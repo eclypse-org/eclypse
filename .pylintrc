@@ -1,0 +1,70 @@
+[MAIN]
+
+# Add files or directories matching the regex patterns to the ignore-list. The
+# regex matches against paths and can be in Posix or Windows format.
+ignore-paths=tests,examples,docs
+
+# Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
+# number of processors available to use.
+jobs=0
+
+# Minimum supported python version
+py-version=3.11
+
+# Specify a score threshold under which the program will exit with error.
+fail-under=10.0
+
+# Clear in-memory caches upon conclusion of linting. Useful if running pylint in
+# a server-like mode.
+clear-cache-post-run=no
+
+[MESSAGES CONTROL]
+
+disable=C0114,C0115,C0116,R0401,W0718
+
+[REPORTS]
+
+# Tells whether to display a full report or only the messages
+reports=no
+
+# Activate the evaluation score.
+score=no
+
+[SIMILARITIES]
+
+# Minimum lines number of a similarity.
+min-similarity-lines=6
+
+# Ignore comments when computing similarities.
+ignore-comments=yes
+
+# Ignore docstrings when computing similarities.
+ignore-docstrings=yes
+
+# Ignore imports when computing similarities.
+ignore-imports=yes
+
+[FORMAT]
+
+# Maximum number of characters on a single line.
+max-line-length=120
+
+# Regexp for a line that is allowed to be longer than the limit.
+ignore-long-lines="^\s*(# )?<?https?://\S+>?$"
+
+[DESIGN]
+
+# Maximum number of arguments for function / method (see R0913).
+max-args=15
+
+# Maximum number of locals for function / method body (see R0914).
+max-locals=30
+
+# Maximum number of attributes for a class (see R0902).
+max-attributes=15
+
+# Minimum number of public methods for a class (see R0903).
+min-public-methods=1
+
+# R0912
+max-branches=15

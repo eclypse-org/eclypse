@@ -1,0 +1,54 @@
+[tool.poetry]
+name = "eclypse"
+version = "0.6.8"
+description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
+authors = [
+    "Valerio De Caro <valerio.decaro@di.unipi.it>",
+    "Jacopo Massa <jacopo.massa@di.unipi.it>",
+]
+maintainers = [
+    "Valerio De Caro <valerio.decaro@di.unipi.it>",
+    "Jacopo Massa <jacopo.massa@di.unipi.it>",
+]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+
+
+[build-system]
+requires = ["poetry-core", "setuptools", "wheel"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.build]
+generate-setup-file = false
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.6.8"
+tag_format = "$version"
+version_files = [
+    "pyproject.toml:version",
+    "eclypse/__init__.py:__version__",
+    "setup.py:version",
+]
+
+[tool.pycln]
+all = true
+
+[tool.isort]
+multi_line_output = 3
+include_trailing_comma = true
+force_grid_wrap = 2
+filter_files = true
+skip = ["__init__.py"]
+
+[tool.docformatter]
+recursive = true
+black = true
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+addopts = "--cov-report=xml --cov-report=term-missing --cov"
+filterwarnings = ["ignore::DeprecationWarning"]

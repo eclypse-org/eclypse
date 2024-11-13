@@ -1,0 +1,57 @@
+name: Build and Deploy to PyPI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - refactor/core  # Trigger on push to refactor/core branch
+
+jobs:
+  build_and_deploy:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry setuptools wheel twine cython
+
+      - name: Prepare Cython Files
+        run: |
+          # Rename .py files to .pyx if required for Cython compilation
+          find eclypse/core -name "*.py" -exec bash -c 'mv "$0" "${0%.py}.pyx"' {} \;
+
+      - name: Build the Package
+        run: |
+          # poetry export -f requirements.txt --output requirements.txt --without-hashes
+          # python setup.py build_ext --inplace
+          poetry build -v --no-cache --format wheel   
+          
+          # if [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          #   python setup.py bdist_wheel --plat-name manylinux2014_x86_64
+          # else
+          #   python setup.py bdist_wheel
+          # fi
+
+      - name: Verify the distribution
+        run: twine check --strict dist/*
+
+      - name: Upload to PyPI
+        # env:
+        #   TWINE_USERNAME: "__token__"
+        #   TWINE_PASSWORD: ${{ secrets.TEST_PYPI_TOKEN }}
+        run: |
+          poetry config repositories.test-pypi https://test.pypi.org/legacy/
+          poetry config pypi-token.test-pypi ${{ secrets.TEST_PYPI_TOKEN }}
+          poetry publish -r test-pypi --skip-existing -v
