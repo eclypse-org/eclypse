@@ -1,9 +1,3 @@
-<p align="center">
-<picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/_static/images/dark.png"><img width=450 alt="dips-logo" src="docs/_static/images/light.png"/>
-</picture>
-</p>
-
 ![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Feclypse-org%2Feclypse%2Fmain%2Fpyproject.toml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&)](https://github.com/pre-commit/pre-commit)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
@@ -18,7 +12,7 @@
 
 ## Installation
 
-To install ECLYPSE you can run the following commands:
+To install ECLYPSE and all its dependencies, you can run the following commands:
 ```bash
 
 pip install eclypse
