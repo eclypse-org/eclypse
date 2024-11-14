@@ -20,7 +20,7 @@ clear-cache-post-run=no
 
 [MESSAGES CONTROL]
 
-disable=C0114,C0115,C0116,R0401,W0718
+disable=C0114,C0115,C0116,R0401,W0718,E0401
 
 [REPORTS]
 
@@ -62,6 +62,9 @@ max-locals=30
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=15
+
+# Maximum number of positional arguments for function / method (see R0917).
+max-positional-arguments=15
 
 # Minimum number of public methods for a class (see R0903).
 min-public-methods=1

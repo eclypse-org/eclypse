@@ -51,7 +51,8 @@ repos:
     hooks:
       - id: pylint
         name: pylint
-        entry: pylint --prefer-stubs=y
-        language: system
+        entry: pylint
+        language: python
+        types: [python]
 
 exclude: "examples/.*"
