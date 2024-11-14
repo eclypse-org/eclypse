@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eclypse"
-version = "0.1.0"
+version = "0.1.1"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 authors = [
     "Valerio De Caro <valerio.decaro@di.unipi.it>",
@@ -12,6 +12,10 @@ maintainers = [
 ]
 license = "MIT"
 readme = "README.md"
+
+[tool.poetry.build]
+script = "build.py"
+generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
@@ -40,9 +44,6 @@ twine = "^5.1.1"
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.build]
-generate-setup-file = false
 
 [tool.commitizen]
 name = "cz_conventional_commits"
