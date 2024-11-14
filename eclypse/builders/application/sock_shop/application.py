@@ -14,6 +14,7 @@ from typing import (
 )
 
 from eclypse_core.utils.tools import prune_assets
+
 from eclypse.graph import (
     Application,
     NodeGroup,

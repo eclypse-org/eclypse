@@ -32,6 +32,7 @@ from eclypse_core.utils.constants import (
     MIN_FLOAT,
     MIN_LATENCY,
 )
+
 from eclypse.graph import NodeGroup
 
 from . import (

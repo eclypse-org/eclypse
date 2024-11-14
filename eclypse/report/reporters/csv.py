@@ -17,8 +17,9 @@ from .reporter import Reporter
 if TYPE_CHECKING:
     from eclypse_core.workflow.callbacks import EclypseCallback
 
+CSV_DELIMITER = ","
 DEFAULT_IDX_HEADER = ["timestamp", "event_id", "n_event", "callback_id"]
-DEFAULT_IDX_HEADER_STR = ",".join(DEFAULT_IDX_HEADER)
+DEFAULT_IDX_HEADER_STR = CSV_DELIMITER.join(DEFAULT_IDX_HEADER)
 
 DEFAULT_CSV_HEADERS = {
     "simulation": DEFAULT_IDX_HEADER + ["value"],
@@ -61,12 +62,21 @@ class CSVReporter(Reporter):
 
             if not path.exists():
                 with open(path, "w", encoding="utf-8") as f:
-                    f.write(",".join(DEFAULT_CSV_HEADERS[t]) + "\n")
+                    f.write(CSV_DELIMITER.join(DEFAULT_CSV_HEADERS[t]) + "\n")
 
             with open(path, "a", encoding="utf-8") as f:
                 for line in self.dfs_data(callback.data):
                     if line[-1] is None:
                         continue
-                    f.write(
-                        f"{dt.now()},{event_name},{event_idx},{callback.name},{','.join([str(l) for l in line])}\n"
-                    )
+
+                    fields = [
+                        dt.now(),
+                        event_name,
+                        event_idx,
+                        callback.name,
+                    ] + line
+
+                    fields = [str(f) for f in fields]
+                    # remove the CSV_DELIMITER from the callback value
+                    fields[-1] = fields[-1].replace(CSV_DELIMITER, ";")
+                    f.write(f"{CSV_DELIMITER.join(fields)}\n")

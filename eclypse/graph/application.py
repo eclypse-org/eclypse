@@ -6,7 +6,6 @@ services and edges representing the interactions between them.
 
 from __future__ import annotations
 
-from functools import cached_property
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -16,10 +15,7 @@ from typing import (
     Optional,
 )
 
-import networkx as nx
-
 from eclypse_core.graph import Application as _Application
-from eclypse_core.remote.service import Service
 
 from .assets import (
     get_default_edge_assets,
@@ -34,7 +30,6 @@ if TYPE_CHECKING:
         NodeView,
     )
 
-    from . import NodeGroup
     from .assets import Asset
 
 

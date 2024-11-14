@@ -32,12 +32,12 @@ from eclypse.graph import (
 )
 
 if TYPE_CHECKING:
+    from eclypse_core.utils.types import ConnectivityFn
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
     )
 
-    from eclypse_core.utils.types import ConnectivityFn
     from eclypse.graph.assets import Asset
 
 DEFAULT_NODE_PARTITIONING = [

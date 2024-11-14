@@ -23,6 +23,7 @@ from .strategy import PlacementStrategy
 
 if TYPE_CHECKING:
     from eclypse_core.placement import Placement
+
     from eclypse.graph import (
         Application,
         Infrastructure,

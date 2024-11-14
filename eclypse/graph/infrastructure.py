@@ -20,16 +20,9 @@ from typing import (
     List,
     Literal,
     Optional,
-    Tuple,
 )
 
 import networkx as nx
-from networkx.classes.coreviews import (
-    FilterAdjacency,
-    FilterAtlas,
-)
-from networkx.classes.filters import no_filter
-
 from eclypse_core.graph import Infrastructure as _Infrastructure
 
 from .assets import (
@@ -41,12 +34,12 @@ from .assets import (
 )
 
 if TYPE_CHECKING:
+    from eclypse_core.graph.assets.asset import Asset
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
     )
 
-    from eclypse_core.graph.assets.asset import Asset
     from eclypse.placement.strategies import PlacementStrategy
 
 

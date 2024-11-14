@@ -12,7 +12,6 @@ from typing import (
 )
 
 import networkx as nx
-
 from eclypse_core.utils.constants import RND_SEED
 
 from . import metric
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
+
     from eclypse.graph import (
         Application,
         Infrastructure,

@@ -6,10 +6,7 @@ the simulation.
 
 from __future__ import annotations
 
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import abstractmethod
 from pathlib import Path
 from typing import (
     Any,
@@ -17,8 +14,8 @@ from typing import (
     Union,
 )
 
-from eclypse_core.workflow.callbacks import EclypseCallback
 from eclypse_core.report.reporter import Reporter as _Reporter
+from eclypse_core.workflow.callbacks import EclypseCallback
 
 
 class Reporter(_Reporter):

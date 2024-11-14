@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from abc import (
-    ABC,
-    abstractmethod,
-)
+from abc import abstractmethod
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -15,12 +12,15 @@ from typing import (
 from eclypse_core.placement import PlacementStrategy as _PlacementStrategy
 
 if TYPE_CHECKING:
-    from eclypse_core.placement import PlacementView
+    from eclypse_core.placement import (
+        Placement,
+        PlacementView,
+    )
+
     from eclypse.graph import (
         Application,
         Infrastructure,
     )
-    from eclypse_core.placement import Placement
 
 
 class PlacementStrategy(_PlacementStrategy):

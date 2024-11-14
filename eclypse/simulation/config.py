@@ -10,12 +10,9 @@ It stores the configuration of a simulation, in detail:
 
 from __future__ import annotations
 
-from collections import defaultdict
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
-    Any,
-    Callable,
     Dict,
     List,
     Literal,
@@ -25,16 +22,17 @@ from typing import (
 )
 
 from eclypse_core.simulation import SimulationConfig as _SimulationConfig
+
 from eclypse.report.metrics.defaults import get_default_metrics
 from eclypse.report.reporters import get_default_reporters
-from eclypse_core.workflow.events.defaults import enact, start, stop, tick
 
 if TYPE_CHECKING:
     from eclypse_core.remote.bootstrap import RemoteBootstrap
-    from eclypse.report.reporters import Reporter
     from eclypse_core.utils.types import LogLevel
     from eclypse_core.workflow.callbacks import EclypseCallback
     from eclypse_core.workflow.events import EclypseEvent
+
+    from eclypse.report.reporters import Reporter
 
 
 class SimulationConfig(_SimulationConfig):
@@ -99,7 +97,6 @@ class SimulationConfig(_SimulationConfig):
         _callbacks.extend(get_default_metrics() if include_default_callbacks else [])
 
         _events = events if events is not None else []
-        _events.extend([start, stop, tick, enact])
 
         super().__init__(
             tick_every_ms=tick_every_ms,
@@ -245,19 +242,3 @@ class SimulationConfig(_SimulationConfig):
             Union[bool, RemoteBootstrap]: True if the simulation is remote. False otherwise.
         """
         return self["remote"]
-
-    def __dict__(self):
-        d = self.copy()
-        d["path"] = str(d["path"])
-        d["callbacks"] = [c.name for c in d["callbacks"]]
-        d["events"] = [e.name for e in d["events"]]
-        d["reporters"] = list(d["reporters"].keys())
-        return d
-
-
-def _catch_duplicates(l: List[Any], access_fn: Callable, label: str):
-    _dd = defaultdict(lambda: 0)
-    for item in l:
-        _dd[access_fn(item)] += 1
-        if _dd[access_fn(item)] > 1:
-            raise ValueError(f"Duplicated {label} found: {access_fn(item)}")

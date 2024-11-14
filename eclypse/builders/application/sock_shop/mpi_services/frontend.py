@@ -22,7 +22,7 @@ class FrontendService(Service):
 
     async def dispatch(self):
         """Example workflow of the Frontend service, starting with fetching the catalog,
-        \ user data, and cart items, then placing an order."""
+        user data, and cart items, then placing an order."""
         # Send request to CatalogService
         await self.catalog_request()
 
