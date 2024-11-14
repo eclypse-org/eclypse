@@ -14,7 +14,7 @@ class UserService(Service):
     """MPI workflow of the User service."""
 
     async def dispatch(self):
-        """Example workflow of the User service, starting with fetching \ the user's
+        """Example workflow of the User service, starting with fetching the user's
         profile information."""
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
 

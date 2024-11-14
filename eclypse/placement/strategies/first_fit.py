@@ -41,6 +41,7 @@ class FirstFitStrategy(PlacementStrategy):
                 the infrastructure nodes. Defaults to the identity function.
         """
         self.sort_fn = sort_fn
+        super().__init__()
 
     def place(
         self,

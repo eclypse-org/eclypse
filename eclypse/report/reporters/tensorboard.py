@@ -1,3 +1,4 @@
+# pylint: disable=no-member, unused-argument
 """Module for TensorBoardReporter class.
 
 It is used to report the simulation metrics on a TensorBoard file, using the
@@ -15,9 +16,8 @@ from typing import (
     List,
 )
 
+from eclypse_core.report.reporter import Reporter
 from tensorboardX import SummaryWriter
-
-from .reporter import Reporter
 
 if TYPE_CHECKING:
     from eclypse_core.workflow.callbacks import EclypseCallback

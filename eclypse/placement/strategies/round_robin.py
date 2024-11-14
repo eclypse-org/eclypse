@@ -30,6 +30,7 @@ class RoundRobinStrategy(PlacementStrategy):
 
     def __init__(self, sort_fn: Optional[Callable[[Any], Any]] = None):
         self.sort_fn = sort_fn
+        super().__init__()
 
     def place(
         self,

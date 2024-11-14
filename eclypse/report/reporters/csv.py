@@ -1,3 +1,4 @@
+# pylint: disable=unused-argument
 """Module for the CSVReporter class.
 
 It is used to report the simulation metrics in a CSV format.
@@ -12,7 +13,7 @@ from typing import (
     List,
 )
 
-from .reporter import Reporter
+from eclypse_core.report.reporter import Reporter
 
 if TYPE_CHECKING:
     from eclypse_core.workflow.callbacks import EclypseCallback

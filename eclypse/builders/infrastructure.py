@@ -48,7 +48,7 @@ DEFAULT_NODE_PARTITIONING = [
 ]
 
 
-def hierarchical(  # pylint: disable=too-many-arguments
+def hierarchical(
     infrastructure_id: str,
     n: int,
     symmetric: bool = False,

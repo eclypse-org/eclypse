@@ -1,4 +1,4 @@
-from .reporter import Reporter
+from eclypse_core.report.reporter import Reporter
 from .csv import CSVReporter
 from .gml import GMLReporter
 from .tensorboard import TensorBoardReporter

@@ -39,7 +39,7 @@ class SimulationConfig(_SimulationConfig):
     """The SimulationConfig is a dictionary-like class that stores the configuration of
     a simulation."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
         tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "auto",
         timeout: Optional[float] = None,
@@ -227,7 +227,8 @@ class SimulationConfig(_SimulationConfig):
 
     @property
     def reporters(self) -> Dict[str, Type[Reporter]]:
-        """Returns the list of reporters that will be used for the final simulation report.
+        """Returns the list of reporters that will be used for the final simulation
+        report.
 
         Returns:
             Dict[str, Type[Reporter]]: The list of reporters.

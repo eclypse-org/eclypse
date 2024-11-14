@@ -36,6 +36,7 @@ class RandomStrategy(PlacementStrategy):
     def __init__(self, spread: bool = False, seed: Optional[int] = None):
         self._rnd = rnd.Random(seed if seed is not None else os.environ[RND_SEED])
         self.spread = spread
+        super().__init__()
 
     def place(
         self,

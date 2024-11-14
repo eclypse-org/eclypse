@@ -546,8 +546,8 @@ __all__ = [
     "alive_nodes",
     # SIMULATION
     "seed",
-    "TickNumber()",
-    "SimulationTime()",
+    "TickNumber",
+    "SimulationTime",
     # GML
     "app_gml",
     "infr_gml",
