@@ -1,2 +1,4 @@
+matplotlib
 ray[train]
 scipy
+seaborn
