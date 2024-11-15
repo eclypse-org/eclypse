@@ -18,6 +18,8 @@ class CatalogService(Service):
         """The `CatalogService` workflow consists of receiving a request from the \
         `FrontendService` and sending a response containing product information."""
 
+        await self.frontend_request()  # pylint: disable=no-value-for-parameter
+
     @mpi.exchange(receive=True, send=True)
     def frontend_request(self, sender_id, body):
         """Process requests from the FrontendService and send responses back.
