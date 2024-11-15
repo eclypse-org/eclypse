@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from .assets import Asset
 
 
-class Application(_Application):
+class Application(_Application):  # pylint: disable=too-few-public-methods
     """Class to represent a multi-service Application."""
 
     def __init__(

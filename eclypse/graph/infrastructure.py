@@ -43,7 +43,7 @@ if TYPE_CHECKING:
     from eclypse.placement.strategies import PlacementStrategy
 
 
-class Infrastructure(_Infrastructure):
+class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
     """Class to represent a Cloud-Edge infrastructure."""
 
     def __init__(
