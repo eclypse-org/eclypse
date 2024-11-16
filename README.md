@@ -4,7 +4,8 @@
 </picture>
 </p>
 
-![Python Version from PEP 621 TOML](https://img.shields.io/python/required-version-toml?tomlFilePath=https%3A%2F%2Fraw.githubusercontent.com%2Feclypse-org%2Feclypse%2Fmain%2Fpyproject.toml)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/eclypse)
+
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&)](https://github.com/pre-commit/pre-commit)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Checked wit pylint](https://img.shields.io/badge/pylint-10/10-green)](https://pylint.pycqa.org/en/latest/)
