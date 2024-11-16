@@ -1,0 +1,30 @@
+/* custom.css */
+.start-button {
+    background-color: transparent;
+    /* Transparent background */
+    border: 2px solid #007bff;
+    /* Blue border */
+    color: #007bff;
+    /* Blue text color */
+    padding: 12px 24px;
+    /* Adjust padding as needed */
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    /* Adjust font size as needed */
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    /* Smooth transition */
+}
+
+.start-button:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+    /* Slightly transparent blue on hover */
+    border-color: #0056b3;
+    /* Darker blue border on hover */
+    color: #0056b3;
+    /* Darker blue text color on hover */
+}

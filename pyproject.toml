@@ -19,7 +19,7 @@ generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
-eclypse-core = "^0.6.11"
+eclypse-core = "^0.6.12"
 
 [tool.poetry.group.dev]
 optional = true
@@ -41,6 +41,22 @@ mypy = "^1.13.0"
 wheel = "^0.45.0"
 setuptools = "^75.5.0"
 twine = "^5.1.1"
+
+[tool.poetry.group.docs]
+optional = true
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "^8.1.3"
+sphinx-copybutton = "^0.5.2"
+sphinx-book-theme = "^1.1.3"
+jinja2 = "^3.1.4"
+docformatter = {extras = ["tomli"], version = "^1.7.5"}
+sphinx-autobuild = "^2024.10.3"
+enum-tools = {extras = ["sphinx"], version = "^0.12.0"}
+sphinx-favicon = "^1.0.1"
+sphinx-design = "^0.6.1"
+myst-parser = "^4.0.0"
+sphinx-icon = "^0.2.2"
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
