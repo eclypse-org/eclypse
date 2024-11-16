@@ -19,6 +19,7 @@ generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = "^3.11"
+eclypse-core = "^0.6.11"
 
 [tool.poetry.group.dev]
 optional = true

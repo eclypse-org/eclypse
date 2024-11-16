@@ -28,6 +28,5 @@ jobs:
 
       - name: Upload to PyPI
         run: |
-          poetry config repositories.test-pypi https://test.pypi.org/legacy/
-          poetry config pypi-token.test-pypi ${{ secrets.TEST_PYPI_TOKEN }}
-          poetry publish -r test-pypi --skip-existing -v
+          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN_PUBLIC }}
+          poetry publish --skip-existing -vv --no-interaction

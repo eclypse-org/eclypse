@@ -9,6 +9,7 @@ changelog:
 setup:
 	python -m pip install --upgrade pip
 	pip install poetry
+	poetry config virtualenvs.create false
 	poetry install --with=dev,deploy --no-root
 
 format:
