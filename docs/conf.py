@@ -6,10 +6,17 @@ import os
 import sys
 from datetime import datetime
 from importlib import import_module
+from importlib.metadata import distribution
 
 from jinja2.filters import FILTERS
 
 sys.path.insert(0, os.path.abspath(".."))
+
+# -- Core package import -----------------------------------------------------
+core_dist = distribution("eclypse-core")
+core_path = os.path.join(core_dist.locate_file("."), "eclypse_core-stubs")
+print("Including", core_path)
+sys.path.insert(0, core_path)
 
 
 # -- Project information -----------------------------------------------------
@@ -24,20 +31,20 @@ author = "Valerio De Caro, Jacopo Massa"
 extensions = [
     # "enum_tools.autoenum",
     "sphinx.ext.autodoc",
-    "sphinx.ext.viewcode",
+    "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
     "sphinx.ext.intersphinx",
-    "sphinxcontrib.icon",
-    "sphinx_copybutton",
+    "sphinx.ext.viewcode",
     "sphinx.ext.autosectionlabel",
-    "sphinx.ext.autosummary",
     "sphinx.ext.coverage",
     "sphinx.ext.napoleon",
-    "sphinx_book_theme",
+    "sphinxcontrib.icon",
+    "sphinx_copybutton",
     "sphinx_favicon",
     "sphinx_design",
     "myst_parser",
 ]
+viewcode_follow_imported_members = True
 autosummary_generate = True
 myst_enable_extensions = ["colon_fence"]
 
@@ -62,19 +69,19 @@ html_static_path = ["_static"]
 html_css_files = ["css/buttons.css", "css/custom.css"]
 
 html_context = {
-    "github_url": "https://github.com",  # or your GitHub Enterprise site
+    "github_url": "https://github.com",
     "github_user": "eclypse-org",
     "github_repo": "eclypse",
     "github_version": "main",
     "doc_path": "docs",
 }
 
-external_links = [
-    {
-        "name": "Changelog",
-        "url": "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md",
-    }
-]
+# external_links = [
+#     {
+#         "name": "Changelog",
+#         "url": "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md",
+#     }
+# ]
 
 favicons = [
     {
@@ -135,7 +142,7 @@ html_theme_options = {
     "show_nav_level": 1,
     "navigation_depth": 4,
     "icon_links": icon_links,
-    "external_links": external_links,
+    # "external_links": external_links,
     "header_links_before_dropdown": 4,
     "logo": {
         "text": "ECLYPSE",
@@ -144,7 +151,7 @@ html_theme_options = {
         "image_light": "_static/images/light.png",
     },
 }
-
+source_suffix = [".rst", ".pyi"]
 html_sidebars = {"**": ["sidebar-nav-bs", "sidebar-ethical-ads"]}
 
 html_scaled_image_link = False
