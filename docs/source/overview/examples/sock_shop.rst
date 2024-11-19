@@ -11,7 +11,7 @@ We have developed two versions of the SockShop application, each utilizing a dif
 
 Below, we show on the two implementations of the **FrontendService**, which is the most communication intensive service in the SockShop application, in both MPI and REST version, just focussing on the main differences between them.
 
-The whole code of all services is available in the `examples/sock_shop_mpi <https://github.com/eclypse-org/eclypse/tree/main/examples/sock_shop_mpi>`_ and `examples/sock_shop_rest <https://github.com/eclypse-org/eclypse/tree/main/examples/sock_shop_rest>`_ directories of the ECLYPSE Github repository.
+The whole code of all services is available in the `examples/sock_shop/mpi <https://github.com/eclypse-org/eclypse/tree/main/examples/sock-shop/mpi>`_ and `examples/sock_shop/rest <https://github.com/eclypse-org/eclypse/tree/main/examples/sock-shop/rest>`_ directories of the ECLYPSE Github repository.
 
 .. warning::
 
@@ -20,35 +20,36 @@ The whole code of all services is available in the `examples/sock_shop_mpi <http
 FrontendService (MPI version)
 -----------------------------
 
-.. literalinclude:: ../../../../examples/sock_shop_mpi/services/frontend.py
+.. literalinclude:: ../../../../eclypse/builders/application/sock_shop/mpi_services/frontend.py
       :language: python
       :linenos:
 
 The MPI interface is made of just two methods: **send** and **recv**. The **send** method is used to send a message to a specific service while the **recv** method is used to receive a message from the internal queue that each service has.
 
-We can notice two ways of sending a message. The former (lines 49 -- 51) uses the :doc:`@mpi.exchange <../../api/reference/application/remote/communication/mpi/interface/eclypse.remote.communication.mpi.interface.exchange>` decorator, wrapping a function that must return a recipient and a message to be sent.
-Since on of the most common pattern in MPI is the *recv-send* pattern, the *@mpi.exchange* decorator is a convenient way to implement it. If also the *recv* parameter is set to ``True``
-the decorated function will be extended with two parameters, namely the sender and the message received. Then, the function will process the received message and return the recipient and the message to be sent.
+We can notice two ways of sending a message:
 
-A complete example of such a pattern is the following, where the service receives a message and sends a response to the sender:
+- At lines 64 -- 72 we use the :py:meth:`~eclypse_core.remote.communication.mpi.interface.exchange` decorator, wrapping a function that must return a recipient and a message to be sent.
+   Since on of the most common pattern in MPI is the *recv-send* pattern, the *@mpi.exchange* decorator is a convenient way to implement it. If also the *recv* parameter is set to ``True``
+   the decorated function will be extended with two parameters, namely the sender and the message received. Then, the function will process the received message and return the recipient and the message to be sent.
 
-.. code-block:: python
+   A complete example of such a pattern is the following, where the service receives a message and sends a response to the sender:
 
-   @mpi.exchange(receive=True, send=True)
-      def my_request(self, sender_id, body):
+   .. code-block:: python
 
-         response = ... # process the body
+      @mpi.exchange(receive=True, send=True)
+         def my_request(self, sender_id, body):
 
-         return sender_id, payment_response
+            response = ... # process the body
 
-The second way to send a message (lines 21,29,43) uses the **mpi.send** method directly, specifying the recipient and the message to be sent.
+            return sender_id, payment_response
 
-The **recv** method is used to receive messages from the internal queue. The **recv** method is blocking, meaning that the service will wait until a message is received.
+- At lines 36,44 and 58 we use the **mpi.send** method directly, specifying the recipient and the message to be sent. 
+   The **recv** method is used to receive messages from the internal queue. The **recv** method is blocking, meaning that the service will wait until a message is received.
 
 FrontendService (REST version)
 ------------------------------
 
-.. literalinclude:: ../../../../examples/sock_shop_rest/services/frontend.py
+.. literalinclude:: ../../../../eclypse/builders/application/sock_shop/rest_services/frontend.py
       :language: python
       :linenos:
 

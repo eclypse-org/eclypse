@@ -27,7 +27,7 @@ You need the following imports to define an :class:`~eclypse.graph.infrastructur
    - **storage**: amount of free storage in GB.
    - **availability**: uptime percentage.
    - **processing_time**: the time it takes to process a task in milliseconds (the only non-functional property).
-   - **group**: the group to which the node belongs, defined using the :class:`~eclypse.graph.node_group.NodeGroup` enum.
+   - **group**: the group to which the node belongs, defined using the :class:`~eclypse_core.graph.node_group.NodeGroup` enum.
 
    To add a node to the infrastructure, you must specify the resources it provides or use one of the predefined methods that create a node according to its group.
 

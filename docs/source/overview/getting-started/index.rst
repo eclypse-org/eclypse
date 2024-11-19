@@ -3,12 +3,12 @@ Getting started
 ===============
 
 .. toctree::
-   :maxdepth: 6
+   :maxdepth: 2
    :hidden:
 
    Build an Infrastructure <infrastructure.rst>
    Define an Application <application.rst>
-   Configure and run the Simulation <simulation.rst>
+   Configure and run a Simulation <simulation.rst>
 
 This guide will walk you through the process of setting up and running your first simulation using ECLYPSE,
 which is made by three main components:

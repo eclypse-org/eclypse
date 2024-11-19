@@ -27,7 +27,7 @@ You need the following imports to define an :class:`~eclypse.graph.application.A
    - **storage**: amount of available storage in GB.
    - **availability**: uptime percentage.
    - **processing_time**: the time it takes to process a task in milliseconds (the only non-functional property).
-   - **group**: the group to which the service belongs, defined using the :class:`~eclypse.graph.node_group.NodeGroup` enum.
+   - **group**: the group to which the service belongs, defined using the :class:`~eclypse_core.graph.node_group.NodeGroup` enum.
 
    To add a service to the application, you must specify the requirements it provides or use one of the predefined methods that create a service according to its group.
 
@@ -124,4 +124,4 @@ You need the following imports to define an :class:`~eclypse.graph.application.A
 
    So far, ECLYPSE provides one application builder, that retrieves the well-known
    **SockShop** application from the `Microservices Demo <https://github.com/ocp-power-demos/sock-shop-demo>`_ project,
-   using :class: `~eclypse.builders.application.sock_shop.application.get_sock_shop` method.
+   using :class:`~eclypse.builders.application.sock_shop.application.get_sock_shop` method.

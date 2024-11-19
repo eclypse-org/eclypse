@@ -38,7 +38,7 @@ class FirstFitStrategy(PlacementStrategy):
 
         Args:
             sort_fn (Optional[Callable[[Any], Any]], optional): A function to sort \
-                the infrastructure nodes. Defaults to the identity function.
+                the infrastructure nodes. Defaults to None.
         """
         self.sort_fn = sort_fn
         super().__init__()
@@ -56,6 +56,9 @@ class FirstFitStrategy(PlacementStrategy):
         Args:
             infrastructure (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
+            _ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            placement_view (PlacementView): The snapshot of the current state of the \
+                infrastructure.
 
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.
@@ -65,7 +68,10 @@ class FirstFitStrategy(PlacementStrategy):
 
         mapping = {}
         infrastructure_nodes = list(placement_view.residual.available.nodes(data=True))
-        rnd.shuffle(infrastructure_nodes)
+        if self.sort_fn:
+            infrastructure_nodes.sort(key=self.sort_fn)
+        else:
+            rnd.shuffle(infrastructure_nodes)
 
         for service, sattr in application.nodes(data=True):
             for node, nattr in infrastructure_nodes:

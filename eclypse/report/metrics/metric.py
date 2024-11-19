@@ -1,3 +1,5 @@
+"""Module containing decorators to define metrics."""
+
 from typing import (
     Callable,
     Dict,

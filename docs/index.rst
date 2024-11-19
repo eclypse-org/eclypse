@@ -9,58 +9,40 @@
 
 .. image:: _static/images/light.png
    :align: center
-   :width: 25%
+   :width: 20%
    :class: only-light
 
 .. image:: _static/images/dark.png
    :align: center
-   :width: 25%
+   :width: 20%
    :class: only-dark
 
-======================
-**Welcome to ECLYPSE docs**
-======================
-ECLYPSE (Edge-CLoud pYthon Platform for Simulated Environments) is the first simulation library entirely written in Python, for experimenting with deployment strategies in varying infrastructure conditions. It provides an interface to simulate deployments of service-based applications onto life-like infrastructures, without and with an actual application implementation to be deployed.
+=====================
+ECLYPSE documentation
+=====================
+**ECLYPSE** (Edge-Cloud raY-based Platform for Simulated Environments) stands as a groundbreaking simulation library, crafted entirely in Python.
+It offers a practical interface for experimenting with deployment strategies across different infrastructure settings.
 
+One of its key strengths lies in its ability to simulate the deployment of service-based applications in environments that closely mimic real-world conditions, with or without actual application implementation.
+This flexibility allows users to explore various deployment strategies comprehensively, testing placement and deployment scenarios with precision.
 
-.. grid:: 12
+ECLYPSE empowers developers and researchers to gain valuable insights into the nuances of deployment in diverse infrastructure scenarios, fostering informed decision-making and driving advancements in Cloud and Edge computing.
 
-   .. grid-item::
-      :columns: auto
+Key features include:
 
-      .. button-ref:: source/overview/install
-         :ref-type: myst
-         :outline:
-         :class: start-button
+- **Entirely written in Python:** Accessible and adaptable for a wide range of users.
+- **Easy to use:** Intuitive interface for seamless experimentation and analysis.
+- **Actual implementation of services:** Simulate real-world scenarios with precise deployment strategies.
+- **User-defined placement strategies and application/infrastructure update policies:** Tailor simulations to specific research or development needs, allowing for comprehensive testing and analysis.
+- **Reporting of key metrics:** Provides insights into application, infrastructure, and simulation performance through various formats, aiding in comprehensive analysis and decision-making.
+- **Logging capabilities:** Allows for detailed tracking and analysis of simulation activities, facilitating troubleshooting and optimization efforts.
 
-         :octicon:`desktop-download;1em;info` Install
+.. button-ref:: source/overview/index
+   :ref-type: myst
+   :outline:
+   :color: secondary
+   :expand:
+   :align: center
+   :shadow:
 
-   .. grid-item::
-      :columns: auto
-
-      .. button-ref:: source/overview/getting-started/index
-         :ref-type: myst
-         :outline:
-         :class: start-button
-
-         :octicon:`play;1em;info` Getting Started
-
-   .. grid-item::
-      :columns: auto
-
-      .. button-ref:: source/overview/examples/index
-         :ref-type: myst
-         :outline:
-         :class: start-button
-
-         :octicon:`file-directory;1em;info` Examples
-
-   .. grid-item::
-      :columns: auto
-
-      .. button-ref:: source/api/index
-         :ref-type: myst
-         :outline:
-         :class: start-button
-
-         :octicon:`book;1em;info` References
+   :octicon:`play;1em;info` Start using ECLYPSE

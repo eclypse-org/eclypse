@@ -27,7 +27,7 @@ After you define your application(s) and infrastructure, in order to run the sim
 
    For a complete list of configurable parameters, refer to the :class:`~eclypse.simulation.config.SimulationConfig` class documentation.
 
-#. Create an instance of the :class:`~eclypse.simulation.simulation.Simulation` class, passing the infrastructure and the configuration as parameters:
+#. Create an instance of the :class:`~eclypse_core.simulation.simulation.Simulation` class, passing the infrastructure and the configuration as parameters:
 
    .. code-block:: python
 
@@ -42,7 +42,7 @@ After you define your application(s) and infrastructure, in order to run the sim
 
       from eclypse.placement.strategies import RandomPlacementStrategy
 
-      simulation.include(example_app, RandomPlacementStrategy())
+      simulation.register(example_app, RandomPlacementStrategy())
 
 #. Start the simulation, and (optionally) access the report to save it in your preferred format:
 
@@ -51,7 +51,7 @@ After you define your application(s) and infrastructure, in order to run the sim
       simulation.run()
       simulation.report.to_html()
 
-   For a complete list of available report formats, refer to the :class:`~eclypse.report.report.Report` class documentation.
+   For a complete list of available report formats, refer to the :class:`~eclypse_core.report.report.Report` class documentation.
 
 
 That's it! You have successfully set up and ran your first simulation using ECLYPSE.
