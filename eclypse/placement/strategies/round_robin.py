@@ -29,7 +29,7 @@ class RoundRobinStrategy(PlacementStrategy):
     round-robin fashion."""
 
     def __init__(self, sort_fn: Optional[Callable[[Any], Any]] = None):
-        """ Initializes the `RoundRobin` placement strategy.
+        """Initializes the `RoundRobin` placement strategy.
 
         Args:
             sort_fn (Optional[Callable[[Any], Any]], optional): A function to sort the \

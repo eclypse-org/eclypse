@@ -1,4 +1,4 @@
-"""Package for workflow management, including callbacks and events. """
+"""Package for workflow management, including callbacks and events."""
 
 from eclypse_core.workflow.callbacks import EclypseCallback
 import eclypse_core.workflow.callbacks as callback

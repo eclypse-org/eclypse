@@ -1,4 +1,4 @@
-""" MPI implementation for the Sock Shop application services. """
+"""MPI implementation for the Sock Shop application services."""
 
 # pylint: disable=duplicate-code
 
