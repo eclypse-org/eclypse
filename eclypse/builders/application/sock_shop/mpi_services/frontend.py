@@ -1,5 +1,5 @@
 """The `FrontendService` serves as the user interface for the SockShop application, \
-    providing the user-facing components of the store.
+providing the user-facing components of the store.
 
 - Key Responsibilities:
     - Displays product catalogs, shopping carts, and order information to users.

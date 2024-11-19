@@ -1,4 +1,4 @@
-"""Package for managing simulation reporters, including the off-the-shelf ones. """
+"""Package for managing simulation reporters, including the off-the-shelf ones."""
 
 from typing import Dict, Type
 from eclypse_core.report.reporter import Reporter
