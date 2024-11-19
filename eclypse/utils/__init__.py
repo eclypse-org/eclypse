@@ -1,3 +1,8 @@
+"""Wrapper package for core utils, constants, and exceptions.
+
+For the complete documentation, refer to :py:mod:`eclypse_core.utils`.
+"""
+
 from eclypse_core.utils.constants import (
     MIN_FLOAT,
     MAX_FLOAT,

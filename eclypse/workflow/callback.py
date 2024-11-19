@@ -1,3 +1,5 @@
+"""Module containing decorators to define callbacks."""
+
 from typing import (
     Callable,
     Dict,

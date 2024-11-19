@@ -12,9 +12,9 @@ import psutil
 
 from eclypse.graph import NodeGroup
 from eclypse.graph.assets import Additive
-from eclypse.report.metrics import (
+from eclypse.report.metrics import metric
+from eclypse.report.metrics.defaults import (
     SimulationTime,
-    metric,
     response_time,
 )
 

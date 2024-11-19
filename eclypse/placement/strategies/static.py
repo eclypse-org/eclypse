@@ -30,7 +30,7 @@ class StaticStrategy(PlacementStrategy):
         super().__init__()
 
     def place(self, *_) -> Dict[Any, Any]:
-        """Returns the static mapping of services to nodes.
+        """Returns the static mapping of services to nodes, given at initialization.
 
         Returns:
             Dict[str, str]: the static mapping.

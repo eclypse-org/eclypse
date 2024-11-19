@@ -1,5 +1,5 @@
 """The `PaymentService` is responsible for handling all payment-related transactions in
-the SockShop.
+the SockShop application.
 
 - Key Responsibilities:
     - Processes payment details and initiates transactions for placed orders.

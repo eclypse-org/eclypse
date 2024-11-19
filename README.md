@@ -25,3 +25,7 @@ pip install eclypse
 ```
 
 **N.B.** We **strongly** suggest the installation of ECLYPSE in a virtual environment.
+
+## Documentation
+
+The documentation for ECLYPSE can be found [here](https://eclypse.readthedocs.io/en/latest/).

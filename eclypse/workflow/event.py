@@ -1,3 +1,5 @@
+"""Module containing the decorator to define events in the simulation."""
+
 from typing import (
     Callable,
     Dict,

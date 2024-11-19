@@ -17,7 +17,7 @@ from typing import (
 
 from eclypse_core.graph import Application as _Application
 
-from .assets import (
+from .assets.defaults import (
     get_default_edge_assets,
     get_default_node_assets,
     group,

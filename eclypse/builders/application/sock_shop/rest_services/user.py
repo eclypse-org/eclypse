@@ -1,6 +1,6 @@
 """The `UserService` manages all user-related functionality, including registration,
+authentication, and profile management.
 
-    authentication, and profile management.
 - Key Responsibilities:
     - Handles user sign-up, login, and logout processes.
     - Manages user data, including credentials, personal information, and addresses.

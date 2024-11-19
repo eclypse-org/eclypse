@@ -2,10 +2,8 @@ import os
 
 import psutil
 
-from eclypse.report.metrics import (
-    featured_latency,
-    metric,
-)
+from eclypse.report.metrics import metric
+from eclypse.report.metrics.defaults import featured_latency
 
 
 @metric.service(name="img_counter", remote=True)

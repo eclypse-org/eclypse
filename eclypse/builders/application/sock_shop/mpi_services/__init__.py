@@ -1,4 +1,6 @@
-# pylint: disable=missing-module-docstring,duplicate-code
+"""MPI implementation for the Sock Shop application services."""
+
+# pylint: disable=duplicate-code
 
 from .catalog import CatalogService
 from .user import UserService

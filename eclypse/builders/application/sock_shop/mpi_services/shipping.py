@@ -1,6 +1,6 @@
-"""The `ShippingService` manages the logistics and shipment of orders, \
+"""The `ShippingService` manages the logistics and shipment of orders, \ ensuring items
+reach customers.
 
-    ensuring items reach customers.
 - Key Responsibilities:
     - Handles the shipping of completed orders.
     - Calculates shipping costs, delivery times, and tracks shipment status.
