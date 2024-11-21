@@ -12,6 +12,8 @@ maintainers = [
 ]
 license = "MIT"
 readme = "README.md"
+homepage = "https://github.com/eclypse-org/eclypse"
+repository = "https://github.com/eclypse-org/eclypse"
 
 [tool.poetry.build]
 script = "build.py"
@@ -49,9 +51,9 @@ optional = true
 sphinx = "^8.1.3"
 sphinx-copybutton = "^0.5.2"
 jinja2 = "^3.1.4"
-docformatter = {extras = ["tomli"], version = "^1.7.5"}
+docformatter = { extras = ["tomli"], version = "^1.7.5" }
 sphinx-autobuild = "^2024.10.3"
-enum-tools = {extras = ["sphinx"], version = "^0.12.0"}
+enum-tools = { extras = ["sphinx"], version = "^0.12.0" }
 sphinx-favicon = "^1.0.1"
 sphinx-design = "^0.6.1"
 myst-parser = "^4.0.0"
