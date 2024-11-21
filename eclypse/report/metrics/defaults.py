@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 """Default metrics to be reported by the ECLYPSE SimulationReporter."""
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
+    from eclypse_core.remote.service import Service
 
     from eclypse.graph import (
         Application,
@@ -478,6 +480,18 @@ def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
     return infr
 
 
+@metric.service(remote=True)
+def step_result(service: Service) -> Optional[str]:
+    """Return the result of the step executed by the service.
+
+    Args:
+        service (Service): The service.
+
+    Returns:
+        Optional[str]: The result of the step executed by the service."""
+    return f"'{str(service._step_queue.pop(0))}'" if service._step_queue else None
+
+
 def get_default_metrics():
     """Return the default metrics for the simulation report.
 
@@ -521,6 +535,8 @@ def get_default_metrics():
         # GML
         app_gml,
         infr_gml,
+        # REMOTE
+        step_result,
     ]
 
 
@@ -551,4 +567,6 @@ __all__ = [
     # GML
     "app_gml",
     "infr_gml",
+    # REMOTE
+    "step_result",
 ]
