@@ -3699,6 +3699,22 @@ files = [
 widechars = ["wcwidth"]
 
 [[package]]
+name = "tensorboardx"
+version = "2.6.2.2"
+description = "TensorBoardX lets you watch Tensors Flow without Tensorflow"
+optional = false
+python-versions = "*"
+files = [
+    {file = "tensorboardX-2.6.2.2-py2.py3-none-any.whl", hash = "sha256:160025acbf759ede23fd3526ae9d9bfbfd8b68eb16c38a010ebe326dc6395db8"},
+    {file = "tensorboardX-2.6.2.2.tar.gz", hash = "sha256:c6476d7cd0d529b0b72f4acadb1269f9ed8b22f441e87a84f2a3b940bb87b666"},
+]
+
+[package.dependencies]
+numpy = "*"
+packaging = "*"
+protobuf = ">=3.20"
+
+[[package]]
 name = "termcolor"
 version = "2.5.0"
 description = "ANSI color formatting for output in terminal"
@@ -4298,4 +4314,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "693ff782d184392d1d1e76772db18b7202b72dc661a5a65bef6bfe76f72650da"
+content-hash = "dd457ce1fa9a2b71443f5e40adae1933e40549387c05e726fa1c5f80550e4f11"

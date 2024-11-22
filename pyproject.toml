@@ -23,6 +23,7 @@ generate-setup-file = false
 python = "^3.11"
 eclypse-core = "^0.6.15"
 pandas = "^2.2.3"
+tensorboardx = "^2.6.2.2"
 
 [tool.poetry.group.dev]
 optional = true
