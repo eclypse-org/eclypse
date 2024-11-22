@@ -488,7 +488,8 @@ def step_result(service: Service) -> Optional[str]:
         service (Service): The service.
 
     Returns:
-        Optional[str]: The result of the step executed by the service."""
+        Optional[str]: The result of the step executed by the service.
+    """
     return f"'{str(service._step_queue.pop(0))}'" if service._step_queue else None
 
 

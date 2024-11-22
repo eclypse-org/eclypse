@@ -193,8 +193,8 @@ class Report:
         step: int = 1,
         **kwargs,
     ) -> pd.DataFrame:
-        """Get a dataframe for the given report type, filtered by the given range, step \
-            and additional filters.
+        """Get a dataframe for the given report type, filtered by the given range, step
+        \ and additional filters.
 
         Args:
             report_type (str): The type of report to get (e.g. application, service, etc.).
@@ -239,7 +239,8 @@ class Report:
         report_step: int = 1,
         **kwargs,
     ):
-        """Filter a dataframe based on the given range and step, and the provided kwargs.
+        """Filter a dataframe based on the given range and step, and the provided
+        kwargs.
 
         Args:
             df (pd.DataFrame): The dataframe to filter.
