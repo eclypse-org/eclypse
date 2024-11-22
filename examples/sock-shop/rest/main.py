@@ -57,6 +57,4 @@ if __name__ == "__main__":
     sim.register(get_sock_shop(communication_interface="rest"), strategy)
 
     sim.start()
-    sim.report.to_html()
-    sim.report.to_csv()
-    sim.report.to_json()
+    sim.wait()

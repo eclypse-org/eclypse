@@ -54,4 +54,4 @@ if __name__ == "__main__":
 
     sim.register(app, strategy)
     sim.start()
-    sim.report.to_html()
+    sim.wait()
