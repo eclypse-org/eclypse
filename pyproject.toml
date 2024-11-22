@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eclypse"
-version = "0.6.14"
+version = "0.6.15"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 authors = [
     "Valerio De Caro <valerio.decaro@di.unipi.it>",
@@ -68,7 +68,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.6.14"
+version = "0.6.15"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:version",
