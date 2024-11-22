@@ -24,9 +24,9 @@ DEFAULT_IDX_HEADER_STR = CSV_DELIMITER.join(DEFAULT_IDX_HEADER)
 
 DEFAULT_CSV_HEADERS = {
     "simulation": DEFAULT_IDX_HEADER + ["value"],
-    "application": DEFAULT_IDX_HEADER + ["app_id", "value"],
-    "service": DEFAULT_IDX_HEADER + ["app_id", "service_id", "value"],
-    "interaction": DEFAULT_IDX_HEADER + ["app_id", "source", "target", "value"],
+    "application": DEFAULT_IDX_HEADER + ["application_id", "value"],
+    "service": DEFAULT_IDX_HEADER + ["application_id", "service_id", "value"],
+    "interaction": DEFAULT_IDX_HEADER + ["application_id", "source", "target", "value"],
     "infrastructure": DEFAULT_IDX_HEADER + ["value"],
     "node": DEFAULT_IDX_HEADER + ["node_id", "value"],
     "link": DEFAULT_IDX_HEADER + ["source", "target", "value"],
