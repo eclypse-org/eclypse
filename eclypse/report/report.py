@@ -38,7 +38,7 @@ class Report:
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "application",
             range=range,
             step=step,
@@ -57,7 +57,7 @@ class Report:
         service_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "service",
             range=range,
             step=step,
@@ -78,7 +78,7 @@ class Report:
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "interaction",
             range=range,
             step=step,
@@ -97,7 +97,7 @@ class Report:
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "infrastructure",
             range=range,
             step=step,
@@ -114,7 +114,7 @@ class Report:
         node_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "node",
             range=range,
             step=step,
@@ -133,7 +133,7 @@ class Report:
         targets: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
-        self.to_dataframe(
+        return self.to_dataframe(
             "link",
             range=range,
             step=step,
@@ -194,7 +194,7 @@ class Report:
         **kwargs,
     ) -> pd.DataFrame:
         """Get a dataframe for the given report type, filtered by the given range, step
-        \ and additional filters.
+        and additional filters.
 
         Args:
             report_type (str): The type of report to get (e.g. application, service, etc.).
