@@ -1,7 +1,7 @@
 import asyncio
 import time
 
-from eclypse_core.remote.service import Service
+from eclypse.remote.service import Service
 
 
 class EchoService(Service):

@@ -29,4 +29,4 @@ if __name__ == "__main__":
 
     sim.register(app, RandomStrategy(seed=seed))
     sim.start()
-    sim.wait()
+    print(sim.report.application())
