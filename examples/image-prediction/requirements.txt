@@ -1,3 +1,4 @@
+ipykernel
 matplotlib
 scipy
 seaborn
