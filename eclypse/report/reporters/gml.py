@@ -51,6 +51,7 @@ class GMLReporter(Reporter):
                     continue
                 if not isinstance(d[-1], nx.DiGraph):
                     continue
-                name = f"{callback.name}{'-'+d[-1].id if hasattr(d[-1], 'id') else ''}"
+                graph = d[-1]
+                name = f"{callback.name}{'-'+graph.id if hasattr(graph, 'id') else ''}"
                 path = path / f"{name}.gml"
-                nx.write_gml(d[-1], path, stringizer=str)
+                nx.write_gml(graph, path, stringizer=str)

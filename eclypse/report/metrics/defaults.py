@@ -451,7 +451,7 @@ class SimulationTime:
         return time() - self.start
 
 
-@metric.application(report="gml", activates_on="stop", name="application")
+@metric.application(report="gml", activates_on="stop", name="gml_app")
 def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     """Return the application graph to be saved in a GML file.
 
@@ -466,7 +466,7 @@ def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     return app
 
 
-@metric.infrastructure(report="gml", activates_on="stop", name="infrastructure")
+@metric.infrastructure(report="gml", activates_on="stop", name="gml_infr")
 def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
     """Return the infrastructure graph to be saved in a GML file.
 
