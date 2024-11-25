@@ -25,7 +25,7 @@ from typing import (
 import networkx as nx
 from eclypse_core.graph import Infrastructure as _Infrastructure
 
-from .assets import (
+from .assets.defaults import (
     get_default_edge_assets,
     get_default_node_assets,
     get_default_path_aggregators,

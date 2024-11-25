@@ -46,6 +46,9 @@ class BestFitStrategy(PlacementStrategy):
         Args:
             infrastructure (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
+            _ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            placement_view (PlacementView): The snapshot of the current state of the \
+                infrastructure.
 
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.

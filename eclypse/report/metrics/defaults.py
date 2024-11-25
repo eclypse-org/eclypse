@@ -1,3 +1,4 @@
+# pylint: disable=protected-access
 """Default metrics to be reported by the ECLYPSE SimulationReporter."""
 
 from __future__ import annotations
@@ -22,6 +23,7 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
+    from eclypse_core.remote.service import Service
 
     from eclypse.graph import (
         Application,
@@ -449,7 +451,7 @@ class SimulationTime:
         return time() - self.start
 
 
-@metric.application(report="gml", activates_on="stop", name="application")
+@metric.application(report="gml", activates_on="stop", name="gml_app")
 def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     """Return the application graph to be saved in a GML file.
 
@@ -464,7 +466,7 @@ def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     return app
 
 
-@metric.infrastructure(report="gml", activates_on="stop", name="infrastructure")
+@metric.infrastructure(report="gml", activates_on="stop", name="gml_infr")
 def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
     """Return the infrastructure graph to be saved in a GML file.
 
@@ -476,6 +478,19 @@ def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
         Infrastructure: The infrastructure graph to be saved in a GML file.
     """
     return infr
+
+
+@metric.service(remote=True)
+def step_result(service: Service) -> Optional[str]:
+    """Return the result of the step executed by the service.
+
+    Args:
+        service (Service): The service.
+
+    Returns:
+        Optional[str]: The result of the step executed by the service.
+    """
+    return f"'{str(service._step_queue.pop(0))}'" if service._step_queue else None
 
 
 def get_default_metrics():
@@ -521,6 +536,8 @@ def get_default_metrics():
         # GML
         app_gml,
         infr_gml,
+        # REMOTE
+        step_result,
     ]
 
 
@@ -551,4 +568,6 @@ __all__ = [
     # GML
     "app_gml",
     "infr_gml",
+    # REMOTE
+    "step_result",
 ]

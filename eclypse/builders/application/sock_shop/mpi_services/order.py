@@ -1,7 +1,7 @@
 # pylint: disable=no-value-for-parameter
 """The `OrderService` processes user orders, ensuring the coordination between \
+different services like payment, inventory, and shipping.
 
-    different services like payment, inventory, and shipping.
 - Key Responsibilities:
     - Creates, updates, and manages customer orders.
     - Interacts with the `PaymentService` and `ShippingService` to complete the order transaction.

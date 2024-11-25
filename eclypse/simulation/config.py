@@ -1,6 +1,7 @@
 """Module for the SimulationConfig class.
 
 It stores the configuration of a simulation, in detail:
+
 - The timeout scheduling.
 - Callbacks/Events/Feeds to be managed.
 - The seed for randomicity.

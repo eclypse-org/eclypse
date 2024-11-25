@@ -1,17 +1,15 @@
 import asyncio
 import time
-from typing import List, Tuple
 
-from eclypse_core.remote.service import Service
+from eclypse.remote.service import Service
 
 
 class EchoService(Service):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, id: str):
+        super().__init__(id, store_step=True)
         self.i = 0
-        self.queue: List[Tuple[int, float, float, float, float]] = []
 
-    async def dispatch(self):
+    async def step(self):
         message = {"message": f"Hello from {self.id}!"}
 
         neigh = await self.mpi.get_neighbors()
@@ -35,14 +33,12 @@ class EchoService(Service):
         self.logger.info(
             f"Service {self.id}, {self.i} - Broadcasts in: {t_broadcast}, expected = {expected_wait_broadcast}"
         )
-        self.queue.append(
-            (
-                self.i,
-                t_unicast,
-                expected_wait_unicast,
-                t_broadcast,
-                expected_wait_broadcast,
-            )
-        )
         self.i += 1
         await asyncio.sleep(1)
+        return (
+            self.i,
+            t_unicast,
+            expected_wait_unicast,
+            t_broadcast,
+            expected_wait_broadcast,
+        )

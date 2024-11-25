@@ -1,0 +1,18 @@
+.bd-main .bd-content .bd-article-container {
+    max-width: 100%;
+    /* default is 60em */
+}
+
+.bd-page-width {
+    max-width: 100%;
+    /* default is 88rem */
+}
+
+.bd-sidebar-primary {
+    max-width: 20%;
+}
+
+#rtd-footer-container {
+    margin-top: 0px !important;
+    margin-right: 0px !important;
+}

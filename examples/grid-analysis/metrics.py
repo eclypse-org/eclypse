@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING
 
 import psutil
 
-from eclypse.report.metrics import (
+from eclypse.report.metrics import metric
+from eclypse.report.metrics.defaults import (
     SimulationTime,
     TickNumber,
     alive_nodes,
-    metric,
     response_time,
     seed,
 )

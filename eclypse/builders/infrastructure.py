@@ -1,4 +1,4 @@
-""" Module for the infrastructure builders.
+"""Module for the infrastructure builders.
 It has the following builders:
 
 - hierarchical: A hierarchical infrastructure made of nodes partitioned into groups.
@@ -60,7 +60,7 @@ def hierarchical(
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = True,
-    resource_init: Literal["min", "max"] = "min",
+    resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
 ):
@@ -74,6 +74,7 @@ def hierarchical(
 
         infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
+        symmetric (bool): Whether the connections are symmetric. Defaults to False.
         node_partitioning (Optional[List[Tuple[NodeGroup, float]]]):
             The partitioning of the nodes into groups. Defaults to None.
         connectivity (Optional[Union[ConnectivityFn, List[float]]]): The connectivity \
@@ -85,6 +86,13 @@ def hierarchical(
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
+        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
+        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
+        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
+            Defaults to "min".
+        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+            compute the paths between nodes. Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:
@@ -175,6 +183,14 @@ def star(
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
+        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
+        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
+        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
+            Defaults to "min".
+        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+            compute the paths between nodes. Defaults to None.
+        seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:
         Infrastructure: The star infrastructure.
@@ -232,6 +248,13 @@ def random(
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
+        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
+        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
+        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
+            Defaults to "min".
+        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+            compute the paths between nodes. Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:
