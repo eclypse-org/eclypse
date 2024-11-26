@@ -52,7 +52,7 @@ repos:
       - id: pylint
         name: pylint
         entry: pylint
-        language: python
+        language: system
         types: [python]
 
 exclude: "examples/.*"
