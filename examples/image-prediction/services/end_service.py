@@ -21,7 +21,7 @@ class EndService(Service):
         self.img_counter = 0
         self.correct = 0
 
-    async def dispatch(self):
+    async def step(self):
         image_idx = rnd.randint(0, len(self.data) - 1)
         image, label = self.data[image_idx]
 

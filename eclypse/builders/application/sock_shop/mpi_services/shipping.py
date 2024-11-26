@@ -14,7 +14,7 @@ from eclypse_core.remote.service import Service
 class ShippingService(Service):
     """MPI workflow of the Shipping service."""
 
-    async def dispatch(self):
+    async def step(self):
         """Example workflow of the Shipping service, consisting of processing shipping
         requests."""
         await self.order_request()  # pylint: disable=no-value-for-parameter

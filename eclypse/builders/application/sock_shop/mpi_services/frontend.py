@@ -20,7 +20,7 @@ class FrontendService(Service):
         super().__init__(name)
         self.user_id = 12345
 
-    async def dispatch(self):
+    async def step(self):
         """Example workflow of the Frontend service, starting with fetching the catalog,
         user data, and cart items, then placing an order."""
         # Send request to CatalogService

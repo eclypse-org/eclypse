@@ -15,7 +15,7 @@ from eclypse_core.remote.service import Service
 class PaymentService(Service):
     """MPI workflow of the Payment service."""
 
-    async def dispatch(self):
+    async def step(self):
         """Example workflow of the Payment service, consisting of processing payment
         requests."""
         await self.order_request()  # pylint: disable=no-value-for-parameter

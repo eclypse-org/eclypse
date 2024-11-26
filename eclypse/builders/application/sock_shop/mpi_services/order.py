@@ -24,7 +24,7 @@ class OrderService(Service):
         self.shipping_details = {}
         self.items = []
 
-    async def dispatch(self):
+    async def step(self):
         """Example workflow of the Order service, starting with processing the order \
         request, then sending requests to the `PaymentService` and `ShippingService`."""
         await self.frontend_request()
