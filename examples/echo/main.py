@@ -15,11 +15,10 @@ if __name__ == "__main__":
     sim_config = SimulationConfig(
         seed=seed,
         max_ticks=100,
-        # tick_every_ms=250,
+        tick_every_ms=250,
         log_to_file=True,
         path=DEFAULT_SIM_PATH / "EchoApp",
-        incremental_mapping_phase=True,
-        # remote=True,
+        remote=True,
     )
 
     sim = Simulation(

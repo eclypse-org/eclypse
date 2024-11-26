@@ -1,1 +1,3 @@
+pyarrow
+psutil
 numpy
