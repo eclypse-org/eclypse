@@ -1,0 +1,639 @@
+$bg-sun: #f39d12a6;
+$bg-day: #f1c40f;
+$bg-day-tr: #f1c40f00;
+$bg-eclipse: #111;
+$duration: 1.5s;
+$dim: 450px;
+$dim-logo: $dim + 400;
+$from-top: 30%;
+$name-width: 400px;
+$name-height: 100px;
+
+$dim-sm: 270px;
+$dim-logo-sm: $dim-sm + 250;
+$name-width-sm: 250px;
+$name-height-sm: 60px;
+
+$dim-md: 350px;
+$dim-logo-md: $dim-md + 300;
+$name-width-md: 300px;
+$name-height-md: 80px;
+
+$dim-xs: 170px;
+$dim-logo-xs: $dim-xs + 150;
+$name-width-xs: 200px;
+$name-height-xs: 50px;
+
+// Buttons
+
+$button-hover: #ff9e47;
+$width-button: $dim-logo+200;
+$height-button: 50px;
+
+$anim-orbit: orbit $duration linear forwards;
+$anim-sun: sunflare $duration+1 linear forwards;
+$anim-bg: background $duration+1 forwards;
+$anim-tr: fadeIn $duration+1 forwards;
+$anim-feat-duration: 30s;
+$anim-feat-delay: calc($anim-feat-duration/6);
+$init-delay: 1s;
+
+.l-body {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    background-color: $bg-eclipse;
+}
+
+.sun,
+.l-logo {
+    position: absolute;
+    top: calc($from-top - $dim/2);
+    left: calc(50% - $dim/2);
+    display: block;
+    width: $dim;
+    height: $dim;
+    border-radius: 50%;
+    z-index: 99;
+}
+
+.sun {
+    box-shadow: 0 0 20px $bg-sun;
+    animation: $anim-sun;
+}
+
+.l-logo {
+    width: $dim-logo;
+    height: $dim-logo;
+    top: calc($from-top - $dim-logo/2);
+    left: calc(50% - $dim-logo/2);
+    background-image: url(../landing/logo.png);
+    background-size: cover;
+    animation: $anim-tr;
+}
+
+.l-name {
+    position: absolute;
+    top: calc($from-top + $dim-logo/4 + $name-height/2);
+    left: calc(50% - $name-width/2);
+    background-image: url(../landing/name.png);
+    background-size: cover;
+    width: $name-width;
+    height: $name-height;
+    display: block;
+    z-index: 100;
+    transform: translateY(50px);
+    animation: fadeInRight $duration+1 forwards;
+}
+
+.stars,
+.twinkling,
+.clouds {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.l-button-container {
+    position: absolute;
+    display: inline-flex;
+    flex-wrap: wrap;
+    column-gap: 30px;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    top: calc($from-top + $dim-logo/2 - 1%);
+    left: calc(50% - $width-button/2);
+    width: $width-button;
+    height: $height-button;
+    margin-top: 2rem;
+    z-index: 98;
+    animation: fadeInUp $duration+1.5 forwards;
+}
+
+.l-btn {
+    display: inline-flex;
+    height: 40px;
+    width: 150px;
+    padding: 1.1em 2em;
+    border: 2px solid #BFC0C0;
+    //margin: 20px 20px 20px 20px;
+    color: #BFC0C0;
+    text-transform: uppercase;
+    text-decoration: none;
+    font-size: .8em;
+    letter-spacing: 1.5px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: 0 0 10px 0 $button-hover inset, 0 0 10px 4px $button-hover;
+    }
+
+    &:hover,
+    &:focus {
+        color: #fff;
+        outline: 0;
+    }
+}
+
+.arrow-hover {
+    width: 20px;
+    height: 30px;
+    position: absolute;
+    transform: translateY(-$height-button*2);
+    opacity: 0;
+    -webkit-transition: all .25s cubic-bezier(.14, .59, 1, 1.01);
+    transition: all .15s cubic-bezier(.14, .59, 1, 1.01);
+    margin: 0;
+    padding: 0 5px;
+    text-align: center;
+}
+
+a.l-btn:hover i {
+    width: 50px;
+    opacity: 1;
+    transform: translateY(- calc($height-button))
+}
+
+// Features
+
+.feature {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    margin-bottom: 1rem;
+    background-color: transparent;
+    opacity: 0;
+    animation-duration: $anim-feat-duration;
+    animation-name: slide;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    top: calc($from-top + $dim-logo/2 + $height-button*2);
+    left: calc(50% - $width-button/2);
+    color: #BFC0C0;
+    text-decoration: none;
+    font-size: 1.2em;
+    letter-spacing: 1.5px;
+    width: $width-button;
+    text-align: center;
+    z-index: 98;
+}
+
+.feat-title {
+    font-weight: bold;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    font-size: 1.2em;
+}
+
+.feat-text {
+    margin-bottom: 1rem;
+    font-size: 1em;
+}
+
+.feat-1 {
+    animation-delay: $init-delay;
+}
+
+.feat-2 {
+    animation-delay: $init-delay + $anim-feat-delay;
+}
+
+.feat-3 {
+    animation-delay: $init-delay + $anim-feat-delay*2;
+}
+
+.feat-4 {
+    animation-delay: $init-delay + $anim-feat-delay*3;
+}
+
+.feat-5 {
+    animation-delay: $init-delay + $anim-feat-delay*4;
+}
+
+.feat-6 {
+    animation-delay: $init-delay + $anim-feat-delay*5;
+}
+
+// Media Queries
+@media screen and (max-width: 768px) {
+    $dim: $dim-md;
+    $dim-logo: $dim-logo-md;
+    $name-width: $name-width-md;
+    $name-height: $name-height-md;
+    $width-button: $dim-logo-md;
+
+    .l-button-container {
+        width: $width-button;
+        height: 45px;
+        top: calc($from-top + $dim-logo/2 - 1%);
+        left: calc(50% - $width-button/2);
+        column-gap: 10px;
+    }
+
+    .l-btn {
+        height: 40px;
+        width: 100px;
+        font-size: 0.85em;
+        padding: 0.8em;
+    }
+
+    .sun,
+    .l-logo {
+        width: $dim;
+        height: $dim;
+        position: absolute;
+        top: calc($from-top - $dim/2);
+        left: calc(50% - $dim/2);
+        display: block;
+    }
+
+    .l-logo {
+        width: $dim-logo;
+        height: $dim-logo;
+        top: calc($from-top - $dim-logo/2);
+        left: calc(50% - $dim-logo/2);
+    }
+
+    .l-name {
+        width: $name-width;
+        height: $name-height;
+        top: calc($from-top + $dim-logo/4 + $name-height/2);
+        left: calc(50% - $name-width/2);
+    }
+
+    .feat-title {
+        font-weight: bold;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 1em;
+    }
+
+    .feat-text {
+        margin-bottom: 1rem;
+        font-size: 0.8em;
+    }
+
+    .feature {
+        top: calc($from-top + $dim-logo/2 + $height-button*2);
+        left: calc(50% - $width-button/2);
+        color: #BFC0C0;
+        text-decoration: none;
+        font-size: 1.2em;
+        letter-spacing: 1.5px;
+        width: $width-button;
+        text-align: center;
+        z-index: 98;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    $dim: $dim-sm;
+    $dim-logo: $dim-logo-sm;
+    $name-width: $name-width-sm;
+    $name-height: $name-height-sm;
+    $width-button: $dim-logo-sm + 100;
+
+    .l-button-container {
+        width: $width-button;
+        top: calc($from-top + $dim-logo/2 + $name-height + 2%);
+        left: calc(50% - $width-button/2);
+        row-gap: 20px;
+    }
+
+    .l-btn {
+        flex: 0 0 50%;
+        font-size: 0.8em;
+        padding: 0.5em;
+    }
+
+    .arrow-hover {
+        width: 20px;
+        height: 30px;
+        position: absolute;
+        transform: translateY($height-button);
+        opacity: 0;
+        -webkit-transition: all .25s cubic-bezier(.14, .59, 1, 1.01);
+        transition: all .15s cubic-bezier(.14, .59, 1, 1.01);
+        margin: 0;
+        padding: 0 5px;
+        text-align: center;
+    }
+
+    a.l-btn:hover i {
+        width: 50px;
+        opacity: 1;
+        transform: translateY($height-button - 10)
+    }
+
+    .sun {
+        width: $dim;
+        height: $dim;
+        position: absolute;
+        top: calc($from-top - $dim/2);
+        left: calc(50% - $dim/2);
+        display: block;
+    }
+
+    .l-logo {
+        width: $dim-logo;
+        height: $dim-logo - 100;
+        top: calc($from-top - $dim-logo/2);
+        left: calc(50% - $dim-logo/2);
+    }
+
+    .l-name {
+        width: $name-width;
+        height: $name-height;
+        top: calc($from-top + $dim-logo/4 + $name-height/2);
+        left: calc(50% - $name-width/2);
+    }
+
+    .feat-title {
+        font-weight: bold;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        font-size: 0.8em;
+    }
+
+    .feat-text {
+        margin-bottom: 1rem;
+        font-size: 0.5em;
+    }
+
+    .feature {
+        top: calc($from-top - $dim-logo/2 + 6%);
+        left: calc(50% - $width-button/2);
+        width: $width-button;
+    }
+}
+
+@media screen and (max-width: 360px) {
+    $dim: $dim-xs;
+    $dim-logo: $dim-logo-xs;
+    $name-width: $name-width-xs;
+    $name-height: $name-height-xs;
+    $width-button: $dim-logo-xs;
+
+    .sun,
+    .l-logo {
+        width: $dim;
+        height: $dim;
+        top: calc($from-top - $dim/2);
+        left: calc(50% - $dim/2);
+    }
+
+    .l-logo {
+        width: $dim-logo;
+        height: $dim-logo;
+        top: calc($from-top - $dim-logo/2);
+        left: calc(50% - $dim-logo/2);
+    }
+
+    .l-name {
+        width: $name-width;
+        height: $name-height;
+        top: calc($from-top + $dim-logo/4 + $name-height/2);
+        left: calc(50% - $name-width/2);
+    }
+
+    .l-button-container {
+        width: $width-button;
+        top: calc($from-top + $dim-logo - 5%);
+        left: calc(50% - $width-button/2);
+        row-gap: 20px;
+    }
+
+    .feature {
+        top: calc($from-top - $dim-logo/2);
+        left: calc(50% - $width-button/2);
+        width: $width-button;
+    }
+}
+
+.stars {
+    background: #000 url(../landing/stars.png) repeat top center;
+    z-index: 0;
+}
+
+.twinkling {
+    background: transparent url(../landing/twinkling.png) repeat top center;
+    z-index: 1;
+
+    -moz-animation: move-twink-back 200s linear infinite;
+    -ms-animation: move-twink-back 200s linear infinite;
+    -o-animation: move-twink-back 200s linear infinite;
+    -webkit-animation: move-twink-back 200s linear infinite;
+    animation: move-twink-back 200s linear infinite;
+}
+
+.clouds {
+    background: transparent url(../landing/clouds.png) repeat top center;
+    z-index: 3;
+
+    -moz-animation: move-clouds-back 200s linear infinite;
+    -ms-animation: move-clouds-back 200s linear infinite;
+    -o-animation: move-clouds-back 200s linear infinite;
+    -webkit-animation: move-clouds-back 200s linear infinite;
+    animation: move-clouds-back 200s linear infinite;
+}
+
+@keyframes orbit {
+    0% {
+        transform: rotate(-60deg) translateX($dim-logo*2) rotate(60deg);
+    }
+
+    100% {
+        transform: rotate(-90deg) translateX($dim-logo*2) rotate(90deg);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateX(-1000px);
+    }
+
+    50% {
+        opacity: 0;
+        transform: translateX(-200px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInRight {
+    0% {
+        opacity: 0;
+        transform: translateX(+1000px);
+    }
+
+    40% {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(+1000px);
+    }
+
+    40% {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes background {
+    0% {
+        background-color: $bg-day;
+        opacity: 0;
+    }
+
+    100% {
+        background-color: $bg-eclipse;
+        opacity: 1;
+    }
+}
+
+@keyframes sunflare {
+    0% {
+        box-shadow: 0 0 0px $bg-sun;
+    }
+
+    90% {
+        box-shadow: 0 0 20px $bg-sun;
+    }
+
+    95% {
+        box-shadow: 0 0 100px $bg-sun;
+    }
+
+    100% {
+        box-shadow: 0 0 30px $bg-sun;
+    }
+}
+
+@keyframes slide {
+
+    0%,
+    16.66% {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    16.66%,
+    33.33% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    33.33%,
+    100% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes move-twink-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -10000px 5000px;
+    }
+}
+
+@-webkit-keyframes move-twink-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -10000px 5000px;
+    }
+}
+
+@-moz-keyframes move-twink-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -10000px 5000px;
+    }
+}
+
+@-ms-keyframes move-twink-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: -10000px 5000px;
+    }
+}
+
+@keyframes move-clouds-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 10000px 0;
+    }
+}
+
+@-webkit-keyframes move-clouds-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 10000px 0;
+    }
+}
+
+@-moz-keyframes move-clouds-back {
+    from {
+        background-position: 0 0;
+    }
+
+    to {
+        background-position: 10000px 0;
+    }
+}
+
+@-ms-keyframes move-clouds-back {
+    from {
+        background-position: 0;
+    }
+
+    to {
+        background-position: 10000px 0;
+    }
+}

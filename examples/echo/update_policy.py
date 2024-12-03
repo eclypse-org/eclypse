@@ -6,7 +6,6 @@ from networkx.classes.reportviews import (
 )
 
 
-# update edges
 def node_random_update(nodes: NodeView):
     for _, resources in nodes.data():
         if rnd.random() < 0.02:
@@ -14,7 +13,6 @@ def node_random_update(nodes: NodeView):
         elif rnd.random() < 0.5 and resources["availability"] == 0:
             resources["availability"] = 1
         else:
-            # Randomly update resources with different ranges
             resources["cpu"] = round(max(0, resources["cpu"] * rnd.uniform(0.95, 1.05)))
             resources["gpu"] = round(max(0, resources["gpu"] * rnd.uniform(0.9, 1.1)))
             resources["ram"] = round(max(0, resources["ram"] * rnd.uniform(0.8, 1.2)))
@@ -28,7 +26,6 @@ def node_random_update(nodes: NodeView):
 
 def edge_random_update(edges: EdgeView):
     for _, _, resources in edges.data():
-        # Randomly update resources with different ranges
         resources["latency"] = round(
             max(0, resources["latency"] * rnd.uniform(0.9, 1.1))
         )
