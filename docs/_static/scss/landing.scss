@@ -3,21 +3,22 @@ $bg-day: #f1c40f;
 $bg-day-tr: #f1c40f00;
 $bg-eclipse: #111;
 $duration: 1.5s;
+
 $dim: 450px;
 $dim-logo: $dim + 400;
 $from-top: 30%;
 $name-width: 400px;
 $name-height: 100px;
 
-$dim-sm: 270px;
-$dim-logo-sm: $dim-sm + 250;
-$name-width-sm: 250px;
-$name-height-sm: 60px;
-
 $dim-md: 350px;
 $dim-logo-md: $dim-md + 300;
 $name-width-md: 300px;
 $name-height-md: 80px;
+
+$dim-sm: 220px;
+$dim-logo-sm: $dim-sm + 200;
+$name-width-sm: 250px;
+$name-height-sm: 70px;
 
 $dim-xs: 170px;
 $dim-logo-xs: $dim-xs + 150;
@@ -27,7 +28,7 @@ $name-height-xs: 50px;
 // Buttons
 
 $button-hover: #ff9e47;
-$width-button: $dim-logo+200;
+$width-button: $dim-logo+400;
 $height-button: 50px;
 
 $anim-orbit: orbit $duration linear forwards;
@@ -231,7 +232,7 @@ a.l-btn:hover i {
     $dim-logo: $dim-logo-md;
     $name-width: $name-width-md;
     $name-height: $name-height-md;
-    $width-button: $dim-logo-md;
+    $width-button: $dim-logo-md+200;
 
     .l-button-container {
         width: $width-button;
@@ -306,7 +307,7 @@ a.l-btn:hover i {
 
     .l-button-container {
         width: $width-button;
-        top: calc($from-top + $dim-logo/2 + $name-height + 2%);
+        top: calc($from-top + $dim-logo/2 + $name-height + 7%);
         left: calc(50% - $width-button/2);
         row-gap: 20px;
     }
@@ -409,7 +410,7 @@ a.l-btn:hover i {
 
     .l-button-container {
         width: $width-button;
-        top: calc($from-top + $dim-logo - 5%);
+        top: calc($from-top + $dim-logo - 3%);
         left: calc(50% - $width-button/2);
         row-gap: 20px;
     }

@@ -69,8 +69,8 @@
   align-items: center;
   align-content: center;
   top: calc(30% + 425px - 1%);
-  left: calc(50% - 525px);
-  width: 1050px;
+  left: calc(50% - 625px);
+  width: 1250px;
   height: 50px;
   margin-top: 2rem;
   z-index: 98;
@@ -133,12 +133,12 @@ a.l-btn:hover i {
   animation-timing-function: ease-in-out;
   animation-iteration-count: infinite;
   top: calc(30% + 425px + 100px);
-  left: calc(50% - 525px);
+  left: calc(50% - 625px);
   color: #BFC0C0;
   text-decoration: none;
   font-size: 1.2em;
   letter-spacing: 1.5px;
-  width: 1050px;
+  width: 1250px;
   text-align: center;
   z-index: 98;
 }
@@ -181,10 +181,10 @@ a.l-btn:hover i {
 
 @media screen and (max-width: 768px) {
   .l-button-container {
-    width: 650px;
+    width: 850px;
     height: 45px;
     top: calc(30% + 325px - 1%);
-    left: calc(50% - 325px);
+    left: calc(50% - 425px);
     column-gap: 10px;
   }
   .l-btn {
@@ -226,21 +226,21 @@ a.l-btn:hover i {
   }
   .feature {
     top: calc(30% + 325px + 100px);
-    left: calc(50% - 325px);
+    left: calc(50% - 425px);
     color: #BFC0C0;
     text-decoration: none;
     font-size: 1.2em;
     letter-spacing: 1.5px;
-    width: 650px;
+    width: 850px;
     text-align: center;
     z-index: 98;
   }
 }
 @media screen and (max-width: 480px) {
   .l-button-container {
-    width: 620px;
-    top: calc(30% + 260px + 60px + 2%);
-    left: calc(50% - 310px);
+    width: 520px;
+    top: calc(30% + 210px + 70px + 7%);
+    left: calc(50% - 260px);
     row-gap: 20px;
   }
   .l-btn {
@@ -266,23 +266,23 @@ a.l-btn:hover i {
     transform: translateY(40px);
   }
   .sun {
-    width: 270px;
-    height: 270px;
+    width: 220px;
+    height: 220px;
     position: absolute;
-    top: calc(30% - 135px);
-    left: calc(50% - 135px);
+    top: calc(30% - 110px);
+    left: calc(50% - 110px);
     display: block;
   }
   .l-logo {
-    width: 520px;
-    height: 420px;
-    top: calc(30% - 260px);
-    left: calc(50% - 260px);
+    width: 420px;
+    height: 320px;
+    top: calc(30% - 210px);
+    left: calc(50% - 210px);
   }
   .l-name {
     width: 250px;
-    height: 60px;
-    top: calc(30% + 130px + 30px);
+    height: 70px;
+    top: calc(30% + 105px + 35px);
     left: calc(50% - 125px);
   }
   .feat-title {
@@ -296,9 +296,9 @@ a.l-btn:hover i {
     font-size: 0.5em;
   }
   .feature {
-    top: calc(30% - 260px + 6%);
-    left: calc(50% - 310px);
-    width: 620px;
+    top: calc(30% - 210px + 6%);
+    left: calc(50% - 260px);
+    width: 520px;
   }
 }
 @media screen and (max-width: 360px) {
@@ -323,7 +323,7 @@ a.l-btn:hover i {
   }
   .l-button-container {
     width: 320px;
-    top: calc(30% + 320px - 5%);
+    top: calc(30% + 320px - 3%);
     left: calc(50% - 160px);
     row-gap: 20px;
   }
