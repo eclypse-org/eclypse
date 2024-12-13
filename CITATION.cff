@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use ECLYPSE in your work or research project, please cite it as below."
 title: "ECLYPSE: an Edge-Cloud Python Platform for Simulated runtime Environments"
-version: 0.6.16
+version: 0.6.17
 date-released: 2024-11-15
 url: "https://eclypse.readthedocs.io/en/latest/"
 repository-code: "https://github.com/eclypse-org/eclypse"
