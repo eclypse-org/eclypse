@@ -31,9 +31,8 @@ if __name__ == "__main__":
     sim_config = SimulationConfig(
         seed=seed,
         tick_every_ms=500,
-        max_ticks=10,
+        max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopREST",
-        log_level="TRACE",
         remote=True,
     )
 

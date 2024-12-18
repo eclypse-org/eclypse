@@ -1,7 +1,7 @@
 """Package for managing simulation reporters, including the off-the-shelf ones.
 
 If you are interested in creating HTML reports, use the
-[eclypse-html-report](https://pypi.org/project/eclypse-html-report) CLI tool.
+`eclypse-html-report <https://pypi.org/project/eclypse-html-report>` CLI tool.
 """
 
 from typing import Dict, Type

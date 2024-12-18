@@ -22,8 +22,8 @@ sys.path.insert(0, core_path)
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 project = "ECLYPSE"
-copyright = str(datetime.now().year) + ", Valerio De Caro & Jacopo Massa"
-author = "Valerio De Caro, Jacopo Massa"
+author = "Valerio De Caro & Jacopo Massa"
+copyright = f"{(datetime.now().year)}, {author}"
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -66,7 +66,9 @@ html_theme = "pydata_sphinx_theme"
 html_logo = "_static/images/light.png"
 
 html_static_path = ["_static"]
-html_css_files = ["css/buttons.css", "css/custom.css"]
+html_extra_path = ["_static/landing"]
+html_css_files = ["css/custom.css", "css/landing.css"]
+html_js_files = ["js/custom.js"]
 
 html_context = {
     "github_url": "https://github.com",
@@ -75,6 +77,8 @@ html_context = {
     "github_version": "main",
     "doc_path": "docs",
 }
+
+html_additional_pages = {"index": "index.html"}
 
 # external_links = [
 #     {

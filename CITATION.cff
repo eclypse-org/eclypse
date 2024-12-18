@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use ECLYPSE in your work or research project, please cite it as below."
+title: "ECLYPSE: an Edge-Cloud Python Platform for Simulated runtime Environments"
+version: 0.6.17
+date-released: 2024-11-15
+url: "https://eclypse.readthedocs.io/en/latest/"
+repository-code: "https://github.com/eclypse-org/eclypse"
+license: "MIT"
+authors:
+  - family-names: "Massa"
+    given-names: "Jacopo"
+    orcid: "https://orcid.org/0000-0002-5255-537X"
+  - family-names: "De Caro"
+    given-names: "Valerio"
+    orcid: "https://orcid.org/0000-0002-5267-6614"

@@ -26,13 +26,13 @@ class Report:
     def __init__(self, simulation_path: Union[str, Path]):
         self._sim_path = Path(simulation_path)
         self._stats_path = self._sim_path / "stats"
-        self.stats: Dict[CallbackType, Optional[pd.Dataframe]] = defaultdict()
+        self.stats: Dict[CallbackType, Optional[pd.DataFrame]] = defaultdict()
         self._config: Optional[Dict[str, Any]] = None
 
     def application(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
@@ -40,8 +40,8 @@ class Report:
 
         return self.to_dataframe(
             "application",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             application_id=application_ids,
             event_id=event_ids,
             callback_id=callback_ids,
@@ -49,8 +49,8 @@ class Report:
 
     def service(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
@@ -59,8 +59,8 @@ class Report:
 
         return self.to_dataframe(
             "service",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             application_id=application_ids,
             event_id=event_ids,
             callback_id=callback_ids,
@@ -69,8 +69,8 @@ class Report:
 
     def interaction(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
         sources: Optional[Union[str, List[str]]] = None,
@@ -80,8 +80,8 @@ class Report:
 
         return self.to_dataframe(
             "interaction",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             application_id=application_ids,
             event_id=event_ids,
             callback_id=callback_ids,
@@ -91,24 +91,24 @@ class Report:
 
     def infrastructure(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
 
         return self.to_dataframe(
             "infrastructure",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             event_id=event_ids,
             callback_id=callback_ids,
         )
 
     def node(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
         node_ids: Optional[Union[str, List[str]]] = None,
@@ -116,8 +116,8 @@ class Report:
 
         return self.to_dataframe(
             "node",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             event_id=event_ids,
             callback_id=callback_ids,
             node_id=node_ids,
@@ -125,8 +125,8 @@ class Report:
 
     def link(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
         sources: Optional[Union[str, List[str]]] = None,
@@ -135,8 +135,8 @@ class Report:
 
         return self.to_dataframe(
             "link",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             event_id=event_ids,
             callback_id=callback_ids,
             source=sources,
@@ -145,16 +145,16 @@ class Report:
 
     def simulation(
         self,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> Dict[str, pd.DataFrame]:
 
         return self.to_dataframe(
             "simulation",
-            range=range,
-            step=step,
+            report_range=report_range,
+            report_step=report_step,
             event_ids=event_ids,
             callback_ids=callback_ids,
         )
@@ -162,8 +162,8 @@ class Report:
     def get_dataframes(
         self,
         report_types: Optional[List[CallbackType]] = None,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> Dict[str, pd.DataFrame]:
@@ -178,8 +178,8 @@ class Report:
         return {
             report_type: self.to_dataframe(
                 report_type,
-                range=range,
-                step=step,
+                report_range=report_range,
+                report_step=report_step,
                 event_ids=event_ids,
                 callback_ids=callback_ids,
             )
@@ -189,18 +189,18 @@ class Report:
     def to_dataframe(
         self,
         report_type: str,
-        range: Tuple[int, int] = (0, int(MAX_FLOAT)),
-        step: int = 1,
+        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_step: int = 1,
         **kwargs,
     ) -> pd.DataFrame:
-        """Get a dataframe for the given report type, filtered by the given range, step
-        and additional filters.
+        """Get a dataframe for the given report type, filtered by the given
+        report_range, report_step and additional filters.
 
         Args:
             report_type (str): The type of report to get (e.g. application, service, etc.).
-            range (Tuple[int, int], optional): The range of the dataframe to filter. \
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
                 Defaults to (0, MAX_FLOAT).
-            step (int, optional): The step to use when filtering. Defaults to 1.
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
             **kwargs: Additional filters to apply to the dataframe. They must \
                 be columns in the dataframe.
 
@@ -212,8 +212,8 @@ class Report:
 
         return self.filter(
             self.stats[report_type],
-            report_range=range,
-            report_step=step,
+            report_range=report_range,
+            report_step=report_step,
             **kwargs,
         )
 
@@ -244,9 +244,9 @@ class Report:
 
         Args:
             df (pd.DataFrame): The dataframe to filter.
-            range (Tuple[int, int], optional): The range of the dataframe to filter. \
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
                 Defaults to (0, MAX_FLOAT).
-            step (int, optional): The step to use when filtering. Defaults to 1.
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
             **kwargs: Additional filters to apply to the dataframe. They must \
                 be columns in the dataframe.
 
@@ -268,12 +268,13 @@ class Report:
                     else:
                         filtered = filtered[filtered[key] == value]
             return filtered
+        return df
 
     @property
     def config(self) -> Dict[str, Any]:
         if self._config is None:
             file_path = self._sim_path / "config.json"
-            with open(file_path, "r") as config_file:
+            with open(file_path, "r", encoding="utf-8") as config_file:
                 self._config = json.load(config_file)
         return self._config
 

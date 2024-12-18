@@ -14,7 +14,7 @@ from eclypse_core.remote.service import Service
 class CatalogService(Service):
     """MPI workflows for the Catalog service."""
 
-    async def dispatch(self):
+    async def step(self):
         """The `CatalogService` workflow consists of receiving a request from the \
         `FrontendService` and sending a response containing product information."""
 

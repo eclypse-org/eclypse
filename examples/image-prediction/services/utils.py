@@ -1,4 +1,3 @@
-
 import torchvision
 from torchvision.datasets import MNIST
 
@@ -16,7 +15,7 @@ TICK_EVERY_MS = 10000
 def load_data(train: bool = True) -> MNIST:
     """Loads the MNIST dataset from torchvision datasets."""
     return MNIST(
-        DEFAULT_SIM_PATH / "dataset",
+        BASE_PATH / "dataset",
         download=True,
         train=train,
         transform=torchvision.transforms.Compose(

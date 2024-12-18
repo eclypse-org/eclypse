@@ -1,5 +1,4 @@
-ipykernel
-matplotlib
+psutil
 ray[train]
 scipy
 seaborn

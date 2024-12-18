@@ -1,6 +1,3 @@
-ipykernel
-matplotlib
-scipy
-seaborn
+psutil
 torch
 torchvision

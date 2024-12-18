@@ -13,7 +13,7 @@ from eclypse_core.remote.service import Service
 class UserService(Service):
     """MPI workflow of the User service."""
 
-    async def dispatch(self):
+    async def step(self):
         """Example workflow of the User service, starting with fetching the user's
         profile information."""
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
