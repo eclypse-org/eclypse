@@ -29,3 +29,15 @@ pip install eclypse
 ## Documentation
 
 The documentation for ECLYPSE can be found [here](https://eclypse.readthedocs.io/en/latest/).
+
+## Authors
+
+- **Jacopo Massa**
+    - Website: [https://pages.di.unipi.it/massa](https://pages.di.unipi.it/massa)
+    - GitHub: [jacopo-massa](https://github.com/jacopo-massa)
+- **Valerio De Caro**
+    - Website: [https://vdecaro.github.io](https://vdecaro.github.io)
+    - GitHub: [vdecaro](https://github.com/vdecaro)
+ 
+## Contact Us
+If you want to get in touch with us, [drop us an e-mail](mailto:jacopo.massa@di.unipi.it,valerio.decaro@di.unipi.it?subject=[ECLYPSE]%20Request%20for%20information)!
