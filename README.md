@@ -30,6 +30,27 @@ pip install eclypse
 
 The documentation for ECLYPSE can be found [here](https://eclypse.readthedocs.io/en/latest/).
 
+## Publication
+
+ECLYPSE is described and assessed in:
+
+> Jacopo Massa, Valerio De Caro, Stefano Forti, Patrizio Dazzi, Davide Bacciu, Antonio Brogi<br>
+> [**ECLYPSE: a Python Framework for Simulation and Emulation of the Cloud-Edge Continuum**](https://arxiv.org/abs/2501.17126), <br>	
+> arXiv preprint arXiv:2501.17126, 2025.
+
+If you want to cite ECLYPSE in your work, you can use the following BibTeX entry:
+```bibtex
+@misc{massa2025eclypse,
+    title         = {{ECLYPSE: a Python Framework for Simulation and Emulation of the Cloud-Edge Continuum}}, 
+    author        = {Jacopo Massa and Valerio De Caro and Stefano Forti and Patrizio Dazzi and Davide Bacciu and Antonio Brogi},
+    year          = {2025},
+    eprint        = {2501.17126},
+    archivePrefix = {arXiv},
+    primaryClass  = {cs.NI},
+    url           = {https://arxiv.org/abs/2501.17126}, 
+}
+```
+
 ## Authors
 
 - **Jacopo Massa**
