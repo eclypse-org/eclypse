@@ -54,9 +54,8 @@ def get_infrastructure(
         seed=seed,
     )
 
-    parser.parse(
-        file_path=Path(__file__).parent / topology / f"infr{n}-{seed}.pl",
-        graph=infra,
-    )
+    infra.graph["file"] = Path(__file__).parent / topology / f"infr{n}-{seed}.pl"
+
+    parser.parse(file=infra.graph["file"], graph=infra)
 
     return infra

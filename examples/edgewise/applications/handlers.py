@@ -53,7 +53,6 @@ def thing_instance_handler(app: Application, **tattr: Dict[str, Any]) -> None:
     app.graph["things"].append(
         {instance_id: app.graph["components"]["thing"][thing_id]}
     )
-    pass
 
 
 def data_flow_handler(app: Application, **dattr: Dict[str, Any]) -> None:
