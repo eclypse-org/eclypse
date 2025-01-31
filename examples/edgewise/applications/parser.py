@@ -70,9 +70,4 @@ def get_application(
     app.graph["file"] = Path(__file__).parent / "prolog" / f"{application_id}.pl"
 
     parser.parse(file_path=app.graph["file"], graph=app)
-
-    for c in app.graph["components"]:
-        app.graph["components"][c] = dict(app.graph["components"][c])
-
-    app.graph["things"] = dict(app.graph["things"])
     return app

@@ -50,7 +50,7 @@ def function_instance_handler(app: Application, **fattr: Dict[str, Any]) -> None
 def thing_instance_handler(app: Application, **tattr: Dict[str, Any]) -> None:
     instance_id = tattr.pop("InstanceId")
     thing_id = tattr.pop("ThingId")
-    app.graph["things"].append(
+    app.graph["things"].update(
         {instance_id: app.graph["components"]["thing"][thing_id]}
     )
 
@@ -59,6 +59,7 @@ def data_flow_handler(app: Application, **dattr: Dict[str, Any]) -> None:
     source_id, target_id = dattr.pop("SourceId"), dattr.pop("TargetId")
     size, rate = dattr.pop("Size"), dattr.pop("Rate")
     dattr.update({"bandwidth": size * rate})
+    dattr.pop("DataId")
     app.add_edge(source_id, target_id, **dattr)
 
 

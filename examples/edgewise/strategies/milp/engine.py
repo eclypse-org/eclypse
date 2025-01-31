@@ -1,5 +1,10 @@
+from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    Dict,
+    Tuple,
+)
 
 import numpy as np
 from ortools.linear_solver import pywraplp
@@ -10,8 +15,9 @@ from eclypse.graph import (
     Infrastructure,
 )
 from examples.edgewise.utils import (
+    COST_QUERY,
     DEPLOYED_QUERY,
-    PL_UTILS_DIR,
+    PREPROCESS_FILE,
     PREPROCESS_QUERY,
     parse_compatibles,
 )
@@ -21,33 +27,66 @@ if TYPE_CHECKING:
 
 
 def get_compatibles(
-    prolog: PrologThread, app_path: Path, infr_path: Path, app_name: str
+    prolog: PrologThread,
+    app: Application,
+    infr: Infrastructure,
+    preprocess: bool = False,
+    cr: bool = False,
 ):
-    prolog.query(f"consult('{app_path}')")
-    prolog.query(f"consult('{infr_path}')")
-    prolog.query(f"consult('{PL_UTILS_DIR / 'preprocess.pl'}')")
-    prolog.query_async(PREPROCESS_QUERY.format(app_name=app_name), find_all=False)
-    r = prolog.query_async_result()
-    compatibles = parse_compatibles(r[0]["Compatibles"]) if r else None
+    prolog.query(f"consult('{app.graph['file']}')")
+    prolog.query(f"consult('{infr.graph['file']}')")
+    prolog.query(f"consult('{PREPROCESS_FILE}')")
+
+    compatibles = defaultdict(dict)
+    if preprocess:
+        if not cr:
+            prolog.query("retract(deployed(_,_))")
+        prolog.query_async(PREPROCESS_QUERY.format(app_name=app.name), find_all=False)
+        r = prolog.query_async_result()
+        compatibles = parse_compatibles(r[0]["Compatibles"]) if r else None
+    else:
+        instances = [
+            (i, attr)
+            for i, attr in app.nodes(data=True)
+            if i not in app.graph["things"]
+        ]
+
+        for s, _ in instances:
+            for n, nattr in infr.nodes(data=True):
+                prolog.query_async(
+                    COST_QUERY.format(ntype=nattr["Type"], compid=s), find_all=False
+                )
+                r = prolog.query_async_result()
+                if r:
+                    compatibles[s][n] = r[0]["Cost"]
+                else:
+                    print(ValueError("No cost for {} in {}".format(nattr["Type"], s)))
+                    return None
     return compatibles
 
 
-def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
+def edgewise(
+    prolog: PrologThread,
+    app: Application,
+    infr: Infrastructure,
+    preprocess: bool = False,
+    cr: bool = False,
+) -> Tuple[Dict[str, str], float, float]:
+    """Uses EdgeWise methodology to compute a placement, then retrieves it
+    together with the cost and execution time."""
 
-    compatibles = get_compatibles(
-        prolog,
-        app.graph["file"],
-        infr.graph["file"],
-        app.name,
-    )
-    if not compatibles:
+    compatibles = get_compatibles(prolog, app, infr, preprocess, cr)
+
+    if compatibles is None:
         print("No compatibles found.")
-        return None
+        return None, float("inf"), float("inf")
 
     prolog.query("retract(deployed(_,_))")
-    app.set_things_from_infr(infr)  # TODO
 
-    instances = [i for i in app.nodes() if i not in app.graph["things"]]
+    instances = [
+        (i, attr) for i, attr in app.nodes(data=True) if i not in app.graph["things"]
+    ]
+
     nodes = list(infr.nodes(data=True))
     links = list(infr.edges(data=True))
 
@@ -66,29 +105,29 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
     # at the same time, create costs matrix C
     costs = np.zeros((S, N))
     x = {(i, j): 0 for i in range(S) for j in range(N)}
-    for i, s in enumerate(instances):
+    for i, (s, _) in enumerate(instances):
         for j, n in enumerate(nids):
-            if n in compatibles[s.id]:
-                x[i, j] = solver.BoolVar(f"{s.id}_{n}")
-                costs[i, j] = compatibles[s.id][n]
+            if n in compatibles[s]:
+                x[i, j] = solver.BoolVar(f"{s}_{n}")
+                costs[i, j] = compatibles[s][n]
 
     # Constraint: one instance at most in one node.
     [
         solver.Add(
             solver.Sum([x[i, j] for j in range(N)]) == 1,
-            name=f"one_node_{instances[i].id}",
+            name=f"one_node_{instances[i][0]}",
         )
         for i in range(S)
     ]
 
     # Constraint: cannot exceed the hw capacity of a node.
-    coeffs = [s.comp.hwreqs for s in instances]
-    bounds = [a["hwcaps"] for _, a in nodes]
+    coeffs = [sattr["HW"] for _, sattr in instances]
+    bounds = [nattr["HW"] for _, nattr in nodes]
 
     [
         solver.Add(
             solver.Sum([coeffs[i] * x[i, j] for i in range(S)])
-            <= (bounds[j] - infr.hwTh),
+            <= (bounds[j] - infr.graph["hwTh"]),
             name=f"hw_{nids[j]}",
         )
         for j in range(N)
@@ -96,7 +135,7 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
 
     # Budgeting: no more than MAX_BIN nodes are used.
     [
-        solver.Add(x[i, j] <= b[j], name=f"bin_{instances[i].id}_{nids[j]}")
+        solver.Add(x[i, j] <= b[j], name=f"bin_{instances[i][0]}_{nids[j]}")
         for j in range(N)
         for i in range(S)
     ]
@@ -113,7 +152,6 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
         for source, dest, attr in app.edges(data=True):  # foreach data flow
 
             name = f"{source}_{dest}_{n}_{n1}"
-
             if source in app.graph["things"]:
                 if app.graph["things"][source]["node"] == n:
                     i = -1
@@ -121,7 +159,8 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
                     continue
             else:
                 if n in compatibles[source]:
-                    i = instances.index(source)
+                    # i = instances.index(source)
+                    i = next(i for i, (x, _) in enumerate(instances) if x == source)
                 else:
                     continue
 
@@ -132,7 +171,8 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
                     continue
             else:
                 if n1 in compatibles[dest]:
-                    i1 = instances.index(dest)
+                    # i1 = instances.index(dest)
+                    i1 = next(i for i, (x, _) in enumerate(instances) if x == dest)
                 else:
                     continue
 
@@ -140,10 +180,11 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
             xi1j1 = x[i1, j1] if i1 != -1 else 1
 
             sec_reqs = set(attr["Sec"])
-            if (a["lat"] > attr["latency"]) or (
-                not (
-                    sec_reqs.issubset(set(infr.nodes[n]["seccaps"]))
-                    and sec_reqs.issubset(set(infr.nodes[n1]["seccaps"]))
+            if (a["latency"] > attr["latency"]) or (
+                preprocess
+                and not (
+                    sec_reqs.issubset(set(infr.nodes[n]["Sec"]))
+                    and sec_reqs.issubset(set(infr.nodes[n1]["Sec"]))
                 )
             ):
                 solver.Add(xij + xi1j1 <= 1, name=f"{name}_no_reqs")
@@ -155,7 +196,7 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
                 coeffs[c] = attr["bandwidth"]
 
         if len(coeffs):
-            upper_bound = max(a["bw"] - infr.bwTh, 0)
+            upper_bound = max(a["bandwidth"] - infr.graph["bwTh"], 0)
             bw_constraint = solver.RowConstraint(0, upper_bound, f"{n}_{n1}_bw")
             for c, b in coeffs.items():
                 bw_constraint.SetCoefficient(c, b)
@@ -165,9 +206,9 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
     solver.Minimize(solver.Sum(obj_expr))
 
     status = solver.Solve()
-    n_distinct = set()
     placement = {}
-    res = {}
+    tot_time = float("inf")
+    tot_cost = float("inf")
     if status == pywraplp.Solver.OPTIMAL:
         for i in range(S):
             row = [
@@ -175,17 +216,12 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
                 for j in range(N)
             ]
             j = row.index(max(row))
-            s = instances[i].id
+            s = instances[i][0]
             n = nodes[j][0]
             placement[s] = n
 
-        tot_cost = solver.Objective().Value()  # if only cost in Objective function
-        tot_time = solver.WallTime() / 1000  # in seconds
-        res = {
-            "Time": tot_time,
-            "Cost": round(tot_cost, 4),
-            "Infs": solver.NumConstraints(),
-        }
+        tot_cost = solver.Objective().Value()
+        tot_time = solver.WallTime() / 1000
 
         str_pl = (
             "["
@@ -196,3 +232,5 @@ def edgewise(prolog: PrologThread, app: Application, infr: Infrastructure):
         print(f"Assert placement for {app.name}: {str_pl}\n")
     else:
         print("The problem does not have a solution.")
+
+    return placement, tot_cost, tot_time
