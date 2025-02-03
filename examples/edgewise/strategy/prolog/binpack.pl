@@ -1,14 +1,16 @@
-:- dynamic deployed/2.
+%:-['../../pl-utils/costs.pl', '../../pl-utils/requirements.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/infrastructures/BA/infr128-3997.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/applications/prolog/speakToMe.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/requirements.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/costs.pl'].
 :- ['comp.pl'].
+:- ['../../pl-utils/requirements.pl', '../../pl-utils/costs.pl'].
 
 :- set_prolog_flag(answer_write_options,[max_depth(0)]). % write answers' text entirely
 :- set_prolog_flag(stack_limit, 32 000 000 000).
 :- set_prolog_flag(last_call_optimisation, true).
 
-:-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/applications/prolog/arFarming.pl'].
-:-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/infrastructures/ER/infr64-42.pl'].
-:-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/requirements.pl'].
-:-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/costs.pl'].
+:- dynamic deployed/2.
 
 stats(App, Placement, Cost, Bins, Infs, Time) :-
     statistics(inferences, InfA),

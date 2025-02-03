@@ -20,8 +20,10 @@ from examples.edgewise.assets import (
     get_path_aggregators,
 )
 from examples.edgewise.infrastructures import get_infrastructure
+from examples.edgewise.metrics import get_metrics
 from examples.edgewise.policy import kill_policy
-from examples.edgewise.strategies import EdgeWiseStrategy
+from examples.edgewise.search_space import search_space
+from examples.edgewise.strategy import get_strategy
 
 
 def edgewise_grid(config):
@@ -39,6 +41,8 @@ def edgewise_grid(config):
         # path=path,
         path=DEFAULT_SIM_PATH / "edgewise",
         include_default_callbacks=False,
+        callbacks=get_metrics(),
+        # log_level="CRITICAL",
     )
 
     app = get_application(
@@ -48,24 +52,23 @@ def edgewise_grid(config):
         seed=config["seed"],
     )
 
-    node_update_policy, edge_update_policy = kill_policy(config["kill_prob"])
+    node_update_policy = kill_policy(config["kill_prob"])
 
     infr = get_infrastructure(
         n=config["nodes"],
         seed=config["seed"],
         topology=config["topology"],
-        node_assets=get_node_assets(is_app=False),
+        node_assets=get_node_assets(config["preprocess"], is_app=False),
         edge_assets=get_edge_assets(),
         path_assets_aggregators=get_path_aggregators(),
         node_update_policy=node_update_policy,
-        edge_update_policy=edge_update_policy,
     )
 
     mqi = PrologMQI()
     prolog = mqi.create_thread()
     sim = Simulation(infrastructure=infr, simulation_config=sim_config)
 
-    sim.register(app, EdgeWiseStrategy(prolog=prolog, preprocess=True, cr=True))
+    sim.register(app, get_strategy(prolog=prolog, **config))
 
     sim.start()
     sim.wait()
@@ -85,13 +88,16 @@ def edgewise_grid(config):
 
 if __name__ == "__main__":
     config_example = {
+        "timeout": 5,
         "application_id": "speakToMe",
-        "max_ticks": 4,
-        "kill_prob": 0.05,
-        # "policy": ("ensure",),
-        "topology": "BA",
-        "nodes": 128,
-        "seed": 42,
+        "max_ticks": 3,
+        "kill_prob": 0.02,
+        "preprocess": False,
+        "declarative": False,
+        "cr": True,
+        "topology": "ER",
+        "nodes": 256,
+        "seed": 3997,
     }
 
     edgewise_grid(config_example)

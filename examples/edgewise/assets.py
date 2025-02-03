@@ -28,22 +28,22 @@ def hw() -> Additive:
 
 def sw() -> Symbolic:
     default_init_spaces = {NodeGroup.CLOUD: lambda: []}
-    return Symbolic([], ["ubuntu", "mySQL", "python", "js", "gcc"], default_init_spaces)
+    return Symbolic([], [], default_init_spaces)
 
 
 def arch() -> Symbolic:
     default_init_spaces = {NodeGroup.CLOUD: lambda: []}
-    return Symbolic([], ["arm64", "x86"], default_init_spaces)
+    return Symbolic([], [], default_init_spaces)
 
 
 def location() -> Symbolic:
     default_init_spaces = {NodeGroup.CLOUD: lambda: []}
-    return Symbolic([], ["de", "es", "it"], default_init_spaces)
+    return Symbolic([], [], default_init_spaces)
 
 
 def provider() -> Symbolic:
     default_init_spaces = {NodeGroup.CLOUD: lambda: []}
-    return Symbolic([], ["aws", "azure", "ibm"], default_init_spaces)
+    return Symbolic([], [], default_init_spaces)
 
 
 def security() -> Symbolic:
@@ -51,12 +51,16 @@ def security() -> Symbolic:
     return Symbolic([], [], default_init_spaces, functional=False)
 
 
-def get_node_assets(is_app: bool = True) -> Dict:
-    node_assets = {
-        "HW": hw(),
-        "SW": sw(),
-        "Arch": arch(),
-    }
+def get_node_assets(preprocess: bool = False, is_app: bool = True) -> Dict:
+    node_assets = {}
+    if preprocess:
+        node_assets.update(
+            {
+                "HW": hw(),
+                "SW": sw(),
+                "Arch": arch(),
+            }
+        )
 
     if not is_app:
         node_assets.update(

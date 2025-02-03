@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Dict,
+    Optional,
     Tuple,
 )
 
@@ -20,6 +21,7 @@ from examples.edgewise.utils import (
     PREPROCESS_FILE,
     PREPROCESS_QUERY,
     parse_compatibles,
+    timed_query,
 )
 
 if TYPE_CHECKING:
@@ -33,17 +35,17 @@ def get_compatibles(
     preprocess: bool = False,
     cr: bool = False,
 ):
-    prolog.query(f"consult('{app.graph['file']}')")
-    prolog.query(f"consult('{infr.graph['file']}')")
-    prolog.query(f"consult('{PREPROCESS_FILE}')")
+    timed_query(prolog, f"consult('{PREPROCESS_FILE}')")
 
     compatibles = defaultdict(dict)
     if preprocess:
         if not cr:
-            prolog.query("retract(deployed(_,_))")
-        prolog.query_async(PREPROCESS_QUERY.format(app_name=app.name), find_all=False)
-        r = prolog.query_async_result()
-        compatibles = parse_compatibles(r[0]["Compatibles"]) if r else None
+            timed_query(prolog, query="retract(deployed(_,_))")
+        r = timed_query(
+            prolog,
+            PREPROCESS_QUERY.format(app_name=app.name),
+        )
+        compatibles = parse_compatibles(r["Compatibles"]) if r else None
     else:
         instances = [
             (i, attr)
@@ -53,12 +55,13 @@ def get_compatibles(
 
         for s, _ in instances:
             for n, nattr in infr.nodes(data=True):
-                prolog.query_async(
-                    COST_QUERY.format(ntype=nattr["Type"], compid=s), find_all=False
+                r = timed_query(
+                    prolog,
+                    COST_QUERY.format(ntype=nattr["Type"], compid=s),
+                    find_all=False,
                 )
-                r = prolog.query_async_result()
                 if r:
-                    compatibles[s][n] = r[0]["Cost"]
+                    compatibles[s][n] = r["Cost"]
                 else:
                     print(ValueError("No cost for {} in {}".format(nattr["Type"], s)))
                     return None
@@ -71,6 +74,7 @@ def edgewise(
     infr: Infrastructure,
     preprocess: bool = False,
     cr: bool = False,
+    timeout: Optional[int] = None,
 ) -> Tuple[Dict[str, str], float, float]:
     """Uses EdgeWise methodology to compute a placement, then retrieves it
     together with the cost and execution time."""
@@ -81,7 +85,7 @@ def edgewise(
         print("No compatibles found.")
         return None, float("inf"), float("inf")
 
-    prolog.query("retract(deployed(_,_))")
+    timed_query(prolog, query="retractall(deployed(_,_))", find_all=False)
 
     instances = [
         (i, attr) for i, attr in app.nodes(data=True) if i not in app.graph["things"]
@@ -97,6 +101,8 @@ def edgewise(
 
     # Create the solver.
     solver = pywraplp.Solver.CreateSolver("SCIP")
+    if timeout:
+        solver.SetTimeLimit(timeout * 1000)  # in milliseconds
 
     # Create the variables for binpack B.
     b = {j: solver.BoolVar(f"b_{nids[j]}") for j in range(N)}
@@ -228,9 +234,14 @@ def edgewise(
             + ", ".join(["({}, {})".format(s, n) for s, n in placement.items()])
             + "]"
         )
-        prolog.query(f"assert({DEPLOYED_QUERY.format(app=app.name, placement=str_pl)})")
-        print(f"Assert placement for {app.name}: {str_pl}\n")
-    else:
-        print("The problem does not have a solution.")
+        timed_query(
+            prolog,
+            query=f"assert({DEPLOYED_QUERY.format(app=app.name, placement=str_pl)})",
+        )
+        print(f"\nAssert placement for {app.name}: {str_pl}\n")
+    elif status == pywraplp.Solver.INFEASIBLE:
+        print("Problem is infeasible")
+    elif status == pywraplp.Solver.ABNORMAL or status == pywraplp.Solver.NOT_SOLVED:
+        print(f"Time limit reached")
 
     return placement, tot_cost, tot_time

@@ -1,6 +1,9 @@
 :-['requirements.pl', 'costs.pl'].
-:- dynamic deployed/2.
 %:- ['../data/apps/arFarming.pl', '../data/infrs/infr32-42.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/applications/prolog/speakToMe.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/infrastructures/BA/infr32-3997-changed.pl'].
+:- dynamic deployed/2.
+
 
 :- set_prolog_flag(answer_write_options,[max_depth(0)]). % write answers' text entirely
 :- set_prolog_flag(stack_limit, 32 000 000 000).
@@ -23,8 +26,8 @@ crStep([(C,N)|P], POk, [(C,[(N,Cost)])|Cs]) :-
     lightNodeOK(C, N, Cost),
     crStep(P, [(C,N)|POk], Cs).
 crStep([(C,N)|P], POk, [(C,[Comp|Atibles])|Cs]) :-
-    \+ ( componentPlacement(C, N, P); qosOK(C, N, POk) ), 
-    findall((N, Cost), lightNodeOK(C, N, Cost), [Comp|Atibles]),
+    \+ ( componentPlacement(C, N, P), qosOK(C, N, POk) ), 
+    findall((M, Cost), lightNodeOK(C, M, Cost), [Comp|Atibles]),
     crStep(P, POk, Cs).
 crStep([], _, []).
 

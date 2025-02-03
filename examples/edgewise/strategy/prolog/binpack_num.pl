@@ -1,5 +1,9 @@
-% :-['../data/infrs/infr32.pl', '../data/apps/speakToMe.pl'].
-:-['../pl-utils/requirements.pl', '../pl-utils/costs.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/infrastructures/IAG/infr32-42.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/applications/prolog/speakToMe.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/requirements.pl'].
+% :-['/Users/jacopomassa/GitHub/eclypse/examples/edgewise/pl-utils/costs.pl'].
+
+:- ['../../pl-utils/requirements.pl', '../../pl-utils/costs.pl'].
 
 :- set_prolog_flag(answer_write_options,[max_depth(0)]). % write answers' text entirely
 :- set_prolog_flag(stack_limit, 32 000 000 000).

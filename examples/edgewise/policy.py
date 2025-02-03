@@ -1,25 +1,25 @@
-import random as rnd
+from __future__ import annotations
 
-from networkx.classes.reportviews import (
-    EdgeView,
-    NodeView,
-)
+import random as rnd
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from networkx.classes.reportviews import NodeView
 
 
 def kill_policy(kill_probability: float):
     revive_probability = kill_probability / 2
 
     def node_update_wrapper(nodes: NodeView):
-        for _, resources in nodes.data():
-            if rnd.random() < kill_probability:
+        for n, resources in nodes.data():
+            if rnd.random() < kill_probability and resources["availability"] > 0:
                 resources["availability"] = 0
-            elif rnd.random() < revive_probability:
+                print(f"Killed node {n}")
+            elif rnd.random() < revive_probability and resources["availability"] == 0:
                 resources["availability"] = 0.99
+                # print(f"Revived node {n}")
 
-    def edge_update_wrapper(_: EdgeView):
-        pass
-
-    return node_update_wrapper, edge_update_wrapper
+    return node_update_wrapper
 
 
 __all__ = ["kill_policy"]

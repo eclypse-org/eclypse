@@ -1,8 +1,17 @@
-from pathlib import Path
+from __future__ import annotations
+
 import signal
-from swiplserver import prolog_args
+from pathlib import Path
+from typing import Optional
+
+from swiplserver import (
+    PrologResultNotAvailableError,
+    PrologThread,
+    prolog_args,
+)
 
 PL_UTILS_DIR = Path(__file__).parent / "pl-utils"
+PL_STRATEGY_DIR = Path(__file__).parent / "strategy" / "prolog"
 PREPROCESS_FILE = PL_UTILS_DIR / "preprocessing.pl"
 REQUIREMENTS_FILE = PL_UTILS_DIR / "requirements.pl"
 COSTS_FILE = PL_UTILS_DIR / "costs.pl"
@@ -11,6 +20,10 @@ PREPROCESS_QUERY = "preprocess({app_name}, Compatibles)"
 PL_QUERY = "stats({app}, Placement, Cost, Bins, Infs, Time)"
 COST_QUERY = "cost({ntype}, {compid}, Cost)"
 DEPLOYED_QUERY = "deployed({app}, {placement})"
+
+
+def prolog_to_dict(p):
+    return dict(list(map((lambda x: prolog_args(x)), p)))
 
 
 def parse_compatibles(r):
@@ -55,3 +68,21 @@ def timeout(func):
         return result
 
     return wrapper
+
+
+def timed_query(
+    prolog: PrologThread,
+    query: str,
+    timeout: Optional[int] = None,
+    find_all: Optional[bool] = True,
+):
+    try:
+        prolog.query_async(query, find_all=find_all)
+        r = prolog.query_async_result(wait_timeout_seconds=timeout)
+        r = r[0] if isinstance(r, list) else r
+    except PrologResultNotAvailableError:
+        print(f"Timeout: {query} took longer than {timeout} seconds.")
+        prolog.cancel_query_async()
+        r = None
+
+    return r
