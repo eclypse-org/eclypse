@@ -97,7 +97,9 @@ class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
             )
 
         default_path_aggregator = get_default_path_aggregators()
-        _path_assets_aggregators = {}
+        _path_assets_aggregators = (
+            path_assets_aggregators if path_assets_aggregators is not None else {}
+        )
 
         for k in _edge_assets:
             if k not in _path_assets_aggregators:
