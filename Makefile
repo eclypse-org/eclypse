@@ -6,6 +6,9 @@ check:
 changelog:
 	cz bump --changelog
 
+patch:
+	cz bump --increment patch
+
 setup:
 	python -m pip install --upgrade pip
 	pip install poetry
