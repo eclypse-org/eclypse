@@ -11,7 +11,7 @@ patch:
 
 setup:
 	python -m pip install --upgrade pip
-	pip install poetry
+	pip install poetry==1.8.4
 	poetry config virtualenvs.create false
 	poetry install --with=dev,deploy --no-root
 
