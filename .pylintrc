@@ -71,7 +71,3 @@ min-public-methods=1
 
 # R0912
 max-branches=15
-
-[TYPECHECK]
-# Ignore type checking for this module (see E0611)
-ignored-modules=eclypse_core
