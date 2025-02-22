@@ -21,7 +21,6 @@ from .assets.defaults import (
     get_default_edge_assets,
     get_default_node_assets,
     group,
-    latency,
 )
 
 if TYPE_CHECKING:
@@ -70,7 +69,6 @@ class Application(_Application):  # pylint: disable=too-few-public-methods
         _edge_assets.update(edge_assets if edge_assets is not None else {})
 
         _node_assets["group"] = group()  # cannot remove or override NodeGroup
-        _edge_assets["latency"] = latency()
 
         super().__init__(
             application_id=application_id,

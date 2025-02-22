@@ -77,8 +77,8 @@ class SimulationConfig(_SimulationConfig):
                 that will be used for the final simulation report. Defaults to None.
             include_default_callbacks (bool, optional): Whether the default callbacks will \
                 be included in the simulation. Defaults to True.
-            remote (bool, optional): Whether the simulation is local or remote. Defaults \
-                to False.
+            include_default_reporters (bool, optional): Whether the default reporters will \
+                be included in the simulation. Defaults to True.
             seed (Optional[int], optional): The seed used to set the randomicity of the \
                 simulation. Defaults to None.
             path (Optional[str], optional): The path where the simulation will be stored. \

@@ -30,7 +30,6 @@ from .assets.defaults import (
     get_default_node_assets,
     get_default_path_aggregators,
     group,
-    latency,
 )
 
 if TYPE_CHECKING:
@@ -87,7 +86,6 @@ class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
         _edge_assets.update(edge_assets if edge_assets is not None else {})
 
         _node_assets["group"] = group()  # cannot remove or override NodeGroup
-        _edge_assets["latency"] = latency()
 
         if path_assets_aggregators is not None and not all(
             k in _edge_assets for k in path_assets_aggregators

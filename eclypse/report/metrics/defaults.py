@@ -15,6 +15,13 @@ from typing import (
 import networkx as nx
 from eclypse_core.utils.constants import RND_SEED
 
+from eclypse.utils import (
+    MAX_LATENCY,
+    MIN_BANDWIDTH,
+    MIN_FLOAT,
+    MIN_LATENCY,
+)
+
 from . import metric
 
 if TYPE_CHECKING:
@@ -54,17 +61,23 @@ def response_time(
             for service, next_service in nx.utils.pairwise(flow):
                 p_service = placement.service_placement(service)
                 p_next_service = placement.service_placement(next_service)
-                service_processing_time = app.nodes[service]["processing_time"]
-                node_processing_time = infr.nodes[p_service]["processing_time"]
-                link_latency = infr.path_resources(p_service, p_next_service)["latency"]
+                service_processing_time = app.nodes[service].get(
+                    "processing_time", MIN_FLOAT
+                )
+                node_processing_time = infr.nodes[p_service].get(
+                    "processing_time", MIN_FLOAT
+                )
+                link_latency = infr.path_resources(p_service, p_next_service).get(
+                    "latency", MIN_LATENCY
+                )
                 rt += service_processing_time + node_processing_time + link_latency
 
             # Add the last service and the last node processing time
             last_service = flow[-1]
-            rt += app.nodes[last_service]["processing_time"]
-            rt += infr.nodes[placement.service_placement(last_service)][
-                "processing_time"
-            ]
+            rt += app.nodes[last_service].get("processing_time", MIN_FLOAT)
+            rt += infr.nodes[placement.service_placement(last_service)].get(
+                "processing_time", MIN_FLOAT
+            )
 
             # Store response time for the flow
             response_times.append(rt)
@@ -116,7 +129,7 @@ def required_cpu(
     Returns:
         ServiceValue: The required CPU for each service in each application.
     """
-    return requirements.get("cpu", 0)
+    return requirements.get("cpu", MIN_FLOAT)
 
 
 @metric.service(aggregate_fn="mean", report=["csv"])
@@ -138,7 +151,7 @@ def required_ram(
     Returns:
         ServiceValue: The required RAM for each service in each application.
     """
-    return requirements.get("ram", 0)
+    return requirements.get("ram", MIN_FLOAT)
 
 
 @metric.service(aggregate_fn="mean", report=["csv"])
@@ -160,7 +173,7 @@ def required_storage(
     Returns:
         ServiceValue: The required storage for each service in each application.
     """
-    return requirements.get("storage", 0)
+    return requirements.get("storage", MIN_FLOAT)
 
 
 @metric.service(aggregate_fn="mean", report=["csv"])
@@ -182,7 +195,7 @@ def required_gpu(
     Returns:
         ServiceValue: The required GPU for each service in each application.
     """
-    return requirements.get("gpu", 0)
+    return requirements.get("gpu", MIN_FLOAT)
 
 
 @metric.interaction(aggregate_fn="mean", report=["csv"])
@@ -205,7 +218,7 @@ def required_latency(
     Returns:
         InteractionValue: The required latency for each interaction in each application.
     """
-    return requirements.get("latency", 0)
+    return requirements.get("latency", MIN_LATENCY)
 
 
 @metric.interaction(aggregate_fn="mean", report=["csv"])
@@ -228,7 +241,7 @@ def required_bandwidth(
     Returns:
         InteractionValue: The required bandwidth for each interaction in each application.
     """
-    return requirements.get("bandwidth", 0)
+    return requirements.get("bandwidth", MIN_BANDWIDTH)
 
 
 ### Infrastructure
@@ -268,7 +281,7 @@ def featured_cpu(
     Returns:
         NodeValue: The featured CPU of each node.
     """
-    return resources.get("cpu", 0)
+    return resources.get("cpu", MIN_FLOAT)
 
 
 @metric.node(aggregate_fn="mean", report=["csv"])
@@ -291,7 +304,7 @@ def featured_ram(
     Returns:
         NodeValue: The featured RAM of each node.
     """
-    return resources.get("ram", 0)
+    return resources.get("ram", MIN_FLOAT)
 
 
 @metric.node(aggregate_fn="mean", report=["csv"])
@@ -314,7 +327,7 @@ def featured_storage(
     Returns:
         NodeValue: The featured storage of each node.
     """
-    return resources.get("storage", 0)
+    return resources.get("storage", MIN_FLOAT)
 
 
 @metric.node(aggregate_fn="mean", report=["csv"])
@@ -337,7 +350,7 @@ def featured_gpu(
     Returns:
         NodeValue: The featured GPU of each node.
     """
-    return resources.get("gpu", 0)
+    return resources.get("gpu", MIN_FLOAT)
 
 
 @metric.link(aggregate_fn="mean", report=["csv"])
@@ -363,7 +376,7 @@ def featured_latency(
     Returns:
         LinkValue: The featured latency of each link.
     """
-    return resources.get("latency", 0)
+    return resources.get("latency", MAX_LATENCY)
 
 
 @metric.link(aggregate_fn="mean", report=["csv"])
@@ -389,7 +402,7 @@ def featured_bandwidth(
     Returns:
         LinkValue: The featured bandwidth of each link.
     """
-    return resources.get("bandwidth", 0)
+    return resources.get("bandwidth", MIN_BANDWIDTH)
 
 
 @metric.simulation
