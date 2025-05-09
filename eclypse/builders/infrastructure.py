@@ -12,6 +12,7 @@ import math
 import random as rnd
 from typing import (
     TYPE_CHECKING,
+    Any,
     Callable,
     Dict,
     Generator,
@@ -26,10 +27,7 @@ from typing import (
 import networkx as nx
 import numpy as np
 
-from eclypse.graph import (
-    Infrastructure,
-    NodeGroup,
-)
+from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
     from eclypse_core.utils.types import ConnectivityFn
@@ -40,43 +38,39 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
 
-DEFAULT_NODE_PARTITIONING = [
-    (NodeGroup.IOT, 0.35),
-    (NodeGroup.NEAR_EDGE, 0.3),
-    (NodeGroup.FAR_EDGE, 0.2),
-    (NodeGroup.CLOUD, 0.15),
-]
+DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 
 
 def hierarchical(
     infrastructure_id: str,
     n: int,
     symmetric: bool = False,
-    node_partitioning: Optional[List[Tuple[NodeGroup, float]]] = None,
+    node_partitioning: Optional[List[float]] = None,
     connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
     cross_level_connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
-    include_default_assets: bool = True,
+    include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
 ):
     """Create a hierarchical infrastructure made of `n` nodes, with a given partitioning
-    of the nodes into CLOUD, FAR_EDGE, NEAR_EDGE, and IOT groups. Nodes of the same
-    level are connected with a given probability function or list of probabilities
-    `connectivity`, and another function/list of probabilities
-    `cross_level_connectivity` is used to connect nodes in the same level.
+    of the nodes into `len(node_partitioning)` layers. Nodes of the same level are
+    connected with a given probability function or list of probabilities `connectivity`,
+    and another function/list of probabilities `cross_level_connectivity` is used to
+    connect nodes in the same level.
 
     Args:
 
         infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
         symmetric (bool): Whether the connections are symmetric. Defaults to False.
-        node_partitioning (Optional[List[Tuple[NodeGroup, float]]]):
-            The partitioning of the nodes into groups. Defaults to None.
+        node_partitioning (Optional[List[float]]]):
+            The partitioning of the nodes into groups, specified as a list of
+            probabilities. The sum of the probabilities must be 1. Defaults to None.
         connectivity (Optional[Union[ConnectivityFn, List[float]]]): The connectivity \
             function or list of probabilities for the connections between levels. Defaults to None.
         cross_level_connectivity (Optional[Union[ConnectivityFn, List[float]]]):
@@ -88,7 +82,7 @@ def hierarchical(
             Defaults to None.
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
         link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        include_default_assets (bool): Whether to include the default assets. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
@@ -101,7 +95,7 @@ def hierarchical(
 
     if node_partitioning is None:
         node_partitioning = DEFAULT_NODE_PARTITIONING
-    if not math.isclose(sum(p for _, p in node_partitioning), 1.0):
+    if not math.isclose(sum(node_partitioning), 1.0):
         raise ValueError("The sum of the node distribution must be 1")
 
     levels = len(node_partitioning)
@@ -122,15 +116,13 @@ def hierarchical(
     nodes = [
         list(section)
         for section in np.array_split(
-            np.arange(n), np.cumsum([int(n * p) for _, p in node_partitioning])[:-1]
+            np.arange(n), np.cumsum([int(n * p) for p in node_partitioning])[:-1]
         )
     ]
-    # rename nodes by group with incremental counter (i.e. cloud_0, cloud_1, ...)
-    counters = {group.name: 0 for group in NodeGroup}
-    for i, (group, _) in enumerate(node_partitioning):
-        for j, _ in enumerate(nodes[i]):
-            nodes[i][j] = f"{group.name.lower()}_{counters[group.name]}"
-            counters[group.name] += 1
+    # rename nodes by group with incremental counter (i.e. l0_1, l0_2, l1_1...)
+    nodes = [
+        [f"l{i}_{j}" for j in range(len(section))] for i, section in enumerate(nodes)
+    ]
 
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
@@ -144,30 +136,31 @@ def hierarchical(
         seed=seed,
     )
 
-    for i, (group, _) in enumerate(node_partitioning):
+    for i in range(levels):
         for node in nodes[i]:
-            infrastructure.add_node_by_group(group, node)
+            infrastructure.add_node(node)
 
     for level in range(levels):
         if level < levels - 1:
             for parent, child in connectivity_fn[level](nodes[level], nodes[level + 1]):
-                infrastructure.add_edge_by_group(parent, child, symmetric=symmetric)
+                infrastructure.add_edge(parent, child, symmetric=symmetric)
         for n1, n2 in cross_level_connectivity_fn[level](nodes[level], nodes[level]):
             if n1 != n2:
-                infrastructure.add_edge_by_group(n1, n2, symmetric=symmetric)
+                infrastructure.add_edge(n1, n2, symmetric=symmetric)
     return infrastructure
 
 
 def star(
     infrastructure_id: str,
     n_clients: int,
-    client_group: NodeGroup = NodeGroup.FAR_EDGE,
     symmetric: bool = False,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
-    include_default_assets: bool = True,
+    center_assets_values: Optional[Dict[str, Any]] = None,
+    outer_assets_values: Optional[Dict[str, Any]] = None,
+    include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
@@ -178,14 +171,17 @@ def star(
     Args:
         infrastructure_id (str): The ID of the infrastructure.
         n_clients (int): The number of clients in the infrastructure.
-        client_group (NodeGroup): The group of the clients. Defaults to NodeGroup.FAR_EDGE.
         node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
         link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        center_assets_values (Optional[Dict[str, Any]]): The assets for the center node. \
+            Defaults to None.
+        outer_assets_values (Optional[Dict[str, Any]]): The assets for the outer nodes. \
+            Defaults to None.
+        include_default_assets (bool): Whether to include the default assets. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
@@ -207,14 +203,14 @@ def star(
         resource_init=resource_init,
         seed=seed,
     )
+    _outer_assets_values = {} if outer_assets_values is None else outer_assets_values
+    _center_assets_values = {} if center_assets_values is None else center_assets_values
+    for i in range(n_clients):
+        infrastructure.add_node(f"outer_{i}", **_outer_assets_values)
+    infrastructure.add_node("center", **_center_assets_values)
 
     for i in range(n_clients):
-        infrastructure.add_node_by_group(client_group, f"outer_{i}")
-
-    infrastructure.add_node_by_group(NodeGroup.CLOUD, "center")
-
-    for i in range(n_clients):
-        infrastructure.add_edge_by_group(f"outer_{i}", "center", symmetric=symmetric)
+        infrastructure.add_edge(f"outer_{i}", "center", symmetric=symmetric)
 
     return infrastructure
 
@@ -224,12 +220,11 @@ def random(
     n: int,
     p: float = 0.5,
     symmetric: bool = False,
-    node_partitioning: Optional[List[Tuple[NodeGroup, float]]] = None,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
-    include_default_assets: bool = True,
+    include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
@@ -242,15 +237,13 @@ def random(
         infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
         p (float): The probability of connecting two nodes. Defaults to 0.5.
-        node_partitioning (Optional[List[Tuple[NodeGroup, float]]]):
-            The partitioning of the nodes into groups. Defaults to None.
         node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
         link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to True.
+        include_default_assets (bool): Whether to include the default assets. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
@@ -260,14 +253,6 @@ def random(
     Returns:
         Infrastructure: The random infrastructure.
     """
-
-    if node_partitioning is None:
-        node_partitioning = DEFAULT_NODE_PARTITIONING
-    if not math.isclose(sum(p for _, p in node_partitioning), 1.0):
-        raise ValueError("The sum of the node distribution must be 1")
-
-    node_sections = np.cumsum([int(n * p) for _, p in node_partitioning])[:-1]
-    nodes = list(np.array_split(np.arange(n), node_sections))
 
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
@@ -281,14 +266,13 @@ def random(
         seed=seed,
     )
 
-    for i, (group, _) in enumerate(node_partitioning):
-        for node in nodes[i]:
-            infrastructure.add_node_by_group(group, node)
+    for i in range(n):
+        infrastructure.add_node(f"n{i}")
 
     nodes = list(infrastructure.nodes)
     random_graph = nx.erdos_renyi_graph(n, p, seed=seed)
     for u, v in random_graph.edges:
-        infrastructure.add_edge_by_group(nodes[u], nodes[v], symmetric=symmetric)
+        infrastructure.add_edge(nodes[u], nodes[v], symmetric=symmetric)
 
     return infrastructure
 

@@ -10,6 +10,8 @@ from typing import (
 
 from eclypse_core.workflow.callbacks import generic
 
+from eclypse.utils import DEFAULT_REPORT_TYPE
+
 
 def simulation(
     func: Optional[Callable] = None,
@@ -17,7 +19,7 @@ def simulation(
     activates_on: Union[str, List[str]] = "stop",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define a simulation callback.
@@ -32,7 +34,7 @@ def simulation(
         triggers (Optional[Dict[str, Callable]], optional): \
             The functions that trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -57,7 +59,7 @@ def application(
     activates_on: Union[str, List[str]] = "tick",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define an application callback.
@@ -72,7 +74,7 @@ def application(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -97,7 +99,7 @@ def service(
     activates_on: Union[str, List[str]] = "tick",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     name: Optional[str] = None,
 ) -> Callable:
@@ -113,7 +115,7 @@ def service(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the callback is remote. Defaults to False.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
@@ -139,7 +141,7 @@ def interaction(
     activates_on: Union[str, List[str]] = "tick",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define an interaction callback.
@@ -154,7 +156,7 @@ def interaction(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -178,7 +180,7 @@ def infrastructure(
     activates_on: Union[str, List[str]] = "tick",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define an infrastructure callback.
@@ -193,7 +195,7 @@ def infrastructure(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -219,7 +221,7 @@ def node(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     remote: bool = False,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define a node callback.
@@ -234,7 +236,7 @@ def node(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the callback is remote. Defaults to False.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
@@ -261,7 +263,7 @@ def link(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     remote: bool = False,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to define a link callback.
@@ -276,7 +278,7 @@ def link(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to "csv".
+            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:

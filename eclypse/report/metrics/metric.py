@@ -10,6 +10,8 @@ from typing import (
 
 from eclypse_core.report.metric import _metric_wrapper
 
+from eclypse.utils import DEFAULT_REPORT_TYPE
+
 
 def simulation(
     func: Optional[Callable] = None,
@@ -17,7 +19,7 @@ def simulation(
     activates_on: Union[str, List[str]] = "stop",
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ) -> Callable:
     """Decorator to create a simulation metric.
@@ -32,7 +34,7 @@ def simulation(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -56,7 +58,7 @@ def application(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create an application metric.
@@ -71,7 +73,7 @@ def application(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -97,7 +99,7 @@ def service(
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
     remote: bool = False,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create a service metric.
@@ -112,7 +114,7 @@ def service(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -138,7 +140,7 @@ def interaction(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create a interaction metric.
@@ -153,7 +155,7 @@ def interaction(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -178,7 +180,7 @@ def infrastructure(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create an infrastructure metric.
@@ -193,7 +195,7 @@ def infrastructure(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -219,7 +221,7 @@ def node(
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
     remote: bool = False,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create a node metric.
@@ -234,7 +236,7 @@ def node(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -260,7 +262,7 @@ def link(
     activates_every_n: Optional[Dict[str, int]] = None,
     triggers: Optional[Dict[str, Callable]] = None,
     aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = "csv",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
 ):
     """Decorator to create a link metric.
@@ -275,7 +277,7 @@ def link(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to "csv".
+            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:

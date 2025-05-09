@@ -7,6 +7,7 @@ For the complete documentation, refer to :py:mod:`eclypse_core.graph.assets.spac
 from eclypse_core.graph.assets.space import (
     AssetSpace,
     Choice,
+    IntUniform,
     Sample,
     Uniform,
 )
@@ -16,4 +17,5 @@ __all__ = [
     "Choice",
     "Sample",
     "Uniform",
+    "IntUniform",
 ]

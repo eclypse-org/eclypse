@@ -6,7 +6,6 @@ It is used to report the simulation metrics in a GML format.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     List,
@@ -24,6 +23,11 @@ class GMLReporter(Reporter):
 
     It uses `networkx.write_gml` method to write the graph on a file.
     """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the TensorBGMLardX reporter."""
+        super().__init__(*args, **kwargs)
+        self.report_path = self.report_path / "gml"
 
     def report(
         self,
@@ -43,8 +47,7 @@ class GMLReporter(Reporter):
         for callback in executed:
             if callback.type is None:
                 continue
-            path = Path(self.report_path) / "gml"
-            path.mkdir(parents=True, exist_ok=True)
+            self.report_path.mkdir(parents=True, exist_ok=True)
 
             for d in self.dfs_data(callback.data):
                 if d[-1] is None:
@@ -53,5 +56,5 @@ class GMLReporter(Reporter):
                     continue
                 graph = d[-1]
                 name = f"{callback.name}{'-'+graph.id if hasattr(graph, 'id') else ''}"
-                path = path / f"{name}.gml"
+                path = self.report_path / f"{name}.gml"
                 nx.write_gml(graph, path, stringizer=str)

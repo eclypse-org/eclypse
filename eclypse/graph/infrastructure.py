@@ -29,7 +29,6 @@ from .assets.defaults import (
     get_default_edge_assets,
     get_default_node_assets,
     get_default_path_aggregators,
-    group,
 )
 
 if TYPE_CHECKING:
@@ -53,7 +52,7 @@ class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
         edge_update_policy: Optional[Callable[[EdgeView], None]] = None,
         node_assets: Optional[Dict[str, Asset]] = None,
         edge_assets: Optional[Dict[str, Asset]] = None,
-        include_default_assets: bool = True,
+        include_default_assets: bool = False,
         path_assets_aggregators: Optional[Dict[str, Callable[[List[Any]], Any]]] = None,
         path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
         resource_init: Literal["min", "max"] = "min",
@@ -71,7 +70,8 @@ class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
                 update the edges.
             node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
             edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
-            include_default_assets (bool): Whether to include the default assets.
+            include_default_assets (bool): Whether to include the default assets. \
+                Defaults to False.
             path_assets_aggregators (Optional[Dict[str, Callable[[List[Any]], Any]]]): \
                 The aggregators to use for the path assets.
             path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): \
@@ -85,22 +85,27 @@ class Infrastructure(_Infrastructure):  # pylint: disable=too-few-public-methods
         _node_assets.update(node_assets if node_assets is not None else {})
         _edge_assets.update(edge_assets if edge_assets is not None else {})
 
-        _node_assets["group"] = group()  # cannot remove or override NodeGroup
-
-        if path_assets_aggregators is not None and not all(
-            k in _edge_assets for k in path_assets_aggregators
+        if (
+            path_assets_aggregators is not None
+            and not _edge_assets.keys() <= path_assets_aggregators.keys()
         ):
             raise ValueError(
                 "The path_assets_aggregators must be a subset of the edge_assets"
             )
 
-        default_path_aggregator = get_default_path_aggregators()
+        default_path_aggregator = (
+            get_default_path_aggregators() if include_default_assets else {}
+        )
         _path_assets_aggregators = (
             path_assets_aggregators if path_assets_aggregators is not None else {}
         )
 
         for k in _edge_assets:
             if k not in _path_assets_aggregators:
+                if k not in default_path_aggregator:
+                    raise ValueError(
+                        f'The path asset aggregator for "{k}" is not defined.'
+                    )
                 _path_assets_aggregators[k] = default_path_aggregator[k]
 
         super().__init__(

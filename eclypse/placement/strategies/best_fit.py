@@ -16,12 +16,13 @@ from typing import (
     Optional,
 )
 
-from eclypse_core.placement import PlacementView
-
 from .strategy import PlacementStrategy
 
 if TYPE_CHECKING:
-    from eclypse_core.placement import Placement
+    from eclypse_core.placement import (
+        Placement,
+        PlacementView,
+    )
 
     from eclypse.graph import (
         Application,

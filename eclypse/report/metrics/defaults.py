@@ -16,6 +16,7 @@ import networkx as nx
 from eclypse_core.utils.constants import RND_SEED
 
 from eclypse.utils import (
+    DEFAULT_REPORT_TYPE,
     MAX_LATENCY,
     MIN_BANDWIDTH,
     MIN_FLOAT,
@@ -38,7 +39,7 @@ if TYPE_CHECKING:
     )
 
 
-@metric.application(report=["csv"])
+@metric.application(report=[DEFAULT_REPORT_TYPE])
 def response_time(
     app: Application,
     placement: Placement,
@@ -110,11 +111,11 @@ def placement_mapping(
     return placement.mapping.get(service_id, "EMPTY")
 
 
-@metric.service(aggregate_fn="mean", report=["csv"])
+@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_cpu(
     _: str,
     requirements: Dict[str, Any],
-    __: Dict[str, Placement],
+    __: Placement,
     ___: Infrastructure,
 ) -> float:
     """Return the required CPU for each service in each application. It also reports the
@@ -123,7 +124,7 @@ def required_cpu(
     Args:
         _: the service ID.
         requirements (Dict[str, Any]): The requirements of the service.
-        __: The placements of the applications.
+        __: The placement of the application the service belongs to.
         ___: The infrastructure.
 
     Returns:
@@ -132,11 +133,11 @@ def required_cpu(
     return requirements.get("cpu", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=["csv"])
+@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_ram(
     _: str,
     requirements: Dict[str, Any],
-    __: Dict[str, Placement],
+    __: Placement,
     ___: Infrastructure,
 ) -> float:
     """Return the required RAM for each service in each application. It also reports the
@@ -145,7 +146,7 @@ def required_ram(
     Args:
         _: the service ID.
         requirements (Dict[str, Any]): The requirements of the service.
-        __: The placements of the applications.
+        __: The placement of the application the service belongs to.
         ___: The infrastructure.
 
     Returns:
@@ -154,11 +155,11 @@ def required_ram(
     return requirements.get("ram", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=["csv"])
+@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_storage(
     _: str,
     requirements: Dict[str, Any],
-    __: Dict[str, Placement],
+    __: Placement,
     ___: Infrastructure,
 ) -> float:
     """Return the required storage for each service in each application. It also reports
@@ -167,7 +168,7 @@ def required_storage(
     Args:
         _: the service ID.
         requirements (Dict[str, Any]): The requirements of the service.
-        __: The placements of the applications.
+        __: The placement of the application the service belongs to.
         ___: The infrastructure.
 
     Returns:
@@ -176,11 +177,11 @@ def required_storage(
     return requirements.get("storage", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=["csv"])
+@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_gpu(
     _: str,
     requirements: Dict[str, Any],
-    __: Dict[str, Placement],
+    __: Placement,
     ___: Infrastructure,
 ) -> float:
     """Return the required GPU for each service in each application. It also reports the
@@ -189,7 +190,7 @@ def required_gpu(
     Args:
         _: the service ID.
         requirements (Dict[str, Any]): The requirements of the service.
-        __: The placements of the applications.
+        __: The placement of the application the service belongs to.
         ___: The infrastructure.
 
     Returns:
@@ -198,12 +199,12 @@ def required_gpu(
     return requirements.get("gpu", MIN_FLOAT)
 
 
-@metric.interaction(aggregate_fn="mean", report=["csv"])
+@metric.interaction(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_latency(
     _: str,
     __: str,
     requirements: Dict[str, Any],
-    ___: Dict[str, Placement],
+    ___: Placement,
     ____: Infrastructure,
 ) -> float:
     """Return the required latency for each interaction in each application. It also
@@ -213,7 +214,7 @@ def required_latency(
         _: The source service ID.
         __: The destination service ID.
         requirements (Dict[str, Any]): The requirements of the interaction.
-        ___: The placements of the applications.
+        ___: The placement of the application the service belongs to.
         ____: The infrastructure.
     Returns:
         InteractionValue: The required latency for each interaction in each application.
@@ -221,12 +222,12 @@ def required_latency(
     return requirements.get("latency", MIN_LATENCY)
 
 
-@metric.interaction(aggregate_fn="mean", report=["csv"])
+@metric.interaction(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def required_bandwidth(
     _: str,
     __: str,
     requirements: Dict[str, Any],
-    ___: Dict[str, Placement],
+    ___: Placement,
     ____: Infrastructure,
 ) -> float:
     """Return the required bandwidth for each interaction in each application. It also
@@ -236,7 +237,7 @@ def required_bandwidth(
         _: The source service ID.
         __: The destination service ID.
         requirements (Dict[str, Any]): The requirements of the interaction.
-        ___: The placements of the applications.
+        ___: The placement of the application the service belongs to.
         ____: The infrastructure.
     Returns:
         InteractionValue: The required bandwidth for each interaction in each application.
@@ -247,7 +248,7 @@ def required_bandwidth(
 ### Infrastructure
 
 
-@metric.infrastructure(report=["csv"])
+@metric.infrastructure(report=[DEFAULT_REPORT_TYPE])
 def alive_nodes(infr: Infrastructure, _: PlacementView) -> int:
     """Return the number of alive nodes in the infrastructure.
 
@@ -261,7 +262,7 @@ def alive_nodes(infr: Infrastructure, _: PlacementView) -> int:
     return len(infr.available.nodes)
 
 
-@metric.node(aggregate_fn="mean", report=["csv"])
+@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_cpu(
     _: str,
     resources: Dict[str, Any],
@@ -273,7 +274,7 @@ def featured_cpu(
     average featured CPU.
 
     Args:
-        _: The placements of the applications.
+        _: The placement of the application the service belongs to.
         resources (Dict[str, Any]): The resources of the node.
         __: The infrastructure.
         ___: The placement view.
@@ -284,7 +285,7 @@ def featured_cpu(
     return resources.get("cpu", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=["csv"])
+@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_ram(
     _: str,
     resources: Dict[str, Any],
@@ -296,7 +297,7 @@ def featured_ram(
     average featured RAM.
 
     Args:
-        _: The placements of the applications.
+        _: The placement of the application the service belongs to.
         resources (Dict[str, Any]): The resources of the node.
         __: The infrastructure.
         ___: The placement view.
@@ -307,7 +308,7 @@ def featured_ram(
     return resources.get("ram", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=["csv"])
+@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_storage(
     _: str,
     resources: Dict[str, Any],
@@ -319,7 +320,7 @@ def featured_storage(
     the average featured storage.
 
     Args:
-        _: The placements of the applications.
+        _: The placement of the application the service belongs to.
         resources (Dict[str, Any]): The resources of the node.
         __: The infrastructure.
         ___: The placement view.
@@ -330,7 +331,7 @@ def featured_storage(
     return resources.get("storage", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=["csv"])
+@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_gpu(
     _: str,
     resources: Dict[str, Any],
@@ -342,7 +343,7 @@ def featured_gpu(
     average featured GPU.
 
     Args:
-        _: The placements of the applications.
+        _: The placement of the application the service belongs to.
         resources (Dict[str, Any]): The resources of the node.
         __: The infrastructure.
         ___: The placement view.
@@ -353,7 +354,7 @@ def featured_gpu(
     return resources.get("gpu", MIN_FLOAT)
 
 
-@metric.link(aggregate_fn="mean", report=["csv"])
+@metric.link(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_latency(
     _: str,
     __: str,
@@ -369,7 +370,7 @@ def featured_latency(
         _: The source node ID.
         __: The destination node ID.
         resources (Dict[str, Any]): The resources of the link.
-        ___: The placements of the applications.
+        ___: The placement of the application the service belongs to.
         ____: The infrastructure.
         _____: The placement view.
 
@@ -379,7 +380,7 @@ def featured_latency(
     return resources.get("latency", MAX_LATENCY)
 
 
-@metric.link(aggregate_fn="mean", report=["csv"])
+@metric.link(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
 def featured_bandwidth(
     _: str,
     __: str,
@@ -395,7 +396,7 @@ def featured_bandwidth(
         _: The source node ID.
         __: The destination node ID.
         resources (Dict[str, Any]): The resources of the link.
-        ___: The placements of the applications.
+        ___: The placement of the application the service belongs to.
         ____: The infrastructure.
         _____: The placement view.
 

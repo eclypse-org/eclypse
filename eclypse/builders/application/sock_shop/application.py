@@ -15,10 +15,7 @@ from typing import (
 
 from eclypse_core.utils.tools import prune_assets
 
-from eclypse.graph import (
-    Application,
-    NodeGroup,
-)
+from eclypse.graph import Application
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import (
@@ -36,7 +33,7 @@ def get_sock_shop(
     edge_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
     edge_assets: Optional[Dict[str, Asset]] = None,
-    include_default_assets: bool = True,
+    include_default_assets: bool = False,
     requirement_init: Literal["min", "max"] = "min",
     flows: Union[Literal["default"], List[List[str]]] = "default",
     seed: Optional[int] = None,
@@ -50,7 +47,7 @@ def get_sock_shop(
         edge_update_policy (Optional[Callable[[EdgeView], None]]): A function to update the edges.
         node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
         edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
-        include_default_assets (bool): Whether to include the default assets.
+        include_default_assets (bool): Whether to include the default assets. Default is False.
         requirement_init (Literal["min", "max"]): The initialization of the requirements.
         flows (Optional[List[List[str]]): The flows of the application.
         seed (Optional[int]): The seed for the random number generator.
@@ -98,10 +95,10 @@ def get_sock_shop(
     )
 
     if communication_interface is None:
-        add_fn = app.add_node_by_group
+        add_fn = app.add_node
         id_fn = lambda service: service
     elif communication_interface in ["mpi", "rest"]:
-        add_fn = app.add_service_by_group  # type: ignore[assignment]
+        add_fn = app.add_service  # type: ignore[assignment]
         if communication_interface == "mpi":
             from . import mpi_services as services
         else:
@@ -121,7 +118,6 @@ def get_sock_shop(
         raise ValueError(f"Unknown communication interface: {communication_interface}")
 
     add_fn(
-        NodeGroup.FAR_EDGE,
         id_fn("UserService"),
         **prune_assets(
             app.node_assets,
@@ -134,7 +130,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.FAR_EDGE,
         id_fn("FrontendService"),
         **prune_assets(
             app.node_assets,
@@ -147,7 +142,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.FAR_EDGE,
         id_fn("CatalogService"),
         **prune_assets(
             app.node_assets,
@@ -160,7 +154,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.NEAR_EDGE,
         id_fn("OrderService"),
         **prune_assets(
             app.node_assets,
@@ -173,7 +166,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.NEAR_EDGE,
         id_fn("CartService"),
         **prune_assets(
             app.node_assets,
@@ -186,7 +178,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.NEAR_EDGE,
         id_fn("PaymentService"),
         **prune_assets(
             app.node_assets,
@@ -199,7 +190,6 @@ def get_sock_shop(
         ),
     )
     add_fn(
-        NodeGroup.NEAR_EDGE,
         id_fn("ShippingService"),
         **prune_assets(
             app.node_assets,
@@ -212,28 +202,28 @@ def get_sock_shop(
         ),
     )
 
-    app.add_edge_by_group(
+    app.add_edge(
         "FrontendService",
         "CatalogService",
         symmetric=True,
         latency=40,
         bandwidth=2,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "FrontendService",
         "UserService",
         symmetric=True,
         latency=40,
         bandwidth=2,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "FrontendService",
         "CartService",
         symmetric=True,
         latency=40,
         bandwidth=2,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "FrontendService",
         "OrderService",
         symmetric=True,
@@ -241,14 +231,14 @@ def get_sock_shop(
         bandwidth=10,
     )
 
-    app.add_edge_by_group(
+    app.add_edge(
         "OrderService",
         "PaymentService",
         symmetric=True,
         latency=50,
         bandwidth=10,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "OrderService",
         "ShippingService",
         symmetric=True,

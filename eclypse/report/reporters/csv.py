@@ -7,7 +7,6 @@ It is used to report the simulation metrics in a CSV format.
 from __future__ import annotations
 
 from datetime import datetime as dt
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     List,
@@ -34,11 +33,17 @@ DEFAULT_CSV_HEADERS = {
 
 
 class CSVReporter(Reporter):
-    """Class to report the simulation metrics in a CSV format.
+    """Class to report the simulation metrics in CSV format.
 
     It prints an header with the format of the rows and then the values of the
     reportable.
     """
+
+    def __init__(self, *args, **kwargs):
+        """Initialize the CSV reporter."""
+
+        super().__init__(*args, **kwargs)
+        self.report_path = self.report_path / "csv"
 
     def report(
         self,
@@ -58,8 +63,8 @@ class CSVReporter(Reporter):
         for callback in executed:
             if (t := callback.type) is None:
                 continue
-            path = Path(self.report_path) / "stats" / f"{t}.csv"
-            path.parent.mkdir(parents=True, exist_ok=True)
+            self.report_path.mkdir(parents=True, exist_ok=True)
+            path = self.report_path / f"{t}.csv"
 
             if not path.exists():
                 with open(path, "w", encoding="utf-8") as f:

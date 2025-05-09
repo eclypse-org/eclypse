@@ -26,6 +26,7 @@ from eclypse_core.simulation import SimulationConfig as _SimulationConfig
 
 from eclypse.report.metrics.defaults import get_default_metrics
 from eclypse.report.reporters import get_default_reporters
+from eclypse.utils import DEFAULT_REPORT_TYPE
 
 if TYPE_CHECKING:
     from eclypse_core.remote.bootstrap import RemoteBootstrap
@@ -45,13 +46,12 @@ class SimulationConfig(_SimulationConfig):
         tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "auto",
         timeout: Optional[float] = None,
         max_ticks: Optional[int] = None,
-        incremental_mapping_phase: bool = True,
         callbacks: Optional[List[EclypseCallback]] = None,
         reporters: Optional[Dict[str, Type[Reporter]]] = None,
         events: Optional[List[EclypseEvent]] = None,
         feeds: Optional[List[str]] = None,
-        include_default_callbacks: bool = True,
-        include_default_reporters: bool = True,
+        incremental_mapping_phase: bool = True,
+        include_default_callbacks: bool = False,
         seed: Optional[int] = None,
         path: Optional[str] = None,
         log_to_file: bool = False,
@@ -76,9 +76,7 @@ class SimulationConfig(_SimulationConfig):
             reporters (Optional[Dict[str, Type[Reporter]]], optional): The list of reporters \
                 that will be used for the final simulation report. Defaults to None.
             include_default_callbacks (bool, optional): Whether the default callbacks will \
-                be included in the simulation. Defaults to True.
-            include_default_reporters (bool, optional): Whether the default reporters will \
-                be included in the simulation. Defaults to True.
+                be included in the simulation. Defaults to False.
             seed (Optional[int], optional): The seed used to set the randomicity of the \
                 simulation. Defaults to None.
             path (Optional[str], optional): The path where the simulation will be stored. \
@@ -90,13 +88,16 @@ class SimulationConfig(_SimulationConfig):
                 or remote. A RemoteBootstrap object can be passed to configure the remote \
                 nodes. Defaults to False.
         """
-        _reporters = {}
-        _reporters.update(get_default_reporters() if include_default_reporters else {})
-        _reporters.update(reporters if reporters is not None else {})
-
         _callbacks = callbacks if callbacks is not None else []
         _callbacks.extend(get_default_metrics() if include_default_callbacks else [])
 
+        _reporters = None
+        if _callbacks:
+            # Default reporter is always added if there is at least one defined callback
+            _reporters = {
+                DEFAULT_REPORT_TYPE: get_default_reporters()[DEFAULT_REPORT_TYPE]
+            }
+            _reporters.update(reporters if reporters is not None else {})
         _events = events if events is not None else []
 
         super().__init__(

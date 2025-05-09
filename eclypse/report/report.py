@@ -25,7 +25,10 @@ class Report:
 
     def __init__(self, simulation_path: Union[str, Path]):
         self._sim_path = Path(simulation_path)
-        self._stats_path = self._sim_path / "stats"
+        self._stats_path = self._sim_path / "csv"
+        if not self._stats_path.exists():
+            raise FileNotFoundError(f'No CSV files found at "{self._stats_path}."')
+
         self.stats: Dict[CallbackType, Optional[pd.DataFrame]] = defaultdict()
         self._config: Optional[Dict[str, Any]] = None
 
