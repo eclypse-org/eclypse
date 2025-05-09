@@ -1,9 +1,9 @@
 from echo import EchoService
 
-from eclypse.graph import Application, NodeGroup
+from eclypse.graph import Application
 
 # Creating an instance of the EchoApp class
-echo_app = Application("EchoApp")
+echo_app = Application("EchoApp", include_default_assets=True)
 
 echo_app.add_service(
     EchoService("Gateway"),
@@ -12,7 +12,6 @@ echo_app.add_service(
     ram=0.5,
     storage=0.5,
     availability=0.9,
-    group=NodeGroup.IOT,
     processing_time=0.1,
 )
 
@@ -23,7 +22,6 @@ echo_app.add_service(
     ram=4.0,
     storage=2.0,
     availability=0.8,
-    group=NodeGroup.NEAR_EDGE,
     processing_time=2.0,
 )
 
@@ -34,7 +32,6 @@ echo_app.add_service(
     ram=2.0,
     storage=5.0,
     availability=0.8,
-    group=NodeGroup.IOT,
     processing_time=1.0,
 )
 
@@ -45,7 +42,6 @@ echo_app.add_service(
     ram=3.0,
     storage=8.0,
     availability=0.85,
-    group=NodeGroup.NEAR_EDGE,
     processing_time=1.5,
 )
 
@@ -57,34 +53,37 @@ echo_app.add_service(
     ram=4.0,
     storage=10.0,
     availability=0.9,
-    group=NodeGroup.CLOUD,
     processing_time=5.0,
 )
 
-echo_app.add_symmetric_edge(
+echo_app.add_edge(
     "Gateway",
     "LightingService",
     latency=100.0,
     bandwidth=20.0,
+    symmetric=True,
 )
 
-echo_app.add_symmetric_edge(
+echo_app.add_edge(
     "Gateway",
     "ClimateControlService",
     latency=100.0,
     bandwidth=10.0,
+    symmetric=True,
 )
 
-echo_app.add_symmetric_edge(
+echo_app.add_edge(
     "Gateway",
     "SecurityService",
     latency=50.0,
     bandwidth=5.0,
+    symmetric=True,
 )
 
-echo_app.add_symmetric_edge(
+echo_app.add_edge(
     "SecurityService",
     "EntertainmentService",
     latency=50.0,
     bandwidth=10.0,
+    symmetric=True,
 )

@@ -10,7 +10,6 @@ from typing import (
 
 import psutil
 
-from eclypse.graph import NodeGroup
 from eclypse.graph.assets import Additive
 from eclypse.report.metrics import metric
 from eclypse.report.metrics.defaults import (
@@ -31,16 +30,9 @@ if TYPE_CHECKING:
 def user_count_asset(
     lower_bound: float = 0.0,
     upper_bound: float = float("inf"),
+    init_value: int = 0,
 ) -> Additive:
-
-    default_init_spaces = {
-        NodeGroup.CLOUD: lambda: 0,
-        NodeGroup.FAR_EDGE: lambda: 0,
-        NodeGroup.NEAR_EDGE: lambda: 0,
-        NodeGroup.IOT: lambda: 0,
-    }
-
-    return Additive(lower_bound, upper_bound, default_init_spaces, functional=False)
+    return Additive(lower_bound, upper_bound, init_value, functional=False)
 
 
 # Metrics for the simulation

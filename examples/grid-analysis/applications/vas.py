@@ -9,10 +9,7 @@ from networkx.classes.reportviews import (
     NodeView,
 )
 
-from eclypse.graph import (
-    Application,
-    NodeGroup,
-)
+from eclypse.graph import Application
 from eclypse.graph.assets import Asset
 
 
@@ -56,8 +53,7 @@ def get_vas(
         seed=seed,
     )
 
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "ObjectDetectionService",
         cpu=2,
         ram=4.0,
@@ -66,8 +62,7 @@ def get_vas(
         availability=0.95,
         processing_time=15,
     )
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "ObjectTrackingService",
         cpu=2,
         ram=3.5,
@@ -76,8 +71,7 @@ def get_vas(
         availability=0.94,
         processing_time=20,
     )
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "ObjectClassificationService",
         cpu=2,
         ram=4.0,
@@ -86,8 +80,7 @@ def get_vas(
         availability=0.95,
         processing_time=25,
     )
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "ObjectCountingService",
         cpu=1,
         ram=2.0,
@@ -96,8 +89,7 @@ def get_vas(
         availability=0.90,
         processing_time=10,
     )
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "AudioDetectionService",
         cpu=1,
         ram=1.5,
@@ -107,28 +99,28 @@ def get_vas(
         processing_time=8,
     )
 
-    app.add_edge_by_group(
+    app.add_edge(
         "ObjectDetectionService",
         "ObjectTrackingService",
         symmetric=True,
         latency=30,
         bandwidth=10,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "ObjectTrackingService",
         "ObjectClassificationService",
         symmetric=True,
         latency=50,
         bandwidth=15,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "ObjectDetectionService",
         "ObjectCountingService",
         symmetric=True,
         latency=30,
         bandwidth=8,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "AudioDetectionService",
         "ObjectClassificationService",
         symmetric=True,

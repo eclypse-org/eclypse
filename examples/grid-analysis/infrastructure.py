@@ -11,7 +11,6 @@ from typing import (
 
 from policies import (
     degrade_policy,
-    ensure_policy,
     kill_policy,
 )
 
@@ -23,7 +22,6 @@ from eclypse.builders.infrastructure import (
 from eclypse.graph import (
     Application,
     Infrastructure,
-    NodeGroup,
 )
 from eclypse.graph.assets import Concave
 from eclypse.graph.assets.space import (
@@ -33,11 +31,12 @@ from eclypse.graph.assets.space import (
 from eclypse.utils import (
     MAX_FLOAT,
     MIN_FLOAT,
+    PrimitiveType,
 )
 
 
-def get_infrastructure(config, apps: List[Application]) -> Infrastructure:
-    node_update_policy, link_update_policy = get_policy(config, apps)
+def get_infrastructure(config) -> Infrastructure:
+    node_update_policy, link_update_policy = get_policy(config)
     common_config = {
         "node_update_policy": node_update_policy,
         "link_update_policy": link_update_policy,
@@ -45,6 +44,7 @@ def get_infrastructure(config, apps: List[Application]) -> Infrastructure:
         "symmetric": True,
         "seed": config["seed"],
         "node_assets": {"energy": idle_energy_consumption()},
+        "include_default_assets": True,
     }
     if config["topology"][0] == "star":
         infr = star(
@@ -72,21 +72,10 @@ def get_infrastructure(config, apps: List[Application]) -> Infrastructure:
     return infr
 
 
-def get_policy(config, apps: List[Application]):
+def get_policy(config):
     if config["policy"][0] == "degrade":
         return degrade_policy(config["policy"][1], config["max_ticks"])
-    elif config["policy"][0] == "kill":
-        return kill_policy(config["policy"][1])
-    elif config["policy"][0] == "ensure":
-        node_reqs = apps[0].node_assets.aggregate(
-            *(app.nodes[n] for app in apps for n in app.nodes)
-        )
-        edge_reqs = [app.edges[e] for app in apps for e in app.edges]
-        path_reqs = {
-            "latency": min(e.get("latency", float("inf")) for e in edge_reqs),
-            "bandwidth": sum(e.get("bandwidth", 0) for e in edge_reqs),
-        }
-        return ensure_policy(node_reqs=node_reqs, path_reqs=path_reqs)
+    return kill_policy(config["policy"][1])
 
 
 def apply_load(infr: Infrastructure, load: float):
@@ -103,25 +92,21 @@ def apply_load(infr: Infrastructure, load: float):
 def idle_energy_consumption(
     lower_bound: float = MAX_FLOAT,
     upper_bound: float = MIN_FLOAT,
-    init_spaces: Optional[Dict[NodeGroup, Union[AssetSpace, Callable[[], Any]]]] = None,
+    init_fn_or_value: Optional[
+        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
+    ] = None,
 ) -> Concave:
-    """Create a new additive asset for idle energy consumption based on node group.
-
+    """Create a new additive asset for idle energy consumption.
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_spaces (Dict[NodeGroup, Union[AssetSpace, Callable[[], Any]]]):
-            The functions to initialize the asset.
+        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+            The function/scalar to initialize the idle energy consumption value.
 
     Returns:
         Concave: The idle energy consumption asset.
     """
-    default_init_spaces = {
-        NodeGroup.CLOUD: Choice([150]),
-        NodeGroup.FAR_EDGE: Choice([80]),
-        NodeGroup.NEAR_EDGE: Choice([50]),
-        NodeGroup.IOT: Choice([20]),
-    }
-    default_init_spaces.update(init_spaces if init_spaces is not None else {})
-
-    return Concave(lower_bound, upper_bound, default_init_spaces, functional=False)
+    _init_fn = (
+        Choice([20, 50, 80, 150]) if init_fn_or_value is None else init_fn_or_value
+    )
+    return Concave(lower_bound, upper_bound, _init_fn, functional=False)

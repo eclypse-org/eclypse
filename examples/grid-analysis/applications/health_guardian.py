@@ -11,7 +11,6 @@ from networkx.classes.reportviews import (
 
 from eclypse.graph import (
     Application,
-    NodeGroup,
 )
 from eclypse.graph.assets import Asset
 
@@ -60,8 +59,7 @@ def get_health_guardian(
         seed=seed,
     )
 
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "DepressionAssessment",
         cpu=1,
         gpu=0,
@@ -71,8 +69,7 @@ def get_health_guardian(
         processing_time=5,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "MobilityAnalysis",
         cpu=2,
         gpu=0.5,
@@ -82,8 +79,7 @@ def get_health_guardian(
         processing_time=15,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "FunctionalMobility",
         cpu=1,
         gpu=1,
@@ -93,8 +89,7 @@ def get_health_guardian(
         processing_time=10,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.FAR_EDGE,
+    app.add_node(
         "ALSVoiceAnalysis",
         cpu=2,
         gpu=1.5,
@@ -104,8 +99,7 @@ def get_health_guardian(
         processing_time=20,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "CognitiveDeclineDetection",
         cpu=3,
         gpu=2,
@@ -115,8 +109,7 @@ def get_health_guardian(
         processing_time=25,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "SleepQuality",
         cpu=1,
         gpu=0.5,
@@ -126,8 +119,7 @@ def get_health_guardian(
         processing_time=8,
     ),
 
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "DrivingRiskAssessment",
         cpu=2,
         gpu=1,
@@ -137,35 +129,35 @@ def get_health_guardian(
         processing_time=12,
     ),
 
-    app.add_edge_by_group(
+    app.add_edge(
         "DepressionAssessment",
         "MobilityAnalysis",
         symmetric=True,
         latency=35,
         bandwidth=5,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "MobilityAnalysis",
         "FunctionalMobility",
         symmetric=True,
         latency=40,
         bandwidth=10,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "ALSVoiceAnalysis",
         "CognitiveDeclineDetection",
         symmetric=True,
         latency=50,
         bandwidth=8,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "CognitiveDeclineDetection",
         "SleepQuality",
         symmetric=True,
         latency=45,
         bandwidth=6,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "DrivingRiskAssessment",
         "CognitiveDeclineDetection",
         symmetric=True,

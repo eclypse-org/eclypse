@@ -19,6 +19,7 @@ def get_infrastructure(seed: int):
         infrastructure_id="hierarchical",
         n=187,
         node_update_policy=[node_policy, UserDistributionPolicy()],
+        include_default_assets=True,
         link_update_policy=edge_policy,
         symmetric=True,
         seed=seed,

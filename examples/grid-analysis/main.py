@@ -38,7 +38,7 @@ def eclypse_grid(config):
     )
 
     apps = get_apps(seed=config["seed"])
-    infr = get_infrastructure(config, apps)
+    infr = get_infrastructure(config)
     sim = Simulation(infrastructure=infr, simulation_config=sim_config)
 
     for app in apps:
@@ -95,7 +95,6 @@ search_space = {
             ("kill", 0.01),
             ("kill", 0.05),
             ("kill", 0.1),
-            ("ensure",),
         ]
     ),
     "strategy": tune.grid_search(

@@ -9,10 +9,7 @@ from networkx.classes.reportviews import (
     NodeView,
 )
 
-from eclypse.graph import (
-    Application,
-    NodeGroup,
-)
+from eclypse.graph import Application
 from eclypse.graph.assets import Asset
 
 
@@ -62,8 +59,7 @@ def get_assembly_platform(
         seed=seed,
     )
 
-    app.add_node_by_group(
-        NodeGroup.FAR_EDGE,
+    app.add_node(
         "AssemblyTaskOrchestration",
         cpu=2,
         gpu=0,
@@ -72,8 +68,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=15,
     )
-    app.add_node_by_group(
-        NodeGroup.CLOUD,
+    app.add_node(
         "ProductStructuralModel",
         cpu=2,
         gpu=0,
@@ -82,8 +77,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=20,
     )
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "PrimitiveAssembly",
         cpu=1,
         gpu=0.5,
@@ -92,8 +86,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=10,
     )
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "CompositeAssembly",
         cpu=2,
         gpu=1.5,
@@ -102,8 +95,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=25,
     )
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "IoTWrapper",
         cpu=1,
         gpu=0,
@@ -112,8 +104,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=8,
     )
-    app.add_node_by_group(
-        NodeGroup.CLOUD,
+    app.add_node(
         "ResourceDiscovery",
         cpu=2,
         gpu=0,
@@ -122,8 +113,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=12,
     )
-    app.add_node_by_group(
-        NodeGroup.NEAR_EDGE,
+    app.add_node(
         "QualityMonitoring",
         cpu=1,
         gpu=0.5,
@@ -132,8 +122,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=10,
     )
-    app.add_node_by_group(
-        NodeGroup.FAR_EDGE,
+    app.add_node(
         "AssemblyWorkerCoordination",
         cpu=2,
         gpu=0,
@@ -142,8 +131,7 @@ def get_assembly_platform(
         availability=0.9,
         processing_time=15,
     )
-    app.add_node_by_group(
-        NodeGroup.IOT,
+    app.add_node(
         "StateTracking",
         cpu=1,
         gpu=0.5,
@@ -153,49 +141,49 @@ def get_assembly_platform(
         processing_time=10,
     )
 
-    app.add_edge_by_group(
+    app.add_edge(
         "AssemblyTaskOrchestration",
         "ProductStructuralModel",
         symmetric=True,
         latency=100,
         bandwidth=5,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "AssemblyTaskOrchestration",
         "CompositeAssembly",
         symmetric=True,
         latency=50,
         bandwidth=10,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "CompositeAssembly",
         "PrimitiveAssembly",
         symmetric=True,
         latency=40,
         bandwidth=20,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "IoTWrapper",
         "AssemblyWorkerCoordination",
         symmetric=True,
         latency=40,
         bandwidth=8,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "ResourceDiscovery",
         "AssemblyTaskOrchestration",
         symmetric=True,
         latency=120,
         bandwidth=3,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "QualityMonitoring",
         "StateTracking",
         symmetric=True,
         latency=40,
         bandwidth=2,
     )
-    app.add_edge_by_group(
+    app.add_edge(
         "AssemblyWorkerCoordination",
         "IoTWrapper",
         symmetric=True,

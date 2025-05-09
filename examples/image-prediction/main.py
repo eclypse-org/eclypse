@@ -8,7 +8,6 @@ from services.utils import (
 from update_policy import DegradePolicy
 
 from eclypse.builders.infrastructure import star
-from eclypse.graph import NodeGroup
 from eclypse.placement.strategies import RandomStrategy
 from eclypse.remote.bootstrap import (
     RayOptionsFactory,
@@ -41,8 +40,8 @@ if __name__ == "__main__":
             n_clients=5,
             seed=seed,
             link_update_policy=DegradePolicy(epochs=TICKS),
+            include_default_assets=True,
             resource_init="max",
-            client_group=NodeGroup.CLOUD,
             symmetric=True,
         ),
         simulation_config=sim_config,

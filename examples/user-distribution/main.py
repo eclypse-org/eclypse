@@ -21,7 +21,6 @@ sim_config = SimulationConfig(
     seed=SEED,
     max_ticks=TICKS,
     path=DEFAULT_SIM_PATH / "user-distribution",
-    include_default_callbacks=False,
     callbacks=get_metrics(),
 )
 infrastructure = get_infrastructure(SEED)

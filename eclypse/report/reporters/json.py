@@ -83,10 +83,10 @@ class JSONReporter(Reporter):
 
 
 class _SafeJSONEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if hasattr(obj, "isoformat"):
-            return obj.isoformat()
-        elif isinstance(obj, (set, tuple)):
-            return list(obj)
+    def default(self, o):
+        if hasattr(o, "isoformat"):
+            return o.isoformat()
+        if isinstance(o, (set, tuple)):
+            return list(o)
 
-        return super().default(obj)
+        return super().default(o)

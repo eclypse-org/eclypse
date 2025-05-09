@@ -5,7 +5,6 @@ from update_policy import (
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
-from eclypse.graph import NodeGroup
 from eclypse.placement.strategies import StaticStrategy
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
@@ -16,14 +15,10 @@ if __name__ == "__main__":
     infrastructure = hierarchical(
         "hierarchical",
         n=30,
-        node_partitioning=[
-            (NodeGroup.CLOUD, 0.7),
-            (NodeGroup.FAR_EDGE, 0.1),
-            (NodeGroup.NEAR_EDGE, 0.1),
-            (NodeGroup.IOT, 0.1),
-        ],
+        node_partitioning=[0.7, 0.1, 0.1, 0.1],
         node_update_policy=node_random_update,
         link_update_policy=edge_random_update,
+        include_default_assets=True,
         symmetric=True,
         seed=seed,
     )
@@ -33,6 +28,7 @@ if __name__ == "__main__":
         tick_every_ms=500,
         max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopREST",
+        include_default_callbacks=True,
         remote=True,
     )
 
@@ -41,19 +37,20 @@ if __name__ == "__main__":
         simulation_config=sim_config,
     )
 
+    app = get_sock_shop(communication_interface="rest", include_default_assets=True)
+
     strategy = StaticStrategy(
         {
-            "CatalogService": "cloud_18",
-            "UserService": "cloud_11",
-            "CartService": "cloud_12",
-            "OrderService": "cloud_18",
-            "PaymentService": "cloud_0",
-            "ShippingService": "cloud_9",
-            "FrontendService": "cloud_19",
+            "CatalogService": "l0_0",
+            "UserService": "l3_0",
+            "CartService": "l0_6",
+            "OrderService": "l0_13",
+            "PaymentService": "l0_20",
+            "ShippingService": "l2_1",
+            "FrontendService": "l1_2",
         }
     )
 
-    sim.register(get_sock_shop(communication_interface="rest"), strategy)
-
+    sim.register(app, strategy)
     sim.start()
     sim.wait()
