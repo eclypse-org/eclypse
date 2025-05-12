@@ -206,44 +206,38 @@ def get_sock_shop(
         "FrontendService",
         "CatalogService",
         symmetric=True,
-        latency=40,
-        bandwidth=2,
+        **prune_assets(app.edge_assets, latency=40, bandwidth=2),
     )
     app.add_edge(
         "FrontendService",
         "UserService",
         symmetric=True,
-        latency=40,
-        bandwidth=2,
+        **prune_assets(app.edge_assets, latency=40, bandwidth=2),
     )
     app.add_edge(
         "FrontendService",
         "CartService",
         symmetric=True,
-        latency=40,
-        bandwidth=2,
+        **prune_assets(app.edge_assets, latency=40, bandwidth=2),
     )
     app.add_edge(
         "FrontendService",
         "OrderService",
         symmetric=True,
-        latency=50,
-        bandwidth=10,
+        **prune_assets(app.edge_assets, latency=50, bandwidth=10),
     )
 
     app.add_edge(
         "OrderService",
         "PaymentService",
         symmetric=True,
-        latency=50,
-        bandwidth=10,
+        **prune_assets(latency=50, bandwidth=10),
     )
     app.add_edge(
         "OrderService",
         "ShippingService",
         symmetric=True,
-        latency=70,
-        bandwidth=10,
+        **prune_assets(app.edge_assets, latency=70, bandwidth=10),
     )
 
     return app
