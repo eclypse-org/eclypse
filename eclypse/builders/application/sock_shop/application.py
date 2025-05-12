@@ -1,5 +1,14 @@
 # pylint: disable=unnecessary-lambda-assignment,import-outside-toplevel
-"""The Sock Shop application."""
+"""Factory for the SockShop microservice application.
+
+Defines the SockShop e-commerce demo as an Application object, modeling typical user interactions
+such as browsing, cart updates, checkout, and order tracking. Each microservice is assigned
+realistic compute and performance requirements.
+
+Service interactions and structure are based on:
+Sock Shop — A Microservices Demo Application,
+https://github.com/ocp-power-demos/sock-shop-demo
+"""
 
 from __future__ import annotations
 

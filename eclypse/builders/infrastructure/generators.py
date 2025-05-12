@@ -42,8 +42,8 @@ DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 
 
 def hierarchical(
-    infrastructure_id: str,
     n: int,
+    infrastructure_id: str = "Hierarchical",
     symmetric: bool = False,
     node_partitioning: Optional[List[float]] = None,
     connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
@@ -151,8 +151,8 @@ def hierarchical(
 
 
 def star(
-    infrastructure_id: str,
     n_clients: int,
+    infrastructure_id: str = "Star",
     symmetric: bool = False,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
@@ -216,8 +216,8 @@ def star(
 
 
 def random(
-    infrastructure_id: str,
     n: int,
+    infrastructure_id: str = "Random",
     p: float = 0.5,
     symmetric: bool = False,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
