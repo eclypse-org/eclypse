@@ -1,9 +1,12 @@
-"""Module for the infrastructure builders.
-It has the following builders:
+"""Hierarchical infrastructure generator.
 
-- hierarchical: A hierarchical infrastructure made of nodes partitioned into groups.
-- star: A star infrastructure with clients connected to a central node.
-- random: A random infrastructure with nodes connected with a given probability.
+This module provides a generator function for creating hierarchical network topologies.
+Nodes are partitioned into multiple layers according to a specified distribution, and
+connections are established both within and across layers based on custom or uniform
+probability models.
+
+Such topologies are useful for modeling structured systems with layered organization,
+like sensor networks, enterprise infrastructures, or cloud-fog-edge computing stacks.
 """
 
 from __future__ import annotations
@@ -12,7 +15,6 @@ import math
 import random as rnd
 from typing import (
     TYPE_CHECKING,
-    Any,
     Callable,
     Dict,
     Generator,
@@ -150,159 +152,6 @@ def hierarchical(
     return infrastructure
 
 
-def star(
-    n_clients: int,
-    infrastructure_id: str = "Star",
-    symmetric: bool = False,
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
-    center_assets_values: Optional[Dict[str, Any]] = None,
-    outer_assets_values: Optional[Dict[str, Any]] = None,
-    include_default_assets: bool = False,
-    resource_init: Literal["min", "max"] = "min",
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    seed: Optional[int] = None,
-):
-    """Create a star infrastructure with `n_clients` clients connected to a central
-    node. The group of the clients can be specified.
-
-    Args:
-        infrastructure_id (str): The ID of the infrastructure.
-        n_clients (int): The number of clients in the infrastructure.
-        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
-            Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        center_assets_values (Optional[Dict[str, Any]]): The assets for the center node. \
-            Defaults to None.
-        outer_assets_values (Optional[Dict[str, Any]]): The assets for the outer nodes. \
-            Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "min".
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
-            compute the paths between nodes. Defaults to None.
-        seed (Optional[int]): The seed for the random number generator. Defaults to None.
-
-    Returns:
-        Infrastructure: The star infrastructure.
-    """
-
-    infrastructure = Infrastructure(
-        infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
-        node_assets=node_assets,
-        edge_assets=link_assets,
-        include_default_assets=include_default_assets,
-        path_algorithm=path_algorithm,
-        resource_init=resource_init,
-        seed=seed,
-    )
-    _outer_assets_values = {} if outer_assets_values is None else outer_assets_values
-    _center_assets_values = {} if center_assets_values is None else center_assets_values
-    for i in range(n_clients):
-        infrastructure.add_node(f"outer_{i}", **_outer_assets_values)
-    infrastructure.add_node("center", **_center_assets_values)
-
-    for i in range(n_clients):
-        infrastructure.add_edge(f"outer_{i}", "center", symmetric=symmetric)
-
-    return infrastructure
-
-
-def random(
-    n: int,
-    infrastructure_id: str = "Random",
-    p: float = 0.5,
-    symmetric: bool = False,
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
-    include_default_assets: bool = False,
-    resource_init: Literal["min", "max"] = "min",
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    seed: Optional[int] = None,
-):
-    """Create a random infrastructure with `n` nodes and a given probability `p` of
-    connecting two nodes. The nodes are partitioned into groups according to the
-    provided distribution.
-
-    Args:
-        infrastructure_id (str): The ID of the infrastructure.
-        n (int): The number of nodes in the infrastructure.
-        p (float): The probability of connecting two nodes. Defaults to 0.5.
-        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
-            Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "min".
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
-            compute the paths between nodes. Defaults to None.
-        seed (Optional[int]): The seed for the random number generator. Defaults to None.
-
-    Returns:
-        Infrastructure: The random infrastructure.
-    """
-
-    infrastructure = Infrastructure(
-        infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
-        node_assets=node_assets,
-        edge_assets=link_assets,
-        include_default_assets=include_default_assets,
-        resource_init=resource_init,
-        path_algorithm=path_algorithm,
-        seed=seed,
-    )
-
-    for i in range(n):
-        infrastructure.add_node(f"n{i}")
-
-    nodes = list(infrastructure.nodes)
-    random_graph = nx.erdos_renyi_graph(n, p, seed=seed)
-    for u, v in random_graph.edges:
-        infrastructure.add_edge(nodes[u], nodes[v], symmetric=symmetric)
-
-    return infrastructure
-
-
-def _uniform_level_connectivity(
-    l: List[str], l1: List[str], p: float, seed: Optional[int] = None
-) -> Generator[Tuple[str, str], None, None]:
-    """Generates the connectivity between levels in a hierarchical infrastructure.
-
-    Args:
-        n (int): The number of nodes in the higher level.
-        m (int): The number of nodes in the lower level.
-
-    Yields:
-        Tuple[str, str]: The links between nodes in the higher and lower levels.
-    """
-    r = rnd.Random(seed)
-    connected = [False for _ in l1]
-    for parent in l:
-        for i, child in enumerate(l1):
-            if r.random() < p:
-                yield parent, child
-                connected[i] = True
-
-    # ensure at least one connection per child
-    for i, child in enumerate(l1):
-        if not connected[i]:
-            yield r.choice(l), child
-
-
 @no_type_check
 def _get_connectivity_functions(
     connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
@@ -345,3 +194,29 @@ def _get_connectivity_functions(
         raise ValueError("Cross-level connectivity must be a function or a list")
 
     return connectivity_fn
+
+
+def _uniform_level_connectivity(
+    l: List[str], l1: List[str], p: float, seed: Optional[int] = None
+) -> Generator[Tuple[str, str], None, None]:
+    """Generates the connectivity between levels in a hierarchical infrastructure.
+
+    Args:
+        n (int): The number of nodes in the higher level.
+        m (int): The number of nodes in the lower level.
+
+    Yields:
+        Tuple[str, str]: The links between nodes in the higher and lower levels.
+    """
+    r = rnd.Random(seed)
+    connected = [False for _ in l1]
+    for parent in l:
+        for i, child in enumerate(l1):
+            if r.random() < p:
+                yield parent, child
+                connected[i] = True
+
+    # ensure at least one connection per child
+    for i, child in enumerate(l1):
+        if not connected[i]:
+            yield r.choice(l), child

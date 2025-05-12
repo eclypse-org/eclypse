@@ -45,6 +45,26 @@ def get_orion_cev(
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
 ) -> Infrastructure:
+    """Create the Orion CEV infrastructure.
+
+    Args:
+        infrastructure_id (str): The ID of the infrastructure. Defaults to "OrionCEV".
+        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
+            Defaults to None.
+        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
+            Defaults to None.
+        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
+        edge_assets (Optional[Dict[str, Asset]]): The assets for the edges. Defaults to None.
+        include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
+            Defaults to "max".
+        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+            compute the paths between nodes. Defaults to None.
+        seed (Optional[int]): The seed for the random number generator. Defaults to None.
+
+    Returns:
+        Infrastructure: The Orion CEV infrastructure.
+    """
 
     infra = Infrastructure(
         infrastructure_id=infrastructure_id,
@@ -205,6 +225,3 @@ def get_orion_cev(
         )
 
     return infra
-
-
-a = get_orion_cev()
