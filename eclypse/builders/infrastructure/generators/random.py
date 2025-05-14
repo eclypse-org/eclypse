@@ -20,22 +20,22 @@ from typing import (
     Optional,
 )
 
-import networkx as nx
-
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
+    import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
     )
 
     from eclypse.graph.assets import Asset
+    from eclypse.placement.strategies import PlacementStrategy
 
 
 def random(
     n: int,
-    infrastructure_id: str = "Random",
+    infrastructure_id: str = "random",
     p: float = 0.5,
     symmetric: bool = False,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
@@ -45,6 +45,7 @@ def random(
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
+    placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ):
     """Create a random infrastructure with `n` nodes and a given probability `p` of
@@ -81,6 +82,7 @@ def random(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
+        placement_strategy=placement_strategy,
         seed=seed,
     )
 

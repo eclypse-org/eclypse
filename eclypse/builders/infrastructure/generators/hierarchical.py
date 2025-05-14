@@ -26,26 +26,27 @@ from typing import (
     no_type_check,
 )
 
-import networkx as nx
 import numpy as np
 
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
     from eclypse_core.utils.types import ConnectivityFn
+    from networkx import nx
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
     )
 
     from eclypse.graph.assets import Asset
+    from eclypse.placement.strategies import PlacementStrategy
 
 DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 
 
 def hierarchical(
     n: int,
-    infrastructure_id: str = "Hierarchical",
+    infrastructure_id: str = "hierarchical",
     symmetric: bool = False,
     node_partitioning: Optional[List[float]] = None,
     connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
@@ -56,6 +57,7 @@ def hierarchical(
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "max",
+    placement_strategy: Optional[PlacementStrategy] = None,
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
 ):
@@ -135,6 +137,7 @@ def hierarchical(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
+        placement_strategy=placement_strategy,
         seed=seed,
     )
 

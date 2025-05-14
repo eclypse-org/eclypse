@@ -21,22 +21,22 @@ from typing import (
     Optional,
 )
 
-import networkx as nx
-
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
+    import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
     )
 
     from eclypse.graph.assets import Asset
+    from eclypse.placement.strategies import PlacementStrategy
 
 
 def star(
     n_clients: int,
-    infrastructure_id: str = "Star",
+    infrastructure_id: str = "star",
     symmetric: bool = False,
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
@@ -47,6 +47,7 @@ def star(
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
+    placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ):
     """Create a star infrastructure with `n_clients` clients connected to a central
@@ -83,8 +84,9 @@ def star(
         node_assets=node_assets,
         edge_assets=link_assets,
         include_default_assets=include_default_assets,
-        path_algorithm=path_algorithm,
         resource_init=resource_init,
+        path_algorithm=path_algorithm,
+        placement_strategy=placement_strategy,
         seed=seed,
     )
     _outer_assets_values = {} if outer_assets_values is None else outer_assets_values

@@ -25,7 +25,6 @@ import networkx as nx
 from eclypse_core.utils.tools import prune_assets
 
 from eclypse.graph import Infrastructure
-from eclypse.graph.assets import Asset
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import (
@@ -33,9 +32,12 @@ if TYPE_CHECKING:
         NodeView,
     )
 
+    from eclypse.graph.assets import Asset
+    from eclypse.placement.strategies import PlacementStrategy
+
 
 def get_orion_cev(
-    infrastructure_id: str = "OrionCEV",
+    infrastructure_id: str = "orion_cev",
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
@@ -43,6 +45,7 @@ def get_orion_cev(
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
+    placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ) -> Infrastructure:
     """Create the Orion CEV infrastructure.
@@ -60,6 +63,8 @@ def get_orion_cev(
             Defaults to "max".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
             compute the paths between nodes. Defaults to None.
+        placement_strategy (Optional[PlacementStrategy]): The strategy to place the resources.\
+            Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:
@@ -75,6 +80,7 @@ def get_orion_cev(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
+        placement_strategy=placement_strategy,
         seed=seed,
     )
 

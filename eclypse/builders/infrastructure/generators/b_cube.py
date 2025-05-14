@@ -1,16 +1,22 @@
-"""Fat-Tree infrastructure generator.
+"""BCube infrastructure generator.
 
-This module provides a factory function to instantiate a Fat-Tree network topology
-commonly used in data center environments. The topology includes core, aggregation,
-and edge switches, as well as hosts connected to edge switches.
+This module provides a factory function to instantiate a BCube(k, n) network topology,
+a server-centric architecture designed for modular data centers. The topology is
+constructed recursively, enabling high fault-tolerance and multiple parallel paths
+between servers.
 
-The size and structure of the topology are determined by the `k` parameter, which must
-be an even number. The number of pods is equal to `k`, and the total number of hosts
-is `k^3 / 4`.
+The topology is defined by two parameters:
+- `k`: the recursion level (BCube₀, BCube₁, ..., BCube_k)
+- `n`: the number of ports per switch (and switches per level)
+
+A BCube(k, n) contains:
+- n^(k+1) servers
+- k * n^k switches
+- Each server is connected to (k + 1) switches, one per level.
 
 The implementation follows the definition from:
-Mohammad Al-Fares et al. "A Scalable, Commodity Data Center Network Architecture."
-ACM SIGCOMM CCR, 2008, https://dl.acm.org/doi/10.1145/1402958.1402967
+Guo et al. "BCube: a high performance, server-centric network architecture for modular data centers."
+ACM SIGCOMM Computer Communication Review, 2009. https://dl.acm.org/doi/10.1145/1592568.1592577
 """
 
 from __future__ import annotations
@@ -37,9 +43,10 @@ if TYPE_CHECKING:
     from eclypse.placement.strategies import PlacementStrategy
 
 
-def fat_tree(
+def b_cube(
     k: int,
-    infrastructure_id: str = "fat_tree",
+    n: int,
+    infrastructure_id: str = "b_cube",
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
@@ -50,15 +57,16 @@ def fat_tree(
     placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ) -> Infrastructure:
-    """Factory for generating a Fat-Tree network topology.
+    """Factory for generating a BCube(k, n) topology.
 
-    This function builds a symmetrical Fat-Tree structure with parameter `k`,
-    used to simulate scalable data center topologies. The resulting Infrastructure
-    includes core, aggregation, and edge switches, as well as connected hosts.
+    A BCube is a server-centric topology designed for modular data centers.
+    It provides multiple parallel paths between servers and is highly fault-tolerant.
 
     Args:
+        k (int): Recursion level of the BCube. Determines depth (e.g., 0 = star).
+        n (int): Number of ports per switch, and number of switches per level.
         infrastructure_id (str): Unique ID for the infrastructure instance.\
-            Defaults to "fat_tree".
+            Defaults to "b_cube".
         node_update_policy (Optional[Callable[[NodeView], None]]): Policy to update nodes.\
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): Policy to update links.\
@@ -78,11 +86,8 @@ def fat_tree(
         seed (Optional[int]): Seed for random number generation. Defaults to None.
 
     Returns:
-        Infrastructure: A Fat-Tree topology with switches and hosts.
+        Infrastructure: The BCube topology as an Infrastructure object.
     """
-    if k % 2 != 0:
-        raise ValueError(f"k must be an even number (got {k}) for a Fat-Tree topology.")
-
     infra = Infrastructure(
         infrastructure_id=infrastructure_id,
         node_update_policy=node_update_policy,
@@ -95,45 +100,25 @@ def fat_tree(
         placement_strategy=placement_strategy,
         seed=seed,
     )
-    num_pods = k
-    num_core_switches = (num_pods // 2) ** 2
-    num_agg_switches_per_pod = num_pods // 2
-    num_edge_switches_per_pod = num_pods // 2
-    num_hosts_per_edge = num_pods // 2
 
-    # Core switches
-    for i in range(num_core_switches):
-        core_id = f"core_{i}"
-        infra.add_node(core_id)
+    # Total number of servers
+    num_servers = n ** (k + 1)
+    servers = [f"server_{i}" for i in range(num_servers)]
+    for s in servers:
+        infra.add_node(s)
 
-    # Pods
-    for pod in range(num_pods):
-        # Aggregation switches
-        agg_switches = []
-        for a in range(num_agg_switches_per_pod):
-            agg_id = f"agg_{pod}_{a}"
-            agg_switches.append(agg_id)
-            infra.add_node(agg_id)
-
-        # Edge switches + hosts
-        for e in range(num_edge_switches_per_pod):
-            edge_id = f"edge_{pod}_{e}"
-            infra.add_node(edge_id)
-            # Edge <-> Aggregation
-            for agg_id in agg_switches:
-                infra.add_edge(edge_id, agg_id, symmetric=True)
-
-            # Hosts under edge
-            for h in range(num_hosts_per_edge):
-                host_id = f"host_{pod}_{e}_{h}"
-                infra.add_node(host_id)
-                infra.add_edge(host_id, edge_id, symmetric=True)
-
-        # Aggregation <-> Core
-        for i, agg_id in enumerate(agg_switches):
-            for j in range(num_pods // 2):
-                core_index = i * (num_pods // 2) + j
-                core_id = f"core_{core_index}"
-                infra.add_edge(agg_id, core_id, symmetric=True)
+    # Add switches and connect them to servers
+    for level in range(k + 1):
+        num_switches = n**level
+        for sw_idx in range(num_switches):
+            sw_id = f"sw_{level}_{sw_idx}"
+            infra.add_node(sw_id)
+            for port in range(n):
+                if level == 0:
+                    server_idx = sw_idx * n + port
+                else:
+                    server_idx = (port * (n**level)) + sw_idx
+                server_id = f"server_{server_idx}"
+                infra.add_edge(sw_id, server_id, symmetric=True)
 
     return infra
