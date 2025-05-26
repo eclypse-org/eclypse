@@ -61,11 +61,11 @@ After you :doc:`define your application(s) and infrastructure <topology>`, in or
 
    .. tip::
 
-   ECLYPSE manages simulation reporting by building and returning `pandas.DataFrame <https://pandas.pydata.org/docs/reference/frame.html>`_ objects.
-   All collected metrics and results in the report are structured using the *de-facto standard* `pandas <https://pandas.pydata.org/docs/index.html>`_ library,
-   giving you full flexibility to analyse, filter, visualise, or export the data using standard Python tools.
+      ECLYPSE manages simulation reporting by building and returning `pandas.DataFrame <https://pandas.pydata.org/docs/reference/frame.html>`_ objects.
+      All collected metrics and results in the report are structured using the *de-facto standard* `pandas <https://pandas.pydata.org/docs/index.html>`_ library,
+      giving you full flexibility to analyse, filter, visualise, or export the data using standard Python tools.
 
-   For a complete list of available report formats, refer to the :class:`~eclypse.report.report.Report` class documentation.
+      For a complete list of available report formats, refer to the :class:`~eclypse.report.report.Report` class documentation.
 
 
 That's it! You have successfully set up and ran your first simulation using ECLYPSE.
