@@ -816,21 +816,21 @@ files = [
 
 [[package]]
 name = "eclypse-core"
-version = "0.6.21"
+version = "0.6.22"
 description = "Core package of the ECLYPSE framework."
 optional = false
 python-versions = "<3.13,>=3.10"
 groups = ["main"]
 files = [
-    {file = "eclypse_core-0.6.21-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:1b47c5425328da90d953bf129eb3f30cbea786b4f29ca38b6bf7db3845e5f4e6"},
-    {file = "eclypse_core-0.6.21-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:023d16a4a4e55ae20eb9b68bce17788bdef01727769500345adeefbc669d7b23"},
-    {file = "eclypse_core-0.6.21-cp310-cp310-manylinux_2_39_x86_64.whl", hash = "sha256:0734f4c70f5080914cf9fadf8bc5965020c06c20064980d280cebd04d0ef7b95"},
-    {file = "eclypse_core-0.6.21-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:a6d4d1f6dfb76a7c6dbfca8df6bd0f95a7322f28015936fc38a5fd04e843873a"},
-    {file = "eclypse_core-0.6.21-cp311-cp311-manylinux_2_35_x86_64.whl", hash = "sha256:a42bc347d0d27412396be0e7f0ae3be4c5d367e61536da1cbf274b89f13e5d65"},
-    {file = "eclypse_core-0.6.21-cp311-cp311-manylinux_2_39_x86_64.whl", hash = "sha256:558b32321747f85ff87493d546ef39773d82f0c324b4f48aa6068514bb1bd556"},
-    {file = "eclypse_core-0.6.21-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:b7ea30bbc1cf176ea1930734f8d29a1af1cdd54f52df535784f0815a77fe55e7"},
-    {file = "eclypse_core-0.6.21-cp312-cp312-manylinux_2_35_x86_64.whl", hash = "sha256:9390e3e6596b91350f8d7f5f9d329f4031e373079fc15c87609c454f31316e62"},
-    {file = "eclypse_core-0.6.21-cp312-cp312-manylinux_2_39_x86_64.whl", hash = "sha256:73d306c9bb104fa557d3680247721768b3daad95e5b3a4f7c8fdb0cf20bb0899"},
+    {file = "eclypse_core-0.6.22-cp310-cp310-macosx_14_0_arm64.whl", hash = "sha256:22a5a3c32ee4c84df64e59546905fe5bdfbf74f42fcc8202d7c75a479c6a18ce"},
+    {file = "eclypse_core-0.6.22-cp310-cp310-manylinux_2_35_x86_64.whl", hash = "sha256:3a64dda45f3732cf8b31e9a289d982f89fdef560b18fbceba08f612f02a4c5df"},
+    {file = "eclypse_core-0.6.22-cp310-cp310-manylinux_2_39_x86_64.whl", hash = "sha256:c3bfbbe4e11fe726a1827fa3fe18d76db005fd048556e4edcddfdf9ce19d21d4"},
+    {file = "eclypse_core-0.6.22-cp311-cp311-macosx_14_0_arm64.whl", hash = "sha256:38bf563fe956275611e791b865be74054afe11f8de1da5dce0d2bedf8ca9b598"},
+    {file = "eclypse_core-0.6.22-cp311-cp311-manylinux_2_35_x86_64.whl", hash = "sha256:a16237bf1c5f0066a0e96c5ff199a56ed990780f331777c8c41dea307083526a"},
+    {file = "eclypse_core-0.6.22-cp311-cp311-manylinux_2_39_x86_64.whl", hash = "sha256:ee6020f9003940e3e7ce2f9dab5443682af23fa9bd0bf3df55ff964bca3e9805"},
+    {file = "eclypse_core-0.6.22-cp312-cp312-macosx_14_0_arm64.whl", hash = "sha256:9467faedefebae0219793a99f1321b8709858692190bb3ef91a77ebdc7d98e09"},
+    {file = "eclypse_core-0.6.22-cp312-cp312-manylinux_2_35_x86_64.whl", hash = "sha256:09cfb65a0f584ae87071c722f91a71819fd8183d7ca6b736e73b2545394271ea"},
+    {file = "eclypse_core-0.6.22-cp312-cp312-manylinux_2_39_x86_64.whl", hash = "sha256:43fce3c208ca44f6793049a71efad42bdc1dc78096fc8938c9a7f9a78ed5b4c9"},
 ]
 
 [package.dependencies]
@@ -4305,4 +4305,4 @@ remote = ["ray"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10, <3.13"
-content-hash = "a289a24980cac579d6cc4c7b626c61e9e095dba5743685cc2b6793caa4d90447"
+content-hash = "acd7099d65fc12a74d73a65e17d2648df89d929f0ae7f4d0d609502b3bb55e43"
