@@ -6,8 +6,8 @@ authentication, and profile management.
     - Manages user data, including credentials, personal information, and addresses.
 """
 
-from eclypse_core.remote.communication import rest
-from eclypse_core.remote.service import RESTService
+from eclypse.remote.communication import rest
+from eclypse.remote.service import RESTService
 
 
 class UserService(RESTService):

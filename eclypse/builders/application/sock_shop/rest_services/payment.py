@@ -9,9 +9,10 @@ the SockShop application.
 import os
 import random as rnd
 
-from eclypse_core.remote.communication import rest
-from eclypse_core.remote.service import RESTService
 from eclypse_core.utils.constants import RND_SEED
+
+from eclypse.remote.communication import rest
+from eclypse.remote.service import RESTService
 
 
 class PaymentService(RESTService):

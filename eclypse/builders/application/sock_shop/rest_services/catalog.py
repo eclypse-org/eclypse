@@ -7,8 +7,8 @@
     - Interfaces with the underlying data store to fetch product data.
 """
 
-from eclypse_core.remote.communication import rest
-from eclypse_core.remote.service import RESTService
+from eclypse.remote.communication import rest
+from eclypse.remote.service import RESTService
 
 
 class CatalogService(RESTService):

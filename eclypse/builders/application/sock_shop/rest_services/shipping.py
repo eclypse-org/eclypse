@@ -7,8 +7,8 @@ reach customers.
     - Coordinates with third-party shipping providers for physical delivery.
 """
 
-from eclypse_core.remote.communication import rest
-from eclypse_core.remote.service import RESTService
+from eclypse.remote.communication import rest
+from eclypse.remote.service import RESTService
 
 
 class ShippingService(RESTService):

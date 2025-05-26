@@ -10,8 +10,8 @@ different services like payment, inventory, and shipping.
 
 import random as rnd
 
-from eclypse_core.remote.communication import mpi
-from eclypse_core.remote.service import Service
+from eclypse.remote.communication import mpi
+from eclypse.remote.service import Service
 
 
 class OrderService(Service):

@@ -6,8 +6,8 @@ their desired items before making a purchase.
     - Stores cart data temporarily for guest users or long-term for registered users.
 """
 
-from eclypse_core.remote.communication import rest
-from eclypse_core.remote.service import RESTService
+from eclypse.remote.communication import rest
+from eclypse.remote.service import RESTService
 
 
 class CartService(RESTService):
