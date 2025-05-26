@@ -1,5 +1,5 @@
 # pylint: disable=protected-access
-"""Default metrics to be reported by the ECLYPSE SimulationReporter."""
+"""Default metrics to be reported by the ECLYPSE Reporter."""
 
 from __future__ import annotations
 
@@ -31,12 +31,12 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
-    from eclypse_core.remote.service import Service
 
     from eclypse.graph import (
         Application,
         Infrastructure,
     )
+    from eclypse.remote.service import Service
 
 
 @metric.application(report=[DEFAULT_REPORT_TYPE])

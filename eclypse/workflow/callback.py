@@ -34,7 +34,7 @@ def simulation(
         triggers (Optional[Dict[str, Callable]], optional): \
             The functions that trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -74,7 +74,7 @@ def application(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -115,7 +115,7 @@ def service(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         remote (bool, optional): Whether the callback is remote. Defaults to False.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
@@ -156,7 +156,7 @@ def interaction(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -195,7 +195,7 @@ def infrastructure(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:
@@ -236,7 +236,7 @@ def node(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         remote (bool, optional): Whether the callback is remote. Defaults to False.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
@@ -278,7 +278,7 @@ def link(
         triggers (Optional[Dict[str, Callable]], optional): The functions that \
             trigger the callback. Defaults to None.
         report (Optional[Union[str, List[str]], optional): \
-            The type(s) of reporter to use for reporting the callback. Defaults to DEFAULT_REPORT_TYPE.
+            The type(s) of reporter to use for reporting the callback. Defaults to csv.
         name (Optional[str], optional): The name of the callback. Defaults to None.
 
     Returns:

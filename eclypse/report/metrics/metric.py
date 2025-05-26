@@ -34,7 +34,7 @@ def simulation(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -73,7 +73,7 @@ def application(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -114,7 +114,7 @@ def service(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -155,7 +155,7 @@ def interaction(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -195,7 +195,7 @@ def infrastructure(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -236,7 +236,7 @@ def node(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:
@@ -277,7 +277,7 @@ def link(
         triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
             Defaults to None.
         report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to DEFAULT_REPORT_TYPE.
+            The reporter for the metric. Defaults to csv.
         name (Optional[str], optional): The name of the metric. Defaults to None.
 
     Returns:

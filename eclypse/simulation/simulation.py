@@ -1,3 +1,10 @@
+"""Module for the Simulation class, which extends the core simulation class to provide
+the reporting funcionality.
+
+For the complete documentation, refer to the :class:`~eclypse_core.simulation.simulation.Simulation`
+core class.
+"""
+
 from __future__ import annotations
 
 from typing import (
@@ -16,6 +23,10 @@ if TYPE_CHECKING:
 
 
 class Simulation(_Simulation):
+    """Class to represent an ECLYPSE simulation.
+
+    It extends the core simulation class to provide the reporting functionality.
+    """
 
     def __init__(
         self,

@@ -1,3 +1,5 @@
+"""Module for the JSON reporter, used to report simulation metrics in JSON format."""
+
 from __future__ import annotations
 
 import json

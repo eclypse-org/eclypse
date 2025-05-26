@@ -1,6 +1,6 @@
 """Wrapper package for core utils, constants, and exceptions.
 
-For the complete documentation, refer to :py:mod:`eclypse_core.utils`.
+For the complete documentation, refer to the :py:mod:`~eclypse_core.utils` core package.
 """
 
 from eclypse_core.utils.constants import (

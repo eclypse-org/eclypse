@@ -1,3 +1,5 @@
+"""Module for the Report class."""
+
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -22,8 +24,30 @@ REPORT_TYPES = list(get_args(CallbackType))
 
 
 class Report:
+    """Class to represent the report of a simulation, built from the CSV files, thus
+    *working only if the simulation reports metrics in CSV format*.
+
+    It provides methods to access the dataframes for the different report types, such as
+    application, service, interaction, infrastructure, node, link, and simulation. It
+    also provides methods to filter the dataframes based on the report range, step, and
+    additional filters like event IDs, callback IDs, application IDs, service IDs, etc.
+
+    The report is initialised with the path to the simulation directory, where it
+    expects to find a "csv" directory containing the CSV files for the different report
+    types.
+    """
 
     def __init__(self, simulation_path: Union[str, Path]):
+        """Initialise the Report with the path to the simulation directory.
+
+        Args:
+
+            simulation_path (Union[str, Path]): The path to the simulation directory.
+
+        Raises:
+            FileNotFoundError: If the "csv" directory does not exist in the simulation path.
+        """
+
         self._sim_path = Path(simulation_path)
         self._stats_path = self._sim_path / "csv"
         if not self._stats_path.exists():
@@ -40,6 +64,23 @@ class Report:
         callback_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the application metrics, filtered by the given
+        report_range, report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the application metrics.
+        """
 
         return self.to_dataframe(
             "application",
@@ -59,6 +100,26 @@ class Report:
         application_ids: Optional[Union[str, List[str]]] = None,
         service_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the service metrics, filtered by the given report_range,
+        report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
+                Defaults to None.
+            service_ids (Optional[Union[str, List[str]]], optional): Service IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+
+            pd.DataFrame: The filtered dataframe for the service metrics.
+        """
 
         return self.to_dataframe(
             "service",
@@ -80,6 +141,27 @@ class Report:
         targets: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the interaction metrics, filtered by the given
+        report_range, report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+            sources (Optional[Union[str, List[str]]], optional): Source IDs to filter by. \
+                Defaults to None.
+            targets (Optional[Union[str, List[str]]], optional): Target IDs to filter by. \
+                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the interaction metrics.
+        """
 
         return self.to_dataframe(
             "interaction",
@@ -99,6 +181,21 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the infrastructure metrics, filtered by the given
+        report_range, report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the infrastructure metrics.
+        """
 
         return self.to_dataframe(
             "infrastructure",
@@ -116,6 +213,23 @@ class Report:
         callback_ids: Optional[Union[str, List[str]]] = None,
         node_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the node metrics, filtered by the given report_range,
+        report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+            node_ids (Optional[Union[str, List[str]]], optional): Node IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the node metrics.
+        """
 
         return self.to_dataframe(
             "node",
@@ -135,6 +249,25 @@ class Report:
         sources: Optional[Union[str, List[str]]] = None,
         targets: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
+        """Get a dataframe for the link metrics, filtered by the given report_range,
+        report_step and additional filters.
+
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+            sources (Optional[Union[str, List[str]]], optional): Source IDs to filter by. \
+                Defaults to None.
+            targets (Optional[Union[str, List[str]]], optional): Target IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the link metrics.
+        """
 
         return self.to_dataframe(
             "link",
@@ -152,8 +285,22 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
-    ) -> Dict[str, pd.DataFrame]:
+    ) -> pd.DataFrame:
+        """Get a dataframe for the simulation metrics, filtered by the given
+        report_range, report_step and additional filters.
 
+        Args:
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            pd.DataFrame: The filtered dataframe for the simulation metrics.
+        """
         return self.to_dataframe(
             "simulation",
             report_range=report_range,
@@ -170,6 +317,27 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         callback_ids: Optional[Union[str, List[str]]] = None,
     ) -> Dict[str, pd.DataFrame]:
+        """Get dataframes for the specified report types, filtered by the given
+        report_range, report_step and additional filters.
+
+        Args:
+            report_types (Optional[List[CallbackType]], optional): The types of reports to get. \
+                Defaults to None, which means all report types.
+            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
+                Defaults to (0, MAX_FLOAT).
+            report_step (int, optional): The step to use when filtering. Defaults to 1.
+            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
+                Defaults to None.
+            callback_ids (Optional[Union[str, List[str]]], optional): Callback IDs to filter by. \
+                Defaults to None.
+
+        Returns:
+            Dict[str, pd.DataFrame]: A dictionary where keys are report types and values are \
+                the corresponding filtered dataframes.
+
+        Raises:
+            ValueError: If an invalid report type is provided.
+        """
 
         if report_types is None:
             report_types = REPORT_TYPES
@@ -275,6 +443,11 @@ class Report:
 
     @property
     def config(self) -> Dict[str, Any]:
+        """Get the configuration of the simulation, loaded from the config.json file.
+
+        Returns:
+            Dict[str, Any]: The configuration of the simulation.
+        """
         if self._config is None:
             file_path = self._sim_path / "config.json"
             with open(file_path, "r", encoding="utf-8") as config_file:

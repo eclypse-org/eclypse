@@ -1,6 +1,7 @@
 """Package for managing application services implementations.
 
-For the complete documentation, refer to :py:mod:`eclypse_core.remote.service`.
+For the complete documentation, refer to the :py:mod:`~eclypse_core.remote.service`
+core package.
 """
 
 from eclypse_core.remote.service import (
