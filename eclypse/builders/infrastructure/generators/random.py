@@ -43,6 +43,7 @@ def random(
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
+    strict: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     placement_strategy: Optional[PlacementStrategy] = None,
@@ -63,10 +64,14 @@ def random(
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
         link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        strict (bool): If True, raises an error if the asset values are not \
+            consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
             compute the paths between nodes. Defaults to None.
+        placement_strategy (Optional[PlacementStrategy]): The strategy to place the resources.\
+            Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:
@@ -87,11 +92,11 @@ def random(
     )
 
     for i in range(n):
-        infrastructure.add_node(f"n{i}")
+        infrastructure.add_node(f"n{i}", strict=strict)
 
     nodes = list(infrastructure.nodes)
     random_graph = nx.erdos_renyi_graph(n, p, seed=seed)
     for u, v in random_graph.edges:
-        infrastructure.add_edge(nodes[u], nodes[v], symmetric=symmetric)
+        infrastructure.add_edge(nodes[u], nodes[v], symmetric=symmetric, strict=strict)
 
     return infrastructure

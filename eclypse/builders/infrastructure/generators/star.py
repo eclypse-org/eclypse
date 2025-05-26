@@ -45,6 +45,7 @@ def star(
     center_assets_values: Optional[Dict[str, Any]] = None,
     outer_assets_values: Optional[Dict[str, Any]] = None,
     include_default_assets: bool = False,
+    strict: bool = False,
     resource_init: Literal["min", "max"] = "min",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     placement_strategy: Optional[PlacementStrategy] = None,
@@ -67,6 +68,8 @@ def star(
         outer_assets_values (Optional[Dict[str, Any]]): The assets for the outer nodes. \
             Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        strict (bool): If True, raises an error if the asset values are not \
+            consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
@@ -92,10 +95,12 @@ def star(
     _outer_assets_values = {} if outer_assets_values is None else outer_assets_values
     _center_assets_values = {} if center_assets_values is None else center_assets_values
     for i in range(n_clients):
-        infrastructure.add_node(f"outer_{i}", **_outer_assets_values)
-    infrastructure.add_node("center", **_center_assets_values)
+        infrastructure.add_node(f"outer_{i}", strict=strict, **_outer_assets_values)
+    infrastructure.add_node("center", strict=strict, **_center_assets_values)
 
     for i in range(n_clients):
-        infrastructure.add_edge(f"outer_{i}", "center", symmetric=symmetric)
+        infrastructure.add_edge(
+            f"outer_{i}", "center", symmetric=symmetric, strict=strict
+        )
 
     return infrastructure

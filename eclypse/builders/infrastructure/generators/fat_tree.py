@@ -45,6 +45,7 @@ def fat_tree(
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
+    strict: bool = False,
     resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     placement_strategy: Optional[PlacementStrategy] = None,
@@ -69,6 +70,8 @@ def fat_tree(
             Defaults to None.
         include_default_assets (bool): Whether to include default assets. \
             Defaults to False.
+        strict (bool): If True, raises an error if the asset values are not \
+            consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): Initialization policy for resources. \
             Defaults to "max".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): \
@@ -104,7 +107,7 @@ def fat_tree(
     # Core switches
     for i in range(num_core_switches):
         core_id = f"core_{i}"
-        infra.add_node(core_id)
+        infra.add_node(core_id, strict=strict)
 
     # Pods
     for pod in range(num_pods):
@@ -113,27 +116,27 @@ def fat_tree(
         for a in range(num_agg_switches_per_pod):
             agg_id = f"agg_{pod}_{a}"
             agg_switches.append(agg_id)
-            infra.add_node(agg_id)
+            infra.add_node(agg_id, strict=strict)
 
         # Edge switches + hosts
         for e in range(num_edge_switches_per_pod):
             edge_id = f"edge_{pod}_{e}"
-            infra.add_node(edge_id)
+            infra.add_node(edge_id, strict=strict)
             # Edge <-> Aggregation
             for agg_id in agg_switches:
-                infra.add_edge(edge_id, agg_id, symmetric=True)
+                infra.add_edge(edge_id, agg_id, symmetric=True, strict=strict)
 
             # Hosts under edge
             for h in range(num_hosts_per_edge):
                 host_id = f"host_{pod}_{e}_{h}"
-                infra.add_node(host_id)
-                infra.add_edge(host_id, edge_id, symmetric=True)
+                infra.add_node(host_id, strict=strict)
+                infra.add_edge(host_id, edge_id, symmetric=True, strict=strict)
 
         # Aggregation <-> Core
         for i, agg_id in enumerate(agg_switches):
             for j in range(num_pods // 2):
                 core_index = i * (num_pods // 2) + j
                 core_id = f"core_{core_index}"
-                infra.add_edge(agg_id, core_id, symmetric=True)
+                infra.add_edge(agg_id, core_id, symmetric=True, strict=strict)
 
     return infra

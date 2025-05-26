@@ -56,6 +56,7 @@ def hierarchical(
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
+    strict: bool = False,
     resource_init: Literal["min", "max"] = "max",
     placement_strategy: Optional[PlacementStrategy] = None,
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
@@ -87,6 +88,8 @@ def hierarchical(
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
         link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        strict (bool): If True, raises an error if the asset values are not \
+            consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
@@ -143,15 +146,17 @@ def hierarchical(
 
     for i in range(levels):
         for node in nodes[i]:
-            infrastructure.add_node(node)
+            infrastructure.add_node(node, strict=strict)
 
     for level in range(levels):
         if level < levels - 1:
             for parent, child in connectivity_fn[level](nodes[level], nodes[level + 1]):
-                infrastructure.add_edge(parent, child, symmetric=symmetric)
+                infrastructure.add_edge(
+                    parent, child, symmetric=symmetric, strict=strict
+                )
         for n1, n2 in cross_level_connectivity_fn[level](nodes[level], nodes[level]):
             if n1 != n2:
-                infrastructure.add_edge(n1, n2, symmetric=symmetric)
+                infrastructure.add_edge(n1, n2, symmetric=symmetric, strict=strict)
     return infrastructure
 
 

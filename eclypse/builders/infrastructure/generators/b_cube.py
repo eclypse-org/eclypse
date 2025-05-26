@@ -52,6 +52,7 @@ def b_cube(
     node_assets: Optional[Dict[str, Asset]] = None,
     link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
+    strict: bool = False,
     resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     placement_strategy: Optional[PlacementStrategy] = None,
@@ -77,6 +78,8 @@ def b_cube(
             Defaults to None.
         include_default_assets (bool): Whether to include default assets. \
             Defaults to False.
+        strict (bool): If True, raises an error if the asset values are not \
+            consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): Initialization policy for resources. \
             Defaults to "max".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): \
@@ -105,14 +108,14 @@ def b_cube(
     num_servers = n ** (k + 1)
     servers = [f"server_{i}" for i in range(num_servers)]
     for s in servers:
-        infra.add_node(s)
+        infra.add_node(s, strict=strict)
 
     # Add switches and connect them to servers
     for level in range(k + 1):
         num_switches = n**level
         for sw_idx in range(num_switches):
             sw_id = f"sw_{level}_{sw_idx}"
-            infra.add_node(sw_id)
+            infra.add_node(sw_id, strict=strict)
             for port in range(n):
                 if level == 0:
                     server_idx = sw_idx * n + port
