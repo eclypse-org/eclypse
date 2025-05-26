@@ -214,7 +214,7 @@ def latency(
 def bandwidth(
     lower_bound: float = MIN_BANDWIDTH,
     upper_bound: float = MAX_BANDWIDTH,
-    init_fn_or_value: Union[PrimitiveType, AssetSpace, Callable[[], Any]] = MAX_FLOAT,
+    init_fn_or_value: Union[PrimitiveType, AssetSpace, Callable[[], Any]] = None,
 ) -> Additive:
     """Create a new additive asset for bandwidth.
 
