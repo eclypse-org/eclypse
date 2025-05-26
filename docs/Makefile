@@ -16,7 +16,7 @@ clean:
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-livehtml: clean
+livehtml:
 	sphinx-autobuild "$(SOURCEDIR)" "$(BUILDDIR)"/html $(SPHINXOPTS) $(O)
 
 # check docstrings using pylint in ../eclypse module

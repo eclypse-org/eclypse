@@ -6,57 +6,71 @@ Getting started
    :maxdepth: 2
    :hidden:
 
-   Build an Infrastructure <infrastructure.rst>
-   Define an Application <application.rst>
-   Configure and run a Simulation <simulation.rst>
+   assets
+   update-policy
+   placement-strategy
+   callbacks
+   topology
+   simulation
 
-This guide will walk you through the process of setting up and running your first simulation using ECLYPSE,
-which is made by three main components:
+Let's get started with ECLYPSE! This guide will walk you through the steps to set up a simulation using the framework.
+ECLYPSE is designed to be flexible and extensible, allowing you to model complex scenarios in Cloud-Edge computing environments.
 
-.. grid:: 3
+The following steps outline the full workflow for setting up a simulation.
 
-   .. grid-item::
-
-      .. card:: Infrastructure
-         :link-type: doc
-         :link: infrastructure
-         :text-align: center
-
-         The computing resources on which your application will be deployed.
+.. grid:: 2
 
    .. grid-item::
 
-      .. card:: Application
+      .. card:: 1. Define assets
+         :link: assets
          :link-type: doc
-         :link: application
-         :text-align: center
 
-         The software system that you want to deploy and simulate.
+         **Assets** describe resource-related properties used in the simulation, including infrastructure *capabilities* and application service *requirements*.
+         They enable compatibility matching between applications and infrastructure.
 
    .. grid-item::
 
-      .. card:: Simulation
+      .. card:: 2. Define update policies
+         :link: update-policy
          :link-type: doc
+
+         **Update policies** model how assets, network and applications' topology evolve over time, reflecting changes in infrastructure capabilities or application requirements. They allow the simulation of dynamic behaviours.
+
+   .. grid-item::
+
+      .. card:: 3. Define a placement strategy
+         :link: placement-strategy
+         :link-type: doc
+
+         A **placement strategy** defines how services are allocated across the infrastructure. It can be defined per application or globally, and can reflect performance, locality, or optimisation goals.
+
+   .. grid-item::
+
+      .. card:: 4. Define callbacks
+         :link: callbacks
+         :link-type: doc
+
+         **Callbacks** allow custom actions during the simulation, such as metric collection, event logging, or injecting logic. They provide extensibility and observability to the simulation process.
+
+   .. grid-item::
+
+      .. card:: 5. Define Infrastructure and Application(s)
+         :link: topology
+         :link-type: doc
+
+         Define the network **infrastructure** (nodes and links) and the **applications** (services and interactions). Assets and update policies are linked to them at this stage.
+
+   .. grid-item::
+
+      .. card:: 6. Create, configure and run the simulation
          :link: simulation
-         :text-align: center
+         :link-type: doc
 
-         The environment where you can deploy and emulate your application(s) on the provided infrastructure.
+         **Instantiate** and **configure** the simulation by setting its parameters
+         and registering applications with their placement strategies.
+         Then, **run** the simulation to start the event loop.
 
+.. tip::
 
-In ECLYPSE we also distinguish between two simulation types:
-
-.. grid:: 1
-
-      .. grid-item::
-
-         .. card:: Local
-
-            The simulation runs by placing applications on an infrastructure using specific placement strategies. The applications and infrastructure are updated during the simulation according to their update policies, with updates occurring at each triggered tick event.
-
-      .. grid-item::
-
-         .. card:: Remote
-
-            The simulation operates like the local one, but the applications are executed on **remote nodes** using Ray. This allows you to run simulations on a cluster of machines, which can be useful for large-scale simulations. It also performs operations on the services placed on the infrastructure, such as *deploying*, *starting*, *stopping* and *undeploying* them.
-
-Click on one of the three top cards to get started with the setup of your first simulation.
+   If you have not yet installed ECLYPSE, refer to the :doc:`Installation <../install>` page.

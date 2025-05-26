@@ -2,7 +2,7 @@
 Install ECLYPSE
 ===============
 
-ECLYPSE can be installed using `pip <https://pip.pypa.io/en/stable/>`_.
+ECLYPSE can be installed using `pip <https://pypi.org/project/eclypse/>`_.
 
 .. note::
 
@@ -11,6 +11,8 @@ ECLYPSE can be installed using `pip <https://pip.pypa.io/en/stable/>`_.
 
 To install ECLYPSE, run the following command:
 
-.. code-block:: bash
+.. code-block:: shell
 
    pip install eclypse
+
+Now you are ready to run :doc:`your first ECLYPSE simulation <getting-started/index>`!

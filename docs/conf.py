@@ -59,6 +59,8 @@ autodoc_member_order = "bysource"
 # Don't show class signature with the class' name.
 autodoc_class_signature = "separated"
 
+autodoc_default_options = {"undoc-members": True}
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 

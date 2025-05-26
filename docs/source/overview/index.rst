@@ -1,8 +1,8 @@
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :hidden:
 
-   install.rst
+   install
    getting-started/index
    advanced/index
    examples/index
@@ -31,16 +31,16 @@ First Steps
 
    .. grid-item::
 
-      .. card:: :octicon:`code;1em;info` **Examples**
-         :link-type: doc
-         :link: examples/index
-
-         Explore example simulations to use ECLYPSE effectively.
-
-   .. grid-item::
-
       .. card:: :octicon:`terminal;1em;info` **Advanced**
          :link-type: doc
          :link: advanced/index
 
          Learn more about advanced features of ECLYPSE.
+
+   .. grid-item::
+
+      .. card:: :octicon:`code;1em;info` **Examples**
+         :link-type: doc
+         :link: examples/index
+
+         Explore example simulations to use ECLYPSE effectively.
