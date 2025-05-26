@@ -13,7 +13,6 @@ from eclypse.utils import DEFAULT_SIM_PATH
 if __name__ == "__main__":
     seed = 22
     infrastructure = hierarchical(
-        "hierarchical",
         n=50,
         node_partitioning=[0.6, 0.1, 0.15, 0.15],
         node_update_policy=node_random_update,
@@ -26,7 +25,7 @@ if __name__ == "__main__":
     sim_config = SimulationConfig(
         seed=seed,
         tick_every_ms=500,
-        max_ticks=10,
+        max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopMPI",
         remote=True,
     )
@@ -35,18 +34,6 @@ if __name__ == "__main__":
 
     app = get_sock_shop(communication_interface="mpi", include_default_assets=True)
 
-    strategy = StaticStrategy(
-        {
-            "CatalogService": "l2_0",
-            "UserService": "l0_0",
-            "CartService": "l2_2",
-            "OrderService": "l0_26",
-            "PaymentService": "l0_9",
-            "ShippingService": "l2_0",
-            "FrontendService": "l0_4",
-        }
-    )
-
-    sim.register(app, strategy)
+    sim.register(app, RandomStrategy(seed=seed))
     sim.start()
     sim.wait()

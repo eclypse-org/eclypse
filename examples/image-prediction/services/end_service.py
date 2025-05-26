@@ -6,12 +6,12 @@ from typing import (
     Optional,
 )
 
-if TYPE_CHECKING:
-    from torchvision.datasets import MNIST
-
 from eclypse.remote.service import Service
 
 from .utils import load_data
+
+if TYPE_CHECKING:
+    from torchvision.datasets import MNIST
 
 
 class EndService(Service):

@@ -13,9 +13,8 @@ from eclypse.utils import DEFAULT_SIM_PATH
 if __name__ == "__main__":
     seed = 22
     infrastructure = hierarchical(
-        "hierarchical",
         n=30,
-        node_partitioning=[0.7, 0.1, 0.1, 0.1],
+        node_partitioning=[0.6, 0.2, 0.1, 0.1],
         node_update_policy=node_random_update,
         link_update_policy=edge_random_update,
         include_default_assets=True,
@@ -41,13 +40,13 @@ if __name__ == "__main__":
 
     strategy = StaticStrategy(
         {
-            "CatalogService": "l0_0",
-            "UserService": "l3_0",
-            "CartService": "l0_6",
-            "OrderService": "l0_13",
-            "PaymentService": "l0_20",
-            "ShippingService": "l2_1",
-            "FrontendService": "l1_2",
+            "CatalogService": "l0_16",
+            "UserService": "l2_0",
+            "CartService": "l0_5",
+            "OrderService": "l0_17",
+            "PaymentService": "l0_17",
+            "ShippingService": "l0_7",
+            "FrontendService": "l0_2",
         }
     )
 
