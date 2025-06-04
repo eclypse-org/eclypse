@@ -3,6 +3,14 @@ from time import time
 
 import ray
 from applications import get_apps
+from infrastructure import get_infrastructure
+from metrics import get_metrics
+from ray import (
+    train,
+    tune,
+)
+from strategy import EnergyMinimizationStrategy
+
 from eclypse.placement.strategies import (
     BestFitStrategy,
     FirstFitStrategy,
@@ -11,10 +19,6 @@ from eclypse.placement.strategies import (
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils import DEFAULT_SIM_PATH
-from infrastructure import get_infrastructure
-from metrics import get_metrics
-from ray import train, tune
-from strategy import EnergyMinimizationStrategy
 
 
 def eclypse_grid(config):

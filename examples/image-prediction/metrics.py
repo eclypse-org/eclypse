@@ -35,7 +35,7 @@ def is_changed(self):
     return None
 
 
-@metric.simulation(name="cpu_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="cpu_usage", activates_on=["enact", "stop"])
 class CPUMonitor:
 
     def __init__(self):
@@ -47,7 +47,7 @@ class CPUMonitor:
         return self.process.cpu_percent(interval=0.1)
 
 
-@metric.node(name="remote_cpu_usage", activates_on=["tick", "stop"], remote=True)
+@metric.node(name="remote_cpu_usage", activates_on=["enact", "stop"], remote=True)
 class RemoteCPUMonitor:
 
     def __init__(self):
@@ -59,7 +59,7 @@ class RemoteCPUMonitor:
         return self.process.cpu_percent(interval=0.1)
 
 
-@metric.simulation(name="memory_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="memory_usage", activates_on=["enact", "stop"])
 class MemoryMonitor:
 
     def __init__(self):
@@ -72,7 +72,7 @@ class MemoryMonitor:
         return memory_usage / (1024 * 1024)  # Convert to MB
 
 
-@metric.node(name="remote_memory_usage", activates_on=["tick", "stop"], remote=True)
+@metric.node(name="remote_memory_usage", activates_on=["enact", "stop"], remote=True)
 class RemoteMemoryMonitor:
 
     def __init__(self):

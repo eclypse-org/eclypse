@@ -5,7 +5,9 @@ from update_policy import (
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
-from eclypse.placement.strategies import StaticStrategy, RandomStrategy
+from eclypse.placement.strategies import (
+    RandomStrategy,
+)
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils import DEFAULT_SIM_PATH
@@ -28,6 +30,7 @@ if __name__ == "__main__":
         max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopMPI",
         remote=True,
+        include_default_callbacks=True,
     )
 
     sim = Simulation(infrastructure, simulation_config=sim_config)

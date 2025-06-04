@@ -9,9 +9,7 @@ from networkx.classes.reportviews import (
     NodeView,
 )
 
-from eclypse.graph import (
-    Application,
-)
+from eclypse.graph import Application
 from eclypse.graph.assets import Asset
 
 

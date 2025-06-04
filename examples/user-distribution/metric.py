@@ -43,13 +43,7 @@ def user_count_metric(_: str, resources: Dict[str, Any], __, ___, ____) -> float
     return resources.get("user_count", 0)
 
 
-def max_no_inf(d: Dict[str, float]) -> float:
-    vls = list(filter(lambda x: x != float("inf"), d.values()))
-    # return sum(vls) / len(vls) if vls else float("inf")
-    return max(vls) if vls else float("inf")
-
-
-@metric.node(name="user_delay", aggregate_fn=max_no_inf)
+@metric.node(name="user_delay")
 def user_delay(
     node: str,
     resources: Dict[str, Any],
@@ -80,7 +74,7 @@ def used_nodes(_: Application, placement: Placement, __: Infrastructure) -> Appl
     return len(set(placement.mapping.values()))
 
 
-@metric.simulation(name="cpu_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="cpu_usage", activates_on=["enact", "stop"])
 class CPUMonitor:
 
     def __init__(self):
@@ -90,7 +84,7 @@ class CPUMonitor:
         return self.process.cpu_percent(interval=0.1)
 
 
-@metric.simulation(name="memory_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="memory_usage", activates_on=["enact", "stop"])
 class MemoryMonitor:
 
     def __init__(self):

@@ -21,7 +21,6 @@ if TYPE_CHECKING:
 
 CSV_DELIMITER = ","
 DEFAULT_IDX_HEADER = ["timestamp", "event_id", "n_event", "callback_id"]
-DEFAULT_IDX_HEADER_STR = CSV_DELIMITER.join(DEFAULT_IDX_HEADER)
 
 DEFAULT_CSV_HEADERS = {
     "simulation": DEFAULT_IDX_HEADER + ["value"],

@@ -1,5 +1,4 @@
 from application import echo_app as app
-from eclypse.utils import DEFAULT_SIM_PATH
 from infrastructure import get_infrastructure
 
 from eclypse.placement.strategies import RandomStrategy
@@ -7,7 +6,7 @@ from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
-
+from eclypse.utils import DEFAULT_SIM_PATH
 
 if __name__ == "__main__":
 

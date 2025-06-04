@@ -347,7 +347,7 @@ class Report:
             pd.DataFrame: The filtered dataframe.
         """
 
-        self.read_csv(report_type)
+        self._read_csv(report_type)
 
         return self.filter(
             self.stats[report_type],
@@ -356,7 +356,7 @@ class Report:
             **kwargs,
         )
 
-    def read_csv(self, report_type: str):
+    def _read_csv(self, report_type: str):
         """Read a CSV file into a dataframe and store it in the stats dictionary.
 
         Args:
