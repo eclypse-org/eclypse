@@ -1,295 +1,422 @@
 """Module containing decorators to define metrics."""
 
+from __future__ import annotations
+
 from typing import (
+    TYPE_CHECKING,
     Callable,
-    Dict,
     List,
     Optional,
     Union,
 )
 
-from eclypse_core.report.metric import _metric_wrapper
+from eclypse.utils import (
+    DEFAULT_REPORT_TYPE,
+    MAX_FLOAT,
+)
+from eclypse.workflow import event
 
-from eclypse.utils import DEFAULT_REPORT_TYPE
+if TYPE_CHECKING:
+    from eclypse.workflow import Trigger
 
 
 def simulation(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "stop",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
 ) -> Callable:
     """Decorator to create a simulation metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
+        event_type (Optional[EventType], optional): The type of the event. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
+
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
 
     Returns:
-        Callable: The decorated function.
+        Callable: The decorated function or class.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="simulation",
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="simulation",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def application(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
     """Decorator to create an application metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        is_callback (bool, optional): Whether the event is a callback. Defaults to False.
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="application",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="application",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def service(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    remote: bool = False,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
     """Decorator to create a service metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="service",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        remote=remote,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="service",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def interaction(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
-    """Decorator to create a interaction metric.
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
+    """Decorator to create an interaction metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="interaction",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="interaction",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def infrastructure(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
     """Decorator to create an infrastructure metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="infrastructure",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="infrastructure",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def node(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    remote: bool = False,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
     """Decorator to create a node metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="node",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        remote=remote,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="node",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )
 
 
 def link(
-    func: Optional[Callable] = None,
+    fn_or_class: Optional[Callable] = None,
     *,
-    activates_on: Union[str, List[str]] = "enact",
-    activates_every_n: Optional[Dict[str, int]] = None,
-    triggers: Optional[Dict[str, Callable]] = None,
-    aggregate_fn: Optional[Union[str, Callable]] = None,
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
     name: Optional[str] = None,
-):
-    """Decorator to create a link metric.
+    activates_on: Optional[Union[str, List[str]]] = "enact",
+    trigger_every_ms: Optional[float] = None,
+    max_triggers: Optional[int] = int(MAX_FLOAT),
+    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+    trigger_condition: Optional[str] = "any",
+    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    remote: bool = False,
+    verbose: bool = False,
+) -> Callable:
+    """Decorator to create an application metric.
 
     Args:
-        func (Optional[Callable], optional): The function to be decorated.
-            Defaults to None.
+        fn_or_class (Optional[Callable], optional): The function or class to decorate
+            as an event. Defaults to None.
+        name (Optional[str], optional): The name of the event. If not provided,
+            the name will be derived from the function or class name. Defaults to None.
         activates_on (Union[str, List[str]], optional): The events that will trigger the metric.
-            Defaults to "stop".
-        activates_every_n (Optional[Dict[str, int]], optional): The frequency of the metric.
-            Defaults to None.
-        triggers (Optional[Dict[str, Callable]], optional): The triggers for the metric.
-            Defaults to None.
-        report (Optional[Union[str, List[str]], optional):
-            The reporter for the metric. Defaults to csv.
-        name (Optional[str], optional): The name of the metric. Defaults to None.
+            Defaults to "enact".
+        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+            each trigger of the event. Defaults to None.
+        max_triggers (Optional[int], optional): The maximum number of times the event
+            can be triggered. Defaults to no limit.
 
+        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+            trigger the event. If not provided, the event will not be triggered by any triggers.
+            Defaults to None.
+        trigger_condition (Optional[str]): The condition for the triggers to fire the
+            event. If "any", the event fires if any trigger is active. If "all",
+            the event fires only if all triggers are active. Defaults to "any".
+        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
+        remote (bool, optional): Whether the event is remote. Defaults to False.
+        verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
     """
-    return _metric_wrapper(
-        func,
-        callback_type="link",
-        aggregate_fn=aggregate_fn,
-        activates_on=activates_on,
-        activates_every_n=activates_every_n,
-        triggers=triggers,
-        report=report,
+    return event(
+        fn_or_class,
         name=name,
+        event_type="link",
+        is_callback=True,
+        activates_on=activates_on,
+        trigger_every_ms=trigger_every_ms,
+        max_triggers=max_triggers,
+        triggers=triggers,
+        trigger_condition=trigger_condition,
+        report=report,
+        remote=remote,
+        verbose=verbose,
     )

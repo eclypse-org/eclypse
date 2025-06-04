@@ -16,7 +16,6 @@ import networkx as nx
 from eclypse_core.utils.constants import RND_SEED
 
 from eclypse.utils import (
-    DEFAULT_REPORT_TYPE,
     MAX_LATENCY,
     MIN_BANDWIDTH,
     MIN_FLOAT,
@@ -39,7 +38,7 @@ if TYPE_CHECKING:
     from eclypse.remote.service import Service
 
 
-@metric.application(report=[DEFAULT_REPORT_TYPE])
+@metric.application
 def response_time(
     app: Application,
     placement: Placement,
@@ -86,10 +85,7 @@ def response_time(
     return max(response_times) if response_times else float("inf")
 
 
-@metric.service(
-    name="placement",
-    aggregate_fn=lambda x: all(p != "EMPTY" for p in x.values()),
-)
+@metric.service(name="placement")
 def placement_mapping(
     service_id: str,
     _: Dict[str, Any],
@@ -111,7 +107,7 @@ def placement_mapping(
     return placement.mapping.get(service_id, "EMPTY")
 
 
-@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.service
 def required_cpu(
     _: str,
     requirements: Dict[str, Any],
@@ -133,7 +129,7 @@ def required_cpu(
     return requirements.get("cpu", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.service
 def required_ram(
     _: str,
     requirements: Dict[str, Any],
@@ -155,7 +151,7 @@ def required_ram(
     return requirements.get("ram", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.service
 def required_storage(
     _: str,
     requirements: Dict[str, Any],
@@ -177,7 +173,7 @@ def required_storage(
     return requirements.get("storage", MIN_FLOAT)
 
 
-@metric.service(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.service
 def required_gpu(
     _: str,
     requirements: Dict[str, Any],
@@ -199,7 +195,7 @@ def required_gpu(
     return requirements.get("gpu", MIN_FLOAT)
 
 
-@metric.interaction(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.interaction
 def required_latency(
     _: str,
     __: str,
@@ -222,7 +218,7 @@ def required_latency(
     return requirements.get("latency", MIN_LATENCY)
 
 
-@metric.interaction(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.interaction
 def required_bandwidth(
     _: str,
     __: str,
@@ -248,7 +244,7 @@ def required_bandwidth(
 ### Infrastructure
 
 
-@metric.infrastructure(report=[DEFAULT_REPORT_TYPE])
+@metric.infrastructure
 def alive_nodes(infr: Infrastructure, _: PlacementView) -> int:
     """Return the number of alive nodes in the infrastructure.
 
@@ -262,7 +258,7 @@ def alive_nodes(infr: Infrastructure, _: PlacementView) -> int:
     return len(infr.available.nodes)
 
 
-@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.node
 def featured_cpu(
     _: str,
     resources: Dict[str, Any],
@@ -285,7 +281,7 @@ def featured_cpu(
     return resources.get("cpu", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.node
 def featured_ram(
     _: str,
     resources: Dict[str, Any],
@@ -308,7 +304,7 @@ def featured_ram(
     return resources.get("ram", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.node
 def featured_storage(
     _: str,
     resources: Dict[str, Any],
@@ -331,7 +327,7 @@ def featured_storage(
     return resources.get("storage", MIN_FLOAT)
 
 
-@metric.node(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.node
 def featured_gpu(
     _: str,
     resources: Dict[str, Any],
@@ -354,7 +350,7 @@ def featured_gpu(
     return resources.get("gpu", MIN_FLOAT)
 
 
-@metric.link(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.link
 def featured_latency(
     _: str,
     __: str,
@@ -380,7 +376,7 @@ def featured_latency(
     return resources.get("latency", MAX_LATENCY)
 
 
-@metric.link(aggregate_fn="mean", report=[DEFAULT_REPORT_TYPE])
+@metric.link
 def featured_bandwidth(
     _: str,
     __: str,
@@ -406,7 +402,7 @@ def featured_bandwidth(
     return resources.get("bandwidth", MIN_BANDWIDTH)
 
 
-@metric.simulation
+@metric.simulation(activates_on="stop")
 def seed(*_) -> str:
     """Return the seed used in the simulation.
 
@@ -419,7 +415,7 @@ def seed(*_) -> str:
     return os.environ[RND_SEED]
 
 
-@metric.simulation(name="ticks", activates_on=["tick", "stop"])
+@metric.simulation(name="tick_number", activates_on=["enact", "stop"])
 class TickNumber:
     """Return the current tick number."""
 
@@ -434,10 +430,10 @@ class TickNumber:
             event (EclypseEvent): The event triggering the reporting of the tick number.
 
         Returns:
-            Optional[int]: The tick number if the event is 'tick' or 'stop', \
+            Optional[int]: The tick number if the event is 'enact' or 'stop', \
                 None otherwise.
         """
-        if event.name == "tick":
+        if event.name == "enact":
             self.tick += 1
         if event.name == "stop":
             return self.tick
@@ -465,7 +461,7 @@ class SimulationTime:
         return time() - self.start
 
 
-@metric.application(report="gml", activates_on="stop", name="gml_app")
+@metric.application(report="gml", activates_on="stop")
 def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     """Return the application graph to be saved in a GML file.
 
@@ -480,7 +476,7 @@ def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     return app
 
 
-@metric.infrastructure(report="gml", activates_on="stop", name="gml_infr")
+@metric.infrastructure(report="gml", activates_on="stop")
 def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
     """Return the infrastructure graph to be saved in a GML file.
 
@@ -495,7 +491,7 @@ def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
 
 
 @metric.service(remote=True)
-def step_result(service: Service) -> Optional[str]:
+def step_result(service: Service) -> Optional[Any]:
     """Return the result of the step executed by the service.
 
     Args:
@@ -504,7 +500,7 @@ def step_result(service: Service) -> Optional[str]:
     Returns:
         Optional[str]: The result of the step executed by the service.
     """
-    return f"'{str(service._step_queue.pop(0))}'" if service._step_queue else None
+    return service._step_queue.pop(0) if service._step_queue else None
 
 
 def get_default_metrics():

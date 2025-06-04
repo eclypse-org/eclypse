@@ -1,7 +1,7 @@
 # pylint: disable=unused-argument
 """Module for GMLReporter class.
 
-It is used to report the simulation metrics in a GML format.
+It is used to report the simulation metrics in GML format.
 """
 
 from __future__ import annotations
@@ -15,17 +15,13 @@ import networkx as nx
 from eclypse_core.report.reporter import Reporter
 
 if TYPE_CHECKING:
-    from eclypse_core.workflow.callbacks import EclypseCallback
+    from eclypse.workflow import EclypseEvent
 
 
 class GMLReporter(Reporter):
-    """Class to report the simulation metrics in a GML format.
-
-    It uses `networkx.write_gml` method to write the graph on a file.
-    """
+    """Class to report simulation metrics in GML format using NetworkX."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize the TensorBGMLardX reporter."""
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "gml"
 
@@ -33,28 +29,31 @@ class GMLReporter(Reporter):
         self,
         event_name: str,
         event_idx: int,
-        executed: List[EclypseCallback],
-        *args,
-        **kwargs,
-    ):
-        """Reports the callback values in a GML file.
+        callback: EclypseEvent,
+    ) -> List[tuple[str, nx.DiGraph]]:
+        """Extract graph data from callback and prepare it for writing.
+
+        Returns:
+            List of (graph_name, graph_object) tuples.
+        """
+        entries = []
+        for d in self.dfs_data(callback.data):
+            if not d or d[-1] is None:
+                continue
+            graph = d[-1]
+            if not isinstance(graph, nx.DiGraph):
+                continue
+            name = f"{callback.name}{'-'+graph.id if hasattr(graph, 'id') else ''}"
+            entries.append((name, graph))
+        return entries
+
+    async def write(self, _: str, data: List[tuple[str, nx.DiGraph]]):
+        """Write graphs in GML format.
 
         Args:
-            event_name (str): The name of the event.
-            event_idx (int): The index of the event trigger (tick).
-            executed (List[EclypseCallback]): The executed callbacks.
+            callback_type (str): The type of the callback.
+            data (List[Tuple[str, nx.DiGraph]]): The graphs to write.
         """
-        for callback in executed:
-            if callback.type is None:
-                continue
-            self.report_path.mkdir(parents=True, exist_ok=True)
-
-            for d in self.dfs_data(callback.data):
-                if d[-1] is None:
-                    continue
-                if not isinstance(d[-1], nx.DiGraph):
-                    continue
-                graph = d[-1]
-                name = f"{callback.name}{'-'+graph.id if hasattr(graph, 'id') else ''}"
-                path = self.report_path / f"{name}.gml"
-                nx.write_gml(graph, path, stringizer=str)
+        for name, graph in data:
+            path = self.report_path / f"{name}.gml"
+            nx.write_gml(graph, path, stringizer=str)

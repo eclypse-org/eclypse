@@ -17,7 +17,10 @@ from eclypse_core.utils.constants import (
     DEFAULT_REPORT_TYPE,
 )
 
-from eclypse_core.utils.types import CallbackType, PrimitiveType
+from eclypse_core.utils.types import (
+    EventType,
+    PrimitiveType,
+)
 
 __all__ = [
     "MIN_FLOAT",
@@ -31,6 +34,6 @@ __all__ = [
     "MAX_AVAILABILITY",
     "DEFAULT_SIM_PATH",
     "DEFAULT_REPORT_TYPE",
-    "CallbackType",
+    "EventType",
     "PrimitiveType",
 ]

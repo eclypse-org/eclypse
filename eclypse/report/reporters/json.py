@@ -6,29 +6,21 @@ import json
 from datetime import datetime as dt
 from typing import (
     TYPE_CHECKING,
+    Any,
     List,
 )
 
+import aiofiles  # type: ignore[import-untyped]
 from eclypse_core.report.reporter import Reporter
 
 if TYPE_CHECKING:
-    from eclypse_core.workflow.callbacks import EclypseCallback
+    from eclypse.workflow import EclypseEvent
 
 
 class JSONReporter(Reporter):
-    """Class to report the simulation metrics in JSON format.
-
-    It prints an header with the format of the rows and then the values of the
-    reportable.
-    """
+    """Class to report the simulation metrics in JSON lines format."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize the JSON reporter.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-        """
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "json"
 
@@ -36,59 +28,37 @@ class JSONReporter(Reporter):
         self,
         event_name: str,
         event_idx: int,
-        executed: List[EclypseCallback],
-        *args,
-        **kwargs,
-    ):
-        """Reports the callback values in a CSV file, one per line.
+        callback: EclypseEvent,
+    ) -> List[Any]:
+        entries = []
 
-        Args:
-            event_name (str): The name of the event.
-            event_idx (int): The index of the event trigger (tick).
-            executed (List[EclypseCallback]): The executed callbacks.
-        """
-
-        for callback in executed:
-            if (t := callback.type) is None:
+        for line in self.dfs_data(callback.data):
+            if line[-1] is None:
                 continue
 
-            self.report_path.mkdir(parents=True, exist_ok=True)
-            path = self.report_path / f"{t}.json"
+            entries.append(
+                {
+                    "timestamp": dt.now().isoformat(),
+                    "event_name": event_name,
+                    "event_idx": event_idx,
+                    "callback_name": callback.name,
+                    "data": line,
+                }
+            )
+        return entries
 
-            all_data = []
-
-            if path.exists():
-                with open(path, "r", encoding="utf-8") as f:
-                    try:
-                        all_data = json.load(f)
-                    except json.JSONDecodeError:
-                        all_data = []
-
-            entry = {
-                "timestamp": dt.now(),
-                "event_name": event_name,
-                "event_idx": event_idx,
-                "callback_name": callback.name,
-                "data": callback.data,
-            }
-
-            all_data.append(entry)
-
-            with open(path, "w", encoding="utf-8") as json_file:
-                json.dump(
-                    all_data,
-                    json_file,
-                    indent=4,
-                    ensure_ascii=False,
-                    cls=_SafeJSONEncoder,
-                )
+    async def write(self, callback_type: str, data: List[dict]):
+        path = self.report_path / f"{callback_type}.jsonl"
+        async with aiofiles.open(path, "a", encoding="utf-8") as f:
+            for item in data:
+                line = json.dumps(item, ensure_ascii=False, cls=_SafeJSONEncoder)
+                await f.write(f"{line}\n")
 
 
 class _SafeJSONEncoder(json.JSONEncoder):
-    def default(self, o):
+    def default(self, o: Any) -> Any:
         if hasattr(o, "isoformat"):
             return o.isoformat()
         if isinstance(o, (set, tuple)):
             return list(o)
-
         return super().default(o)

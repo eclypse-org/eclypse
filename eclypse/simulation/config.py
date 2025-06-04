@@ -3,7 +3,7 @@
 It stores the configuration of a simulation, in detail:
 
 - The timeout scheduling.
-- Callbacks/Events/Feeds to be managed.
+- Events to be managed.
 - The seed for randomicity.
 - The path where the simulation results will be stored.
 - The logging configuration (log level and enable/disable log to file).
@@ -26,15 +26,13 @@ from eclypse_core.simulation import SimulationConfig as _SimulationConfig
 
 from eclypse.report.metrics.defaults import get_default_metrics
 from eclypse.report.reporters import get_default_reporters
-from eclypse.utils import DEFAULT_REPORT_TYPE
 
 if TYPE_CHECKING:
     from eclypse_core.remote.bootstrap import RemoteBootstrap
     from eclypse_core.utils.types import LogLevel
-    from eclypse_core.workflow.callbacks import EclypseCallback
-    from eclypse_core.workflow.events import EclypseEvent
 
     from eclypse.report.reporters import Reporter
+    from eclypse.workflow import EclypseEvent
 
 
 class SimulationConfig(_SimulationConfig):
@@ -46,16 +44,15 @@ class SimulationConfig(_SimulationConfig):
         tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "auto",
         timeout: Optional[float] = None,
         max_ticks: Optional[int] = None,
-        callbacks: Optional[List[EclypseCallback]] = None,
         reporters: Optional[Dict[str, Type[Reporter]]] = None,
         events: Optional[List[EclypseEvent]] = None,
-        feeds: Optional[List[str]] = None,
         incremental_mapping_phase: bool = True,
         include_default_callbacks: bool = False,
         seed: Optional[int] = None,
         path: Optional[str] = None,
         log_to_file: bool = False,
         log_level: LogLevel = "ECLYPSE",
+        report_chunk_size: int = 1,
         remote: Union[bool, RemoteBootstrap] = False,
     ):
         """Initializes a new SimulationConfig object.
@@ -84,21 +81,23 @@ class SimulationConfig(_SimulationConfig):
             log_to_file (bool, optional): Whether the log should be written to a file. Defaults \
                 to False.
             log_level (LogLevel, optional): The log level. Defaults to "ECLYPSE".
+            report_chunk_size (int, optional): The size of the chunks in which the report will \
+                be generated. Defaults to 1 (each event reported immediately).
             remote (Union[bool, RemoteBootstrap], optional): Whether the simulation is local \
                 or remote. A RemoteBootstrap object can be passed to configure the remote \
                 nodes. Defaults to False.
         """
-        _callbacks = callbacks if callbacks is not None else []
-        _callbacks.extend(get_default_metrics() if include_default_callbacks else [])
+        _events = events if events is not None else []
+        _events.extend(get_default_metrics() if include_default_callbacks else [])
 
         _reporters = None
-        if _callbacks:
-            # Default reporter is always added if there is at least one defined callback
-            _reporters = {
-                DEFAULT_REPORT_TYPE: get_default_reporters()[DEFAULT_REPORT_TYPE]
-            }
-            _reporters.update(reporters if reporters is not None else {})
-        _events = events if events is not None else []
+        # collect all report types of all the callbacks if any
+        report_types = list(
+            {rtype for e in _events for rtype in e.report_types if e.is_callback}
+        )
+
+        _reporters = get_default_reporters(report_types)
+        _reporters.update(reporters if reporters is not None else {})
 
         super().__init__(
             tick_every_ms=tick_every_ms,
@@ -106,13 +105,12 @@ class SimulationConfig(_SimulationConfig):
             max_ticks=max_ticks,
             incremental_mapping_phase=incremental_mapping_phase,
             events=_events,
-            callbacks=_callbacks,
             reporters=_reporters,
-            feeds=feeds,
             seed=seed,
             path=path,
             log_to_file=log_to_file,
             log_level=log_level,
+            report_chunk_size=report_chunk_size,
             remote=remote,
         )
 
@@ -172,22 +170,13 @@ class SimulationConfig(_SimulationConfig):
         return self["events"]
 
     @property
-    def callbacks(self) -> List[EclypseCallback]:
+    def callbacks(self) -> List[EclypseEvent]:
         """Returns the list of callbacks that will be triggered in the simulation.
 
         Returns:
             List[Callable]: The list of callbacks.
         """
-        return self["callbacks"]
-
-    @property
-    def feeds(self) -> List[str]:
-        """Returns the list of feeds that will be used in the simulation.
-
-        Returns:
-            List[str]: The list of feeds.
-        """
-        return self["feeds"]
+        return [c for c in self.events if c.is_callback]
 
     @property
     def include_default_callbacks(self) -> bool:

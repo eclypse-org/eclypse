@@ -9,13 +9,15 @@ from __future__ import annotations
 from datetime import datetime as dt
 from typing import (
     TYPE_CHECKING,
+    Any,
     List,
 )
 
+import aiofiles  # type: ignore[import-untyped]
 from eclypse_core.report.reporter import Reporter
 
 if TYPE_CHECKING:
-    from eclypse_core.workflow.callbacks import EclypseCallback
+    from eclypse.workflow import EclypseEvent
 
 CSV_DELIMITER = ","
 DEFAULT_IDX_HEADER = ["timestamp", "event_id", "n_event", "callback_id"]
@@ -49,40 +51,46 @@ class CSVReporter(Reporter):
         self,
         event_name: str,
         event_idx: int,
-        executed: List[EclypseCallback],
-        *args,
-        **kwargs,
-    ):
+        callback: EclypseEvent,
+    ) -> List[str]:
         """Reports the callback values in a CSV file, one per line.
 
         Args:
             event_name (str): The name of the event.
             event_idx (int): The index of the event trigger (tick).
-            executed (List[EclypseCallback]): The executed callbacks.
+            callback (EclypseEvent): The executed callback containing the data to report.
         """
-        for callback in executed:
-            if (t := callback.type) is None:
+        lines = []
+        for line in self.dfs_data(callback.data):
+            if line[-1] is None:
                 continue
-            self.report_path.mkdir(parents=True, exist_ok=True)
-            path = self.report_path / f"{t}.csv"
 
-            if not path.exists():
-                with open(path, "w", encoding="utf-8") as f:
-                    f.write(CSV_DELIMITER.join(DEFAULT_CSV_HEADERS[t]) + "\n")
+            fields = [
+                dt.now().isoformat(),
+                event_name,
+                event_idx,
+                callback.name,
+            ] + line
 
-            with open(path, "a", encoding="utf-8") as f:
-                for line in self.dfs_data(callback.data):
-                    if line[-1] is None:
-                        continue
+            fields = [str(f) for f in fields]
+            fields[-1] = fields[-1].replace(CSV_DELIMITER, ";")
+            lines.append(CSV_DELIMITER.join(fields))
 
-                    fields = [
-                        dt.now(),
-                        event_name,
-                        event_idx,
-                        callback.name,
-                    ] + line
+        return lines
 
-                    fields = [str(f) for f in fields]
-                    # remove the CSV_DELIMITER from the callback value
-                    fields[-1] = fields[-1].replace(CSV_DELIMITER, ";")
-                    f.write(f"{CSV_DELIMITER.join(fields)}\n")
+    async def write(self, callback_type: str, data: Any):
+        """Writes the data to a CSV file based on the callback type.
+
+        Args:
+            callback_type (str): The type of the callback.
+            data (Any): The data to write to the CSV file.
+        """
+        path = self.report_path / f"{callback_type}.csv"
+        if not path.exists():
+            async with aiofiles.open(path, "a", encoding="utf-8") as f:
+                await f.write(
+                    f"{CSV_DELIMITER.join(DEFAULT_CSV_HEADERS[callback_type])}\n"
+                )
+
+        async with aiofiles.open(path, "a", encoding="utf-8") as f:
+            await f.writelines([f"{line}\n" for line in data])
