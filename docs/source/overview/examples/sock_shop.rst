@@ -43,7 +43,7 @@ We can notice two ways of sending a message:
 
             return sender_id, payment_response
 
-- At lines 36,44 and 58 we use the **mpi.send** method directly, specifying the recipient and the message to be sent. 
+- At lines 36,44 and 58 we use the **mpi.send** method directly, specifying the recipient and the message to be sent.
    The **recv** method is used to receive messages from the internal queue. The **recv** method is blocking, meaning that the service will wait until a message is received.
 
 FrontendService (REST version)
@@ -54,4 +54,3 @@ FrontendService (REST version)
       :linenos:
 
 In this example, the REST interface uses just two methods: **get** and **post**, which reflect the HTTP methods used in RESTful APIs. The **get** method is used to query a service endpoint and retrieve data, while the **post** method is used to send data to given a service endpoint.
-

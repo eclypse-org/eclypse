@@ -2,7 +2,7 @@
 Echo Application
 ================
 
-The Echo Application showcases a simple microservices architecture where messages are echoed back and forth among a set of identical services. 
+The Echo Application showcases a simple microservices architecture where messages are echoed back and forth among a set of identical services.
 This example provides insights into the basic structure and interaction patterns of microservices within a distributed system.
 
 The whole code for this example can be found in the `examples/echo <https://github.com/eclypse-org/eclypse/tree/main/examples/echo>`_ directory of the ECLYPSE Github repository.
@@ -54,12 +54,11 @@ To do so, we used a **random** node/edge udpate policy.
 Simulation
 ----------
 
-The simulation is run *remotely* for 20 iterations, each lasting 0.5 seconds. 
-Logs are enabled, as is the reporting, in a folder named as the application. 
+The simulation is run *remotely* for 20 iterations, each lasting 0.5 seconds.
+Logs are enabled, as is the reporting, in a folder named as the application.
 A random seed is set to ensure reproducibility.
 
 .. dropdown:: Simulation code
 
     .. literalinclude:: ../../../../examples/echo/main.py
         :language: python
-

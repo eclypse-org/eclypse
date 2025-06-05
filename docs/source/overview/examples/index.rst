@@ -9,7 +9,7 @@ Examples
    Echo Application <echo.rst>
    SockShop <sock_shop.rst>
 
-We have implemented several examples to demonstrate the capabilities of ECLYPSE. 
+We have implemented several examples to demonstrate the capabilities of ECLYPSE.
 
 The code of the examples is available at the :icon:`fa-brands fa-github` `eclypse/examples <https://github.com/eclypse-org/eclypse/tree/main/examples/>`_ subdirectory of the GitHub repository.
 
@@ -32,5 +32,3 @@ The code of the examples is available at the :icon:`fa-brands fa-github` `eclyps
 
          A microservices application that simulates an online shop, with 7 services that interact with each other to simulate the purchase of socks.
          This example is provided in two versions that differ for the communication interface used by the services: MPI and REST.
-
-
