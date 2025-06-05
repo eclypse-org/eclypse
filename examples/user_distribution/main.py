@@ -9,7 +9,7 @@ from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
-from eclypse.utils import DEFAULT_SIM_PATH
+from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 SEED = 42
 TICKS = 4167
@@ -22,7 +22,6 @@ sim_config = SimulationConfig(
     max_ticks=TICKS,
     path=DEFAULT_SIM_PATH / "user-distribution",
     events=get_metrics(),
-    log_level="TRACE",
     log_to_file=True,
 )
 infrastructure = get_infrastructure(SEED)

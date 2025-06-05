@@ -9,7 +9,7 @@ from typing import (
 )
 
 from eclypse.placement.strategies import PlacementStrategy
-from eclypse.utils import MAX_FLOAT
+from eclypse.utils.constants import MAX_FLOAT
 
 if TYPE_CHECKING:
     from eclypse.graph import (

@@ -6,7 +6,7 @@ from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
-from eclypse.utils import DEFAULT_SIM_PATH
+from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 if __name__ == "__main__":
 

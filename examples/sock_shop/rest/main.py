@@ -5,10 +5,11 @@ from update_policy import (
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
-from eclypse.placement.strategies import StaticStrategy
+from eclypse.placement.strategies import RandomStrategy
+from eclypse.placement.strategies.random import RandomStrategy
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
-from eclypse.utils import DEFAULT_SIM_PATH
+from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 if __name__ == "__main__":
     seed = 22
@@ -38,18 +39,6 @@ if __name__ == "__main__":
 
     app = get_sock_shop(communication_interface="rest", include_default_assets=True)
 
-    strategy = StaticStrategy(
-        {
-            "CatalogService": "l0_16",
-            "UserService": "l2_0",
-            "CartService": "l0_5",
-            "OrderService": "l0_17",
-            "PaymentService": "l0_17",
-            "ShippingService": "l0_7",
-            "FrontendService": "l0_2",
-        }
-    )
-
-    sim.register(app, strategy)
+    sim.register(app, RandomStrategy(seed=seed))
     sim.start()
     sim.wait()

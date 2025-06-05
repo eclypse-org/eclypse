@@ -17,20 +17,17 @@ from eclypse.builders.infrastructure import (
     random,
     star,
 )
-from eclypse.graph import (
-    Application,
-    Infrastructure,
-)
+from eclypse.graph import Infrastructure
 from eclypse.graph.assets import Concave
 from eclypse.graph.assets.space import (
     AssetSpace,
     Choice,
 )
-from eclypse.utils import (
+from eclypse.utils.constants import (
     MAX_FLOAT,
     MIN_FLOAT,
-    PrimitiveType,
 )
+from eclypse.utils.types import PrimitiveType
 
 
 def get_infrastructure(config) -> Infrastructure:

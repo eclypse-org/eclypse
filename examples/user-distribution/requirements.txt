@@ -1,3 +1,0 @@
-pyarrow
-psutil
-numpy

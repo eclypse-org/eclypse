@@ -18,7 +18,7 @@ from eclypse.placement.strategies import (
 )
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
-from eclypse.utils import DEFAULT_SIM_PATH
+from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 
 def eclypse_grid(config):

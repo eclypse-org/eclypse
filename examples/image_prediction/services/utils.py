@@ -1,7 +1,7 @@
 import torchvision
 from torchvision.datasets import MNIST
 
-from eclypse.utils import DEFAULT_SIM_PATH
+from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 BASE_PATH = DEFAULT_SIM_PATH / "image_prediction"
 RUNTIME_PATH = BASE_PATH / "runtime"

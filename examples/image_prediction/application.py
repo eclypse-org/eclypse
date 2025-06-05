@@ -5,7 +5,7 @@ from services import (
 )
 
 from eclypse.graph import Application
-from eclypse.utils import MAX_LATENCY
+from eclypse.utils.constants import MAX_LATENCY
 
 image_app = Application("ImagePrediction", include_default_assets=True)
 
