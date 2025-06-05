@@ -22,20 +22,21 @@ generate-setup-file = false
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
 eclypse-core = "^0.6.22"
-pandas = "^2.2.3"
+pandas = "^2.3.0"
 tensorboardx = "^2.6.2.2"
 ray = { extras = ["default"], version = "^2.8.0" }
 aiofiles = "^24.1.0"
 
 [tool.poetry.extras]
 remote = ["ray"]
+tboard = ["tensorboardX"]
 
 [tool.poetry.group.dev]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
 black = "^25.1.0"
-commitizen = "^4.7.0"
+commitizen = "^4.8.2"
 pre-commit = "^4.2.0"
 isort = "^6.0.1"
 pycln = "^2.5.0"
@@ -46,9 +47,9 @@ docformatter = { extras = ["tomli"], version = "^1.7.7" }
 optional = true
 
 [tool.poetry.group.deploy.dependencies]
-mypy = "^1.15.0"
+mypy = "^1.16.0"
 wheel = "^0.45.1"
-setuptools = "^80.4.0"
+setuptools = "^80.9.0"
 twine = "^6.1.0"
 
 [tool.poetry.group.docs]

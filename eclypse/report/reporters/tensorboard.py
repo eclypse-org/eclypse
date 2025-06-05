@@ -16,9 +16,10 @@ from typing import (
 )
 
 from eclypse_core.report.reporter import Reporter
-from tensorboardX import SummaryWriter
 
 if TYPE_CHECKING:
+    from tensorboardX import SummaryWriter
+
     from eclypse.workflow import EclypseEvent
 
 
@@ -27,8 +28,16 @@ class TensorBoardReporter(Reporter):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.report_path = self.report_path / "tboard"
-        self.writer = SummaryWriter(log_dir=self.report_path)
+        self.report_path = self.report_path / "tensorboard"
+        self._writer = None
+
+    async def init(self):
+        """Initialize the TensorBoard reporter."""
+        from tensorboardX import (  # pylint: disable=import-outside-toplevel
+            SummaryWriter,
+        )
+
+        self._writer = SummaryWriter(log_dir=self.report_path)
 
     def report(
         self,
@@ -58,3 +67,10 @@ class TensorBoardReporter(Reporter):
         """Write the collected metrics to TensorBoard."""
         for cb_name, metric_dict, step in data:
             self.writer.add_scalars(f"{callback_type}/{cb_name}", metric_dict, step)
+
+    @property
+    def writer(self) -> SummaryWriter:
+        """Get the TensorBoardX SummaryWriter."""
+        if self._writer is None:
+            raise RuntimeError("TensorBoard reporter is not initialised.")
+        return self._writer
