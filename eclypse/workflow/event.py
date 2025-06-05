@@ -12,14 +12,14 @@ from typing import (
 
 from eclypse_core.workflow.events.decorator import _event
 
-from eclypse.utils import (
+from eclypse.utils.constants import (
     DEFAULT_REPORT_TYPE,
     MAX_FLOAT,
 )
 
 if TYPE_CHECKING:
-    from eclypse.utils import EventType
-    from eclypse.workflow import Trigger
+    from eclypse.utils.types import EventType
+    from eclypse.workflow.triggers import Trigger
 
 
 def event(
@@ -43,7 +43,8 @@ def event(
             as an event. Defaults to None.
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (Optional[EventType], optional): The type of the event. Defaults to None.
+        event_type (Optional[EventType], optional): The type of the event.
+            Defaults to None.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event

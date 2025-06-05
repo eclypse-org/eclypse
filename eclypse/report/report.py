@@ -15,10 +15,8 @@ from typing import (
 
 import pandas as pd
 
-from eclypse.utils import (
-    MAX_FLOAT,
-    EventType,
-)
+from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils.types import EventType
 
 REPORT_TYPES = list(get_args(EventType))
 

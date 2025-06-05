@@ -15,7 +15,7 @@ from typing import (
 import networkx as nx
 from eclypse_core.utils.constants import RND_SEED
 
-from eclypse.utils import (
+from eclypse.utils.constants import (
     MAX_LATENCY,
     MIN_BANDWIDTH,
     MIN_FLOAT,

@@ -32,7 +32,7 @@ from eclypse_core.utils.constants import (
     MIN_LATENCY,
 )
 
-from eclypse.utils import PrimitiveType
+from eclypse.utils.types import PrimitiveType
 
 from . import (
     Additive,
