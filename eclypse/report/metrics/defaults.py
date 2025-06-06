@@ -16,6 +16,7 @@ import networkx as nx
 from eclypse_core.utils.constants import RND_SEED
 
 from eclypse.utils.constants import (
+    DRIVING_EVENT,
     MAX_LATENCY,
     MIN_BANDWIDTH,
     MIN_FLOAT,
@@ -415,7 +416,7 @@ def seed(*_) -> str:
     return os.environ[RND_SEED]
 
 
-@metric.simulation(name="tick_number", activates_on=["enact", "stop"])
+@metric.simulation(name="tick_number", activates_on=[DRIVING_EVENT, "stop"])
 class TickNumber:
     """Return the current tick number."""
 
@@ -430,10 +431,10 @@ class TickNumber:
             event (EclypseEvent): The event triggering the reporting of the tick number.
 
         Returns:
-            Optional[int]: The tick number if the event is 'enact' or 'stop', \
+            Optional[int]: The tick number if the event is the DRIVING_EVENT or 'stop', \
                 None otherwise.
         """
-        if event.name == "enact":
+        if event.name == DRIVING_EVENT:
             self.tick += 1
         if event.name == "stop":
             return self.tick

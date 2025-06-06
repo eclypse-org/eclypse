@@ -12,6 +12,7 @@ from typing import (
 
 from eclypse.utils.constants import (
     DEFAULT_REPORT_TYPE,
+    DRIVING_EVENT,
     MAX_FLOAT,
 )
 from eclypse.workflow import event
@@ -25,7 +26,7 @@ def simulation(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -43,7 +44,7 @@ def simulation(
             the name will be derived from the function or class name. Defaults to None.
         event_type (Optional[EventType], optional): The type of the event. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -84,7 +85,7 @@ def application(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -101,7 +102,7 @@ def application(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -142,7 +143,7 @@ def service(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -159,7 +160,7 @@ def service(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -199,7 +200,7 @@ def interaction(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -216,7 +217,7 @@ def interaction(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -256,7 +257,7 @@ def infrastructure(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -273,7 +274,7 @@ def infrastructure(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -313,7 +314,7 @@ def node(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -330,7 +331,7 @@ def node(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -370,7 +371,7 @@ def link(
     fn_or_class: Optional[Callable] = None,
     *,
     name: Optional[str] = None,
-    activates_on: ActivatesOnType = "enact",
+    activates_on: ActivatesOnType = DRIVING_EVENT,
     trigger_every_ms: Optional[float] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
@@ -387,7 +388,7 @@ def link(
         name (Optional[str], optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
-            Defaults to "enact".
+            Defaults to DRIVING_EVENT.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event

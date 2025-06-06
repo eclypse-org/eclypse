@@ -21,6 +21,9 @@ Attributes:
     DEFAULT_REPORT_TYPE (str): Default report type used in simulations.
         Default is ``csv``
 
+    DRIVING_EVENT (str): Name of the event used to drive the simulation.
+        Default is ``enact``
+
     RND_SEED (str): Environment variable key to configure the random seed.
         Value is ``ECLYPSE_RND_SEED``
     LOG_LEVEL (str): Environment variable key to configure the logging level.
@@ -32,6 +35,7 @@ Attributes:
 from eclypse_core.utils.constants import (
     DEFAULT_REPORT_TYPE,
     DEFAULT_SIM_PATH,
+    DRIVING_EVENT,
     FLOAT_EPSILON,
     LOG_FILE,
     LOG_LEVEL,
@@ -49,6 +53,7 @@ from eclypse_core.utils.constants import (
 __all__ = [
     "DEFAULT_REPORT_TYPE",
     "DEFAULT_SIM_PATH",
+    "DRIVING_EVENT",
     "FLOAT_EPSILON",
     "LOG_FILE",
     "LOG_LEVEL",

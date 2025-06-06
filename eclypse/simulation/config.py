@@ -41,7 +41,7 @@ class SimulationConfig(_SimulationConfig):
 
     def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
-        tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "auto",
+        tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "manual",
         timeout: Optional[float] = None,
         max_ticks: Optional[int] = None,
         reporters: Optional[Dict[str, Type[Reporter]]] = None,
@@ -98,6 +98,12 @@ class SimulationConfig(_SimulationConfig):
 
         _reporters = get_default_reporters(report_types)
         _reporters.update(reporters if reporters is not None else {})
+
+        if "tensorboard" in _reporters:
+            _require_module("tensorboard", extras_name="tboard")
+
+        if remote:
+            _require_module("ray", extras_name="remote")
 
         super().__init__(
             tick_every_ms=tick_every_ms,
@@ -234,3 +240,15 @@ class SimulationConfig(_SimulationConfig):
             Union[bool, RemoteBootstrap]: True if the simulation is remote. False otherwise.
         """
         return self["remote"]
+
+
+def _require_module(module_name: str, extras_name: Optional[str] = None):
+    """Require a module and raise an ImportError if it is not found."""
+    try:
+        __import__(module_name)
+    except ImportError as e:
+        raise ImportError(
+            f"{module_name} is not installed. "
+            f"Please install it with 'pip install eclypse["
+            f"{extras_name if extras_name else module_name}]'."
+        ) from e
