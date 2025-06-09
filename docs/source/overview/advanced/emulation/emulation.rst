@@ -5,7 +5,7 @@ ECLYPSE supports **emulation mode** for the infrastructure and the applications,
 
 Unlike in simulation, where services are abstracted by placement and resource constraints, in emulation you are responsible for implementing the actual **runtime behaviour** of each service.
 
-This page focuses on the elements that differ from standard simulation.
+In this page, we focus on the elements that differ from standard simulation.
 
 Ray Overview
 ------------

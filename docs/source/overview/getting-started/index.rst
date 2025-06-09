@@ -9,14 +9,14 @@ Getting started
    assets
    update-policy
    placement-strategy
-   callbacks
+   events
    topology
    simulation
 
 Let's get started with ECLYPSE! This guide will walk you through the steps to set up a simulation using the framework.
 ECLYPSE is designed to be flexible and extensible, allowing you to model complex scenarios in Cloud-Edge computing environments.
 
-The following steps outline the full workflow for setting up a simulation.
+The following steps outline the full workflow for setting up a simulation:
 
 .. grid:: 2
 
@@ -35,7 +35,7 @@ The following steps outline the full workflow for setting up a simulation.
          :link: update-policy
          :link-type: doc
 
-         **Update policies** model how assets, network and applications' topology evolve over time, reflecting changes in infrastructure capabilities or application requirements. They allow the simulation of dynamic behaviours.
+         **Update policies** model how assets, network and applications' topologies evolve over time, reflecting changes in infrastructure capabilities or application requirements. They allow the simulation of dynamic behaviours.
 
    .. grid-item::
 
@@ -47,11 +47,12 @@ The following steps outline the full workflow for setting up a simulation.
 
    .. grid-item::
 
-      .. card:: 4. Define callbacks
-         :link: callbacks
+      .. card:: 4. Define simulation workflow through events
+         :link: events
          :link-type: doc
 
-         **Callbacks** allow custom actions during the simulation, such as metric collection, event logging, or injecting logic. They provide extensibility and observability to the simulation process.
+         **Events** allow custom actions during the simulation, such as metric collection, event logging, or injecting logic.
+         They provide extensibility and observability to the simulation process.
 
    .. grid-item::
 

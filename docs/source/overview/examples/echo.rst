@@ -1,6 +1,5 @@
-================
-Echo Application
-================
+Echo 
+====
 
 The Echo Application showcases a simple microservices architecture where messages are echoed back and forth among a set of identical services.
 This example provides insights into the basic structure and interaction patterns of microservices within a distributed system.
@@ -12,7 +11,7 @@ Application
 
 The Echo Application consists of several identical services, each of which receives a message and echoes it back to all of its neighbors. This symmetrical architecture ensures that each service behaves identically.
 
-As each service echoes messages both by broadcasting to all neighbors and unicasting individually to each neighbor, it is useful to compare the expected results of these two communication methods.
+As each service echoes messages both by broadcasting to all neighbors and unicasting individually to each neighbour, it is useful to compare the expected results of these two communication methods.
 Broadcasting is expected to be faster than unicasting, as it involves sending messages to all neighbors simultaneously. Unicasting, on the other hand, requires sending a separate message to each neighbor, which can result in a longer total communication time.
 
 .. dropdown:: Application code
@@ -26,9 +25,11 @@ Echo Service
 
 The `EchoService` class is the core component responsible for echoing messages within the Echo Example application. Below is the code for the EchoService along with an explanation:
 
-.. literalinclude:: ../../../../examples/echo/echo.py
-    :language: python
-    :linenos:
+.. dropdown:: Service code
+
+    .. literalinclude:: ../../../../examples/echo/echo.py
+        :language: python
+        :linenos:
 
 We defined the `EchoService` class, which inherits from the :class:`~eclypse_core.remote.service.service.Service` class provided in ECLYPSE. The `dispatch` implements the logic of the `EchoService`, thus it is responsible for sending messages to neighbors and logging the communication statistics.
 

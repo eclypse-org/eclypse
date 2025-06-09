@@ -5,13 +5,12 @@
    install
    getting-started/index
    advanced/index
-   examples/index
 
------------
-First Steps
------------
 
-.. grid:: 2
+Overview
+--------
+
+.. grid:: 1
 
    .. grid-item::
 
@@ -37,10 +36,10 @@ First Steps
 
          Learn more about advanced features of ECLYPSE.
 
-   .. grid-item::
+   .. .. grid-item::
 
-      .. card:: :octicon:`code;1em;info` **Examples**
-         :link-type: doc
-         :link: examples/index
+   ..    .. card:: :octicon:`code;1em;info` **Examples**
+   ..       :link-type: doc
+   ..       :link: examples/index
 
-         Explore example simulations to use ECLYPSE effectively.
+   ..       Explore example simulations to use ECLYPSE effectively.

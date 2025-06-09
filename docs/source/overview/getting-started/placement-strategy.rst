@@ -70,3 +70,38 @@ The available default strategies are:
 - :class:`~eclypse.placement.strategies.static.StaticStrategy` — expects service-to-node mappings to be provided statically.
 - :class:`~eclypse.placement.strategies.first_fit.FirstFitStrategy` — places services on the first node that satisfies their requirements.
 - :class:`~eclypse.placement.strategies.best_fit.BestFitStrategy` — selects the node with the tightest fit (smallest surplus) for each service.
+
+Attaching a Placement Strategy
+------------------------------
+
+To use a placement strategy during simulation, it must be associated with either an application or the infrastructure.
+
+There are two ways to attach a strategy:
+
+- **Via the infrastructure:**
+  You can pass the strategy when instantiating the :class:`~eclypse.graph.infrastructure.Infrastructure` object:
+
+  .. code-block:: python
+
+     from eclypse.graph.infrastructure import Infrastructure
+     from eclypse.placement.strategies import RandomStrategy
+
+     strategy = RandomStrategy()
+     infr = Infrastructure(..., placement_strategy=strategy)
+
+- **Via the application registration:**
+  You can associate a strategy when registering the application with the simulation using the :py:meth:`~eclypse_core.simulation.simulation.Simulation.register` method:
+
+  .. code-block:: python
+
+     from eclypse.simulation import Simulation
+     from eclypse.placement.strategies import FirstFitStrategy
+
+     sim = Simulation(...)
+     sim.register(application, FirstFitStrategy())
+
+.. important::
+
+   If **no strategy is attached** to either the application or the infrastructure, the simulation will raise an error.
+
+   If **both** are provided, the strategy associated with the **application** takes precedence over the one defined in the infrastructure.

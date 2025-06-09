@@ -25,7 +25,8 @@ if TYPE_CHECKING:
 class Simulation(_Simulation):
     """Class to represent an ECLYPSE simulation.
 
-    It extends the core simulation class to provide the reporting functionality.
+    It extends the core :class:`eclypse_core.simulation.simulation.Simulation`
+    class to provide the reporting functionality.
     """
 
     def __init__(

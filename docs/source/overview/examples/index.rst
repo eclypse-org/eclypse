@@ -6,8 +6,8 @@ Examples
    :maxdepth: 2
    :hidden:
 
-   Echo Application <echo.rst>
-   SockShop <sock_shop.rst>
+   echo
+   sock_shop
 
 We have implemented several examples to demonstrate the capabilities of ECLYPSE.
 
@@ -17,7 +17,7 @@ The code of the examples is available at the :icon:`fa-brands fa-github` `eclyps
 
    .. grid-item::
 
-      .. card:: :octicon:`megaphone;1em;info` **Echo Application**
+      .. card:: :octicon:`megaphone;1em;info` **Echo**
          :link-type: doc
          :link: echo
 

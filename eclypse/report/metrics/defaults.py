@@ -52,7 +52,8 @@ def response_time(
         placement (Placement): The placement of the application.
         infr (Infrastructure): The infrastructure.
     Returns:
-        ApplicationValue: The response time for each application.
+        Optional[float]: The maximum response time for the application, if any,
+            'inf' otherwise.
     """
     response_times = []
     if placement.mapping:
@@ -102,8 +103,7 @@ def placement_mapping(
         __: The infrastructure.
 
     Returns:
-        ServiceValue: The placement of each service in each application, if any,
-            'EMPTY' otherwise.
+        str: The placement of the service in the application, or "EMPTY" if not placed.
     """
     return placement.mapping.get(service_id, "EMPTY")
 
@@ -125,7 +125,7 @@ def required_cpu(
         ___: The infrastructure.
 
     Returns:
-        ServiceValue: The required CPU for each service in each application.
+        float: The required CPU for each service in each application.
     """
     return requirements.get("cpu", MIN_FLOAT)
 
@@ -147,7 +147,7 @@ def required_ram(
         ___: The infrastructure.
 
     Returns:
-        ServiceValue: The required RAM for each service in each application.
+        float: The required RAM for each service in each application.
     """
     return requirements.get("ram", MIN_FLOAT)
 
@@ -169,7 +169,7 @@ def required_storage(
         ___: The infrastructure.
 
     Returns:
-        ServiceValue: The required storage for each service in each application.
+        float: The required storage for each service in each application.
     """
     return requirements.get("storage", MIN_FLOAT)
 
@@ -191,7 +191,7 @@ def required_gpu(
         ___: The infrastructure.
 
     Returns:
-        ServiceValue: The required GPU for each service in each application.
+        float: The required GPU for each service in each application.
     """
     return requirements.get("gpu", MIN_FLOAT)
 
@@ -237,7 +237,7 @@ def required_bandwidth(
         ___: The placement of the application the service belongs to.
         ____: The infrastructure.
     Returns:
-        InteractionValue: The required bandwidth for each interaction in each application.
+        float: The required bandwidth for each interaction in each application.
     """
     return requirements.get("bandwidth", MIN_BANDWIDTH)
 
@@ -277,7 +277,7 @@ def featured_cpu(
         ___: The placement view.
 
     Returns:
-        NodeValue: The featured CPU of each node.
+        float: The featured CPU of each node.
     """
     return resources.get("cpu", MIN_FLOAT)
 
@@ -300,7 +300,7 @@ def featured_ram(
         ___: The placement view.
 
     Returns:
-        NodeValue: The featured RAM of each node.
+        float: The featured RAM of each node.
     """
     return resources.get("ram", MIN_FLOAT)
 
@@ -323,7 +323,7 @@ def featured_storage(
         ___: The placement view.
 
     Returns:
-        NodeValue: The featured storage of each node.
+        float: The featured storage of each node.
     """
     return resources.get("storage", MIN_FLOAT)
 
@@ -346,7 +346,7 @@ def featured_gpu(
         ___: The placement view.
 
     Returns:
-        NodeValue: The featured GPU of each node.
+        float: The featured GPU of each node.
     """
     return resources.get("gpu", MIN_FLOAT)
 
@@ -398,7 +398,7 @@ def featured_bandwidth(
         _____: The placement view.
 
     Returns:
-        LinkValue: The featured bandwidth of each link.
+        float: The featured bandwidth of each link.
     """
     return resources.get("bandwidth", MIN_BANDWIDTH)
 
@@ -499,7 +499,7 @@ def step_result(service: Service) -> Optional[Any]:
         service (Service): The service.
 
     Returns:
-        Optional[str]: The result of the step executed by the service.
+        Optional[Any]: The result of the step executed by the service.
     """
     return service._step_queue.pop(0) if service._step_queue else None
 

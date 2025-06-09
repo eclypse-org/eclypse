@@ -38,8 +38,8 @@ All methods are **asynchronous** and simulate network cost using the placement a
    # Receive next message
    message = await self.mpi.recv()
 
-:py:func:`@echange() <eclypse_core.remote.communication.mpi.interface.exchange>` decorator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@exchange() decorator
+~~~~~~~~~~~~~~~~~~~~~
 
 In addition to direct calls, the :class:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI` interface provides a decorator (:py:func:`@echange() <eclypse_core.remote.communication.mpi.interface.exchange>`) to define communication behaviour declaratively inside service methods.
 
@@ -71,8 +71,8 @@ ECLYPSE also provides a REST-style communication interface for services. This mo
 
 To use this, your service must subclass :class:`~eclypse_core.remote.communication.rest.interface.EclypseREST`. Each instance exposes a REST interface, backed by a Ray actor, which handles remote requests.
 
-:py:func:`@endpoint() <eclypse_core.remote.communication.rest.interface.register_endpoint>` decorator
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+@endpoint() decorator
+~~~~~~~~~~~~~~~~~~~~~
 
 You define REST endpoints inside your service by decorating methods with the :py:func:`@endpoint() <eclypse_core.remote.communication.rest.interface.register_endpoint>` decorator (renamed *@endpoint* out of the core for readability).
 
