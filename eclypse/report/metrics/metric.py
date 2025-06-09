@@ -320,7 +320,6 @@ def node(
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
     trigger_condition: Optional[str] = "any",
     report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
-    remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create a node metric.
@@ -346,7 +345,6 @@ def node(
         report (Optional[Union[str, List[str]]], optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
-        remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
     Returns:
         Callable: The decorated function.
@@ -362,7 +360,6 @@ def node(
         triggers=triggers,
         trigger_condition=trigger_condition,
         report=report,
-        remote=remote,
         verbose=verbose,
     )
 
