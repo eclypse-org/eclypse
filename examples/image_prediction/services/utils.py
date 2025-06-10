@@ -9,7 +9,7 @@ LEARNING_RATE = 0.001
 EPOCHS = 100
 BATCH_SIZE = 1024
 TICKS = 600
-TICK_EVERY_MS = 10000
+TICK_EVERY_MS = 1000
 
 
 def load_data(train: bool = True) -> MNIST:

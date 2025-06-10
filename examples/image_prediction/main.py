@@ -28,7 +28,7 @@ if __name__ == "__main__":
         max_ticks=TICKS,
         tick_every_ms=TICK_EVERY_MS,
         include_default_callbacks=False,
-        callbacks=get_metrics(),
+        events=get_metrics(),
         log_to_file=True,
         path=BASE_PATH,
         remote=True,  # use "with_gpus" instead of "True" if you have available GPUs
