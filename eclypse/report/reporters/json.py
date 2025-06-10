@@ -30,22 +30,20 @@ class JSONReporter(Reporter):
         event_idx: int,
         callback: EclypseEvent,
     ) -> List[Any]:
-        entries = []
 
-        for line in self.dfs_data(callback.data):
-            if line[-1] is None:
-                continue
-
-            entries.append(
+        return (
+            [
                 {
                     "timestamp": dt.now().isoformat(),
                     "event_name": event_name,
                     "event_idx": event_idx,
                     "callback_name": callback.name,
-                    "data": line,
+                    "data": callback.data,
                 }
-            )
-        return entries
+            ]
+            if callback.data
+            else []
+        )
 
     async def write(self, callback_type: str, data: List[dict]):
         path = self.report_path / f"{callback_type}.jsonl"
