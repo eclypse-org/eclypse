@@ -72,7 +72,6 @@ class CSVReporter(Reporter):
             ] + line
 
             fields = [str(f) for f in fields]
-            fields[-1] = fields[-1].replace(CSV_DELIMITER, ";")
             lines.append(CSV_DELIMITER.join(fields))
 
         return lines
