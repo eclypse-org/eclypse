@@ -21,7 +21,7 @@ generate-setup-file = false
 
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
-eclypse-core = "^0.6.22"
+eclypse-core = "^0.7.0"
 pandas = "^2.3.0"
 tensorboardx = "^2.6.2.2"
 ray = { extras = ["default"], version = "^2.8.0" }
