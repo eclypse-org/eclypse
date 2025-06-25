@@ -14,7 +14,7 @@ import aiofiles  # type: ignore[import-untyped]
 from eclypse_core.report.reporter import Reporter
 
 if TYPE_CHECKING:
-    from eclypse.workflow import EclypseEvent
+    from eclypse.workflow.event import EclypseEvent
 
 
 class JSONReporter(Reporter):

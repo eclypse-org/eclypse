@@ -32,7 +32,7 @@ if TYPE_CHECKING:
     from eclypse_core.utils.types import LogLevel
 
     from eclypse.report.reporters import Reporter
-    from eclypse.workflow import EclypseEvent
+    from eclypse.workflow.event import EclypseEvent
 
 
 class SimulationConfig(_SimulationConfig):

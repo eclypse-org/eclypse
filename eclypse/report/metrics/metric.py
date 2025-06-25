@@ -15,7 +15,7 @@ from eclypse.utils.constants import (
     DRIVING_EVENT,
     MAX_FLOAT,
 )
-from eclypse.workflow import event
+from eclypse.workflow.event import event
 
 if TYPE_CHECKING:
     from eclypse.utils.types import ActivatesOnType

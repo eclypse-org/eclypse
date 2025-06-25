@@ -20,7 +20,7 @@ from eclypse_core.report.reporter import Reporter
 if TYPE_CHECKING:
     from tensorboardX import SummaryWriter
 
-    from eclypse.workflow import EclypseEvent
+    from eclypse.workflow.event import EclypseEvent
 
 
 class TensorBoardReporter(Reporter):

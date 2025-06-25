@@ -10,7 +10,11 @@ from typing import (
     Union,
 )
 
-from eclypse_core.workflow.events.decorator import _event
+from eclypse_core.workflow.events import (
+    EclypseEvent,
+    _event,
+)
+from eclypse_core.workflow.events.defaults import get_default_events
 
 from eclypse.utils.constants import (
     DEFAULT_REPORT_TYPE,
@@ -18,7 +22,10 @@ from eclypse.utils.constants import (
 )
 
 if TYPE_CHECKING:
-    from eclypse.utils.types import EventType
+    from eclypse.utils.types import (
+        ActivatesOnType,
+        EventType,
+    )
     from eclypse.workflow.triggers import Trigger
 
 
@@ -28,6 +35,7 @@ def event(
     name: Optional[str] = None,
     event_type: Optional[EventType] = None,
     trigger_every_ms: Optional[float] = None,
+    activates_on: Optional[ActivatesOnType] = None,
     max_triggers: Optional[int] = int(MAX_FLOAT),
     triggers: Optional[Union[Trigger, List[Trigger]]] = None,
     trigger_condition: Optional[str] = "any",
@@ -45,6 +53,8 @@ def event(
             the name will be derived from the function or class name. Defaults to None.
         event_type (Optional[EventType], optional): The type of the event.
             Defaults to None.
+        activates_on (Optional[ActivatesOnType], optional): The conditions that will
+            trigger the event. Defaults to None.
         trigger_every_ms (Optional[float], optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
         max_triggers (Optional[int], optional): The maximum number of times the event
@@ -69,6 +79,7 @@ def event(
         fn_or_class=fn_or_class,
         name=name,
         event_type=event_type,
+        activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
         triggers=triggers,
@@ -78,3 +89,6 @@ def event(
         remote=remote,
         verbose=verbose,
     )
+
+
+__all__ = ["event", "EclypseEvent", "get_default_events"]
