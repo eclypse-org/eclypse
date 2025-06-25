@@ -1,7 +1,8 @@
 """Module for the Application class.
 
-It extends the AssetGraph class to represent an application, with nodes representing
-services and edges representing the interactions between them.
+It extends the :class:`~eclypse_core.graph.application.Application` core class
+to represent an application, with nodes representing services and edges representing
+the interactions between them.
 """
 
 from __future__ import annotations
