@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "eclypse"
-version = "0.7.2"
+version = "0.7.3"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 authors = [
     "Jacopo Massa <jacopo.massa@di.unipi.it>",
@@ -75,7 +75,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.7.2"
+version = "0.7.3"
 tag_format = "$version"
 version_files = ["pyproject.toml:version", "eclypse/__init__.py:__version__"]
 
