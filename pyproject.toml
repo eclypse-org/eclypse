@@ -25,7 +25,7 @@ pandas = "^2.3.0"
 tensorboardx = "^2.6.2.2"
 ray = { extras = ["default"], version = "^2.8.0" }
 aiofiles = "^24.1.0"
-eclypse-core = "^0.7.3"
+eclypse-core = "^0.7.4"
 
 [tool.poetry.extras]
 remote = ["ray"]
