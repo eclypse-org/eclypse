@@ -20,10 +20,11 @@ from typing import (
     Optional,
 )
 
+import networkx as nx
+
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
