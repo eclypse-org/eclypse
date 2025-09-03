@@ -133,6 +133,7 @@ def hierarchical(
 
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
+        placement_strategy=placement_strategy,
         node_update_policy=node_update_policy,
         edge_update_policy=link_update_policy,
         node_assets=node_assets,
@@ -140,7 +141,6 @@ def hierarchical(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 
