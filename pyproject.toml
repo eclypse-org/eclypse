@@ -55,11 +55,9 @@ twine = "^6.1.0"
 [tool.poetry.group.docs]
 optional = true
 
-# To build the docs, at least python3.10 is required
+# To build the docs, at least python3.11 is required
 [tool.poetry.group.docs.dependencies]
-sphinx = { version = "^8.2.3", python = "^3.11" }
 myst-parser = { version = "^4.0.1", python = "^3.11" }
-sphinx-copybutton = { version = "^0.5.2", python = "^3.11" }
 jinja2 = "^3.1.6"
 docformatter = { extras = ["tomli"], version = "^1.7.7" }
 sphinx-autobuild = "^2024.10.3"
@@ -68,6 +66,8 @@ sphinx-favicon = "^1.0.1"
 sphinx-design = "^0.6.1"
 sphinx-icon = "^0.2.2"
 pydata-sphinx-theme = "^0.16.1"
+sphinx = { version = "^8.2.3", python = "^3.11" }
+sphinx-copybutton = { version = "^0.5.2", python = "^3.11" }
 
 [build-system]
 requires = ["poetry-core", "setuptools", "wheel"]
