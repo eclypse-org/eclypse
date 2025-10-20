@@ -98,7 +98,7 @@ class EnergyMinimizationStrategy(PlacementStrategy):
             return {}
 
         mapping = {}
-        infrastructure_nodes = list(placement_view.residual.available.nodes(data=True))
+        infrastructure_nodes = list(infrastructure.available.nodes(data=True))
         rnd.shuffle(infrastructure_nodes)
 
         for service, sattr in application.nodes(data=True):

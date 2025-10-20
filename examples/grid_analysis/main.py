@@ -33,6 +33,7 @@ def eclypse_grid(config):
     print("PATH: ", path)
 
     sim_config = SimulationConfig(
+        tick_every_ms="auto",
         seed=config["seed"],
         max_ticks=config["max_ticks"],
         path=path,

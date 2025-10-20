@@ -4,7 +4,7 @@ from infrastructure import get_infrastructure
 from metric import get_metrics
 
 from eclypse.builders.application import get_sock_shop
-from eclypse.placement.strategies import FirstFitStrategy
+from eclypse.placement.strategies import BestFitStrategy
 from eclypse.simulation import (
     Simulation,
     SimulationConfig,
@@ -15,9 +15,10 @@ SEED = 42
 TICKS = 4167
 
 app = get_sock_shop(seed=SEED)
-strategy = FirstFitStrategy()
+strategy = BestFitStrategy()
 
 sim_config = SimulationConfig(
+    tick_every_ms="auto",
     seed=SEED,
     max_ticks=TICKS,
     path=DEFAULT_SIM_PATH / "user-distribution",

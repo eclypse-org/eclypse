@@ -13,10 +13,11 @@ if __name__ == "__main__":
     seed = 2
     sim_config = SimulationConfig(
         seed=seed,
-        max_ticks=100,
-        tick_every_ms=250,
+        # max_ticks=100,
+        tick_every_ms=500,
         log_to_file=True,
         path=DEFAULT_SIM_PATH / "EchoApp",
+        # log_level="TRACE",
         remote=True,
         include_default_callbacks=True,
     )
@@ -28,4 +29,5 @@ if __name__ == "__main__":
 
     sim.register(app, RandomStrategy(seed=seed))
     sim.start()
-    print(sim.report.application())
+    # print(sim.report.application())
+    sim.wait()
