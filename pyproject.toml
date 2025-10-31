@@ -39,6 +39,7 @@ isort = "^7.0.0"
 pycln = "^2.6.0"
 pylint = "^4.0.2"
 docformatter = { extras = ["tomli"], version = "^1.7.7" }
+ruff = "^0.14.3"
 
 [tool.poetry.group.deploy]
 optional = true
@@ -84,9 +85,6 @@ version = "0.7.4"
 tag_format = "$version"
 version_files = ["pyproject.toml:version", "eclypse/__init__.py:__version__"]
 
-[tool.pycln]
-all = true
-
 [tool.isort]
 multi_line_output = 3
 include_trailing_comma = true
@@ -94,11 +92,14 @@ force_grid_wrap = 2
 filter_files = true
 skip = ["__init__.py"]
 
-[tool.docformatter]
-recursive = true
-black = true
-diff = true
-tab-width = 4
+# [tool.docformatter]
+# recursive = true
+# black = true
+# diff = true
+# tab-width = 4
+
+# [tool.pycln]
+# all = true
 
 [tool.pytest.ini_options]
 testpaths = "tests"

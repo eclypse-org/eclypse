@@ -1,58 +1,62 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v2.3.0
+    rev: v6.0.0
     hooks:
       - id: check-added-large-files
       - id: end-of-file-fixer
       - id: trailing-whitespace
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: detect-private-key
       - id: requirements-txt-fixer
 
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
+
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v3.16.0
+    rev: v4.9.1
     hooks:
       - id: commitizen
       - id: commitizen-branch
         stages:
           - pre-push
 
-  - repo: https://github.com/psf/black
-    rev: 24.2.0
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.14.3
     hooks:
-      - id: black
+      - id: ruff-format
+      - id: ruff-check
 
-  - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.7
-    hooks:
-      - id: docformatter
-        args: [--in-place, --config, ./pyproject.toml]
+  # - repo: https://github.com/psf/black
+  #   rev: 24.2.0
+  #   hooks:
+  #     - id: black
 
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
+  # - repo: https://github.com/PyCQA/docformatter
+  #   rev: v1.7.7
+  #   hooks:
+  #     - id: docformatter
+  #       args: [--in-place, --config, ./pyproject.toml]
 
-  - repo: https://github.com/hadialqattan/pycln
-    rev: v2.4.0
-    hooks:
-      - id: pycln
-        args: [--config, ./pyproject.toml]
+  # - repo: https://github.com/hadialqattan/pycln
+  #   rev: v2.4.0
+  #   hooks:
+  #     - id: pycln
+  #       args: [--config, ./pyproject.toml]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.8.0
+    rev: v1.18.2
     hooks:
       - id: mypy
-        exclude: ^tests/
+        exclude: ^docs/
 
-  - repo: local
-    hooks:
-      - id: pylint
-        name: pylint
-        entry: pylint
-        language: system
-        types: [python]
+  # - repo: local
+  #   hooks:
+  #     - id: pylint
+  #       name: pylint
+  #       entry: pylint
+  #       language: system
+  #       types: [python]
 
 exclude: "examples/.*"

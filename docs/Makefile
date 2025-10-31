@@ -21,7 +21,8 @@ livehtml:
 
 # check docstrings using pylint in ../eclypse module
 check:
-	pylint --rcfile=../.pylintrc --enable=C0114,C0115,C0116 --disable=R0801,E0611 ../eclypse
+# 	pylint --rcfile=../.pylintrc --enable=C0114,C0115,C0116 --disable=R0801,E0611 ../eclypse
+	ruff check --select D,E501 ../eclypse
 
 .PHONY: help Makefile
 
