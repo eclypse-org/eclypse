@@ -9,10 +9,10 @@ from .first_fit import FirstFitStrategy
 from .best_fit import BestFitStrategy
 
 __all__ = [
-    "PlacementStrategy",
-    "RoundRobinStrategy",
-    "RandomStrategy",
-    "StaticStrategy",
-    "FirstFitStrategy",
     "BestFitStrategy",
+    "FirstFitStrategy",
+    "PlacementStrategy",
+    "RandomStrategy",
+    "RoundRobinStrategy",
+    "StaticStrategy",
 ]

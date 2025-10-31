@@ -10,14 +10,11 @@ defined in terms of a set of constraints:
 from __future__ import annotations
 
 from typing import (
-    TYPE_CHECKING,
     Any,
+    Set,
 )
 
 from .asset import Asset
-
-if TYPE_CHECKING:
-    pass
 
 
 class Symbolic(Asset):
@@ -37,11 +34,10 @@ class Symbolic(Asset):
         """
         # return list(set().union(*assets))
 
-        uniques = set()
+        uniques: Set[Any] = set()
         for asset in assets:
-            if isinstance(asset, str):
-                asset = [asset]
-            uniques.update(asset)
+            _asset = [asset] if isinstance(asset, str) else asset
+            uniques.update(_asset)
         return list(uniques)
 
     def satisfies(self, asset: Any, constraint: Any) -> bool:

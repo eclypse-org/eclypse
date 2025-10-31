@@ -5,7 +5,6 @@ It represents a request to broadcast a message to all neighbor services in the n
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -19,6 +18,8 @@ from eclypse.remote import ray_backend
 from .multicast import MulticastRequest
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from eclypse.remote.communication.mpi import EclypseMPI
 
 
@@ -50,5 +51,4 @@ class BroadcastRequest(MulticastRequest):
         Returns:
             Awaitable: The result of the request.
         """
-
         return super().__await__()  # type: ignore[return-value]

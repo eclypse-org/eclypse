@@ -5,7 +5,7 @@ from .response import Response
 from .interface import EclypseMPI, exchange
 
 __all__ = [
-    "Response",
     "EclypseMPI",
+    "Response",
     "exchange",
 ]

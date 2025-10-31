@@ -52,7 +52,6 @@ class Placement:
     ):
         """Generate the mapping of the application services onto the infrastructure
         nodes, according to the placement strategy."""
-
         if self.strategy is None:
             raise ValueError("No placement strategy provided")
         self.mapping = self.strategy.place(

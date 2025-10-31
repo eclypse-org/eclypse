@@ -23,10 +23,7 @@ from typing import (
 )
 
 from eclypse.remote import ray_backend
-from eclypse.utils._logging import (
-    Logger,
-    logger,
-)
+from eclypse.utils._logging import logger
 from eclypse.utils.constants import MAX_FLOAT
 from eclypse.workflow.trigger.bucket import TriggerBucket
 
@@ -39,6 +36,7 @@ if TYPE_CHECKING:
         PlacementView,
     )
     from eclypse.simulation._simulator.local import Simulator
+    from eclypse.utils._logging import Logger
     from eclypse.utils.types import EventType
     from eclypse.workflow.trigger import Trigger
 
@@ -80,7 +78,6 @@ class EclypseEvent:
         Raises:
             ValueError: The event must have a name.
         """
-
         if not name:
             raise ValueError("The event must have a name.")
 
@@ -123,7 +120,8 @@ class EclypseEvent:
         """Execute the event function according to the type of the event.
 
         Args:
-            trigger_event (Optional[EclypseEvent]): The event that triggered this event. Defaults to None.
+            trigger_event (Optional[EclypseEvent]): The event that triggered this event.\
+                Defaults to None.
 
         Returns:
             Any: The value returned by the event function, which must be a dict or None.
@@ -183,13 +181,13 @@ class EclypseEvent:
         """Fire the event.
 
         Args:
-            trigger_event (Optional[EclypseEvent]): The event that triggered this event. Defaults to None.
+            trigger_event (Optional[EclypseEvent]): The event that triggered\
+                this event. Defaults to None.
 
         Raises:
             ValueError: The event must be associated to a simulator to be fired.
             ValueError: The event function must return None or a dict.
         """
-
         if self._simulator is None:
             raise ValueError("The event must be associated to a simulator to be fired.")
 

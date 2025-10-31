@@ -4,10 +4,6 @@ the interface used by services to communicate."""
 from __future__ import annotations
 
 import asyncio
-from asyncio import (
-    Future,
-    Task,
-)
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -20,6 +16,11 @@ from typing import (
 from eclypse.remote import ray_backend
 
 if TYPE_CHECKING:
+    from asyncio import (
+        Future,
+        Task,
+    )
+
     from eclypse.remote.service import Service
     from eclypse.simulation._simulator.remote import RemoteSimulator
 

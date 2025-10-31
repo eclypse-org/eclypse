@@ -7,6 +7,6 @@ from .request import EclypseRequest
 
 __all__ = [
     "EclypseCommunicationInterface",
-    "Route",
     "EclypseRequest",
+    "Route",
 ]

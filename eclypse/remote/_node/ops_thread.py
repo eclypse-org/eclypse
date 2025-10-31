@@ -94,7 +94,6 @@ class RemoteOpsThread(Thread):
                 (OK, service) if successful, (ERROR, None) otherwise.
         """
         try:
-
             self._node.services[service_id]._undeploy()
             service = self._node.services.pop(service_id)
             return (ResponseCode.OK, service)

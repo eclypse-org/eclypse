@@ -86,7 +86,6 @@ def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
         user_events (List[EclypseEvent]): The user-defined events.
 
     Returns:
-
         List[EclypseEvent]: The default events.
     """
     user_event_names = [event.name for event in user_events]

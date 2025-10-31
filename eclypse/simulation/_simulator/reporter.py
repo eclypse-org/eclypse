@@ -42,10 +42,10 @@ class SimulationReporter:
             rtype: rep(report_path) for rtype, rep in reporters.items()
         }
         self.queues: Dict[str, asyncio.Queue] = {
-            rtype: asyncio.Queue() for rtype in self.reporters.keys()
+            rtype: asyncio.Queue() for rtype in self.reporters
         }
         self.buffers: Dict[str, DefaultDict[str, List[Any]]] = {
-            rtype: defaultdict(list) for rtype in self.reporters.keys()
+            rtype: defaultdict(list) for rtype in self.reporters
         }
 
         self.writer_tasks: Dict[str, asyncio.Task] = {}
@@ -76,7 +76,7 @@ class SimulationReporter:
             self.logger.trace(f"[{rtype}] Waiting for queue to flush...")
             await queue.join()
 
-        for rtype, queue in self.queues.items():
+        for _, queue in self.queues.items():
             await queue.put(None)  # Signal the writer to stop
 
         await asyncio.gather(*self.writer_tasks.values())

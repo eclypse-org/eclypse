@@ -44,10 +44,9 @@ class TriggerBucket:
             max_triggers (Optional[int]): The maximum number of times the trigger
                 can be called. Defaults to `no limit`.
         """
-        if triggers:
-            triggers = triggers if isinstance(triggers, list) else [triggers]
-        else:
-            triggers = []
+        triggers = (
+            (triggers if isinstance(triggers, list) else [triggers]) if triggers else []
+        )
 
         self.event: Optional[EclypseEvent] = None
         self.triggers = triggers

@@ -24,7 +24,6 @@ class FrontendService(Service):
     async def step(self):
         """Example workflow of the Frontend service, starting with fetching the catalog,
         user data, and cart items, then placing an order."""
-
         catalog_r = await self.rest.get("CatalogService/catalog")
         user_r = await self.rest.get("UserService/user", user_id=self.user_id)
         cart_r = await self.rest.get("CartService/cart")

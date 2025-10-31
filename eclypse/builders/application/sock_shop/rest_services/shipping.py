@@ -36,7 +36,6 @@ class ShippingService(RESTService):
                 },
             })
         """
-
         return 200, {
             "order_id": order_id,
             "status": "success",

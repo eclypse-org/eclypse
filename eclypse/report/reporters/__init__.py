@@ -22,7 +22,6 @@ def get_default_reporters(
     Returns:
         Dict[str, Type[Reporter]]: The default reporters.
     """
-
     default_reporters = {
         "csv": CSVReporter,
         "gml": GMLReporter,
@@ -38,10 +37,10 @@ def get_default_reporters(
 
 
 __all__ = [
-    "get_default_reporters",
-    "Reporter",
     "CSVReporter",
     "GMLReporter",
     "JSONReporter",
+    "Reporter",
     "TensorBoardReporter",
+    "get_default_reporters",
 ]

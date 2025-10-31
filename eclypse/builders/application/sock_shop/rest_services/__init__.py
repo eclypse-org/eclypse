@@ -11,11 +11,11 @@ from .shipping import ShippingService
 from .frontend import FrontendService
 
 __all__ = [
-    "CatalogService",
-    "UserService",
     "CartService",
+    "CatalogService",
+    "FrontendService",
     "OrderService",
     "PaymentService",
     "ShippingService",
-    "FrontendService",
+    "UserService",
 ]

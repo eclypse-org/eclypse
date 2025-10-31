@@ -5,7 +5,6 @@ It represents a request to send a message to multiple recipients.
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -18,6 +17,8 @@ from typing import (
 from eclypse.remote.communication import EclypseRequest
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from eclypse.remote.communication.mpi import EclypseMPI
 
 
@@ -53,5 +54,4 @@ class MulticastRequest(EclypseRequest):
         Returns:
             Awaitable: The result of the request.
         """
-
         return super().__await__()  # type: ignore[return-value]

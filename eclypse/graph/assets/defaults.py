@@ -9,6 +9,7 @@ Default path aggregators are: latency (sum), bandwidth (min).
 from __future__ import annotations
 
 from typing import (
+    TYPE_CHECKING,
     Any,
     Callable,
     Optional,
@@ -16,7 +17,6 @@ from typing import (
 )
 
 from eclypse.graph.assets.space import (
-    AssetSpace,
     Choice,
     IntUniform,
     Uniform,
@@ -31,13 +31,16 @@ from eclypse.utils.constants import (
     MIN_FLOAT,
     MIN_LATENCY,
 )
-from eclypse.utils.types import PrimitiveType
 
 from . import (
     Additive,
     Concave,
     Multiplicative,
 )
+
+if TYPE_CHECKING:
+    from eclypse.graph.assets.space import AssetSpace
+    from eclypse.utils.types import PrimitiveType
 
 
 def cpu(
@@ -274,15 +277,15 @@ def get_default_path_aggregators():
 
 
 __all__ = [
+    "availability",
+    "bandwidth",
     "cpu",
+    "get_default_edge_assets",
+    "get_default_node_assets",
+    "get_default_path_aggregators",
+    "gpu",
+    "latency",
+    "processing_time",
     "ram",
     "storage",
-    "gpu",
-    "availability",
-    "processing_time",
-    "latency",
-    "bandwidth",
-    "get_default_node_assets",
-    "get_default_edge_assets",
-    "get_default_path_aggregators",
 ]

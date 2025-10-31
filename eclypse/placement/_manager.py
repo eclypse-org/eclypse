@@ -43,7 +43,7 @@ class PlacementManager:
 
         Args:
             infrastructure (Infrastructure): The infrastructure to place the applications onto.
-            incremental_mapping_phase (bool, optional): If True, the placement is done incrementally,
+            incremental_mapping_phase (bool, optional): If True, the placement is incremental,
                 i.e. one application at a time. If False, the placement is done in batch.
                 Defaults to False.
         """
@@ -70,7 +70,6 @@ class PlacementManager:
     def enact(self):
         """Enact (resets or not) the current placement of the applications onto the
         infrastructure."""
-
         for p in self.placements.values():
             if p._to_reset:
                 self.logger.warning(f"Resetting placement of {p.application.id}")
@@ -95,7 +94,7 @@ class PlacementManager:
         if placement.strategy is None:
             self.logger.trace(
                 f"Using {self.infrastructure.strategy.__class__.__name__} "
-                f"strategy for {placement.application.id}"
+                f" strategy for {placement.application.id}",
             )
             if self.infrastructure.has_strategy:
                 placement.mapping = self.infrastructure.strategy.place(  # type: ignore[union-attr]
@@ -204,7 +203,6 @@ class PlacementManager:
             application (Application): The application to include.
             placement_strategy (PlacementStrategy): The placement strategy to use.
         """
-
         application.set_flows()
         self.placements[application.id] = Placement(
             infrastructure=self.infrastructure,

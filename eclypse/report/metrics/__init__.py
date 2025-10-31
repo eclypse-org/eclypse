@@ -14,12 +14,12 @@ from .metric import (
 )
 
 __all__ = [
-    # DECORATORS
-    "simulation",
     "application",
     "infrastructure",
-    "service",
     "interaction",
-    "node",
     "link",
+    "node",
+    "service",
+    # DECORATORS
+    "simulation",
 ]

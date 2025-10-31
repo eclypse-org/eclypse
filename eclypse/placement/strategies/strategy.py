@@ -42,7 +42,7 @@ class PlacementStrategy(_PlacementStrategy):
         Args:
             infrastructure (Infrastructure): The infrastructure to place the application onto.
             application (Application): The application to place onto the infrastructure.
-            placements (Dict[str, Placement]): The placement of all the applications in the simulations.
+            placements (Dict[str, Placement]): The placement of the applications in the simulations.
             placement_view (PlacementView): The snapshot of the current state of the \
                 infrastructure.
 

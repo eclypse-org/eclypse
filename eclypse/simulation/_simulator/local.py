@@ -32,13 +32,11 @@ from eclypse.utils.constants import (
     FLOAT_EPSILON,
     RND_SEED,
 )
-from eclypse.workflow.event import EclypseEvent
 from eclypse.workflow.trigger.trigger import ScheduledTrigger
 
 from .reporter import SimulationReporter
 
 if TYPE_CHECKING:
-
     from eclypse.graph import (
         Application,
         Infrastructure,
@@ -50,6 +48,7 @@ if TYPE_CHECKING:
     from eclypse.placement.strategy import PlacementStrategy
     from eclypse.simulation.config import SimulationConfig
     from eclypse.utils._logging import Logger
+    from eclypse.workflow.event import EclypseEvent
 
 
 class Simulator:

@@ -44,7 +44,7 @@ class GMLReporter(Reporter):
             graph = d[-1]
             if not isinstance(graph, nx.DiGraph):
                 continue
-            name = f"{callback.name}{'-'+graph.id if hasattr(graph, 'id') else ''}"
+            name = f"{callback.name}{'-' + graph.id if hasattr(graph, 'id') else ''}"
             entries.append((name, graph))
         return entries
 

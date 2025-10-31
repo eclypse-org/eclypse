@@ -3,7 +3,8 @@ the SockShop application.
 
 - Key Responsibilities:
     - Processes payment details and initiates transactions for placed orders.
-    - Communicates with external payment providers and returns transaction statuses (e.g., success, failure).
+    - Communicates with external payment providers and returns transaction statuses \
+        (e.g., success, failure).
 """
 
 import os
@@ -40,7 +41,6 @@ class PaymentService(RESTService):
                 "status": "success",
             })
         """
-
         return 200, {
             "order_id": order_id,
             "amount": amount + self.rnd.randint(1, 10),

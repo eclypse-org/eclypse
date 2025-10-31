@@ -60,7 +60,6 @@ class RemoteBootstrap:
         simulation_config: Optional[SimulationConfig] = None,
     ):
         """Build the remote simulation."""
-
         # if self.resume_if_exists:
         #     ray.init(address="auto", runtime_env={"env_vars": self.env_vars})
         #     return ray.get_actor(f"{infrastructure.id}/manager"), [
@@ -104,11 +103,10 @@ def _create_remote(
     Returns:
         Any: The remote object.
     """
-
     if remote_cls == "sim-core":
         from eclypse.simulation._simulator import (  # isort:skip
             RemoteSimulator as remote_cls,
-        )  # noqa
+        )
     elif remote_cls == "node-core":
         from eclypse.remote._node import RemoteNode as remote_cls
 

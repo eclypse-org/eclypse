@@ -62,7 +62,6 @@ class RemoteSimulator(Simulator):
             timeout (Optional[float]): The maximum time to wait for the simulation to
                 finish. If None, it waits indefinitely. Defaults to None.
         """
-
         if timeout:
             stop_event = self._events["stop"]
             trigger = ScheduledTrigger(timedelta(seconds=timeout))
@@ -98,7 +97,6 @@ class RemoteSimulator(Simulator):
         Returns:
             Route: The route between the two services.
         """
-
         n = await self.get_neighbors(application_id, source_id)
         if dest_id not in n:
             return None
@@ -110,10 +108,11 @@ class RemoteSimulator(Simulator):
         except KeyError:
             return None
 
-        if source_node != dest_node:
-            path = self.infrastructure.path(source_node, dest_node)
-        else:
-            path = ([], 0)
+        path = (
+            self.infrastructure.path(source_node, dest_node)
+            if source_node != dest_node
+            else ([], 0)
+        )
 
         return (
             None

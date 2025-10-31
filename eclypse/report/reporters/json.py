@@ -31,7 +31,6 @@ class JSONReporter(Reporter):
         event_idx: int,
         callback: EclypseEvent,
     ) -> List[Any]:
-
         return (
             [
                 {

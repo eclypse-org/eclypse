@@ -26,7 +26,6 @@ from eclypse.utils.constants import (
 from . import metric
 
 if TYPE_CHECKING:
-
     from eclypse.graph import (
         Application,
         Infrastructure,
@@ -50,6 +49,7 @@ def response_time(
         app (Application): The application.
         placement (Placement): The placement of the application.
         infr (Infrastructure): The infrastructure.
+
     Returns:
         Optional[float]: The maximum response time for the application, if any,
             'inf' otherwise.
@@ -212,6 +212,7 @@ def required_latency(
         requirements (Dict[str, Any]): The requirements of the interaction.
         ___: The placement of the application the service belongs to.
         ____: The infrastructure.
+
     Returns:
         InteractionValue: The required latency for each interaction in each application.
     """
@@ -235,6 +236,7 @@ def required_bandwidth(
         requirements (Dict[str, Any]): The requirements of the interaction.
         ___: The placement of the application the service belongs to.
         ____: The infrastructure.
+
     Returns:
         float: The required bandwidth for each interaction in each application.
     """
@@ -552,32 +554,25 @@ def get_default_metrics():
 
 
 __all__ = [
-    # REQUIRED ASSETS
-    "required_cpu",
-    "required_ram",
-    "required_storage",
-    "required_gpu",
-    "required_latency",
-    "required_bandwidth",
-    # FEATURED ASSETS
+    "SimulationTime",
+    "TickNumber",
+    "alive_nodes",
+    "app_gml",
+    "featured_bandwidth",
     "featured_cpu",
-    "featured_ram",
-    "featured_storage",
     "featured_gpu",
     "featured_latency",
-    "featured_bandwidth",
-    # APPLICATION
-    "placement_mapping",
-    "response_time",
-    # INFRASTRUCTURE
-    "alive_nodes",
-    # SIMULATION
-    "seed",
-    "TickNumber",
-    "SimulationTime",
-    # GML
-    "app_gml",
+    "featured_ram",
+    "featured_storage",
     "infr_gml",
-    # REMOTE
+    "placement_mapping",
+    "required_bandwidth",
+    "required_cpu",
+    "required_gpu",
+    "required_latency",
+    "required_ram",
+    "required_storage",
+    "response_time",
+    "seed",
     "step_result",
 ]

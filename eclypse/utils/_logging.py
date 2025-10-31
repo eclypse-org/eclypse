@@ -30,7 +30,6 @@ def config_logger():
     are printed to stdout and saved to a file if the LOG_FILE environment variable is
     set.
     """
-
     head = "{time:HH:mm:ss.SSS} | <level>{level}</level> | "
     fmt = head + "<b><level>{extra[id]}</level></b> - <level>{message}</level>"
 
@@ -103,9 +102,7 @@ def log_placement_violations(vlogger: Logger, violations: Dict[str, Dict[str, An
         label = f" [{key}]"
         padded_label = label.rjust(total_pad)
         vlogger.warning(
-            f"{padded_label}"
-            f" featured {v['featured']} |"
-            f" required {v['required']}"
+            f"{padded_label} featured {v['featured']} | required {v['required']}"
         )
 
 
@@ -128,10 +125,10 @@ def log_assets_violations(
         label = f" [{key}]"
         padded_label = label.rjust(total_pad)
         vlogger.warning(
-            f"{padded_label} | {v}"
-            f" upper_bound {bucket[key].upper_bound} |"
-            f" lower_bound {bucket[key].lower_bound}"
+            f"{padded_label} | "
+            f"{v} upper_bound {bucket[key].upper_bound} | "
+            f"lower_bound {bucket[key].lower_bound}"
         )
 
 
-__all__ = ["Logger", "print_exception", "log_placement_violations"]
+__all__ = ["Logger", "log_placement_violations", "print_exception"]

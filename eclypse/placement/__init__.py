@@ -8,7 +8,7 @@ from .strategy import PlacementStrategy
 
 __all__ = [
     "Placement",
-    "PlacementView",
     "PlacementManager",
     "PlacementStrategy",
+    "PlacementView",
 ]

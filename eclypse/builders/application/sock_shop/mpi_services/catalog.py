@@ -17,7 +17,6 @@ class CatalogService(Service):
     async def step(self):
         """The `CatalogService` workflow consists of receiving a request from the \
         `FrontendService` and sending a response containing product information."""
-
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)
@@ -36,7 +35,6 @@ class CatalogService(Service):
 
         # Send response to FrontendService
         if body.get("request_type") == "catalog_data":
-
             frontend_response = {
                 "response_type": "catalog_response",
                 "products": [

@@ -41,7 +41,6 @@ class HTTPRequest(EclypseRequest):
             data (Dict[Any, Any]): The data to send in the request.
             _rest (EclypseREST): The REST interface used to send the request.
         """
-
         recipient_id = url.split("/")[0]
         data["url"] = url
         data["method"] = method
@@ -58,7 +57,6 @@ class HTTPRequest(EclypseRequest):
         Returns:
             Awaitable: The result of the request.
         """
-
         return super().__await__()  # type: ignore[return-value]
 
     @property

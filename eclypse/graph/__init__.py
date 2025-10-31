@@ -6,7 +6,7 @@ from .application import Application
 from .infrastructure import Infrastructure
 
 __all__ = [
-    "AssetGraph",
     "Application",
+    "AssetGraph",
     "Infrastructure",
 ]

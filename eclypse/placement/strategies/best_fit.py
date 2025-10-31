@@ -64,12 +64,14 @@ class BestFitStrategy(PlacementStrategy):
             best_fit: Optional[str] = None
             best_nattr: Optional[Dict[str, Any]] = None
             for node, nattr in infrastructure_nodes:
-                if infrastructure.node_assets.satisfies(nattr, sattr):
-                    if best_fit is None or infrastructure.node_assets.satisfies(
+                if infrastructure.node_assets.satisfies(nattr, sattr) and (
+                    best_fit is None
+                    or infrastructure.node_assets.satisfies(
                         placement_view.residual.nodes[best_fit], nattr
-                    ):
-                        best_fit = node
-                        best_nattr = nattr
+                    )
+                ):
+                    best_fit = node
+                    best_nattr = nattr
             mapping[service] = best_fit
             if best_fit is None or best_nattr is None:
                 continue

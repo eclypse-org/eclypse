@@ -106,7 +106,6 @@ class AssetBucket(Dict[str, Asset]):
         Returns:
             Dict[str, Any]: The remaining assets after the consumption.
         """
-
         return {
             key: (
                 assets[key] - amounts[key]
@@ -134,7 +133,6 @@ class AssetBucket(Dict[str, Asset]):
                 - If `violations=True`: A dictionary of violations,
                     empty if all assets are consistent.
         """
-
         violated = {
             key: v
             for key, v in assets.items()

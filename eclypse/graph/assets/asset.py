@@ -66,11 +66,11 @@ class Asset:
                 Defaults to None.
             functional (bool, optional): If True, the asset is functional. Defaults to
                 True.
+
         Raises:
             ValueError: If the lower bound is not contained in the upper bound.
             TypeError: If the init_fn is not a callable or an AssetSpace object.
         """
-
         if not self.satisfies(upper_bound, lower_bound):
             raise ValueError(
                 "The lower bound must be contained in the upper bound. See the ",
@@ -111,7 +111,6 @@ class Asset:
         Returns:
             Any: The initialised asset.
         """
-
         if isinstance(self.init_fn, AssetSpace):
             return self.init_fn(rnd)
         if callable(self.init_fn):

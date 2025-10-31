@@ -30,12 +30,10 @@ class UserService(Service):
             str: The ID of the recipient.
             dict: The response body.
         """
-
         self.logger.info(f"{self.id} - {body}")
 
         # Send response to FrontendService
         if body.get("request_type") == "user_data":
-
             frontend_response = {
                 "response_type": "user_response",
                 "name": "John Doe",

@@ -24,12 +24,8 @@ from typing import (
 
 import networkx as nx
 
-from eclypse.graph.assets import (
-    Asset,
-    AssetBucket,
-)
+from eclypse.graph.assets import AssetBucket
 from eclypse.utils._logging import (
-    Logger,
     log_assets_violations,
     logger,
 )
@@ -39,6 +35,9 @@ if TYPE_CHECKING:
         EdgeView,
         NodeView,
     )
+
+    from eclypse.graph.assets import Asset
+    from eclypse.utils._logging import Logger
 
 
 class AssetGraph(nx.DiGraph):
@@ -77,7 +76,6 @@ class AssetGraph(nx.DiGraph):
             seed (Optional[int], optional): The seed for the random number generator.
                 Defaults to None.
         """
-
         self.rnd = rnd.Random(seed)
 
         self.id = graph_id

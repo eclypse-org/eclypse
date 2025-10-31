@@ -4,11 +4,7 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import Future
-from datetime import (
-    datetime,
-    timedelta,
-)
+from datetime import datetime
 from functools import cached_property
 from typing import (
     TYPE_CHECKING,
@@ -23,6 +19,9 @@ from typing import (
 from eclypse.remote import ray_backend
 
 if TYPE_CHECKING:
+    from asyncio import Future
+    from datetime import timedelta
+
     from ray import ObjectRef
 
     from eclypse.remote._node import RemoteNode
@@ -50,7 +49,6 @@ class EclypseRequest:
             timestamp (Optional[datetime], optional): The timestamp of the request.
                 Defaults to None.
         """
-
         self._data = data
         self._timestamp = timestamp if timestamp is not None else datetime.now()
 
@@ -72,7 +70,9 @@ class EclypseRequest:
                     loop=_comm.service._node.engine_loop,  # type: ignore[union-attr]
                 )
             )
-            for route, recipient_id in zip(self._routes, self._recipient_ids)
+            for route, recipient_id in zip(
+                self._routes, self._recipient_ids, strict=False
+            )
         ]
 
     def __await__(self) -> Generator[Any, None, EclypseRequest]:
@@ -164,7 +164,6 @@ async def _process_request(
     recipient_id: str,
     _comm: EclypseCommunicationInterface,
 ) -> Dict[str, Union[Any, datetime]]:
-
     _route = route.result() if route.done() else await route
     if _route is None:
         raise RuntimeError(f"Route to {recipient_id} not found")
