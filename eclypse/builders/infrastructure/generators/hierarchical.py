@@ -31,7 +31,6 @@ import numpy as np
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    from eclypse_core.utils.types import ConnectivityFn
     from networkx import nx
     from networkx.classes.reportviews import (
         EdgeView,
@@ -40,6 +39,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
+    from eclypse.utils.types import ConnectivityFn
 
 DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 

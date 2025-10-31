@@ -19,7 +19,7 @@ from eclypse.workflow.event import event
 
 if TYPE_CHECKING:
     from eclypse.utils.types import ActivatesOnType
-    from eclypse.workflow.triggers import Trigger
+    from eclypse.workflow.trigger import Trigger
 
 
 def simulation(

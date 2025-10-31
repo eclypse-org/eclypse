@@ -22,9 +22,9 @@ from typing import (
 )
 
 import networkx as nx
-from eclypse_core.utils.tools import prune_assets
 
 from eclypse.graph import Infrastructure
+from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import (

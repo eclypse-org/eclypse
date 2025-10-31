@@ -11,7 +11,8 @@ from typing import (
 )
 
 import aiofiles  # type: ignore[import-untyped]
-from eclypse_core.report.reporter import Reporter
+
+from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
     from eclypse.workflow.event import EclypseEvent

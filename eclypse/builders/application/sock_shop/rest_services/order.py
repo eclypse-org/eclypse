@@ -7,9 +7,8 @@ different services like payment, inventory, and shipping.
     - Tracks the status of placed orders (e.g., pending, confirmed, shipped).
 """
 
-from eclypse_core.remote.communication.rest import HTTPStatusCode
-
 from eclypse.remote.communication import rest
+from eclypse.remote.communication.rest import HTTPStatusCode
 from eclypse.remote.service import RESTService
 
 

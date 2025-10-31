@@ -15,13 +15,13 @@ from typing import (
     Union,
 )
 
-from eclypse_core.graph.assets.space import (
+from eclypse.graph.assets.space import (
     AssetSpace,
     Choice,
     IntUniform,
     Uniform,
 )
-from eclypse_core.utils.constants import (
+from eclypse.utils.constants import (
     MAX_AVAILABILITY,
     MAX_BANDWIDTH,
     MAX_FLOAT,
@@ -31,7 +31,6 @@ from eclypse_core.utils.constants import (
     MIN_FLOAT,
     MIN_LATENCY,
 )
-
 from eclypse.utils.types import PrimitiveType
 
 from . import (
@@ -214,7 +213,9 @@ def latency(
 def bandwidth(
     lower_bound: float = MIN_BANDWIDTH,
     upper_bound: float = MAX_BANDWIDTH,
-    init_fn_or_value: Union[PrimitiveType, AssetSpace, Callable[[], Any]] = None,
+    init_fn_or_value: Optional[
+        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
+    ] = None,
 ) -> Additive:
     """Create a new additive asset for bandwidth.
 

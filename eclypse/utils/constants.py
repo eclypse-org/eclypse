@@ -21,9 +21,6 @@ Attributes:
     DEFAULT_REPORT_TYPE (str): Default report type used in simulations.
         Default is ``csv``
 
-    DRIVING_EVENT (str): Name of the event used to drive the simulation.
-        Default is ``enact``
-
     RND_SEED (str): Environment variable key to configure the random seed.
         Value is ``ECLYPSE_RND_SEED``
     LOG_LEVEL (str): Environment variable key to configure the logging level.
@@ -32,38 +29,38 @@ Attributes:
         Value is ``ECLYPSE_LOG_FILE``
 """
 
-from eclypse_core.utils.constants import (
-    DEFAULT_REPORT_TYPE,
-    DEFAULT_SIM_PATH,
-    DRIVING_EVENT,
-    FLOAT_EPSILON,
-    LOG_FILE,
-    LOG_LEVEL,
-    MAX_AVAILABILITY,
-    MAX_BANDWIDTH,
-    MAX_FLOAT,
-    MAX_LATENCY,
-    MIN_AVAILABILITY,
-    MIN_BANDWIDTH,
-    MIN_FLOAT,
-    MIN_LATENCY,
-    RND_SEED,
-)
+import sys
+from pathlib import Path
+
+MIN_FLOAT, MAX_FLOAT = 0.0, 1e9
+FLOAT_EPSILON = sys.float_info.min
+
+RND_SEED = "ECLYPSE_RND_SEED"
+LOG_LEVEL = "ECLYPSE_LOG_LEVEL"
+LOG_FILE = "ECLYPSE_LOG_FILE"
+
+### Application requirements / Infrastructure resources constants
+
+MIN_BANDWIDTH, MAX_BANDWIDTH = MIN_FLOAT, MAX_FLOAT
+MIN_LATENCY, MAX_LATENCY = MIN_FLOAT, MAX_FLOAT
+MIN_AVAILABILITY, MAX_AVAILABILITY = 0.0, 1.0
+
+### Simulation metrics
+
+DEFAULT_SIM_PATH = Path.home() / "eclypse-sim"
+DEFAULT_REPORT_TYPE = "csv"
+DRIVING_EVENT = "enact"
 
 __all__ = [
-    "DEFAULT_REPORT_TYPE",
-    "DEFAULT_SIM_PATH",
-    "DRIVING_EVENT",
-    "FLOAT_EPSILON",
-    "LOG_FILE",
-    "LOG_LEVEL",
-    "MAX_AVAILABILITY",
-    "MAX_BANDWIDTH",
+    "MIN_FLOAT",
     "MAX_FLOAT",
+    "FLOAT_EPSILON",
+    "MIN_BANDWIDTH",
+    "MAX_BANDWIDTH",
+    "MIN_LATENCY",
     "MAX_LATENCY",
     "MIN_AVAILABILITY",
-    "MIN_BANDWIDTH",
-    "MIN_FLOAT",
-    "MIN_LATENCY",
-    "RND_SEED",
+    "MAX_AVAILABILITY",
+    "DEFAULT_SIM_PATH",
+    "DEFAULT_REPORT_TYPE",
 ]

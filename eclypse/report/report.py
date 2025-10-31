@@ -325,7 +325,7 @@ class Report:
 
     def to_dataframe(
         self,
-        report_type: str,
+        report_type: EventType,
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         **kwargs,
@@ -354,7 +354,7 @@ class Report:
             **kwargs,
         )
 
-    def _read_csv(self, report_type: str):
+    def _read_csv(self, report_type: EventType):
         """Read a CSV file into a dataframe and store it in the stats dictionary.
 
         Args:

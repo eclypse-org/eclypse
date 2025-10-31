@@ -22,9 +22,8 @@ from typing import (
     Union,
 )
 
-from eclypse_core.utils.tools import prune_assets
-
 from eclypse.graph import Application
+from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import (

@@ -19,7 +19,7 @@ if __name__ == "__main__":
         path=DEFAULT_SIM_PATH / "EchoApp",
         # log_level="TRACE",
         remote=True,
-        include_default_callbacks=True,
+        include_default_metrics=True,
     )
 
     sim = Simulation(

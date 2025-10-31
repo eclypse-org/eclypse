@@ -28,7 +28,7 @@ if __name__ == "__main__":
         tick_every_ms=500,
         max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopREST",
-        include_default_callbacks=True,
+        include_default_metrics=True,
         remote=True,
     )
 
