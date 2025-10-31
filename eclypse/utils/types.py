@@ -1,7 +1,6 @@
 """Module containing type aliases used throughout the ECLYPSE package.
 
 Attributes:
-
     PrimitiveType (Union): Type alias for primitive types.\
         Possible values are ``int``, ``float``, ``str``, ``bool``, ``list``,\
         ``tuple``, ``dict``, ``set``.

@@ -53,6 +53,7 @@ class Trigger(ABC):
         This method can be overridden in subclasses to perform any necessary
         initialization before the trigger is used.
         """
+        return None
 
     def reset(self):
         """Reset the trigger state.
@@ -60,6 +61,7 @@ class Trigger(ABC):
         This method can be overridden in subclasses to reset any internal state of the
         trigger.
         """
+        return None
 
     def __repr__(self) -> str:
         """Return a string representation of the trigger."""
@@ -99,8 +101,9 @@ class PeriodicTrigger(Trigger):
 
     def __repr__(self) -> str:
         """Return a string representation of the periodic trigger."""
+        ms = self.trigger_every_ms.microseconds // 1000
         return (
-            f"PeriodicTrigger(trigger_every_ms={self.trigger_every_ms.microseconds // 1000}, "
+            f"PeriodicTrigger(trigger_every_ms={ms}, "
             f"last_exec_time={self.last_exec_time})"
         )
 

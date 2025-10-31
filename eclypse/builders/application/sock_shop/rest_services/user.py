@@ -33,7 +33,6 @@ class UserService(RESTService):
                 "phone": "555-1234",
             })
         """
-
         return 200, {
             "user_id": user_id,
             "name": "John Doe",

@@ -35,7 +35,6 @@ class RoundRobinStrategy(PlacementStrategy):
             sort_fn (Optional[Callable[[Any], Any]], optional): A function to sort the
             infrastructure nodes. Defaults to None.
         """
-
         self.sort_fn = sort_fn
         super().__init__()
 

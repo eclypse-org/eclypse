@@ -72,7 +72,6 @@ class Uniform(AssetSpace):
             low (float): The lower bound of the distribution.
             high (float): The upper bound of the distribution.
         """
-
         self.low = low
         self.high = high
 
@@ -154,6 +153,6 @@ class Sample(AssetSpace):
 __all__ = [
     "AssetSpace",
     "Choice",
-    "Uniform",
     "Sample",
+    "Uniform",
 ]

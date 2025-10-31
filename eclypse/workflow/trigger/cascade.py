@@ -2,7 +2,7 @@
 triggered based on the state of another event in the simulation workflow.
 
 Available cascade triggers include:
-- CascadeTrigger: Fires when a specific event occurs (can be subclassed for more complex behaviour).
+- CascadeTrigger: Fires when a specific event occurs.
 - PeriodicCascadeTrigger: Fires at regular intervals based on another event.
 - ScheduledCascadeTrigger: Fires at specific times based on another event.
 """
@@ -92,8 +92,8 @@ class ScheduledCascadeTrigger(CascadeTrigger):
 
         Args:
             trigger_event (str): The name of the event that can trigger this cascade.
-            scheduled_times (List[int]): A list of scheduled times (in number of triggers)
-                when the trigger should fire.
+            scheduled_times (List[int]): A list of scheduled times \
+                (in number of triggers) when the trigger should fire.
 
         Raises:
             ValueError: If scheduled_times is empty.
@@ -117,6 +117,7 @@ class ScheduledCascadeTrigger(CascadeTrigger):
 
     def __repr__(self) -> str:
         """Return a string representation of the cascade trigger."""
+
         return (
             f"ScheduledCascadeTrigger(trigger_event={self.trigger_event}, "
             f"scheduled_times={self.scheduled_times})"

@@ -160,9 +160,8 @@ class SimulationConfig(dict):
             LOG_LEVEL: self.log_level,
         }
 
-        if self.path is not None:
-            if self.log_to_file:
-                env_vars[LOG_FILE] = str(self.path / "simulation.log")
+        if self.path is not None and self.log_to_file:
+            env_vars[LOG_FILE] = str(self.path / "simulation.log")
 
         os.environ.update(env_vars)
         config_logger()
@@ -375,9 +374,9 @@ def _require_module(module_name: str, extras_name: Optional[str] = None):
         ) from e
 
 
-def _catch_duplicates(l: List[Any], access_fn: Callable, label: str):
+def _catch_duplicates(items: List[Any], access_fn: Callable, label: str):
     _dd: Dict[Any, int] = defaultdict(lambda: 0)
-    for item in l:
+    for item in items:
         _dd[access_fn(item)] += 1
         if _dd[access_fn(item)] > 1:
             raise ValueError(f"Duplicated {label} found: {access_fn(item)}")

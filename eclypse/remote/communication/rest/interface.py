@@ -24,7 +24,6 @@ from eclypse.remote.communication.interface import (
     EclypseCommunicationInterface,
 )
 from eclypse.remote.communication.rest.http_request import HTTPRequest
-from eclypse.utils.types import HTTPMethodLiteral
 
 from .codes import HTTPStatusCode
 from .methods import HTTPMethod
@@ -32,6 +31,7 @@ from .methods import HTTPMethod
 if TYPE_CHECKING:
     from eclypse.remote.communication.route import Route
     from eclypse.remote.service import Service
+    from eclypse.utils.types import HTTPMethodLiteral
 
 
 class EclypseREST(EclypseCommunicationInterface):
@@ -60,8 +60,8 @@ class EclypseREST(EclypseCommunicationInterface):
                 continue
             fn = getattr(self.service, attr)
             if hasattr(fn, "__endpoint__"):
-                endpoint = f"{self.service.id}{getattr(fn, '__endpoint__')}"
-                method = getattr(fn, "__method__")
+                endpoint = f"{self.service.id}{fn.__endpoint__}"
+                method = fn.__method__
                 if endpoint in self.endpoints and method in self.endpoints[endpoint]:
                     raise ValueError(f"{method} already registered for {endpoint}.")
 
@@ -132,7 +132,6 @@ class EclypseREST(EclypseCommunicationInterface):
 
     async def _not_connected_response(self) -> Tuple[HTTPStatusCode, Dict[str, Any]]:
         """Returns a response when the service is not connected."""
-
         return HTTPStatusCode.INTERNAL_SERVER_ERROR, {
             "message": f"{self.service.id} not connected"
         }
@@ -155,7 +154,6 @@ class EclypseREST(EclypseCommunicationInterface):
         Returns:
             Tuple[HTTPStatusCode, Dict[str, Any]]: The result of the request.
         """
-
         if url not in self.endpoints:
             return HTTPStatusCode.NOT_FOUND, {"message": "Endpoint not found"}
 
@@ -168,9 +166,10 @@ class EclypseREST(EclypseCommunicationInterface):
             else:
                 http_code, result = handler(**kwargs)
         except Exception as e:
-            http_code, result = HTTPStatusCode.INTERNAL_SERVER_ERROR, {
-                "message": str(e)
-            }
+            http_code, result = (
+                HTTPStatusCode.INTERNAL_SERVER_ERROR,
+                {"message": str(e)},
+            )
         if not isinstance(result, dict):
             error_code = "Invalid return type for handler: data must be a dictionary."
             return HTTPStatusCode.INTERNAL_SERVER_ERROR, {"message": error_code}
@@ -201,8 +200,8 @@ def register_endpoint(endpoint: str, method: Union[HTTPMethod, HTTPMethodLiteral
     def decorator(func):
         _method = HTTPMethod[method] if not isinstance(method, HTTPMethod) else method
 
-        setattr(func, "__endpoint__", endpoint)
-        setattr(func, "__method__", _method)
+        func.__endpoint__ = endpoint
+        func.__method__ = _method
         return func
 
     return decorator

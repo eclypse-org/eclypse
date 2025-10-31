@@ -33,7 +33,10 @@ from networkx.classes.filters import no_filter
 
 from eclypse.graph import AssetGraph
 from eclypse.utils._logging import log_placement_violations
-from eclypse.utils.constants import MIN_FLOAT
+from eclypse.utils.constants import (
+    COST_RECOMPUTATION_THRESHOLD,
+    MIN_FLOAT,
+)
 
 from .assets.defaults import (
     get_default_edge_assets,
@@ -95,7 +98,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             resource_init (Literal["min", "max"]): The initialization method for the resources.
             seed (Optional[int]): The seed for the random number generator.
         """
-
         _node_assets = get_default_node_assets() if include_default_assets else {}
         _edge_assets = get_default_edge_assets() if include_default_assets else {}
         _node_assets.update(node_assets if node_assets is not None else {})
@@ -211,8 +213,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
                 # check if any hop cost changed by more than 5%
                 if len(costs) != len(cached_costs) or any(
-                    (abs(c - cc) / cc >= 0.05 if cc != 0 else 0)
-                    for c, cc in zip(costs, cached_costs)
+                    (abs(c - cc) / cc >= COST_RECOMPUTATION_THRESHOLD if cc != 0 else 0)
+                    for c, cc in zip(costs, cached_costs, strict=False)
                 ):
                     self._compute_path(source, target)
 
@@ -346,7 +348,9 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
 
 def _default_weight_function(
-    u: str, v: str, eattr: Dict[str, Any]  # pylint: disable=unused-argument
+    u: str,
+    v: str,
+    eattr: Dict[str, Any],  # pylint: disable=unused-argument
 ) -> float:
     """Function to compute the weight of an edge in the shortest path algorithm. The
     weight is given by the 'latency' attribute if it exists, 1 otherwise (i.e., it

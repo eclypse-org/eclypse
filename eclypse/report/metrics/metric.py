@@ -120,6 +120,7 @@ def application(
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """
@@ -177,6 +178,7 @@ def service(
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """
@@ -234,6 +236,7 @@ def interaction(
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """
@@ -291,6 +294,7 @@ def infrastructure(
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """
@@ -346,6 +350,7 @@ def node(
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """
@@ -402,6 +407,7 @@ def link(
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
+
     Returns:
         Callable: The decorated function.
     """

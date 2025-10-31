@@ -78,15 +78,16 @@ class RemoteNode:
 
         The build method and has a twofold purpose.
 
-        **Define object-level attributes**. This encloses attributes that are independent
-        from whether the node is executing the training method or the test method (e.g.,
-        choosing the optimizer, the loss function, etc.).
+        **Define object-level attributes**. This encloses attributes that are \
+            independent from whether the node is executing the training method or the \
+                test method (e.g., choosing the optimizer, the loss function, etc.).
 
-        **Perform all the resource-intensive operations in advance to avoid bottlenecks**.
+        **Perform all the resource-intensive operations \
+            in advance to avoid bottlenecks**.
         An example can be downloading the data from an external source, or instantiating
         a model with computationally-intensive techniques.
 
-        Since it is called within the ``__init__`` method, the user can define additional
+        Since it is called in the ``__init__`` method, the user can define additional
         class attributes.
 
         An example of build function can be the following:
@@ -138,8 +139,8 @@ class RemoteNode:
 
         Args:
             service_id (str): The ID of the service.
-            comm_interface (str): The communication interface to be used. Currently, only \
-                "EclypseMPI" and "EclypeREST" are supported.
+            comm_interface (str): The communication interface to be used. \
+                Currently, only "EclypseMPI" and "EclypeREST" are supported.
             **handle_args: The arguments of the function to be invoked.
         """
         service_id = route.recipient_id

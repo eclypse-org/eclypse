@@ -2,6 +2,7 @@
 exchange within an MPIRequest."""
 
 from datetime import datetime
+from typing import Optional
 
 from eclypse.remote.utils import ResponseCode
 
@@ -13,7 +14,7 @@ class Response:
     def __init__(
         self,
         code: ResponseCode = ResponseCode.OK,
-        timestamp: datetime = datetime.now(),
+        timestamp: Optional[datetime] = None,
     ):
         """Initializes a Response object.
 
@@ -22,7 +23,7 @@ class Response:
             timestamp (datetime.datetime): The timestamp of the response.
         """
         self.code = code
-        self.timestamp = timestamp
+        self.timestamp = timestamp if timestamp is not None else datetime.now()
 
     def __str__(self) -> str:
         """Returns a string representation of the response, with the format:

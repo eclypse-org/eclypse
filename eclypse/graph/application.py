@@ -72,7 +72,6 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             flows (Optional[List[List[str]]): The flows of the application.
             seed (Optional[int]): The seed for the random number generator.
         """
-
         _node_assets = get_default_node_assets() if include_default_assets else {}
         _edge_assets = get_default_edge_assets() if include_default_assets else {}
         _node_assets.update(node_assets if node_assets is not None else {})
@@ -109,7 +108,8 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         """Set the flows of the application, using the following rules:
 
         - If the flows are already set, do nothing.
-        - If the flows are not set, use the gateway as the source and all the other nodes as the target.
+        - If the flows are not set, use the gateway as the source and all \
+            the other nodes as the target.
         - If there is no gateway, set the flows to an empty list.
         """
         if self.flows == []:

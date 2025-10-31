@@ -38,7 +38,6 @@ class PlacementView(nx.DiGraph):
 
     def __init__(self, infrastructure: Infrastructure):
         """Initializes the PlacementView."""
-
         super().__init__(graph_id="PlacementView")
         self.nodes_used_by: Dict[str, Set[str]] = defaultdict(set)
         self.infrastructure = infrastructure
@@ -122,7 +121,6 @@ class PlacementView(nx.DiGraph):
 
     def _get_snapshot(self):
         """Creates a snapshot of the current Infrastructure."""
-
         snapshot = AssetGraph(
             graph_id="Snapshot",
             node_assets=self.infrastructure.node_assets,
@@ -148,7 +146,6 @@ class PlacementView(nx.DiGraph):
         Args:
             placements (List[Placement]): The placements to update the view with.
         """
-
         for p in placements:
             if p.mapping:
                 for n, node_reqs in p.node_requirements_mapping().items():

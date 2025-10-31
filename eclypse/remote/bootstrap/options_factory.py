@@ -25,7 +25,7 @@ class RayOptionsFactory:
             **ray_options: The options for Ray. See the documentation \
                 `here <https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote>`_ \
                 for more information.
-        """
+        """  # noqa E501
         self.detached = detached
         self.ray_options = ray_options
         self._infrastructure: Optional[Infrastructure] = None

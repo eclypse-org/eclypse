@@ -44,10 +44,11 @@ class RayInterface:
         Returns:
             Union[Any, List[Any]]: The result of the Ray task or list of Ray tasks.
         """
-
-        with open(os.devnull, "w", encoding="utf-8") as devnull:
-            with redirect_stderr(devnull):
-                return self.backend.get(obj)
+        with (
+            open(os.devnull, "w", encoding="utf-8") as devnull,
+            redirect_stderr(devnull),
+        ):
+            return self.backend.get(obj)
 
     def put(self, obj: Any) -> ObjectRef:
         """Put an object into the Ray object store.
@@ -73,6 +74,7 @@ class RayInterface:
 
     def remote(self, fn_or_class):
         """Handle the remote execution of a function or class.
+
         Args:
             fn_or_class: The function or class to execute remotely.
 

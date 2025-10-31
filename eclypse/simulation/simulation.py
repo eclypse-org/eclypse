@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import json
 import os
-from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Dict,
@@ -18,15 +17,9 @@ from typing import (
     cast,
 )
 
-from eclypse.graph.application import Application
-from eclypse.placement.strategies.strategy import PlacementStrategy
 from eclypse.remote import ray_backend
-from eclypse.remote.bootstrap.bootstrap import RemoteBootstrap
 from eclypse.report import Report
-from eclypse.simulation._simulator.local import (
-    SimulationState,
-    Simulator,
-)
+from eclypse.simulation._simulator.local import Simulator
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils._logging import logger
 from eclypse.utils.constants import (
@@ -37,11 +30,15 @@ from eclypse.utils.constants import (
 )
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
+    from eclypse.graph.application import Application
     from eclypse.graph.infrastructure import Infrastructure
+    from eclypse.placement.strategies.strategy import PlacementStrategy
+    from eclypse.remote.bootstrap.bootstrap import RemoteBootstrap
+    from eclypse.simulation._simulator.local import SimulationState
     from eclypse.simulation._simulator.remote import RemoteSimulator
     from eclypse.utils._logging import Logger
-
-    from .config import SimulationConfig
 
 
 class Simulation:
@@ -165,12 +162,11 @@ class Simulation:
                     "Must provide a global placement strategy for the infrastructure "
                     + f"or a placement strategy for the application {application.id}"
                 )
-        else:
-            if self.infrastructure.has_strategy:
-                self.logger.warning(
-                    "Ignoring the provided placement strategy, using the global one."
-                    + " Unset the global strategy to use the provided one."
-                )
+        elif self.infrastructure.has_strategy:
+            self.logger.warning(
+                "Ignoring the provided placement strategy, using the global one."
+                + " Unset the global strategy to use the provided one."
+            )
 
         if self.remote:
             if application.has_logic:
@@ -216,7 +212,7 @@ class Simulation:
         """
         if self.remote:
             return cast(
-                SimulationState,
+                "SimulationState",
                 ray_backend.get(self.simulator.get_status.remote()),  # type: ignore[union-attr]
             )
         return self.simulator.status

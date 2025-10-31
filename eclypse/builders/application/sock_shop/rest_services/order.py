@@ -42,7 +42,6 @@ class OrderService(RESTService):
                 "status": "success",
             })
         """
-
         amount = sum(item["amount"] for item in items)
         payment_r = self.rest.post(
             "PaymentService/pay",

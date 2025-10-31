@@ -6,7 +6,7 @@ from .broadcast import BroadcastRequest
 from .unicast import UnicastRequest
 
 __all__ = [
-    "MulticastRequest",
     "BroadcastRequest",
+    "MulticastRequest",
     "UnicastRequest",
 ]

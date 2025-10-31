@@ -5,10 +5,6 @@ It represents a request to send a message to a single recipient.
 
 from __future__ import annotations
 
-from datetime import (
-    datetime,
-    timedelta,
-)
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -20,6 +16,11 @@ from typing import (
 from eclypse.remote.communication.mpi.requests import MulticastRequest
 
 if TYPE_CHECKING:
+    from datetime import (
+        datetime,
+        timedelta,
+    )
+
     from eclypse.remote.communication.mpi import (
         EclypseMPI,
         Response,
@@ -44,7 +45,6 @@ class UnicastRequest(MulticastRequest):
             body (Dict[str, Any]): The body of the request.
             _mpi (EclypseMPI): The MPI interface.
         """
-
         super().__init__(
             recipient_ids=[recipient_id],
             body=body,
@@ -58,7 +58,6 @@ class UnicastRequest(MulticastRequest):
         Returns:
             Awaitable: The result of the request.
         """
-
         return super().__await__()  # type: ignore[return-value]
 
     @property

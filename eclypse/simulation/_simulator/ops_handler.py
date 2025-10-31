@@ -41,7 +41,6 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-
         deployments = ray_backend.get(
             [
                 node.ops_entrypoint.remote(  # type: ignore[attr-defined]
@@ -66,7 +65,6 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-
         starts = ray_backend.get(
             [
                 node.ops_entrypoint.remote(  # type: ignore[attr-defined]
@@ -88,7 +86,6 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-
         stops = ray_backend.get(
             [
                 node.ops_entrypoint.remote(  # type: ignore[attr-defined]
@@ -111,7 +108,6 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-
         undeploy_result = ray_backend.get(
             [
                 node.ops_entrypoint.remote(  # type: ignore[attr-defined]
@@ -121,8 +117,8 @@ class RemoteSimOpsHandler:
                 for node, service in RemoteSimOpsHandler._get_remotes(placement)
             ]
         )
-        codes, new_services = zip(*undeploy_result)
-        _handle_error(cast(List[ResponseCode], codes))
+        codes, new_services = zip(*undeploy_result, strict=False)
+        _handle_error(cast("List[ResponseCode]", codes))
 
         for new_service in new_services:
             placement.application.services[new_service.id] = new_service

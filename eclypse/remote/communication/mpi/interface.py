@@ -102,7 +102,6 @@ class EclypseMPI(EclypseCommunicationInterface):
         Returns:
             BroadcastRequest: The Broadcast MPI request.
         """
-
         if not isinstance(body, dict):
             raise ValueError("body must be a dictionary")
 
@@ -157,9 +156,7 @@ def exchange(
         )
 
     def decorator(func):
-
         async def wrapper(self: Service, *args, **kwargs):
-
             if receive:
                 message = await self.mpi.recv()
                 sender_id: str = message.pop("sender_id")

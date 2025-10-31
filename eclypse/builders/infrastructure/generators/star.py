@@ -79,7 +79,6 @@ def star(
     Returns:
         Infrastructure: The star infrastructure.
     """
-
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
         node_update_policy=node_update_policy,

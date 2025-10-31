@@ -90,11 +90,7 @@ def prune_assets(
     Returns:
         Dict: The pruned requirements dictionary.
     """
-    return (
-        {k: v for k, v in requirements.items() if k in assets and assets[k]}
-        if assets
-        else {}
-    )
+    return {k: v for k, v in requirements.items() if assets.get(k)} if assets else {}
 
 
 def shield_interrupt(func):
@@ -120,8 +116,8 @@ def shield_interrupt(func):
 
 
 __all__ = [
+    "camel_to_snake",
     "get_bytes_size",
     "get_constant",
-    "camel_to_snake",
     "shield_interrupt",
 ]

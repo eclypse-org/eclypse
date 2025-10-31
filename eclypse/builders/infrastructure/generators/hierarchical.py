@@ -69,7 +69,6 @@ def hierarchical(
     connect nodes in the same level.
 
     Args:
-
         infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
         symmetric (bool): Whether the connections are symmetric. Defaults to False.
@@ -99,7 +98,6 @@ def hierarchical(
     Returns:
         Infrastructure: The hierarchical infrastructure.
     """
-
     if node_partitioning is None:
         node_partitioning = DEFAULT_NODE_PARTITIONING
     if not math.isclose(sum(node_partitioning), 1.0):
@@ -179,11 +177,10 @@ def _get_connectivity_functions(
     Returns:
         List[ConnectivityFn]: The list of connectivity functions for the levels.
     """
-
     if connectivity is None:
         connectivity_fn = [
-            lambda l, l1, p=default_prob: _uniform_level_connectivity(
-                l, l1, p, seed=seed
+            lambda layer, layer1, p=default_prob: _uniform_level_connectivity(
+                layer, layer1, p, seed=seed
             )
         ] * length
     elif isinstance(connectivity, list):
@@ -193,7 +190,9 @@ def _get_connectivity_functions(
             )
 
         connectivity_fn = [
-            lambda l, l1, p=p: _uniform_level_connectivity(l, l1, p, seed=seed)
+            lambda layer, layer1, p=p: _uniform_level_connectivity(
+                layer, layer1, p, seed=seed
+            )
             for p in connectivity
         ] * length
     elif callable(connectivity):
@@ -205,7 +204,7 @@ def _get_connectivity_functions(
 
 
 def _uniform_level_connectivity(
-    l: List[str], l1: List[str], p: float, seed: Optional[int] = None
+    layer: List[str], layer1: List[str], p: float, seed: Optional[int] = None
 ) -> Generator[Tuple[str, str], None, None]:
     """Generates the connectivity between levels in a hierarchical infrastructure.
 
@@ -217,14 +216,14 @@ def _uniform_level_connectivity(
         Tuple[str, str]: The links between nodes in the higher and lower levels.
     """
     r = rnd.Random(seed)
-    connected = [False for _ in l1]
-    for parent in l:
-        for i, child in enumerate(l1):
+    connected = [False for _ in layer1]
+    for parent in layer:
+        for i, child in enumerate(layer1):
             if r.random() < p:
                 yield parent, child
                 connected[i] = True
 
     # ensure at least one connection per child
-    for i, child in enumerate(l1):
+    for i, child in enumerate(layer1):
         if not connected[i]:
-            yield r.choice(l), child
+            yield r.choice(layer), child

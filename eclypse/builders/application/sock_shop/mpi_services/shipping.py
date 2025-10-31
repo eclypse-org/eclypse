@@ -31,7 +31,6 @@ class ShippingService(Service):
             str: The ID of the recipient.
             dict: The response body.
         """
-
         self.logger.info(f"{self.id} - {body}")
 
         # Send response to OrderService

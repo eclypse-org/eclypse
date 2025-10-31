@@ -3,6 +3,7 @@
 
 An event is a function that is triggered by other events or by the simulation itself.
 """
+
 from __future__ import annotations
 
 import inspect
@@ -65,7 +66,8 @@ def event(
             the event fires only if all triggers are active. Defaults to "any".
         is_callback (bool, optional): Whether the event is a callback. Defaults to False.
         report (Optional[Union[str, List[str]]], optional): The type of report to generate
-            for the event. If not provided, the default report type will be used. Defaults to DEFAULT_REPORT_TYPE.
+            for the event. If not provided, the default report type will be used.
+            Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
 

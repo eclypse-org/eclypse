@@ -42,7 +42,6 @@ class OrderService(Service):
             str: The ID of the recipient.
             dict: The response body.
         """
-
         self.logger.info(f"{self.id} - {body}")
 
         self.items = body.get("items", [])

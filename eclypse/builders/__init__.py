@@ -3,4 +3,4 @@
 from . import infrastructure
 from . import application
 
-__all__ = ["infrastructure", "application"]
+__all__ = ["application", "infrastructure"]

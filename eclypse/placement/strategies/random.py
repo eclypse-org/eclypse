@@ -66,7 +66,6 @@ class RandomStrategy(PlacementStrategy):
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.
         """
-
         infrastructure_nodes = list(infrastructure.available.nodes())
         if not infrastructure_nodes:
             return {}

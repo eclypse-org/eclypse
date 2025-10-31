@@ -5,4 +5,4 @@ from .interface import EclypseREST, register_endpoint as endpoint
 from .codes import HTTPStatusCode
 from .methods import HTTPMethod
 
-__all__ = ["EclypseREST", "endpoint", "HTTPStatusCode", "HTTPMethod"]
+__all__ = ["EclypseREST", "HTTPMethod", "HTTPStatusCode", "endpoint"]

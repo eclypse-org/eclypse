@@ -62,35 +62,39 @@ class EventWrapper(EclypseEvent):
             triggers (List[Trigger]): The list of triggers that will trigger the event.
             activates_on (Optional[ActivatesOnType], optional): The conditions that will
                 trigger the metric. Defaults to None.
-            event_type (Optional[EventType], optional): The type of the event. Defaults to None.
-            trigger_every_ms (Optional[float], optional): The time in milliseconds between
-                each trigger of the event. Defaults to None.
-            max_triggers (Optional[int], optional): The maximum number of times the event
-                can be triggered. Defaults to None.
-            trigger_condition (Optional[str], optional): The condition for the triggers to fire the
-                event. Defaults to "any".
-            is_callback (bool, optional): Whether the event is a callback. Defaults to False.
-            report (Optional[Union[str, List[str]]], optional): The type of report to generate
-                for the event. Defaults to None.
+            event_type (Optional[EventType], optional): The type of the event. \
+                Defaults to None.
+            trigger_every_ms (Optional[float], optional): The time in milliseconds \
+                between each trigger of the event. Defaults to None.
+            max_triggers (Optional[int], optional): The maximum number of times the \
+                event can be triggered. Defaults to None.
+            trigger_condition (Optional[str], optional): The condition for the triggers\
+                to fire the event. Defaults to "any".
+            is_callback (bool, optional): Whether the event is a callback. \
+                Defaults to False.
+            report (Optional[Union[str, List[str]]], optional): The type of report \
+                to generate for the event. Defaults to None.
             remote (bool, optional): Whether the event is remote. Defaults to False.
-            verbose (bool, optional): Whether to enable verbose logging. Defaults to False.
+            verbose (bool, optional): Whether to enable verbose logging. \
+                Defaults to False.
         """
-
-        if activates_on:
-            _activates_on = (
-                activates_on if isinstance(activates_on, list) else [activates_on]
-            )
-        else:
-            _activates_on = []
+        _activates_on = (
+            (activates_on if isinstance(activates_on, list) else [activates_on])
+            if activates_on
+            else []
+        )
 
         for e in _activates_on:
             if isinstance(e, str):
                 triggers.append(CascadeTrigger(e))
             elif isinstance(e, tuple):
-                if len(e) != 2 or not isinstance(e[1], (int, float, list)):
+                expected_length = 2
+                if len(e) != expected_length or not isinstance(
+                    e[1], (int, float, list)
+                ):
                     raise ValueError(
-                        "Invalid tuple format for activates_on. Expected "
-                        "(str, int), (str, List[int]), or (str, float)."
+                        "Invalid tuple format for activates_on.\
+                        Expected (str, int), (str, List[int]), or (str, float)."
                     )
                 if isinstance(e[1], int):
                     triggers.append(PeriodicCascadeTrigger(e[0], e[1]))

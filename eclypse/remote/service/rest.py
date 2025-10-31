@@ -22,7 +22,6 @@ class RESTService(Service):
         Args:
             service_id (str): The name of the service.
         """
-
         super().__init__(service_id=service_id, comm_interface="rest")
 
     async def step(self):

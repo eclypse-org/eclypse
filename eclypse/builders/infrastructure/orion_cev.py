@@ -21,12 +21,11 @@ from typing import (
     Optional,
 )
 
-import networkx as nx
-
 from eclypse.graph import Infrastructure
 from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
+    import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
@@ -70,7 +69,6 @@ def get_orion_cev(
     Returns:
         Infrastructure: The Orion CEV infrastructure.
     """
-
     infra = Infrastructure(
         infrastructure_id=infrastructure_id,
         node_update_policy=node_update_policy,

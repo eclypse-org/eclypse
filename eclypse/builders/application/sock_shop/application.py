@@ -104,7 +104,10 @@ def get_sock_shop(
 
     if communication_interface is None:
         add_fn = app.add_node
-        id_fn = lambda service: service
+
+        def id_fn(service):
+            return service
+
     elif communication_interface in ["mpi", "rest"]:
         add_fn = app.add_service  # type: ignore[assignment]
         if communication_interface == "mpi":
@@ -121,7 +124,10 @@ def get_sock_shop(
             "ShippingService": services.ShippingService,
             "FrontendService": services.FrontendService,
         }
-        id_fn = lambda service: classes[service](service)
+
+        def id_fn(service):
+            return classes[service](service)
+
     else:
         raise ValueError(f"Unknown communication interface: {communication_interface}")
 

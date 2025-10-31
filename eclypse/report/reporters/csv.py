@@ -24,13 +24,13 @@ CSV_DELIMITER = ","
 DEFAULT_IDX_HEADER = ["timestamp", "event_id", "n_event", "callback_id"]
 
 DEFAULT_CSV_HEADERS = {
-    "simulation": DEFAULT_IDX_HEADER + ["value"],
-    "application": DEFAULT_IDX_HEADER + ["application_id", "value"],
-    "service": DEFAULT_IDX_HEADER + ["application_id", "service_id", "value"],
-    "interaction": DEFAULT_IDX_HEADER + ["application_id", "source", "target", "value"],
-    "infrastructure": DEFAULT_IDX_HEADER + ["value"],
-    "node": DEFAULT_IDX_HEADER + ["node_id", "value"],
-    "link": DEFAULT_IDX_HEADER + ["source", "target", "value"],
+    "simulation": [*DEFAULT_IDX_HEADER, "value"],
+    "application": [*DEFAULT_IDX_HEADER, "application_id", "value"],
+    "service": [*DEFAULT_IDX_HEADER, "application_id", "service_id", "value"],
+    "interaction": [*DEFAULT_IDX_HEADER, "application_id", "source", "target", "value"],
+    "infrastructure": [*DEFAULT_IDX_HEADER, "value"],
+    "node": [*DEFAULT_IDX_HEADER, "node_id", "value"],
+    "link": [*DEFAULT_IDX_HEADER, "source", "target", "value"],
 }
 
 
@@ -43,7 +43,6 @@ class CSVReporter(Reporter):
 
     def __init__(self, *args, **kwargs):
         """Initialize the CSV reporter."""
-
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "csv"
 
@@ -65,12 +64,7 @@ class CSVReporter(Reporter):
             if line[-1] is None:
                 continue
 
-            fields = [
-                dt.now().isoformat(),
-                event_name,
-                event_idx,
-                callback.name,
-            ] + line
+            fields = [dt.now().isoformat(), event_name, event_idx, callback.name, *line]
 
             fields = [str(f) for f in fields]
             lines.append(CSV_DELIMITER.join(fields))

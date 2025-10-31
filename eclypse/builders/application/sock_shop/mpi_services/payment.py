@@ -3,7 +3,8 @@ the SockShop.
 
 - Key Responsibilities:
     - Processes payment details and initiates transactions for placed orders.
-    - Communicates with external payment providers and returns transaction statuses (e.g., success, failure).
+    - Communicates with external payment providers and returns transaction statuses \
+        (e.g., success, failure).
 """
 
 import random as rnd

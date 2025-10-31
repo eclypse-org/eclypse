@@ -39,13 +39,11 @@ class Report:
         """Initialise the Report with the path to the simulation directory.
 
         Args:
-
             simulation_path (Union[str, Path]): The path to the simulation directory.
 
         Raises:
             FileNotFoundError: If the "csv" directory does not exist in the simulation path.
         """
-
         self._sim_path = Path(simulation_path)
         self._stats_path = self._sim_path / "csv"
         if not self._stats_path.exists():
@@ -70,13 +68,12 @@ class Report:
             report_step (int, optional): The step to use when filtering. Defaults to 1.
             event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
                 Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
-                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): \
+                Application IDs to filter by. Defaults to None.
 
         Returns:
             pd.DataFrame: The filtered dataframe for the application metrics.
         """
-
         return self.to_dataframe(
             "application",
             report_range=report_range,
@@ -102,16 +99,14 @@ class Report:
             report_step (int, optional): The step to use when filtering. Defaults to 1.
             event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
                 Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
-                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): \
+                Application IDs to filter by. Defaults to None.
             service_ids (Optional[Union[str, List[str]]], optional): Service IDs to filter by. \
                 Defaults to None.
 
         Returns:
-
             pd.DataFrame: The filtered dataframe for the service metrics.
         """
-
         return self.to_dataframe(
             "service",
             report_range=report_range,
@@ -143,13 +138,12 @@ class Report:
                 Defaults to None.
             targets (Optional[Union[str, List[str]]], optional): Target IDs to filter by. \
                 Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): Application IDs to filter by. \
-                Defaults to None.
+            application_ids (Optional[Union[str, List[str]]], optional): \
+                Application IDs to filter by. Defaults to None.
 
         Returns:
             pd.DataFrame: The filtered dataframe for the interaction metrics.
         """
-
         return self.to_dataframe(
             "interaction",
             report_range=report_range,
@@ -179,7 +173,6 @@ class Report:
         Returns:
             pd.DataFrame: The filtered dataframe for the infrastructure metrics.
         """
-
         return self.to_dataframe(
             "infrastructure",
             report_range=report_range,
@@ -209,7 +202,6 @@ class Report:
         Returns:
             pd.DataFrame: The filtered dataframe for the node metrics.
         """
-
         return self.to_dataframe(
             "node",
             report_range=report_range,
@@ -243,7 +235,6 @@ class Report:
         Returns:
             pd.DataFrame: The filtered dataframe for the link metrics.
         """
-
         return self.to_dataframe(
             "link",
             report_range=report_range,
@@ -305,7 +296,6 @@ class Report:
         Raises:
             ValueError: If an invalid report type is provided.
         """
-
         if report_types is None:
             report_types = REPORT_TYPES
         else:
@@ -344,7 +334,6 @@ class Report:
         Returns:
             pd.DataFrame: The filtered dataframe.
         """
-
         self._read_csv(report_type)
 
         return self.filter(
@@ -363,7 +352,6 @@ class Report:
         Returns:
             pd.DataFrame: The dataframe containing the report data.
         """
-
         if report_type not in self.stats:
             file_path = self._stats_path / f"{report_type}.csv"
             df = pd.read_csv(file_path, converters={"value": _to_float})
@@ -416,7 +404,7 @@ class Report:
         """
         if self._config is None:
             file_path = self._sim_path / "config.json"
-            with open(file_path, "r", encoding="utf-8") as config_file:
+            with open(file_path, encoding="utf-8") as config_file:
                 self._config = json.load(config_file)
         return self._config
 

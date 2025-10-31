@@ -8,7 +8,6 @@ class HTTPStatusCode(IntEnum):
     """HTTP status codes used by the `EclypseREST` communication interface.
 
     Attributes:
-
         OK: 200 - OK status code.
         CREATED: 201 - Created status code.
         NO_CONTENT: 204 - No Content status code.

@@ -8,7 +8,7 @@ from .decorator import event
 from .defaults import get_default_events
 
 __all__ = [
-    "event",
     "EclypseEvent",
+    "event",
     "get_default_events",
 ]

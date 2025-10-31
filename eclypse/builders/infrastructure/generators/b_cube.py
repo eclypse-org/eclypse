@@ -15,7 +15,7 @@ A BCube(k, n) contains:
 - Each server is connected to (k + 1) switches, one per level.
 
 The implementation follows the definition from:
-Guo et al. "BCube: a high performance, server-centric network architecture for modular data centers."
+Guo et al. "BCube: a high performance, server-centric network architecture for modular data centers"
 ACM SIGCOMM Computer Communication Review, 2009. https://dl.acm.org/doi/10.1145/1592568.1592577
 """
 
@@ -117,10 +117,9 @@ def b_cube(
             sw_id = f"sw_{level}_{sw_idx}"
             infra.add_node(sw_id, strict=strict)
             for port in range(n):
-                if level == 0:
-                    server_idx = sw_idx * n + port
-                else:
-                    server_idx = (port * (n**level)) + sw_idx
+                server_idx = (
+                    sw_idx * n + port if level == 0 else port * n**level + sw_idx
+                )
                 server_id = f"server_{server_idx}"
                 infra.add_edge(sw_id, server_id, symmetric=True)
 

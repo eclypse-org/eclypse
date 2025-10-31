@@ -57,7 +57,6 @@ class Service:
             store_step (bool, optional): Whether to store the results of each step. Defaults
                 to False.
         """
-
         if comm_interface not in ["mpi", "rest"]:
             raise ValueError("Invalid communication interface.")
 
@@ -177,7 +176,7 @@ class Service:
             raise RuntimeError(
                 f"Service {self.id} implements {self._comm_interface}, not mpi."
             )
-        return cast(EclypseMPI, self._comm)
+        return cast("EclypseMPI", self._comm)
 
     @property
     def rest(self) -> EclypseREST:
@@ -188,7 +187,7 @@ class Service:
             raise RuntimeError(
                 f"Service {self.id} implements {self._comm_interface}, not rest."
             )
-        return cast(EclypseREST, self._comm)
+        return cast("EclypseREST", self._comm)
 
     @property
     def event_loop(self) -> asyncio.AbstractEventLoop:
