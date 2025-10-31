@@ -161,6 +161,9 @@ cython_debug/
 # VSCode
 .vscode/
 
+# ruff
+.ruff_cache/
+
 # personal
 *.DS_Store
 docs/source/api/reference/*
