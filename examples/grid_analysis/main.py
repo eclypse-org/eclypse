@@ -23,7 +23,7 @@ from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 def eclypse_grid(config):
     print("Running with config: ", config)
-    stg = train.get_context().get_storage()
+    stg = tune.get_context().get_storage()
     path = (
         Path(stg.storage_fs_path)
         / stg.experiment_dir_name
@@ -37,8 +37,8 @@ def eclypse_grid(config):
         seed=config["seed"],
         max_ticks=config["max_ticks"],
         path=path,
-        include_default_callbacks=False,
-        callbacks=get_metrics(),
+        include_default_metrics=False,
+        events=get_metrics(),
         log_level="CRITICAL",
     )
 

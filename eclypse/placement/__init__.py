@@ -1,15 +1,14 @@
-"""Wrapper package for Placement and PlacementView classes, used in PlacementStrategy.
+"""Package for placement (mapping of application services onto infrastructure nodes)
+views and management."""
 
-For their complete documentation, refer to the :py:mod:`~eclypse_core.placement`
-core package.
-"""
-
-from eclypse_core.placement import (
-    Placement,
-    PlacementView,
-)
+from .placement import Placement
+from .view import PlacementView
+from ._manager import PlacementManager
+from .strategy import PlacementStrategy
 
 __all__ = [
     "Placement",
     "PlacementView",
+    "PlacementManager",
+    "PlacementStrategy",
 ]

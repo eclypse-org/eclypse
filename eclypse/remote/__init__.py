@@ -1,5 +1,8 @@
-"""Package for managing remote simulations (node configuration, service implementation,
-etc.).
+"""Package for every functionality related to a remote simulation.
 
-For the complete documentation, refer to the :py:mod:`~eclypse_core.remote` core package.
+It includes Remote nodes, services, communicaiton interfaces, and some utilities.
 """
+
+from .utils.ray_interface import ray_backend
+
+__all__ = ["ray_backend"]

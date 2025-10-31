@@ -13,7 +13,6 @@ from typing import (
 )
 
 import networkx as nx
-from eclypse_core.utils.constants import RND_SEED
 
 from eclypse.utils.constants import (
     DRIVING_EVENT,
@@ -21,20 +20,20 @@ from eclypse.utils.constants import (
     MIN_BANDWIDTH,
     MIN_FLOAT,
     MIN_LATENCY,
+    RND_SEED,
 )
 
 from . import metric
 
 if TYPE_CHECKING:
 
-    from eclypse_core.placement import (
-        Placement,
-        PlacementView,
-    )
-
     from eclypse.graph import (
         Application,
         Infrastructure,
+    )
+    from eclypse.placement import (
+        Placement,
+        PlacementView,
     )
     from eclypse.remote.service import Service
 

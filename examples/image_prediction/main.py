@@ -27,7 +27,7 @@ if __name__ == "__main__":
         seed=seed,
         max_ticks=TICKS,
         tick_every_ms=TICK_EVERY_MS,
-        include_default_callbacks=False,
+        include_default_metrics=False,
         events=get_metrics(),
         log_to_file=True,
         path=BASE_PATH,

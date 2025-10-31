@@ -1,5 +1,12 @@
-"""Wrapper package for services communication interfaces.
+"""Package collectiong interfaces for communication among services into an
+application."""
 
-For the complete documentation, refer to the :py:mod:`~eclypse_core.remote.communication`
-core package.
-"""
+from .interface import EclypseCommunicationInterface
+from .route import Route
+from .request import EclypseRequest
+
+__all__ = [
+    "EclypseCommunicationInterface",
+    "Route",
+    "EclypseRequest",
+]

@@ -16,19 +16,18 @@ from typing import (
     Optional,
 )
 
-from eclypse_core.utils.constants import RND_SEED
+from eclypse.utils.constants import RND_SEED
 
 from .strategy import PlacementStrategy
 
 if TYPE_CHECKING:
-    from eclypse_core.placement import (
-        Placement,
-        PlacementView,
-    )
-
     from eclypse.graph import (
         Application,
         Infrastructure,
+    )
+    from eclypse.placement import (
+        Placement,
+        PlacementView,
     )
 
 

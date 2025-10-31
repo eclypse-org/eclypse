@@ -25,22 +25,55 @@ Attributes:
         ``"SUCCESS"``, ``"WARNING"``, ``"ERROR"``, ``"CRITICAL"``.
 """
 
-from eclypse_core.utils.types import (
-    ActivatesOnType,
-    CascadeTriggerType,
-    ConnectivityFn,
-    EventType,
-    HTTPMethodLiteral,
-    LogLevel,
-    PrimitiveType,
+from __future__ import annotations
+
+from typing import (
+    Callable,
+    Generator,
+    List,
+    Literal,
+    Tuple,
+    Union,
 )
 
-__all__ = [
-    "ActivatesOnType",
-    "CascadeTriggerType",
-    "ConnectivityFn",
-    "EventType",
-    "HTTPMethodLiteral",
-    "LogLevel",
-    "PrimitiveType",
+PrimitiveType = Union[int, float, str, bool, list, tuple, dict, set]
+
+CascadeTriggerType = Union[
+    str,  # CascadeTrigger
+    Tuple[str, int],  # PeriodicCascadeTrigger
+    Tuple[str, List[int]],  # ScheduledCascadeTrigger
+    Tuple[str, float],  # RandomCascadeTrigger
+]
+ActivatesOnType = Union[CascadeTriggerType, List[CascadeTriggerType]]
+
+HTTPMethodLiteral = Literal[
+    "GET",
+    "POST",
+    "PUT",
+    "DELETE",
+]
+
+ConnectivityFn = Callable[
+    [List[str], List[str]], Generator[Tuple[str, str], None, None]
+]
+
+EventType = Literal[
+    "application",
+    "infrastructure",
+    "service",
+    "interaction",
+    "node",
+    "link",
+    "simulation",
+]
+
+LogLevel = Literal[
+    "TRACE",
+    "DEBUG",
+    "ECLYPSE",
+    "INFO",
+    "SUCCESS",
+    "WARNING",
+    "ERROR",
+    "CRITICAL",
 ]

@@ -28,7 +28,7 @@ if __name__ == "__main__":
         max_ticks=100,
         path=DEFAULT_SIM_PATH / "SockShopMPI",
         remote=True,
-        include_default_callbacks=True,
+        include_default_metrics=True,
     )
 
     sim = Simulation(infrastructure, simulation_config=sim_config)

@@ -8,17 +8,16 @@ from typing import (
     Dict,
 )
 
-from eclypse_core.placement import PlacementStrategy as _PlacementStrategy
+from eclypse.placement import PlacementStrategy as _PlacementStrategy
 
 if TYPE_CHECKING:
-    from eclypse_core.placement import (
-        Placement,
-        PlacementView,
-    )
-
     from eclypse.graph import (
         Application,
         Infrastructure,
+    )
+    from eclypse.placement import (
+        Placement,
+        PlacementView,
     )
 
 

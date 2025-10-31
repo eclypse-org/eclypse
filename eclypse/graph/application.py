@@ -6,6 +6,7 @@ services and edges representing the interactions between them.
 
 from __future__ import annotations
 
+from functools import cached_property
 from typing import (
     TYPE_CHECKING,
     Callable,
@@ -13,14 +14,17 @@ from typing import (
     List,
     Literal,
     Optional,
+    Union,
 )
 
-from eclypse_core.graph import Application as _Application
+import networkx as nx
 
-from .assets.defaults import (
+from eclypse.graph import AssetGraph
+from eclypse.graph.assets.defaults import (
     get_default_edge_assets,
     get_default_node_assets,
 )
+from eclypse.remote.service import Service
 
 if TYPE_CHECKING:
     from networkx.classes.reportviews import (
@@ -31,14 +35,18 @@ if TYPE_CHECKING:
     from .assets import Asset
 
 
-class Application(_Application):  # pylint: disable=too-few-public-methods
+class Application(AssetGraph):  # pylint: disable=too-few-public-methods
     """Class to represent a multi-service Application."""
 
     def __init__(
         self,
         application_id: str,
-        node_update_policy: Optional[Callable[[NodeView], None]] = None,
-        edge_update_policy: Optional[Callable[[EdgeView], None]] = None,
+        node_update_policy: Optional[
+            Union[Callable[[NodeView], None], List[Callable[[NodeView], None]]]
+        ] = None,
+        edge_update_policy: Optional[
+            Union[Callable[[EdgeView], None], List[Callable[[EdgeView], None]]]
+        ] = None,
         node_assets: Optional[Dict[str, Asset]] = None,
         edge_assets: Optional[Dict[str, Asset]] = None,
         include_default_assets: bool = False,
@@ -50,10 +58,12 @@ class Application(_Application):  # pylint: disable=too-few-public-methods
 
         Args:
             application_id (str): The ID of the application.
-            node_update_policy (Optional[Callable[[NodeView], None]]): A function to \
-                update the nodes.
-            edge_update_policy (Optional[Callable[[EdgeView], None]]): A function to \
-                update the edges.
+            node_update_policy (Optional[Union[Callable[[NodeView], None], \
+                List[Callable[[NodeView], None]]]], optional): A function to \
+                update the nodes. Defaults to None.
+            edge_update_policy (Optional[Union[Callable[[EdgeView], None], \
+                List[Callable[[EdgeView], None]]]], optional): A function to \
+                update the edges. Defaults to None.
             node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
             edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
@@ -69,12 +79,55 @@ class Application(_Application):  # pylint: disable=too-few-public-methods
         _edge_assets.update(edge_assets if edge_assets is not None else {})
 
         super().__init__(
-            application_id=application_id,
+            graph_id=application_id,
             node_update_policy=node_update_policy,
             edge_update_policy=edge_update_policy,
             node_assets=_node_assets,
             edge_assets=_edge_assets,
-            requirement_init=requirement_init,
-            flows=flows,
+            attr_init=requirement_init,
             seed=seed,
+            flip_assets=True,
         )
+
+        self.services: Dict[str, Service] = {}
+        self.flows = flows if flows is not None else []
+
+    def add_service(self, service: Service, **assets):
+        """Add a service to the application.
+
+        Args:
+            service (Service): The service to add.
+            **assets : The assets to add to the service.
+        """
+        if not isinstance(service, Service):
+            raise ValueError("The service must be an instance of Service.")
+        service.application_id = self.id
+        self.services[service.id] = service
+        self.add_node(service.id, **assets)
+
+    def set_flows(self):
+        """Set the flows of the application, using the following rules:
+
+        - If the flows are already set, do nothing.
+        - If the flows are not set, use the gateway as the source and all the other nodes as the target.
+        - If there is no gateway, set the flows to an empty list.
+        """
+        if self.flows == []:
+            gateway_name = next((s for s in self.nodes if "gateway" in s.lower()), None)
+            if gateway_name is not None:
+                self.flows = list(
+                    nx.all_simple_paths(
+                        self,
+                        source=gateway_name,
+                        target=[x for x in self.nodes if x != gateway_name],
+                    )
+                )
+
+    @cached_property
+    def has_logic(self) -> bool:
+        """Check if the application has a logic for each service.
+
+        This property requires to be True for the remote execution.
+        """
+        checks = [(x in self.services) for x in self.nodes]
+        return checks != [] and all(checks)

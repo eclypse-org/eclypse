@@ -15,7 +15,7 @@ from typing import (
     List,
 )
 
-from eclypse_core.report.reporter import Reporter
+from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
     from tensorboardX import SummaryWriter
