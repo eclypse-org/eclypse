@@ -69,7 +69,7 @@ def get_infrastructure(config) -> Infrastructure:
 
 def get_policy(config):
     if config["policy"][0] == "degrade":
-        return degrade_policy(config["policy"][1], config["max_ticks"])
+        return degrade_policy(config["policy"][1], config["max_steps"])
     return kill_policy(config["policy"][1])
 
 

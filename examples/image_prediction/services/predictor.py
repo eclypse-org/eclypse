@@ -9,8 +9,8 @@ from eclypse.remote.service import RESTService
 from .model import MNISTModel
 from .utils import (
     EPOCHS,
-    TICK_EVERY_MS,
-    TICKS,
+    STEP_EVERY_MS,
+    STEPS,
 )
 
 
@@ -27,8 +27,8 @@ class PredictorService(RESTService):
     async def predict(self, image: np.ndarray):
         last_time, req_time = self.last_model_time, time.time()
         if self.last_model_time is None or (req_time - self.last_model_time) > (
-            TICKS / EPOCHS
-        ) * (TICK_EVERY_MS / 1000):
+            STEPS / EPOCHS
+        ) * (STEP_EVERY_MS / 1000):
             self.last_model_time = req_time
             self.new_model = await self.poll_model()
             if not self.new_model:

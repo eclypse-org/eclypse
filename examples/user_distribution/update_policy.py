@@ -45,19 +45,19 @@ class UserDistributionPolicy:
         self.df = pd.read_parquet(Path(__file__).parent / "dataset.parquet")
         self.df = self.df.astype({"node_id": int, "time": int, "user_count": int})
 
-        self.tick = self.df["time"].min()
+        self.step = self.df["time"].min()
         self.factor = 1
 
     def __call__(self, nodes: NodeView):
 
-        if self.tick == 1000 or self.tick == 3000:
+        if self.step == 1000 or self.step == 3000:
             self.factor += 2
-        elif self.tick == 2000 or self.tick == 4000:
+        elif self.step == 2000 or self.step == 4000:
             self.factor -= 2
 
-        current_data = self.df[self.df["time"] == self.tick]
+        current_data = self.df[self.df["time"] == self.step]
         for _, row in current_data.iterrows():
             user_count = int(row["user_count"]) * self.factor
             nodes[row["node_id"]]["user_count"] = user_count
 
-        self.tick += 1
+        self.step += 1

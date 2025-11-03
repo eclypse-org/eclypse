@@ -12,15 +12,15 @@ from eclypse.simulation import (
 from eclypse.utils.constants import DEFAULT_SIM_PATH
 
 SEED = 42
-TICKS = 4167
+STEPS = 4167
 
 app = get_sock_shop(seed=SEED)
 strategy = BestFitStrategy()
 
 sim_config = SimulationConfig(
-    tick_every_ms="auto",
+    step_every_ms="auto",
     seed=SEED,
-    max_ticks=TICKS,
+    max_steps=STEPS,
     path=DEFAULT_SIM_PATH / "user-distribution",
     events=get_metrics(),
     log_to_file=True,
