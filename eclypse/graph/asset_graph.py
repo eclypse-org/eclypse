@@ -66,11 +66,11 @@ class AssetGraph(nx.DiGraph):
                 Defaults to None.
             edge_assets (Optional[Dict[str, Asset]], optional): The assets of the edges.\
                 Defaults to None.
-            node_update_policy (Optional[Callable[[NodeView], None]], optional): The policy \
+            node_update_policy (Optional[Union[Callable, List[Callable]]]): The policy \
                 to update the nodes. Defaults to None.
-            edge_update_policy (Optional[Callable[[EdgeView], None]], optional): The policy \
+            edge_update_policy (Optional[Union[Callable, List[Callable]]]): The policy \
                 to update the edges. Defaults to None.
-            attr_init (Literal["min", "max"], optional): The initialization policy for the \
+            attr_init (Literal["min", "max"], optional): The initialization policy for the\
                 assets. Defaults to "min".
             flip_assets (bool, optional): Whether to flip the assets. Defaults to False.
             seed (Optional[int], optional): The seed for the random number generator.
@@ -124,8 +124,9 @@ class AssetGraph(nx.DiGraph):
         super().__init__()
 
     def add_node(self, node_for_adding: str, strict: bool = True, **assets):
-        """Adds a node to the graph with the given assets. It also checks if the assets
-        values are consistent with their spaces.
+        """Adds a node to the graph with the given assets.
+
+        It also checks if the assets values are consistent with their spaces.
 
         Args:
             node_for_adding (Optional[str], optional): The node to add. Defaults to None.
@@ -159,8 +160,9 @@ class AssetGraph(nx.DiGraph):
         strict: bool = True,
         **assets,
     ):
-        """Adds an edge to the graph with the given assets. It also checks if the assets
-        values are consistent with their spaces.
+        """Adds an edge to the graph with the given assets.
+
+        It also checks if the assets values are consistent with their spaces.
 
         Args:
             u_of_edge (str): The source node.

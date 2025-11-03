@@ -1,5 +1,6 @@
-"""Module for the Multiplicative Asset class. It represents a numeric asset where the aggregation
-is the multiplication of the provided assets.
+"""Module for the Multiplicative Asset class.
+
+It represents a numeric asset where the aggregation is the multiplication of the provided assets.
 It provides the interface for the basic algebraic functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via product.
@@ -28,8 +29,7 @@ if TYPE_CHECKING:
 
 
 class Multiplicative(Asset):
-    """Multiplicative represents a numeric asset where the aggregation is
-    multiplicative."""
+    """Multiplicative represents a numeric asset where the aggregation is multiplicative."""
 
     def __init__(
         self,
@@ -77,15 +77,16 @@ class Multiplicative(Asset):
         return reduce(mul, assets, 1.0)
 
     def satisfies(self, asset: float, constraint: float) -> bool:
-        """Check asset1 contains asset2. In an multiplicative asset, the higher value
-        contains the lower value.
+        """Check `asset` contains `constraint`.
+
+        In an multiplicative asset, the higher value contains the lower value.
 
         Args:
-            asset1 (float): The "container" asset.
-            asset2 (float): The "contained" asset.
+            asset (float): The "container" asset.
+            constraint (float): The "contained" asset.
 
         Returns:
-            True if asset1 >= asset2, False otherwise.
+            True if asset >= constraint, False otherwise.
         """
         return asset >= constraint  #  and asset > 0.0
 
@@ -101,6 +102,11 @@ class Multiplicative(Asset):
         return self.lower_bound <= asset <= self.upper_bound
 
     def flip(self):
+        """Flip the multiplicative asset into a multiplicative concave asset.
+
+        Returns:
+            Concave: The flipped concave asset.
+        """
         from .concave import Concave  # pylint: disable=import-outside-toplevel
 
         return Concave(

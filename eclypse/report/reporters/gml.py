@@ -23,6 +23,7 @@ class GMLReporter(Reporter):
     """Class to report simulation metrics in GML format using NetworkX."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the GML reporter."""
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "gml"
 
@@ -33,6 +34,11 @@ class GMLReporter(Reporter):
         callback: EclypseEvent,
     ) -> List[tuple[str, nx.DiGraph]]:
         """Extract graph data from callback and prepare it for writing.
+
+        Args:
+            event_name (str): The name of the event.
+            event_idx (int): The index of the event trigger (tick).
+            callback (EclypseEvent): The executed callback containing the data to report.
 
         Returns:
             List of (graph_name, graph_object) tuples.

@@ -103,7 +103,9 @@ class EclypseEvent:
             self._report = []
 
     def __call__(self, *args, **kwargs) -> Any:
-        """The event logic. Must be implemented by the user by either decorating a
+        """The event logic.
+
+        Must be implemented by the user by either decorating a
         function or a class with a __call__ method, or by subclassing the EclypseEvent
         class and implementing the __call__ method.
 

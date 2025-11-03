@@ -22,7 +22,9 @@ REPORT_TYPES = list(get_args(EventType))
 
 
 class Report:
-    """Class to represent the report of a simulation, built from the CSV files, thus
+    """Report class.
+
+    It represents the report of a simulation, built from the CSV files, thus
     *working only if the simulation reports metrics in CSV format*.
 
     It provides methods to access the dataframes for the different report types, such as
@@ -59,7 +61,9 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the application metrics, filtered by the given
+        """Return a filtered dataframe containing application metrics within the given range.
+
+        Get a dataframe for the application metrics, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -90,7 +94,9 @@ class Report:
         application_ids: Optional[Union[str, List[str]]] = None,
         service_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the service metrics, filtered by the given report_range,
+        """Return a filtered dataframe containing service metrics within the given range.
+
+        Get a dataframe for the service metrics, filtered by the given report_range,
         report_step and additional filters.
 
         Args:
@@ -125,7 +131,9 @@ class Report:
         targets: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the interaction metrics, filtered by the given
+        """Return a filtered dataframe containing interaction metrics within the given range.
+
+        Get a dataframe for the interaction metrics, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -160,7 +168,9 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the infrastructure metrics, filtered by the given
+        """Return a filtered dataframe containing infrastructure metrics within the given range.
+
+        Get a dataframe for the infrastructure metrics, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -187,7 +197,9 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         node_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the node metrics, filtered by the given report_range,
+        """Return a filtered dataframe containing node metrics within the given range.
+
+        Get a dataframe for the node metrics, filtered by the given report_range,
         report_step and additional filters.
 
         Args:
@@ -218,7 +230,9 @@ class Report:
         sources: Optional[Union[str, List[str]]] = None,
         targets: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the link metrics, filtered by the given report_range,
+        """Return a filtered dataframe containing link metrics within the given range.
+
+        Get a dataframe for the link metrics, filtered by the given report_range,
         report_step and additional filters.
 
         Args:
@@ -250,7 +264,9 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
     ) -> pd.DataFrame:
-        """Get a dataframe for the simulation metrics, filtered by the given
+        """Return a filtered dataframe containing simulation metrics within the given range.
+
+        Get a dataframe for the simulation metrics, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -277,7 +293,9 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
     ) -> Dict[str, pd.DataFrame]:
-        """Get dataframes for the specified report types, filtered by the given
+        """Get dataframes for the specified report types, filtered by the given range.
+
+        Get dataframes for the specified report types, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -320,7 +338,9 @@ class Report:
         report_step: int = 1,
         **kwargs,
     ) -> pd.DataFrame:
-        """Get a dataframe for the given report type, filtered by the given
+        """Get a dataframe for the given report type, filtered by the given report_range.
+
+        Get a dataframe for the given report type, filtered by the given
         report_range, report_step and additional filters.
 
         Args:
@@ -364,8 +384,7 @@ class Report:
         report_step: int = 1,
         **kwargs,
     ):
-        """Filter a dataframe based on the given range and step, and the provided
-        kwargs.
+        """Filter a dataframe based on the given range and step, and the provided kwargs.
 
         Args:
             df (pd.DataFrame): The dataframe to filter.

@@ -1,5 +1,7 @@
-"""The `UserService` manages all user-related functionality, including registration,
-authentication, and profile management.
+"""The `UserService` class.
+
+It manages all user-related functionality, including registration,\
+    authentication, and profile management.
 
 - Key Responsibilities:
     - Handles user sign-up, login, and logout processes.

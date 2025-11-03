@@ -1,6 +1,7 @@
-"""Module for the Infrastructure class, which extends the AssetGraph class to represent
-a network, with nodes representing devices and edges representing (physical/virtual)
-links between them.
+"""Module for the Infrastructure class.
+
+It represents a network, with nodes representing devices and
+edges representing links between them.
 
 The infrastructure also stores:
 - A global placement strategy (optional).
@@ -81,12 +82,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             infrastructure_id (str): The ID of the infrastructure.
             placement_strategy (Optional[PlacementStrategy]): The placement \
                 strategy to use.
-            node_update_policy (Optional[Union[Callable[[NodeView], None], \
-                List[Callable[[NodeView], None]]]], optional): A function to \
-                update the nodes. Defaults to None.
-            edge_update_policy (Optional[Union[Callable[[EdgeView], None], \
-                List[Callable[[EdgeView], None]]]], optional): A function to \
-                update the edges. Defaults to None.
+            node_update_policy (Optional[Union[Callable, List[Callable]]]):\
+                A function to update the nodes. Defaults to None.
+            edge_update_policy (Optional[Union[Callable, List[Callable]]]):\
+                A function to update the edges. Defaults to None.
             node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
             edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
@@ -152,7 +151,9 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._costs: Dict[str, Dict[str, Tuple[List[Tuple[str, str, Any]], float]]] = {}
 
     def contains(self, other: nx.DiGraph) -> List[str]:
-        """Compares the requirements of the nodes and edges in the PlacementView with
+        """Comparison between requirements and infrastructure resources.
+
+        Compares the requirements of the nodes and edges in the PlacementView with
         the resources of the nodes and edges in the Infrastructure.
 
         Args:
@@ -185,9 +186,11 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     def path(
         self, source: str, target: str
     ) -> Optional[Tuple[List[Tuple[str, str, Dict[str, Any]]], float]]:
-        """Retrieve the path between two nodes, if it exists. If the path does not
-        exist, it is computed and cached, with costs for each hop. Both the path and the
-        costs are recomputed if any of the hop costs has changed by more than 5%.
+        """Retrieve the path between two nodes, if it exists.
+
+        If the path does not exist, it is computed and cached, with costs for each hop.
+        Both the path and the costs are recomputed if any of the hop costs has changed
+        by more than 5%.
 
         Args:
             source (str): The name of the source node.
@@ -223,8 +226,9 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             return None
 
     def path_resources(self, source: str, target: str) -> Dict[str, Any]:
-        """Retrieve the resources of the path between two nodes, if it exists. If the
-        path does not exist, it is computed and cached.
+        """Retrieve the resources of the path between two nodes, if it exists.
+
+        If the path does not exist, it is computed and cached.
 
         Args:
             source (str): The name of the source node.
@@ -347,13 +351,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         return self.strategy is not None
 
 
-def _default_weight_function(
-    u: str,
-    v: str,
-    eattr: Dict[str, Any],  # pylint: disable=unused-argument
-) -> float:
-    """Function to compute the weight of an edge in the shortest path algorithm. The
-    weight is given by the 'latency' attribute if it exists, 1 otherwise (i.e., it
+def _default_weight_function(_: str, __: str, eattr: Dict[str, Any]) -> float:
+    """Function to compute the weight of an edge in the shortest path algorithm.
+
+    The weight is given by the 'latency' attribute if it exists, 1 otherwise (i.e., it
     counts as an hop).
 
     Args:
@@ -368,9 +369,10 @@ def _default_weight_function(
 
 
 def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> List[str]:
-    """Compute the path between two nodes using Dijkstra's algorithm. It tries to use
-    the 'latency' attribute of the edges as the weight, or the number of hops if it does
-    not exist.
+    """Compute the path between two nodes using Dijkstra's algorithm.
+
+    It tries to use the 'latency' attribute of the edges as the weight,
+    or the number of hops if it does not exist.
 
     Args:
         g (nx.Graph): The graph to compute the path on.

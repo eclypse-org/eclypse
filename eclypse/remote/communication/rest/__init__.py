@@ -1,5 +1,8 @@
-"""Package for the REST communication interface, based on the REpresentational State
-Transfer (REST) protocol."""
+"""Package for the REST communication interface.
+
+Based on the
+`Representational State Transfer (REST) protocol <https://it.wikipedia.org/wiki/Representational_state_transfer>`_.
+"""
 
 from .interface import EclypseREST, register_endpoint as endpoint
 from .codes import HTTPStatusCode

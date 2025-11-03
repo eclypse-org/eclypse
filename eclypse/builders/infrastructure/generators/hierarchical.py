@@ -62,11 +62,12 @@ def hierarchical(
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
     seed: Optional[int] = None,
 ):
-    """Create a hierarchical infrastructure made of `n` nodes, with a given partitioning
-    of the nodes into `len(node_partitioning)` layers. Nodes of the same level are
-    connected with a given probability function or list of probabilities `connectivity`,
-    and another function/list of probabilities `cross_level_connectivity` is used to
-    connect nodes in the same level.
+    """Create a hierarchical infrastructure made of `n` nodes.
+
+    It uses the given partitioning of the nodes into `len(node_partitioning)` layers.
+    Nodes of the same level are connected with a given probability function or list of
+    probabilities `connectivity`, and another function/list of probabilities
+    `cross_level_connectivity` is used to connect nodes in the same level.
 
     Args:
         infrastructure_id (str): The ID of the infrastructure.
@@ -91,6 +92,8 @@ def hierarchical(
             consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
+        placement_strategy (Optional[PlacementStrategy]): The placement strategy for the\
+            infrastructure. Defaults to None.
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
             compute the paths between nodes. Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
@@ -209,8 +212,10 @@ def _uniform_level_connectivity(
     """Generates the connectivity between levels in a hierarchical infrastructure.
 
     Args:
-        n (int): The number of nodes in the higher level.
-        m (int): The number of nodes in the lower level.
+        layer (List[str]): The nodes in the higher level.
+        layer1 (List[str]): The nodes in the lower level.
+        p (float): The probability of connecting two nodes.
+        seed (Optional[int]): The seed for the random number generator.
 
     Yields:
         Tuple[str, str]: The links between nodes in the higher and lower levels.

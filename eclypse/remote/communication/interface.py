@@ -1,5 +1,7 @@
-"""Module for the EclypseCommunicationInterface class, containing the implementation of
-the interface used by services to communicate."""
+"""Module for the EclypseCommunicationInterface class.
+
+It contains the implementation of the interface used by services to communicate.
+"""
 
 from __future__ import annotations
 
@@ -28,8 +30,10 @@ if TYPE_CHECKING:
 
 
 class EclypseCommunicationInterface:
-    """The EclypseCommunicationInterface is used to implement and simulate the
-    interactions between services deployed and running in the same infrastructure.
+    """EclypseCommunicationInterface class.
+
+    It is used to implement and simulate the interactions between services deployed
+    and running in the same infrastructure.
 
     It allows to interact with the `RemoteSimulator`, which provides the details regarding
     the current state of the infrastructure, and simulate the behaviour of the services
@@ -56,8 +60,9 @@ class EclypseCommunicationInterface:
         self._im = None
 
     def request_route(self, recipient_id: str) -> Future[Route]:
-        """Interacts with the `RemoteSimulator` to request a route to a desired
-        recipient service. The result of the function can be obtained by calling
+        """Interacts with the `RemoteSimulator` to request a route to a desired recipient service.
+
+        The result of the function can be obtained by calling
         `ray.get` or by awaiting it.
 
         Args:
@@ -77,9 +82,9 @@ class EclypseCommunicationInterface:
         )
 
     def get_neighbors(self) -> Task[List[str]]:
-        """Interacts with the InfrastructureManager to request the list of neighbors of
-        the service. The result of the function can be obtained by calling `ray.get` or
-        by awaiting it.
+        """Interacts with the InfrastructureManager to request the list of service neighbors.
+
+        The result of the function can be obtained by calling `ray.get` or by awaiting it.
 
         Returns:
             Task[List[str]]: The list of neighbor service IDs.
@@ -141,8 +146,7 @@ class EclypseCommunicationInterface:
 
     @property
     def connected(self) -> bool:
-        """Returns True if the communication interface is connected to the
-        RemoteSimulator.
+        """Returns True if the communication interface is connected to the RemoteSimulator.
 
         Returns:
             bool: True if the communication interface is connected.

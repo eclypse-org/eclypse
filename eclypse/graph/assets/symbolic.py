@@ -1,5 +1,7 @@
-"""Module for a Symbolic Asset class. It represents an asset defined as a list of
-symbolic variables, such as a location or security taxonomy. The logic of the asset is
+"""Module for a Symbolic Asset class.
+
+It represents an asset defined as a list of symbolic variables,
+such as a location or security taxonomy. The logic of the asset is
 defined in terms of a set of constraints:
 
 - `aggregate`: Aggregate the assets into a single asset via intersection.
@@ -41,20 +43,24 @@ class Symbolic(Asset):
         return list(uniques)
 
     def satisfies(self, asset: Any, constraint: Any) -> bool:
-        """Check if asset1 contains asset2. In a symbolic asset, asset1 contains asset2
-        if all the variables in asset2 are present in asset1.
+        """Check if `asset` contains `constraint`.
+
+        In a symbolic asset, `asset` contains `constraint`
+        if all the variables in `constraint` are present in `asset`.
 
         Args:
-            asset1 (SymbolicAsset): The "container" asset.
-            asset2 (SymbolicAsset): The "contained" asset.
+            asset (SymbolicAsset): The "container" asset.
+            constraint (SymbolicAsset): The "contained" asset.
 
         Returns:
-            bool: True if asset1 >= asset2, False otherwise.
+            bool: True if asset >= constraint, False otherwise.
         """
         return all(x in asset for x in constraint)
 
     def is_consistent(self, asset: Any) -> bool:
-        """Checks if all the lower bound variables are present in the asset and all the
+        """Consistency check for `asset`.
+
+        Checks if all the lower bound variables are present in the asset and all the
         variables in the asset are present in the upper bound.
 
         Args:

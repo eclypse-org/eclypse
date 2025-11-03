@@ -51,12 +51,14 @@ def star(
     placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ):
-    """Create a star infrastructure with `n_clients` clients connected to a central
-    node. The group of the clients can be specified.
+    """Create a star infrastructure with `n_clients` clients connected to a central node.
+
+    The group of the clients can be specified.
 
     Args:
-        infrastructure_id (str): The ID of the infrastructure.
         n_clients (int): The number of clients in the infrastructure.
+        infrastructure_id (str): The ID of the infrastructure.
+        symmetric (bool): Whether the links are symmetric. Defaults to False.
         node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
@@ -74,6 +76,8 @@ def star(
             Defaults to "min".
         path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
             compute the paths between nodes. Defaults to None.
+        placement_strategy (Optional[PlacementStrategy]): The placement strategy for the\
+            infrastructure. Defaults to None.
         seed (Optional[int]): The seed for the random number generator. Defaults to None.
 
     Returns:

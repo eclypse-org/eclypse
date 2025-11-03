@@ -1,4 +1,4 @@
-# pylint: disable=unnecessary-lambda-assignment,import-outside-toplevel
+# pylint: disable=import-outside-toplevel
 """Factory for the SockShop microservice application.
 
 Defines the SockShop e-commerce demo as an Application object, modeling typical user interactions

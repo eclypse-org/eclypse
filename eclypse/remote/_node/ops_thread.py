@@ -131,8 +131,9 @@ class RemoteOpsThread(Thread):
             return ResponseCode.ERROR
 
     async def set_future_result(self, future: asyncio.Future, result: Any):
-        """Sets the result of the future. This method must be called to return the
-        result of the operation to the caller.
+        """Sets the result of the future.
+
+        This method must be called to return the result of the operation to the caller.
 
         Args:
             future (asyncio.Future): The future to set the result.

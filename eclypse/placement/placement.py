@@ -1,5 +1,8 @@
-"""Module for the Placement class, which represents the mapping of application services
-onto infrastructure nodes, according to a placement strategy."""
+"""Module for the Placement class.
+
+It represents the mapping of application services onto infrastructure nodes, a
+ccording to a placement strategy.
+"""
 
 from __future__ import annotations
 
@@ -17,12 +20,15 @@ if TYPE_CHECKING:
     from eclypse.graph.infrastructure import Infrastructure
     from eclypse.placement.view import PlacementView
 
-    from .strategy import PlacementStrategy
+    from .strategies.strategy import PlacementStrategy
 
 
 class Placement:
-    """A placement is a mapping of each service of an application to a node of an
-    infrastructure, computed according to a placement strategy."""
+    """Placement class.
+
+    A placement is a mapping of each service of an application to a node of an
+    infrastructure, computed according to a placement strategy.
+    """
 
     def __init__(
         self,
@@ -50,8 +56,7 @@ class Placement:
     def _generate_mapping(
         self, placements: Dict[str, Placement], placement_view: PlacementView
     ):
-        """Generate the mapping of the application services onto the infrastructure
-        nodes, according to the placement strategy."""
+        """Generate the mapping {service: node}, according to the placement strategy."""
         if self.strategy is None:
             raise ValueError("No placement strategy provided")
         self.mapping = self.strategy.place(
@@ -127,16 +132,18 @@ class Placement:
         return interactions
 
     def node_service_mapping(self) -> Dict[str, List[str]]:
-        """Return a view of the placement as a mapping of nodes to the list of services
-        placed on them."""
+        """Return a view of the placement.
+
+        Returns:
+            Dict[str, List[str]]: The mapping of nodes to the list of services placed on them.
+        """
         return {node: self.services_on_node(node) for node in self.infrastructure.nodes}
 
     def link_interaction_mapping(self) -> Dict[Tuple[str, str], List[Tuple[str, str]]]:
-        """Return a view of the placement as a mapping of links to the list of services
-        interactions crossing them.
+        """Return a view of the placement.
 
         Returns:
-            Dict[Tuple[str, str], List[Tuple[str, str]]]: The mapping of links to the list \
+            Dict[Tuple[str, str], List[Tuple[str, str]]]: The mapping of links to the list
                 of services interactions crossing them.
         """
         return {
@@ -145,11 +152,10 @@ class Placement:
         }
 
     def node_requirements_mapping(self) -> Dict[str, Dict[str, Any]]:
-        """Return a view of the placement as a mapping of nodes to the total
-        requirements of the services placed on them.
+        """Return a view of the placement.
 
         Returns:
-            Dict[str, ServiceRequirements]: The mapping of nodes to the total requirements \
+            Dict[str, ServiceRequirements]: The mapping of nodes to the total requirements
                 of the services placed on them.
         """
         return {
@@ -164,11 +170,10 @@ class Placement:
         }
 
     def link_requirements_mapping(self) -> Dict[Tuple[str, str], Dict[str, Any]]:
-        """Return a view of the placement as a mapping of links to the total
-        requirements of the services interactions crossing them.
+        """Return a view of the placement.
 
         Returns:
-            Dict[Tuple[str, str], S2SRequirements]: The mapping of links to the total \
+            Dict[Tuple[str, str], S2SRequirements]: The mapping of links to the total
                 requirements of the services interactions crossing them.
         """
         return {
@@ -183,11 +188,11 @@ class Placement:
         }
 
     def __str__(self) -> str:
-        """Return a string representation of the placement, in the form: <service_id>
-        -> <node_name>
+        """Return a string representation of the placement.
 
         Returns:
-            str: The string representation of the placement.
+            str: The string representation of the placement, in the form:
+                <service_id> -> <node_name>
         """
         result = (
             "{"
@@ -202,11 +207,11 @@ class Placement:
         return result
 
     def __repr__(self) -> str:
-        """Return a string representation of the placement, in the form: <service_id>
-        -> <node_name>
+        """Return a string representation of the placement.
 
         Returns:
-            str: The string representation of the placement.
+            str: The string representation of the placement, in the form:
+            <service_id> -> <node_name>
         """
         return self.__str__()
 

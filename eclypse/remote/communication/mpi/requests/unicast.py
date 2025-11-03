@@ -44,6 +44,8 @@ class UnicastRequest(MulticastRequest):
             recipient_id (str): The ID of the recipient node.
             body (Dict[str, Any]): The body of the request.
             _mpi (EclypseMPI): The MPI interface.
+            timestamp (Optional[datetime], optional): The timestamp of the request.
+                Defaults to None.
         """
         super().__init__(
             recipient_ids=[recipient_id],

@@ -1,5 +1,8 @@
-"""Module for the HTTPRequest class, used to send and receive data between services that
-communicate using the REST communication interface."""
+"""Module for the HTTPRequest class.
+
+It is used to send and receive data between services that
+communicate using the REST communication interface.
+"""
 
 from __future__ import annotations
 
@@ -23,8 +26,11 @@ if TYPE_CHECKING:
 
 
 class HTTPRequest(EclypseRequest):
-    """An HTTP request object, used to send and receive data between services in the
-    same application, using the REST communication protocol."""
+    """HTTPRequest class.
+
+    An HTTP request is used to send and receive data between services in the
+    same application, using the REST communication protocol.
+    """
 
     def __init__(
         self,

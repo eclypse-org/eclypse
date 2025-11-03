@@ -27,8 +27,11 @@ if TYPE_CHECKING:
 
 
 class StaticStrategy(PlacementStrategy):
-    """Static placement strategy based on a predefined mapping of services to nodes in
-    the form of a dictionary."""
+    """StaticStrategy class.
+
+    Static placement strategy based on a predefined mapping of services
+    to nodes in the form of a dictionary.
+    """
 
     def __init__(self, mapping: Dict[str, str]):
         """Initializes the StaticPlacementStrategy object.

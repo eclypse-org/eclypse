@@ -15,8 +15,11 @@ class CatalogService(Service):
     """MPI workflows for the Catalog service."""
 
     async def step(self):
-        """The `CatalogService` workflow consists of receiving a request from the \
-        `FrontendService` and sending a response containing product information."""
+        """Example workflow of the `Catalog` service.
+
+        It starts with receiving a request from the `FrontendService`
+        and sending a response containing product information.
+        """
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)

@@ -1,5 +1,6 @@
-"""Module for the EclypseREST class, which implements the REST communication protocol
-among services in the same application.
+"""Module for the EclypseREST class.
+
+It implements the REST communication protocol among services in the same application.
 
 It allows to send and receive HTTP requests at specific endpoints, which are defined by
 each service, using the @endpoint decorator.
@@ -35,7 +36,9 @@ if TYPE_CHECKING:
 
 
 class EclypseREST(EclypseCommunicationInterface):
-    """The EclypseREST implements the REST communication interface among services in the
+    """EclypseREST class.
+
+    It implements the REST communication interface among services in the
     same application, deployed within the same infrastructure.
 
     It allows to send and receive HTTP requests at specific endpoints, which are defined
@@ -52,8 +55,10 @@ class EclypseREST(EclypseCommunicationInterface):
         self.endpoints: Dict[str, Dict[HTTPMethod, Callable]] = defaultdict(lambda: {})
 
     def connect(self):
-        """Connects the REST interface to the service, registering the endpoints and
-        their handlers."""
+        """Connects the REST interface to the service.
+
+        It registers the endpoints and their handlers.
+        """
         super().connect()
         for attr in dir(self.service):
             if attr == "mpi":
@@ -119,6 +124,7 @@ class EclypseREST(EclypseCommunicationInterface):
             endpoint (str): The endpoint to handle.
             method (HTTPMethod): The method of the request.
             route (Route): The route of the request.
+            *args: The positional arguments to be sent in the request.
             **kwargs: The data to be sent in the request.
 
         Returns:
@@ -146,6 +152,7 @@ class EclypseREST(EclypseCommunicationInterface):
         """Executes a request to an endpoint.
 
         Args:
+            url (str): The URL of the request.
             endpoint (str): The endpoint to handle.
             method (HTTPMethod): The method of the request.
             route (Route): The route of the request.
@@ -191,7 +198,7 @@ def register_endpoint(endpoint: str, method: Union[HTTPMethod, HTTPMethodLiteral
 
     Args:
         endpoint (str): The endpoint to register.
-        methods (List[HTTPMethod]): The methods allowed for the endpoint.
+        method (Union[HTTPMethod, HTTPMethodLiteral]): The method allowed for the endpoint.
 
     Returns:
         Callable: The decorated function.

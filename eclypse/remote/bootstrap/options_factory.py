@@ -1,5 +1,7 @@
-"""Module for RayOptionsFactory class, incapsulating several option for Ray remote
-nodes."""
+"""Module for RayOptionsFactory class.
+
+It incapsulates several option for Ray remote nodes.
+"""
 
 from __future__ import annotations
 

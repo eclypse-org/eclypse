@@ -1,5 +1,6 @@
-"""The `PaymentService` is responsible for handling all payment-related transactions in
-the SockShop.
+"""The `PaymentService` class.
+
+It is responsible for handling all payment-related transactions in the SockShop.
 
 - Key Responsibilities:
     - Processes payment details and initiates transactions for placed orders.
@@ -17,8 +18,10 @@ class PaymentService(Service):
     """MPI workflow of the Payment service."""
 
     async def step(self):
-        """Example workflow of the Payment service, consisting of processing payment
-        requests."""
+        """Example workflow of the `PaymentService` class.
+
+        It consists of processing payment requests.
+        """
         await self.order_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)

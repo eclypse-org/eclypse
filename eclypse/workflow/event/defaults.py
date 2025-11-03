@@ -1,4 +1,3 @@
-# pylint: disable=protected-access
 """Default events to be managed by the ECLYPSE simulator."""
 
 from __future__ import annotations
@@ -16,6 +15,7 @@ class StartEvent(EclypseEvent):
     """The start is the beginning of the simulation."""
 
     def __init__(self):
+        """Initialize the start event."""
         super().__init__(
             name="start",
             verbose=True,
@@ -26,25 +26,37 @@ class StartEvent(EclypseEvent):
 
 
 class EnactEvent(EclypseEvent):
-    """The enact is the actuation of the placement decisions made by the placement
-    algorithms."""
+    """The EnactEvent represents the enactment phase of the simulation.
+
+    The enact is the actuation of the placement decisions made by the placement
+    algorithms.
+    """
 
     def __init__(self):
+        """Initialize the enact event."""
         super().__init__(
             name="enact",
             verbose=True,
         )
 
     def __call__(self, _: Optional[EclypseEvent] = None):
+        """Enact placement decisions.
+
+        It calls the audit and enact methods of the simulator.
+        """
         self.simulator.audit()
         self.simulator.enact()
 
 
 class TickEvent(EclypseEvent):
-    """The tick is the step of the simulation where the applications and infrastructure
-    are updated, according to the given update policies."""
+    """The TickEvent represents a simulation tick.
+
+    The tick is the step of the simulation where the applications and infrastructure
+    are updated, according to the given update policies.
+    """
 
     def __init__(self):
+        """Initialize the tick event."""
         super().__init__(
             name="tick",
             triggers=[CascadeTrigger("enact")],
@@ -52,6 +64,7 @@ class TickEvent(EclypseEvent):
         )
 
     def __call__(self, _: EclypseEvent):
+        """Update applications and infrastructure."""
         for app in self.simulator.applications.values():
             if app.is_dynamic:
                 app.evolve()
@@ -68,6 +81,7 @@ class StopEvent(EclypseEvent):
     """
 
     def __init__(self):
+        """Initialize the stop event."""
         super().__init__(
             name="stop",
             verbose=True,
@@ -78,7 +92,9 @@ class StopEvent(EclypseEvent):
 
 
 def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
-    """Returns the default events to be managed by the ECLYPSE simulator, which are: \
+    """Returns the default events to be managed by the ECLYPSE simulator.
+
+    Events are:
     'start', 'stop', 'tick', and 'enact'. If the user has defined an event with the same
     name as one of the default events, the default event is overridden.
 

@@ -1,4 +1,6 @@
-"""The `FrontendService` serves as the user interface for the SockShop application, \
+"""The `FrontendService` class.
+
+It serves as the user interface for the SockShop application,
 providing the user-facing components of the store.
 
 - Key Responsibilities:
@@ -16,14 +18,15 @@ class FrontendService(Service):
     """Example workflow of the Frontend service."""
 
     def __init__(self, name):
-        """Initialize the Frontend service, setting the communication interface to
-        REST."""
+        """Initialize the Frontend service, setting the communication interface to REST."""
         super().__init__(name, comm_interface="rest")
         self.user_id = 12345
 
     async def step(self):
-        """Example workflow of the Frontend service, starting with fetching the catalog,
-        user data, and cart items, then placing an order."""
+        """Example workflow of the `Frontend` service.
+
+        It starts with fetching the catalog, user data, and cart items, then placing an order.
+        """
         catalog_r = await self.rest.get("CatalogService/catalog")
         user_r = await self.rest.get("UserService/user", user_id=self.user_id)
         cart_r = await self.rest.get("CartService/cart")

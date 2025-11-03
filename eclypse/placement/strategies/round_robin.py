@@ -1,5 +1,8 @@
-"""Module that contains the `RoundRobin` class, a `PlacementStrategy` that attempts to
-distribute services across nodes, in a round-robin fashion."""
+"""Module for the RoundRobin placement strategy.
+
+A `PlacementStrategy` that attempts to distribute services across nodes,
+in a round-robin fashion.
+"""
 
 from __future__ import annotations
 
@@ -25,8 +28,11 @@ if TYPE_CHECKING:
 
 
 class RoundRobinStrategy(PlacementStrategy):
-    """A `PlacementStrategy` that attempts to distribute services across nodes, in a
-    round-robin fashion."""
+    """RoundRobin class.
+
+    A `PlacementStrategy` that attempts to distribute services across nodes, in a
+    round-robin fashion.
+    """
 
     def __init__(self, sort_fn: Optional[Callable[[Any], Any]] = None):
         """Initializes the `RoundRobin` placement strategy.
@@ -43,16 +49,18 @@ class RoundRobinStrategy(PlacementStrategy):
         infrastructure: Infrastructure,
         application: Application,
         _: Dict[str, Placement],
-        placement_view: PlacementView,
+        __: PlacementView,
     ) -> Dict[Any, Any]:
-        """Places the services of an application on the infrastructure nodes, attempting
+        """Performs the placement according to a round-robin logic.
+
+        Places the services of an application on the infrastructure nodes, attempting
         to distribute them evenly.
 
         Args:
             infrastructure (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
             _ (Dict[str, Placement]): The placement of all the applications in the simulations.
-            placement_view (PlacementView): The snapshot of the current state of the infrastructure.
+            __ (PlacementView): The snapshot of the current state of the infrastructure.
 
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.

@@ -1,5 +1,7 @@
-"""Module for the Event Wrapper, used to wrap an event function into a class that can be
-managed by the Simulator."""
+"""Module for the Event Wrapper.
+
+It is used to wrap an event function into a class that can be managed by the Simulator.
+"""
 
 from __future__ import annotations
 
@@ -36,8 +38,11 @@ if TYPE_CHECKING:
 
 
 class EventWrapper(EclypseEvent):
-    """Class to wrap an event function into a class that can be managed by the
-    Simulator."""
+    """EventWrapper class.
+
+    Class to wrap an event function into a class that can be managed by the
+    Simulator.
+    """
 
     def __init__(
         self,
@@ -124,7 +129,9 @@ class EventWrapper(EclypseEvent):
         self._event_fn = event_fn
 
     def __call__(self, *args, **kwargs) -> Dict[str, Any]:
+        """Call the wrapped event function."""
         return self._event_fn(*args, **kwargs)
 
     def __repr__(self) -> str:
+        """Return a string representation of the EventWrapper."""
         return f"EclypseEventWrapper(name={self.name}, remote={self.remote})"

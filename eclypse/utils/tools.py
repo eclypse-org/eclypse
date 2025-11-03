@@ -80,7 +80,9 @@ def prune_assets(
     assets: Optional[AssetBucket] = None,
     **requirements,
 ):
-    """Prune the requirements dictionary to only include the keys present in the given
+    """Prune the requirements dictionary.
+
+    Removes all the keys from the requirements dictionary that are not present in the
     assets dictionary.
 
     Args:

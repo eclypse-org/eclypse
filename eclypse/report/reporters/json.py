@@ -22,6 +22,7 @@ class JSONReporter(Reporter):
     """Class to report the simulation metrics in JSON lines format."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the JSON reporter."""
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "json"
 
@@ -31,6 +32,16 @@ class JSONReporter(Reporter):
         event_idx: int,
         callback: EclypseEvent,
     ) -> List[Any]:
+        """Reports the callback values in JSON lines format.
+
+        Args:
+            event_name (str): The name of the event.
+            event_idx (int): The index of the event trigger (tick).
+            callback (EclypseEvent): The executed callback containing the data to report.
+
+        Returns:
+            List[Any]: A list of dictionaries representing the JSON lines to report.
+        """
         return (
             [
                 {
@@ -46,6 +57,12 @@ class JSONReporter(Reporter):
         )
 
     async def write(self, callback_type: str, data: List[dict]):
+        """Write the JSON lines report to a file.
+
+        Args:
+            callback_type (str): The type of the callback (used for file naming).
+            data (List[dict]): The list of dictionaries to write as JSON lines.
+        """
         path = self.report_path / f"{callback_type}.jsonl"
         async with aiofiles.open(path, "a", encoding="utf-8") as f:
             for item in data:

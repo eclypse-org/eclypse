@@ -58,6 +58,8 @@ def fat_tree(
     includes core, aggregation, and edge switches, as well as connected hosts.
 
     Args:
+        k (int): The Fat-Tree parameter, must be an even number. Determines the size and \
+            structure of the Fat-Tree topology.
         infrastructure_id (str): Unique ID for the infrastructure instance.\
             Defaults to "fat_tree".
         node_update_policy (Optional[Callable[[NodeView], None]]): Policy to update nodes.\

@@ -1,5 +1,7 @@
 # pylint: disable=no-value-for-parameter
-"""The `OrderService` processes user orders, ensuring the coordination between \
+"""The `OrderService` class.
+
+It processes user orders, ensuring the coordination between\
 different services like payment, inventory, and shipping.
 
 - Key Responsibilities:
@@ -18,6 +20,11 @@ class OrderService(Service):
     """MPI workflow of the Order service."""
 
     def __init__(self, name):
+        """Initialize the OrderService with an order ID.
+
+        Args:
+            name (str): The name of the service.
+        """
         super().__init__(name)
         self.order_id = 54321
         self.transaction_id = None
@@ -25,8 +32,11 @@ class OrderService(Service):
         self.items = []
 
     async def step(self):
-        """Example workflow of the Order service, starting with processing the order \
-        request, then sending requests to the `PaymentService` and `ShippingService`."""
+        """Example workflow of the `OrderService` class.
+
+        It starts with processing the order request,\
+            then sending requests to the `PaymentService` and `ShippingService`.
+        """
         await self.frontend_request()
         await self.payment_request()
         await self.shipping_request()

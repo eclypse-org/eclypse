@@ -1,5 +1,6 @@
-"""Module for defining asset spaces. An asset space is a set of possible values for an
-asset. Possible asset spaces include:
+"""Module for defining asset spaces.
+
+An asset space is a set of possible values for an asset. Possible asset spaces include:
 
 - `Choice`: a value is chosen from a list of possible values.
 - `Uniform`: a value is chosen from a uniform distribution.
@@ -124,7 +125,9 @@ class Sample(AssetSpace):
         k: Union[int, Tuple[int, int]],
         counts: Optional[List[int]] = None,
     ):
-        """Create a new Sample asset space. The sample is drawn from the population. The
+        """Create a new Sample asset space.
+
+        The sample is drawn from the population. The
         parameter `k` can be either an integer or a pair of integers representing the
         range from which to draw the sample size.
 

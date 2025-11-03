@@ -35,11 +35,12 @@ class RayInterface:
         self.backend.init(runtime_env=runtime_env)
 
     def get(self, obj: ObjectRef) -> Any:
-        """Get the result of a Ray task or a list of Ray tasks, ignoring any output to
-        stderr.
+        """Get the result of a Ray task or a list of Ray tasks.
+
+        Ignores any output to stderr.
 
         Args:
-            Any: The Ray task or list of Ray tasks.
+            obj (ObjectRef): The Ray task or list of Ray tasks.
 
         Returns:
             Union[Any, List[Any]]: The result of the Ray task or list of Ray tasks.
@@ -85,8 +86,9 @@ class RayInterface:
 
     @property
     def backend(self):
-        """Get the Ray backend. If the backend is not initialised, it will attempt to
-        import Ray and set it as the backend.
+        """Get the Ray backend.
+
+        If the backend is not initialised, it will attempt to import Ray and set it as the backend.
 
         Returns:
             Any: The Ray backend.
