@@ -35,6 +35,7 @@ optional = true
 black = "^25.9.0"
 commitizen = "^4.9.1"
 pre-commit = "^4.3.0"
+mypy = "^1.18.2"
 isort = "^7.0.0"
 ruff = "^0.14.3"
 # pycln = "^2.6.0"
@@ -45,7 +46,6 @@ ruff = "^0.14.3"
 optional = true
 
 [tool.poetry.group.deploy.dependencies]
-mypy = "^1.18.2"
 wheel = "^0.45.1"
 setuptools = "^80.9.0"
 twine = "^6.2.0"
