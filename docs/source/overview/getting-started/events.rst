@@ -127,23 +127,23 @@ This flexible decorator allows you to register both functions and classes as **s
 
    from eclypse.workflow import _event
 
-   @event(name="tick_logger", event_type="simulation", activates_on=["tick"])
-   def log_tick():
-       print("Simulation tick")
+   @event(name="step_logger", event_type="simulation", activates_on=["step"])
+   def log_step():
+       print("Simulation step")
 
 .. code-block:: python
    :caption: Example: Decorating a *class*
 
    from eclypse.workflow import _event
 
-   @event(name="tick_counter", event_type="simulation", activates_on=["tick"])
-   class TickCounter:
+   @event(name="step_counter", event_type="simulation", activates_on=["step"])
+   class StepCounter:
        def __init__(self):
            self.counter = 0
 
        def __call__(self):
            self.counter += 1
-           print(f"Tick: {self.counter}")
+           print(f"Step: {self.counter}")
 
 .. _event-metrics:
 

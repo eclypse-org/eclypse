@@ -13,8 +13,8 @@ if __name__ == "__main__":
     seed = 2
     sim_config = SimulationConfig(
         seed=seed,
-        # max_ticks=100,
-        tick_every_ms=500,
+        # max_steps=100,
+        step_every_ms=500,
         log_to_file=True,
         path=DEFAULT_SIM_PATH / "EchoApp",
         # log_level="TRACE",

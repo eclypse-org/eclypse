@@ -111,6 +111,6 @@ You can also set this field when manually instantiating an :class:`~eclypse.work
 
   event = EclypseEvent(
       name="monitor",
-      triggers=[PeriodicTrigger(1000), CascadeTrigger("tick")],
+      triggers=[PeriodicTrigger(1000), CascadeTrigger("step")],
       trigger_condition="all"  # fires only if both trigger
   )

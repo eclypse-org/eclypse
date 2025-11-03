@@ -37,7 +37,7 @@ class GMLReporter(Reporter):
 
         Args:
             event_name (str): The name of the event.
-            event_idx (int): The index of the event trigger (tick).
+            event_idx (int): The index of the event trigger (step).
             callback (EclypseEvent): The executed callback containing the data to report.
 
         Returns:

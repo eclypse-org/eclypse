@@ -2,8 +2,8 @@ from application import image_app as app
 from metrics import get_metrics
 from services.utils import (
     BASE_PATH,
-    TICK_EVERY_MS,
-    TICKS,
+    STEP_EVERY_MS,
+    STEPS,
 )
 from update_policy import DegradePolicy
 
@@ -25,8 +25,8 @@ if __name__ == "__main__":
 
     sim_config = SimulationConfig(
         seed=seed,
-        max_ticks=TICKS,
-        tick_every_ms=TICK_EVERY_MS,
+        max_steps=STEPS,
+        step_every_ms=STEP_EVERY_MS,
         include_default_metrics=False,
         events=get_metrics(),
         log_to_file=True,
@@ -39,7 +39,7 @@ if __name__ == "__main__":
             infrastructure_id="IPInfr",
             n_clients=5,
             seed=seed,
-            link_update_policy=DegradePolicy(epochs=TICKS),
+            link_update_policy=DegradePolicy(epochs=STEPS),
             include_default_assets=True,
             resource_init="max",
             symmetric=True,

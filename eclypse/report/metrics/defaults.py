@@ -405,28 +405,28 @@ def seed(*_) -> str:
     return os.environ[RND_SEED]
 
 
-@metric.simulation(name="tick_number", activates_on=[DRIVING_EVENT, "stop"])
-class TickNumber:
-    """Return the current tick number."""
+@metric.simulation(name="step_number", activates_on=[DRIVING_EVENT, "stop"])
+class StepNumber:
+    """Return the current step number."""
 
     def __init__(self):
-        """Initialize the tick number to 0."""
-        self.tick = 0
+        """Initialize the step number to 0."""
+        self.step = 0
 
     def __call__(self, event):
-        """Increment the tick number by 1 and return it.
+        """Increment the step number by 1 and return it.
 
         Args:
-            event (EclypseEvent): The event triggering the reporting of the tick number.
+            event (EclypseEvent): The event triggering the reporting of the step number.
 
         Returns:
-            Optional[int]: The tick number if the event is the DRIVING_EVENT or 'stop', \
+            Optional[int]: The step number if the event is the DRIVING_EVENT or 'stop', \
                 None otherwise.
         """
         if event.name == DRIVING_EVENT:
-            self.tick += 1
+            self.step += 1
         if event.name == "stop":
-            return self.tick
+            return self.step
         return None
 
 
@@ -504,7 +504,7 @@ def get_default_metrics():
             - response_time
             - alive_nodes
             - seed
-            - tick number
+            - step number
             - simulation time
             - application in GML format
             - infrastructure in GML format
@@ -531,7 +531,7 @@ def get_default_metrics():
         alive_nodes,
         # SIMULATION
         seed,
-        TickNumber(),
+        StepNumber(),
         SimulationTime(),
         # GML
         app_gml,
@@ -543,7 +543,7 @@ def get_default_metrics():
 
 __all__ = [
     "SimulationTime",
-    "TickNumber",
+    "StepNumber",
     "alive_nodes",
     "app_gml",
     "featured_bandwidth",

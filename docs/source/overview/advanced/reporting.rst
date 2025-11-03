@@ -37,7 +37,7 @@ Example:
 
     from eclypse.report.metrics import metric
 
-    @metric.application(activates_on=["tick"], report["csv", "json"])
+    @metric.application(activates_on=["step"], report["csv", "json"])
     def my_metric(application, placement, infrastructure):
         return len(application.nodes)
 

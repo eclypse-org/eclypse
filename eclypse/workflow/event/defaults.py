@@ -48,17 +48,17 @@ class EnactEvent(EclypseEvent):
         self.simulator.enact()
 
 
-class TickEvent(EclypseEvent):
-    """The TickEvent represents a simulation tick.
+class StepEvent(EclypseEvent):
+    """The StepEvent represents a simulation step.
 
-    The tick is the step of the simulation where the applications and infrastructure
+    The step is the phase of the simulation where the applications and infrastructure
     are updated, according to the given update policies.
     """
 
     def __init__(self):
-        """Initialize the tick event."""
+        """Initialize the step event."""
         super().__init__(
-            name="tick",
+            name="step",
             triggers=[CascadeTrigger("enact")],
             verbose=True,
         )
@@ -77,7 +77,7 @@ class StopEvent(EclypseEvent):
     """The stop is the end of the simulation.
 
     Its triggers are set after the SimulationConfig is created, so it can be triggered
-    by the 'tick' event, according to the parameters defined in the configuration.
+    by the 'StepEvent', according to the parameters defined in the configuration.
     """
 
     def __init__(self):
@@ -95,7 +95,7 @@ def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
     """Returns the default events to be managed by the ECLYPSE simulator.
 
     Events are:
-    'start', 'stop', 'tick', and 'enact'. If the user has defined an event with the same
+    'start', 'stop', 'step', and 'enact'. If the user has defined an event with the same
     name as one of the default events, the default event is overridden.
 
     Args:
@@ -111,7 +111,7 @@ def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
             [
                 StartEvent(),
                 EnactEvent(),
-                TickEvent(),
+                StepEvent(),
                 StopEvent(),
             ],
         )

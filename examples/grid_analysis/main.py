@@ -33,9 +33,9 @@ def eclypse_grid(config):
     print("PATH: ", path)
 
     sim_config = SimulationConfig(
-        tick_every_ms="auto",
+        step_every_ms="auto",
         seed=config["seed"],
-        max_ticks=config["max_ticks"],
+        max_steps=config["max_steps"],
         path=path,
         include_default_metrics=False,
         events=get_metrics(),
@@ -69,7 +69,7 @@ def get_strategy(config):
 
 # Define the search space
 search_space = {
-    "max_ticks": 600,
+    "max_steps": 600,
     "load": tune.grid_search(
         [
             0,
@@ -123,7 +123,7 @@ search_space = {
 
 if __name__ == "__main__":
     config_example = {
-        "max_ticks": 10,
+        "max_steps": 10,
         "load": 0,
         "nodes": 50,
         "seed": 42,

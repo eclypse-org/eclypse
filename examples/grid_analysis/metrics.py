@@ -8,7 +8,7 @@ import psutil
 from eclypse.report.metrics import metric
 from eclypse.report.metrics.defaults import (
     SimulationTime,
-    TickNumber,
+    StepNumber,
     alive_nodes,
     response_time,
     seed,
@@ -32,7 +32,7 @@ def is_placed(app: Application, placement: Placement, _: Infrastructure):
     return len(placement.mapping) == len(app.nodes)
 
 
-@metric.simulation(name="cpu_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="cpu_usage", activates_on=["step", "stop"])
 class CPUMonitor:
 
     def __init__(self):
@@ -42,7 +42,7 @@ class CPUMonitor:
         return self.process.cpu_percent(interval=0.1)
 
 
-@metric.simulation(name="memory_usage", activates_on=["tick", "stop"])
+@metric.simulation(name="memory_usage", activates_on=["step", "stop"])
 class MemoryMonitor:
 
     def __init__(self):
@@ -59,7 +59,7 @@ def get_metrics():
         used_nodes,
         is_placed,
         SimulationTime(),
-        TickNumber(),
+        StepNumber(),
         alive_nodes,
         seed,
     ]

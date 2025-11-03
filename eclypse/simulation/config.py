@@ -65,9 +65,9 @@ class SimulationConfig(dict):
 
     def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
-        tick_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "manual",
+        step_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "manual",
         timeout: Optional[float] = None,
-        max_ticks: Optional[int] = None,
+        max_steps: Optional[int] = None,
         reporters: Optional[Dict[str, Type[Reporter]]] = None,
         events: Optional[List[EclypseEvent]] = None,
         incremental_mapping_phase: bool = True,
@@ -82,11 +82,11 @@ class SimulationConfig(dict):
         """Initializes a new SimulationConfig object.
 
         Args:
-            tick_every_ms (Optional[float], optional): The time in milliseconds between \
-                each tick. Defaults to None.
+            step_every_ms (Optional[float], optional): The time in milliseconds between \
+                each step. Defaults to None.
             timeout (Optional[float], optional): The maximum time the simulation can run. \
                 Defaults to None.
-            max_ticks (Optional[int], optional): The number of iterations the simulation \
+            max_steps (Optional[int], optional): The number of iterations the simulation \
                 will run. Defaults to None.
             incremental_mapping_phase (bool, optional): Whether the mapping phase will be \
                 incremental. Defaults to False.
@@ -128,23 +128,23 @@ class SimulationConfig(dict):
         if remote:
             _require_module("ray", extras_name="remote")
 
-        if isinstance(tick_every_ms, str) and tick_every_ms == "manual":
-            _tick_every_ms = None
-        elif isinstance(tick_every_ms, str) and tick_every_ms == "auto":
-            _tick_every_ms = 0.0
-        elif isinstance(tick_every_ms, (float, int)) or tick_every_ms is None:
-            _tick_every_ms = tick_every_ms
+        if isinstance(step_every_ms, str) and step_every_ms == "manual":
+            _step_every_ms = None
+        elif isinstance(step_every_ms, str) and step_every_ms == "auto":
+            _step_every_ms = 0.0
+        elif isinstance(step_every_ms, (float, int)) or step_every_ms is None:
+            _step_every_ms = step_every_ms
         else:
-            raise ValueError("tick_every_ms must be a float, 'manual', 'auto' or None.")
+            raise ValueError("step_every_ms must be a float, 'manual', 'auto' or None.")
 
         _path = DEFAULT_SIM_PATH if path is None else Path(path)
         if _path.exists():
             _path = Path(f"{_path}-{strftime('%Y%m%d_%H%M%S')}")
 
         super().__init__(
-            tick_every_ms=_tick_every_ms,
+            step_every_ms=_step_every_ms,
             timeout=timeout,
-            max_ticks=max_ticks,
+            max_steps=max_steps,
             incremental_mapping_phase=incremental_mapping_phase,
             events=_events,
             reporters=_reporters,
@@ -189,12 +189,12 @@ class SimulationConfig(dict):
         if enact_event is None:
             raise ValueError("An 'enact' event must be defined in the simulation.")
 
-        if self.tick_every_ms is not None:
-            enact_event.triggers.append(PeriodicTrigger(self.tick_every_ms))
-        if self.max_ticks is not None:
-            enact_event.trigger_bucket.max_triggers = self.max_ticks
+        if self.step_every_ms is not None:
+            enact_event.triggers.append(PeriodicTrigger(self.step_every_ms))
+        if self.max_steps is not None:
+            enact_event.trigger_bucket.max_triggers = self.max_steps
             stop_event.triggers.append(
-                PeriodicCascadeTrigger(DRIVING_EVENT, self.max_ticks)
+                PeriodicCascadeTrigger(DRIVING_EVENT, self.max_steps)
             )
         if self.timeout is not None:
             stop_event.triggers.append(
@@ -216,13 +216,13 @@ class SimulationConfig(dict):
         )
 
     @property
-    def max_ticks(self) -> Optional[int]:
+    def max_steps(self) -> Optional[int]:
         """Returns the number of iterations the simulation will run.
 
         Returns:
             Optional[int]: The number of iterations, if it is set. None otherwise.
         """
-        return self.get("max_ticks")
+        return self.get("max_steps")
 
     @property
     def timeout(self) -> Optional[float]:
@@ -234,13 +234,13 @@ class SimulationConfig(dict):
         return self.get("timeout")
 
     @property
-    def tick_every_ms(self) -> Optional[float]:
-        """Returns the time between each tick.
+    def step_every_ms(self) -> Optional[float]:
+        """Returns the time between each step.
 
         Returns:
-            float: The time in milliseconds between each tick.
+            float: The time in milliseconds between each step.
         """
-        return self["tick_every_ms"]
+        return self["step_every_ms"]
 
     @property
     def seed(self) -> int:

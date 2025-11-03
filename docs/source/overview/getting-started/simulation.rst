@@ -9,7 +9,7 @@ After you :doc:`define your application(s) and infrastructure <topology>`, in or
 
    To do so, it is necessary to define an instance of the :class:`~eclypse.simulation.config.SimulationConfig` class, specifying all possible parameters in the constructor.
 
-   For example, if you want to run a remote simulation lasting 1 minute, with a tick every half-second, you want to hide the simulator log messages, save the report in the *my-simulation* folder and set a seed for pseudo-randomness, you will have to configure the simulation as follows:
+   For example, if you want to run a remote simulation lasting 1 minute, with a step every half-second, you want to hide the simulator log messages, save the report in the *my-simulation* folder and set a seed for pseudo-randomness, you will have to configure the simulation as follows:
 
    .. code-block:: python
 
@@ -18,8 +18,8 @@ After you :doc:`define your application(s) and infrastructure <topology>`, in or
       config = SimulationConfig(
          remote=True,
          timeout=60,
-         #max_ticks=120 # Alternatively, you can set the maximum number of ticks
-         tick_every_ms=500,
+         #max_steps=120 # Alternatively, you can set the maximum number of steps
+         step_every_ms=500,
          log_level="INFO",
          path="my-simulation",
          seed=42,

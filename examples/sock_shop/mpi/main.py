@@ -24,8 +24,8 @@ if __name__ == "__main__":
 
     sim_config = SimulationConfig(
         seed=seed,
-        tick_every_ms=500,
-        max_ticks=100,
+        step_every_ms=500,
+        max_steps=100,
         path=DEFAULT_SIM_PATH / "SockShopMPI",
         remote=True,
         include_default_metrics=True,
