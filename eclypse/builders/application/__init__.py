@@ -1,5 +1,6 @@
-"""Module for the application builders. It has the following builders:
+"""Module for the application builders.
 
+It has the following builders:
 - SockShop: A microservice-based application that simulates an e-commerce platform, \
     made of 7 microservices.
 """

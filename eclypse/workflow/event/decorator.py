@@ -1,4 +1,3 @@
-# pylint: disable=missing-function-docstring, missing-class-docstring
 """Module containing the event decorator.
 
 An event is a function that is triggered by other events or by the simulation itself.

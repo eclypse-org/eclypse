@@ -1,5 +1,7 @@
-"""Module for CascadeTrigger class. A cascade trigger allows an EclypseEvent to be
-triggered based on the state of another event in the simulation workflow.
+"""Module for CascadeTrigger class.
+
+A cascade trigger allows an EclypseEvent to be triggered based on the state of
+another event in the simulation workflow.
 
 Available cascade triggers include:
 - CascadeTrigger: Fires when a specific event occurs.
@@ -117,7 +119,6 @@ class ScheduledCascadeTrigger(CascadeTrigger):
 
     def __repr__(self) -> str:
         """Return a string representation of the cascade trigger."""
-
         return (
             f"ScheduledCascadeTrigger(trigger_event={self.trigger_event}, "
             f"scheduled_times={self.scheduled_times})"
@@ -139,6 +140,8 @@ class RandomCascadeTrigger(CascadeTrigger):
             trigger_event (str): The name of the event that can trigger this cascade.
             probability (float): The probability of the trigger firing when the
                 triggering event occurs. Defaults to 0.5.
+            seed (Optional[int]): An optional seed for the random number generator.
+                Defaults to None.
         """
         super().__init__(trigger_event)
         self.probability = probability

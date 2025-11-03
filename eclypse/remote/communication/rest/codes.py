@@ -1,5 +1,4 @@
-"""Module for an integer enumeration for HTTP status codes, used by the `EclypseREST`
-communication interface."""
+"""Module for an integer enumeration for HTTP status codes."""
 
 from enum import IntEnum
 

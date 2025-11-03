@@ -30,8 +30,11 @@ if TYPE_CHECKING:
 
 
 class BestFitStrategy(PlacementStrategy):
-    """A placement strategy that places services onto the node that best fits the
-    requirements."""
+    """BestFitStrategy class.
+
+    A placement strategy that places services onto the node that best fits the
+    requirements.
+    """
 
     def place(
         self,
@@ -40,7 +43,9 @@ class BestFitStrategy(PlacementStrategy):
         _: Dict[str, Placement],
         placement_view: PlacementView,
     ) -> Dict[Any, Any]:
-        """Places the services of an application on the infrastructure nodes based on
+        """Performs the placement according to a best-fit logic.
+
+        Places the services of an application on the infrastructure nodes based on
         the node that best fits the requirements of the service.
 
         Args:

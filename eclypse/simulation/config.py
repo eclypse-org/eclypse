@@ -58,8 +58,10 @@ if TYPE_CHECKING:
 
 
 class SimulationConfig(dict):
-    """The SimulationConfig is a dictionary-like class that stores the configuration of
-    a simulation."""
+    """The SimulationConfig class.
+
+    It is a dictionary-like class that stores the configuration of a simulation.
+    """
 
     def __init__(  # pylint: disable=too-many-arguments,too-many-positional-arguments
         self,
@@ -251,8 +253,7 @@ class SimulationConfig(dict):
 
     @property
     def incremental_mapping_phase(self) -> bool:
-        """Returns whether the simulator will perform the mapping phase incrementally or
-        in batch.
+        """Returns whether the the placement mapping phase is incremental or in batch.
 
         Returns:
             bool: True if the mapping phase is incremental. False otherwise (batch).
@@ -317,8 +318,7 @@ class SimulationConfig(dict):
 
     @property
     def reporters(self) -> Dict[str, Type[Reporter]]:
-        """Returns the list of reporters that will be used for the final simulation
-        report.
+        """Returns the list of reporters that will be used for the final report.
 
         Returns:
             Dict[str, Type[Reporter]]: The list of reporters.
@@ -353,6 +353,11 @@ class SimulationConfig(dict):
         return logger.bind(id="SimulationConfig")
 
     def __dict__(self):
+        """Returns the dictionary representation of the SimulationConfig.
+
+        Returns:
+            dict: The dictionary representation of the SimulationConfig.
+        """
         d = self.copy()
         d["path"] = str(d["path"])
         d["events"] = [e.name for e in d["events"]]

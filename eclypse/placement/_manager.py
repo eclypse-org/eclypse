@@ -1,9 +1,8 @@
 # pylint: disable=protected-access
-"""Module for the PlacementManager class, which manages the placement of applications in
-the infrastructure.
+"""Module for the PlacementManager class.
 
-It is responsible for the mapping phase, where the application services are mapped to
-the infrastructure nodes.
+It manages the placement of applications in the infrastructure and is responsible for
+the mapping phase, where the application services are mapped to the infrastructure nodes.
 """
 
 from __future__ import annotations
@@ -29,7 +28,7 @@ if TYPE_CHECKING:
         Application,
         Infrastructure,
     )
-    from eclypse.placement.strategy import PlacementStrategy
+    from eclypse.placement import PlacementStrategy
     from eclypse.utils._logging import Logger
 
 
@@ -53,11 +52,13 @@ class PlacementManager:
         self.placement_view: PlacementView = PlacementView(self.infrastructure)
 
     def audit(self):
-        """Iterates over the placements of all the involved applications, checking if
-        the placement is respected by the infrastructure.
+        """Check application placements and reset those violating infrastructure constraints.
 
-        If not, it resets the placement of the applications that are not respected by
-        the infrastructure.
+        Iterates over the placements of all the involved applications, checking if
+        the placement constraints are respected by the infrastructure capabilities.
+
+        If not, it resets the placement of the applications whose requirements
+        are not respected.
         """
         for _, not_respected in self.mapping_phase():
             if not_respected:
@@ -68,8 +69,7 @@ class PlacementManager:
                             p._to_reset = True
 
     def enact(self):
-        """Enact (resets or not) the current placement of the applications onto the
-        infrastructure."""
+        """Manage and apply (or reset) the placement of applications on the infrastructure."""
         for p in self.placements.values():
             if p._to_reset:
                 self.logger.warning(f"Resetting placement of {p.application.id}")
@@ -84,7 +84,9 @@ class PlacementManager:
                 self.logger.log("ECLYPSE", p)
 
     def generate_mapping(self, placement: Placement):
-        """Generate the mapping of the applications onto the infrastructure, using the
+        """Create application-to-infrastructure mapping based on available placement strategy.
+
+        Generate the mapping of the applications onto the infrastructure, using the
         placement strategy if available. If no placement strategy is available, the
         global one is used.
 
@@ -130,11 +132,11 @@ class PlacementManager:
         List[Tuple[Placement, List[str]]],
         Generator[Tuple[Placement, List[str]], None, None],
     ]:
-        """Executes the mapping phase of the placement of the applications onto the
-        infrastructure. If the placement is incremental, it will return a generator of
-        tuples containing the placement and the nodes that are not respected by the
-        placement. If the placement is not incremental, it will return a list of such
-        tuples.
+        """Executes the mapping phase of the placement.
+
+        If the placement is incremental, it will return a generator of tuples containing
+        the placement and the nodes that are not respected by the placement. If the
+        placement is not incremental, it will return a list of such tuples.
 
         Returns:
             Union[
@@ -152,8 +154,7 @@ class PlacementManager:
         )
 
     def _batch_mapping_phase(self, placements: List[Placement]):
-        """Executes the mapping phase of the placement of the applications onto the
-        infrastructure in batch mode.
+        """Executes the mapping phase of the placement in batch mode.
 
         Args:
             placements (List[Placement]): The placements to map onto the infrastructure.
@@ -172,8 +173,9 @@ class PlacementManager:
         return [(p, not_respected) for p in placements]
 
     def _incremental_mapping_phase(self, placements: List[Placement]):
-        """Executes the mapping phase of the placement of the applications onto the
-        infrastructure in incremental mode, randomly shuffling the placements.
+        """Executes the mapping phase of the placement in incremental mode.
+
+        N.B. The placements are shuffled to avoid bias in the placement order.
 
         Args:
             placements (List[Placement]): The placements to map onto the infrastructure.
@@ -196,8 +198,9 @@ class PlacementManager:
         application: Application,
         placement_strategy: Optional[PlacementStrategy] = None,
     ):
-        """Include an application in the simulation. A placement strategy must be
-        provided.
+        """Include an application in the simulation.
+
+        A placement strategy must be provided.
 
         Args:
             application (Application): The application to include.

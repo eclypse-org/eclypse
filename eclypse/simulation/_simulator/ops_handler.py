@@ -1,7 +1,7 @@
-"""Module for the RemoteSimOpsHandler class. It is responsible for handling the
-operations on the remote nodes.
+"""Module for the RemoteSimOpsHandler class.
 
-It can to deploy, start, stop and undeploy services on the remote nodes.
+It is responsible for handling the operations on the remote nodes.
+It can deploy, start, stop and undeploy services on the remote nodes.
 """
 
 from __future__ import annotations

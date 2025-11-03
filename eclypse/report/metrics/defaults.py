@@ -114,8 +114,7 @@ def required_cpu(
     __: Placement,
     ___: Infrastructure,
 ) -> float:
-    """Return the required CPU for each service in each application. It also reports the
-    average required CPU for each application.
+    """Return the required CPU for each service in each application.
 
     Args:
         _: the service ID.
@@ -136,8 +135,7 @@ def required_ram(
     __: Placement,
     ___: Infrastructure,
 ) -> float:
-    """Return the required RAM for each service in each application. It also reports the
-    average required RAM for each application.
+    """Return the required RAM for each service in each application.
 
     Args:
         _: the service ID.
@@ -158,8 +156,7 @@ def required_storage(
     __: Placement,
     ___: Infrastructure,
 ) -> float:
-    """Return the required storage for each service in each application. It also reports
-    the average required storage for each application.
+    """Return the required storage for each service in each application.
 
     Args:
         _: the service ID.
@@ -180,8 +177,7 @@ def required_gpu(
     __: Placement,
     ___: Infrastructure,
 ) -> float:
-    """Return the required GPU for each service in each application. It also reports the
-    average required GPU for each application.
+    """Return the required GPU for each service in each application.
 
     Args:
         _: the service ID.
@@ -203,8 +199,7 @@ def required_latency(
     ___: Placement,
     ____: Infrastructure,
 ) -> float:
-    """Return the required latency for each interaction in each application. It also
-    reports the average required latency for each application.
+    """Return the required latency for each interaction in each application.
 
     Args:
         _: The source service ID.
@@ -227,8 +222,7 @@ def required_bandwidth(
     ___: Placement,
     ____: Infrastructure,
 ) -> float:
-    """Return the required bandwidth for each interaction in each application. It also
-    reports the average required bandwidth for each application.
+    """Return the required bandwidth for each interaction in each application.
 
     Args:
         _: The source service ID.
@@ -268,8 +262,7 @@ def featured_cpu(
     ___: Infrastructure,
     ____: PlacementView,
 ) -> float:
-    """Return the featured CPU of each node in the infrastructure. It also reports the
-    average featured CPU.
+    """Return the featured CPU of each node in the infrastructure.
 
     Args:
         _: The placement of the application the service belongs to.
@@ -291,8 +284,7 @@ def featured_ram(
     ___: Infrastructure,
     ____: PlacementView,
 ) -> float:
-    """Return the featured RAM of each node in the infrastructure. It also reports the
-    average featured RAM.
+    """Return the featured RAM of each node in the infrastructure.
 
     Args:
         _: The placement of the application the service belongs to.
@@ -314,8 +306,7 @@ def featured_storage(
     ___: Infrastructure,
     ____: PlacementView,
 ) -> float:
-    """Return the featured storage of each node in the infrastructure. It also reports
-    the average featured storage.
+    """Return the featured storage of each node in the infrastructure.
 
     Args:
         _: The placement of the application the service belongs to.
@@ -337,8 +328,7 @@ def featured_gpu(
     ___: Infrastructure,
     ____: PlacementView,
 ) -> float:
-    """Return the featured GPU of each node in the infrastructure. It also reports the
-    average featured GPU.
+    """Return the featured GPU of each node in the infrastructure.
 
     Args:
         _: The placement of the application the service belongs to.
@@ -361,8 +351,7 @@ def featured_latency(
     ____: Infrastructure,
     _____: PlacementView,
 ) -> float:
-    """Return the featured latency of each link in the infrastructure. It also reports
-    the average featured latency.
+    """Return the featured latency of each link in the infrastructure.
 
     Args:
         _: The source node ID.
@@ -387,8 +376,7 @@ def featured_bandwidth(
     ____: Infrastructure,
     _____: PlacementView,
 ) -> float:
-    """Return the featured bandwidth of each link in the infrastructure. It also reports
-    the average featured bandwidth.
+    """Return the featured bandwidth of each link in the infrastructure.
 
     Args:
         _: The source node ID.

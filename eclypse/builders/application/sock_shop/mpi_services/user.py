@@ -1,5 +1,7 @@
-"""The `UserService` manages all user-related functionality, including registration,
-authentication, and profile management.
+"""The `UserService` class.
+
+It manages all user-related functionality, including registration,\
+    authentication, and profile management.
 
 - Key Responsibilities:
     - Handles user sign-up, login, and logout processes.
@@ -14,8 +16,10 @@ class UserService(Service):
     """MPI workflow of the User service."""
 
     async def step(self):
-        """Example workflow of the User service, starting with fetching the user's
-        profile information."""
+        """Example workflow of the `UserService` class.
+
+        It starts with fetching the user's profile information.
+        """
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)

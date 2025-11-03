@@ -1,5 +1,6 @@
-"""Module for the Service class, which is the base class for services. Services are the
-basic building blocks of ECLYPSE remote applications.
+"""Module for the Service class, which is the base class for services.
+
+Services are the basic building blocks of ECLYPSE remote applications.
 
 In its lifecycle, a `Service` object has the following capabilities:
     1. To be included in an `Application`, implementing the business logic of a given
@@ -75,7 +76,9 @@ class Service:
         self._step_queue: List[Any] = []
 
     async def run(self):
-        """Runs the service. It provides a default behaviour where the service runs the
+        """Runs the service.
+
+        It provides a default behaviour where the service runs the
         `step` method in a loop until the service is stopped.
 
         This method can be overridden by the user to provide a custom behaviour.

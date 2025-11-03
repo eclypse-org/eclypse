@@ -58,12 +58,10 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         Args:
             application_id (str): The ID of the application.
-            node_update_policy (Optional[Union[Callable[[NodeView], None], \
-                List[Callable[[NodeView], None]]]], optional): A function to \
-                update the nodes. Defaults to None.
-            edge_update_policy (Optional[Union[Callable[[EdgeView], None], \
-                List[Callable[[EdgeView], None]]]], optional): A function to \
-                update the edges. Defaults to None.
+            node_update_policy (Optional[Union[Callable, List[Callable]]]):\
+                A function to update the nodes. Defaults to None.
+            edge_update_policy (Optional[Union[Callable, List[Callable]]]):\
+                A function to update the edges. Defaults to None.
             node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
             edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
@@ -105,10 +103,10 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         self.add_node(service.id, **assets)
 
     def set_flows(self):
-        """Set the flows of the application, using the following rules:
+        """Set the flows of the application, using the following rules.
 
         - If the flows are already set, do nothing.
-        - If the flows are not set, use the gateway as the source and all \
+        - If the flows are not set, use the gateway as the source and all\
             the other nodes as the target.
         - If there is no gateway, set the flows to an empty list.
         """

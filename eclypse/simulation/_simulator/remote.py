@@ -1,9 +1,10 @@
 # mypy: disable-error-code="override"
-# pylint: disable=invalid-overridden-method, protected-access
-"""Module for the RemoteSimulator class. It operates like the local simulator, but
-performs the simulation using ray actors. It also performs operations on the Services
-placed on the infrastructure, such as deploying, starting, stopping and undeploying
-them.
+# pylint: disable=protected-access
+"""Module for the RemoteSimulator class.
+
+It operates like the local simulator, but performs the simulation using ray actors.
+It also performs operations on the Services placed on the infrastructure,
+such as deploying, starting, stopping and undeploying them.
 
 The RemoteSimulator is also the entry point for the communication between services, as
 it ask to the infrastructure the computation of the routes between them, retrieving the
@@ -31,8 +32,7 @@ from .ops_handler import RemoteSimOpsHandler
 
 
 class RemoteSimulator(Simulator):
-    """The RemoteSimulator is used to implement a remote simulation of the
-    infrastructural conditions.
+    """RemoteSimulator class.
 
     When a service needs to interact with another service, it communicates with the
     RemoteSimulator to define the current costs for such interaction.
@@ -56,6 +56,7 @@ class RemoteSimulator(Simulator):
         super().enact()
 
     async def wait(self, timeout: Optional[float] = None):
+        # pylint: disable=invalid-overridden-method
         """Wait for the simulation to finish.
 
         Args:
@@ -87,10 +88,12 @@ class RemoteSimulator(Simulator):
         source_id: str,
         dest_id: str,
     ) -> Optional[Route]:
-        """Computes the route between two logically neighbor services. If the services
-        are not logically neighbors, it returns None.
+        """Computes the route between two logically neighbor services.
+
+        If the services are not logically neighbors, it returns None.
 
         Args:
+            application_id (str): The ID of the application.
             source_id (str): The ID of the source service.
             dest_id (str): The ID of the destination service.
 
@@ -131,6 +134,7 @@ class RemoteSimulator(Simulator):
         """Returns the logical neighbors of a service in an application.
 
         Args:
+            application_id (str): The ID of the application.
             service_id (str): The ID of the service for which to retrieve the neighbors.
 
         Returns:

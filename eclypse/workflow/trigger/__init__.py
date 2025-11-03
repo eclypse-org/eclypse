@@ -1,5 +1,8 @@
-"""This module provides various trigger classes that can be used to control the
-execution of workflows."""
+"""Module for trigger classes.
+
+This module provides various trigger classes that can be used to control the
+execution of workflows.
+"""
 
 from .trigger import (
     Trigger,

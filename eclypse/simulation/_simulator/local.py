@@ -45,7 +45,7 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
-    from eclypse.placement.strategy import PlacementStrategy
+    from eclypse.placement.strategies.strategy import PlacementStrategy
     from eclypse.simulation.config import SimulationConfig
     from eclypse.utils._logging import Logger
     from eclypse.workflow.event import EclypseEvent
@@ -98,8 +98,10 @@ class Simulator:
         )
 
     def trigger(self, event_name: str):
-        """Triggers an external event (overriding the timeout and the max_calls
-        parameters), scheduling its execution.
+        """Triggers an external event.
+
+        This method overrides the timeout and the max_calls parameters,
+        scheduling the event's execution.
 
         Args:
             event_name (str): The name of the event to trigger.
@@ -130,6 +132,8 @@ class Simulator:
 
         Args:
             event_name (str): The name of the event to enqueue.
+            triggered_by (Optional[str], optional): The name of the event that
+                triggered this event. Defaults to None.
         """
         await self._events_queue.put(
             {"event_name": event_name, "triggered_by": triggered_by}
@@ -225,8 +229,9 @@ class Simulator:
         application: Application,
         placement_strategy: Optional[PlacementStrategy] = None,
     ):
-        """Include an application in the simulation. A placement strategy must be
-        provided.
+        """Include an application in the simulation.
+
+        A placement strategy must be provided.
 
         Args:
             application (Application): The application to include.
@@ -235,17 +240,11 @@ class Simulator:
         self._manager.register(application, placement_strategy)
 
     def audit(self):
-        """Iterates over the placements of all the involved applications, checking if
-        the placement is respected by the infrastructure.
-
-        If not, it resets the placement of the applications that are not respected by
-        the infrastructure.
-        """
+        """Delegates the audit to the PlacementManager."""
         self._manager.audit()
 
     def enact(self):
-        """Enact (resets or not) the current placement of the applications onto the
-        infrastructure."""
+        """Delegates the enact to the PlacementManager."""
         self._manager.enact()
 
     @property
@@ -304,7 +303,6 @@ class Simulator:
 
 
 def _run_loop(simulator: Simulator):
-    # pylint: disable=protected-access
     loop = simulator._event_loop
     asyncio.set_event_loop(loop)
     try:

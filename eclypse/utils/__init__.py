@@ -1,2 +1,5 @@
-"""Package for utility functions, from logging, to constants used in ECLYPSE, to helper
-functions for the other modules."""
+"""Package for utility functions.
+
+It comprises logging, constants used in ECLYPSE, and helper
+functions for the other modules.
+"""

@@ -1,5 +1,6 @@
-"""Module for the RESTService class, which uses the REST interface to communicate with
-other services in the same application.
+"""Module for the RESTService class.
+
+It uses the REST interface to communicate with other services in the same application.
 
 It differs from a base Service, since it runs its own loop forever, handling the
 communication with other services through HTTP requests.

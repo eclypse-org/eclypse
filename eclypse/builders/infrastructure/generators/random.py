@@ -50,14 +50,16 @@ def random(
     placement_strategy: Optional[PlacementStrategy] = None,
     seed: Optional[int] = None,
 ):
-    """Create a random infrastructure with `n` nodes and a given probability `p` of
-    connecting two nodes. The nodes are partitioned into groups according to the
+    """Create a random infrastructure with `n` nodes and a connection probability `p`.
+
+    The nodes are partitioned into groups according to the
     provided distribution.
 
     Args:
-        infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
+        infrastructure_id (str): The ID of the infrastructure.
         p (float): The probability of connecting two nodes. Defaults to 0.5.
+        symmetric (bool): Whether the links are symmetric. Defaults to False.
         node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
             Defaults to None.
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\

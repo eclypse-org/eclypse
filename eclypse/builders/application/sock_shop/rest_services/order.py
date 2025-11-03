@@ -1,4 +1,7 @@
-"""The `OrderService` processes user orders, ensuring the coordination between \
+# pylint: disable=no-value-for-parameter
+"""The `OrderService` class.
+
+It processes user orders, ensuring the coordination between\
 different services like payment, inventory, and shipping.
 
 - Key Responsibilities:
@@ -16,6 +19,11 @@ class OrderService(RESTService):
     """REST endpoints for the Order service."""
 
     def __init__(self, name):
+        """Initialize the OrderService with an order ID.
+
+        Args:
+            name (str): The name of the service.
+        """
         super().__init__(name)
         self.order_id = 54321
 

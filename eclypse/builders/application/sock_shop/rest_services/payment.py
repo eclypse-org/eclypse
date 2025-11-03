@@ -1,5 +1,6 @@
-"""The `PaymentService` is responsible for handling all payment-related transactions in
-the SockShop application.
+"""The `PaymentService` class.
+
+It is responsible for handling all payment-related transactions in the SockShop.
 
 - Key Responsibilities:
     - Processes payment details and initiates transactions for placed orders.
@@ -19,6 +20,11 @@ class PaymentService(RESTService):
     """REST service for payment processing."""
 
     def __init__(self, service_id: str):
+        """Initialize the PaymentService with a random number generator.
+
+        Args:
+            service_id (str): The ID of the service.
+        """
         super().__init__(service_id)
         self.rnd = rnd.Random(os.getenv(RND_SEED))
 

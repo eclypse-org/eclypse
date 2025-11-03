@@ -1,6 +1,7 @@
-"""Module for the AdditiveAsset class. It represents a numeric asset where the
-aggregation is the sum of the assets. It provides the interface for the basic algebraic
-functions between assets:
+"""Module for the AdditiveAsset class.
+
+It represents a numeric asset where the aggregation is the sum of the assets.
+It provides the interface for the basic algebraic functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via summation.
 - `satisfies`: Check if the asset contains another asset.
@@ -72,15 +73,16 @@ class Additive(Asset):
         return sum(assets, start=self.lower_bound)
 
     def satisfies(self, asset: float, constraint: float) -> bool:
-        """Check asset1 contains asset2. In an additive asset, the higher value contains
-        the lower value.
+        """Check `asset` contains `constraint`.
+
+        In an additive asset, the higher value contains the lower value.
 
         Args:
-            asset1 (float): The "container" asset.
-            asset2 (float): The "contained" asset.
+            asset (float): The "container" asset.
+            constraint (float): The "contained" asset.
 
         Returns:
-            True if asset1 >= asset2, False otherwise.
+            True if asset >= constraint, False otherwise.
         """
         return asset >= constraint
 

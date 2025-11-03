@@ -1,5 +1,4 @@
-"""The `CartService` handles the shopping cart functionality, allowing users to manage \
-their desired items before making a purchase.
+"""The `CartService` handles the shopping cart functionality.
 
 - Key Responsibilities:
     - Manages the user's shopping cart by adding, removing, or updating items.

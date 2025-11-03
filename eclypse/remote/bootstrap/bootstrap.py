@@ -1,7 +1,8 @@
 # pylint: disable=import-outside-toplevel
+"""Module for the RemoteBootstrap class.
 
-"""Module for the RemoteBootstrap class, which contains the configuration for the remote
-infrastructure."""
+It contains the configuration for the remote infrastructure.
+"""
 
 from __future__ import annotations
 
@@ -96,9 +97,11 @@ def _create_remote(
     """Create a remote object.
 
     Args:
+        name (str): The name of the remote object.
         remote_cls (Any): The class of the remote object.
-        *args: The arguments to be passed to the remote object.
-        **kwargs: The keyword arguments to be passed to the remote object.
+        options_factory (RayOptionsFactory): The Ray options factory.
+        *args: The arguments for the remote object.
+        **kwargs: The keyword arguments for the remote object.
 
     Returns:
         Any: The remote object.

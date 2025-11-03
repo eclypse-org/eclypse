@@ -1,5 +1,7 @@
-"""Module for the RemoteOps enumeration, which defines the operations that can be
-performed on a Service."""
+"""Module for the RemoteOps enumeration.
+
+It defines the operations that can be performed on a Service.
+"""
 
 from enum import Enum
 

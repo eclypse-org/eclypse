@@ -1,5 +1,7 @@
-"""Module for the Convex Asset class. It represents a numeric asset where the
-aggregation is convex, i.e. the minimum value of the assets. It provides the interface
+"""Module for the Convex Asset class.
+
+It represents a numeric asset where the aggregation is convex,
+i.e. the minimum value of the assets. It provides the interface
 for the basic algebraic functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via the minimum value.
@@ -61,8 +63,9 @@ class Convex(Asset):
         )
 
     def aggregate(self, *assets) -> float:
-        """Aggregate the assets into a single asset by taking the minimum value. If no
-        assets are provided, the upper bound is returned.
+        """Aggregate the assets into a single asset by taking the minimum value.
+
+        If no assets are provided, the upper bound is returned.
 
         Args:
             assets (Iterable[NumericAsset]): The assets to aggregate.
@@ -73,15 +76,16 @@ class Convex(Asset):
         return min(assets, default=self.upper_bound)
 
     def satisfies(self, asset: float, constraint: float) -> bool:
-        """Check if asset1 contains asset2. In the ordering of a convex asset, the
-        higher value contains the other.
+        """Check if `asset` contains `constraint`.
+
+        In the ordering of a convex asset, the higher value contains the other.
 
         Args:
-            asset1 (NumericAsset): The "container" asset.
-            asset2 (NumericAsset): The "contained" asset.
+            asset (NumericAsset): The "container" asset.
+            constraint (NumericAsset): The "contained" asset.
 
         Returns:
-            bool: True if asset1 >= asset2, False otherwise.
+            bool: True if asset >= constraint, False otherwise.
         """
         return asset >= constraint
 
@@ -97,6 +101,11 @@ class Convex(Asset):
         return self.lower_bound <= asset <= self.upper_bound
 
     def flip(self):
+        """Flip the convex asset into a concave asset.
+
+        Returns:
+            Concave: The flipped concave asset.
+        """
         from .concave import Concave  # pylint: disable=import-outside-toplevel
 
         return Concave(

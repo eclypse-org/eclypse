@@ -30,8 +30,11 @@ if TYPE_CHECKING:
 
 
 class FirstFitStrategy(PlacementStrategy):
-    """A placement strategy that places services onto the first node that satisfies the
-    requirements."""
+    """FirstFitStrategy class.
+
+    A placement strategy that places services onto the first node that satisfies the
+    requirements.
+    """
 
     def __init__(self, sort_fn: Optional[Callable[[Any], Any]] = None):
         """Initializes the FirstFit placement strategy.
@@ -50,7 +53,9 @@ class FirstFitStrategy(PlacementStrategy):
         _: Dict[str, Placement],
         placement_view: PlacementView,
     ) -> Dict[str, str]:
-        """Places the services of an application on the infrastructure nodes based on
+        """Performs the placement according to a first-fit logic.
+
+        Places the services of an application on the infrastructure nodes based on
         the first node that satisfies the requirements of the service.
 
         Args:

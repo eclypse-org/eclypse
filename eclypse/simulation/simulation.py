@@ -1,9 +1,4 @@
-"""Module for the Simulation class, which extends the core simulation class to provide
-the reporting funcionality.
-
-For the complete documentation, refer to the :class:`~eclypse.simulation.simulation.Simulation`
-core class.
-"""
+"""Module for the Simulation class."""
 
 from __future__ import annotations
 
@@ -49,7 +44,9 @@ class Simulation:
         infrastructure: Infrastructure,
         simulation_config: Optional[SimulationConfig] = None,
     ):
-        """Create a new Simulation. It instantiates a Simulator or RemoteSimulator based
+        """Create a new Simulation.
+
+        It instantiates a Simulator or RemoteSimulator based
         on the simulation configuration, than can be either local or remote.
 
         It also registers an exit handler to ensure the simulation is properly closed
@@ -111,15 +108,17 @@ class Simulation:
         """Fire an event in the simulation.
 
         Args:
-            event (str): The event to fire.
+            event_name (str): The event to fire.
         """
         return _local_remote_event_call(
             self.simulator, self.remote, "trigger", event_name
         )
 
     def step(self):
-        """Run a single step of the simulation, by triggering the DRIVING_EVENT, thus
-        the 'enact' event."""
+        """Run a single step of the simulation.
+
+        It triggers the DRIVING_EVENT, thus the 'enact' event, by default.
+        """
         return self.trigger(DRIVING_EVENT)
 
     def stop(self, blocking: bool = True):

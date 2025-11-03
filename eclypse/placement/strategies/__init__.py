@@ -1,5 +1,7 @@
-"""Package collecting placement strategies that can be used to place services of an
-application on infrastructure nodes."""
+"""Package collecting placement strategies.
+
+They can be used to place services of an application on infrastructure nodes.
+"""
 
 from .strategy import PlacementStrategy
 from .round_robin import RoundRobinStrategy

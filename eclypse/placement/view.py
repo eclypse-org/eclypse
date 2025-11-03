@@ -1,7 +1,9 @@
-"""Module for the PlacementView class, which is a snapshot of the required resources of
-the infrastructure, considering the current placements of application services.
+"""Module for the PlacementView class.
 
-It is used to check if the requirements of the placements cna be satisfied by the
+It can be considered as a snapshot of the required resources of the infrastructure,
+considering the current placements of application services.
+
+It is used to check if the requirements of the placements can be satisfied by the
 infrastructure, thus allowing the placement to be enacted.
 """
 
@@ -47,7 +49,7 @@ class PlacementView(nx.DiGraph):
         """Gets the resources required on a node.
 
         Args:
-            node (str): The name of the node.
+            node_name (str): The name of the node.
 
         Returns:
             ServiceRequirements: The resources required on the node.
@@ -140,8 +142,9 @@ class PlacementView(nx.DiGraph):
         self.nodes_used_by.clear()
 
     def _update_view(self, placements: List[Placement]):
-        """Creates a view of the infrastructure with the current placements, aggregating
-        the resources they use.
+        """Creates a view of the infrastructure.
+
+        It considers the current placements, aggregating the resources they use.
 
         Args:
             placements (List[Placement]): The placements to update the view with.

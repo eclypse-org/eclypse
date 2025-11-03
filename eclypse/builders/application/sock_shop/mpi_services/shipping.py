@@ -1,5 +1,6 @@
-"""The `ShippingService` manages the logistics and shipment of orders, ensuring items
-reach customers.
+"""The `ShippingService` class.
+
+It manages the logistics and shipment of orders, ensuring items reach customers.
 
 - Key Responsibilities:
     - Handles the shipping of completed orders.
@@ -15,8 +16,10 @@ class ShippingService(Service):
     """MPI workflow of the Shipping service."""
 
     async def step(self):
-        """Example workflow of the Shipping service, consisting of processing shipping
-        requests."""
+        """Example workflow of the `ShippingService` class.
+
+        It consists of processing shipping requests.
+        """
         await self.order_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)

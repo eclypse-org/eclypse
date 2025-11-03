@@ -1,4 +1,5 @@
 """Module for the infrastructure builders.
+
 It has the following builders:
 
 - b_cube: A BCube infrastructure with switches and hosts.

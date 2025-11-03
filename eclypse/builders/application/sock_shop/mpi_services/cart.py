@@ -13,8 +13,10 @@ class CartService(Service):
     """MPI workflow of the Cart service."""
 
     async def step(self):
-        """Example workflow of the Cart service, starting with fetching the user's cart
-        data."""
+        """Example workflow of the Cart service.
+
+        It starts with fetching the user's cart data.
+        """
         await self.frontend_request()  # pylint: disable=no-value-for-parameter
 
     @mpi.exchange(receive=True, send=True)

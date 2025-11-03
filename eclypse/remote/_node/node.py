@@ -1,6 +1,7 @@
 # pylint: disable=protected-access
-"""Module for the RemoteEngine class, which represents a node in the infrastructure,
-during a remote simulation.
+"""Module for the RemoteEngine class.
+
+It represents a node in the infrastructure, during a remote simulation.
 
 A node is implemented as a Ray actor which is provided with a unique identifier in the
 infrastructure, and can contain an arbitrary number of Service objects running,
@@ -73,8 +74,7 @@ class RemoteNode:
         self.logger.log("ECLYPSE", f"Node {self.id} created.")
 
     def build(self, **node_config):
-        """Performs the setup of the node's environment when the node is instantiated
-        within the infrastructure.
+        """Performs the setup of the node's environment.
 
         The build method and has a twofold purpose.
 
@@ -101,13 +101,13 @@ class RemoteNode:
 
     async def ops_entrypoint(self, engine_op: RemoteOps, **op_args) -> Any:
         """Entry point for executing operations involving services within a node.
+
         Currently, the operations implemented are `DEPLOY`, `UNDEPLOY`, `START` and
         `STOP`. If none of these operations are specified,
 
         Args:
-            service_id (str): The ID of the service.
-            fn (str): The functionality to be executed.
-            **fn_args: The arguments of the function to be invoked.
+            engine_op (RemoteOps): The operation to be executed.
+            **op_args: The arguments of the operation to be invoked.
         """
         self.logger.trace(f"Executing operation: {engine_op}, {op_args}")
         return await self._engine_ops_thread.submit(engine_op, op_args)
@@ -118,8 +118,9 @@ class RemoteNode:
         fn: Callable,
         **fn_args,
     ) -> Any:
-        """Entry point for executing functions within a node. If service_id is None, the
-        function is executed in the node itself.
+        """Entry point for executing functions within a node.
+
+        If service_id is None, the function is executed in the node itself.
 
         Args:
             service_id (str): The ID of the service.
@@ -133,15 +134,15 @@ class RemoteNode:
     async def service_comm_entrypoint(
         self, route: Route, comm_interface: Type, **handle_args
     ) -> Any:
-        """Entry point for the communication interface of a service deployed in the
-        node. It is used to allow the interaction among services by leveraging the Ray
+        """Entry point for the communication interface of a service deployed in the node.
+
+        It is used to allow the interaction among services by leveraging the Ray
         Actor's remote method invocation.
 
         Args:
-            service_id (str): The ID of the service.
-            comm_interface (str): The communication interface to be used. \
-                Currently, only "EclypseMPI" and "EclypeREST" are supported.
-            **handle_args: The arguments of the function to be invoked.
+            route (Route): The route of the communication.
+            comm_interface (Type): The communication interface to be used.
+            **handle_args: The arguments for handling the request.
         """
         service_id = route.recipient_id
 

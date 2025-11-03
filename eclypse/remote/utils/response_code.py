@@ -10,8 +10,7 @@ from enum import (
 
 
 class ResponseCode(Enum):
-    """A ResponseCode is an enumeration denoting possible responses to an
-    `EclypseRequest`.
+    """Enum class, denoting possible responses to an `EclypseRequest`.
 
     Attributes:
         OK: The request was processed successfully.

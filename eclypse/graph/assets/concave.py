@@ -1,6 +1,8 @@
-"""Module for the Concave Asset class. It represents a numeric asset where the
-aggregation is concave, i.e. the maximum value of the assets. It provides the interface
-for the basic algebraic functions between assets:
+"""Module for the Concave Asset class.
+
+It represents a numeric asset where the aggregation is concave,
+i.e. the maximum value of the assets. It provides the interface for the basic algebraic
+functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via the maximum value.
 - `satisfies`: Check if the asset is contained in another asset.
@@ -61,8 +63,9 @@ class Concave(Asset):
         )
 
     def aggregate(self, *assets) -> float:
-        """Aggregate the assets into a single asset by taking the maximum value. If no
-        assets are provided, the lower bound is returned.
+        """Aggregate the assets into a single asset by taking the maximum value.
+
+        If no assets are provided, the lower bound is returned.
 
         Args:
             assets (Iterable[TConcave]): The assets to aggregate.
@@ -73,15 +76,16 @@ class Concave(Asset):
         return max(assets, default=self.upper_bound)
 
     def satisfies(self, asset: float, constraint: float) -> bool:
-        """Check if asset1 contains asset2. In the ordering of a concave asset, the
-        lower value contains the other.
+        """Check if `asset` contains `constraint`.
+
+        In the ordering of a concave asset, the lower value contains the other.
 
         Args:
-            asset1 (TConcave): The "container" asset.
-            asset2 (TConcave): The "contained" asset.
+            asset (TConcave): The "container" asset.
+            constraint (TConcave): The "contained" asset.
 
         Returns:
-            bool: True if asset1 <= asset2, False otherwise.
+            bool: True if asset <= constraint, False otherwise.
         """
         return asset <= constraint
 
@@ -90,6 +94,11 @@ class Concave(Asset):
         return self.lower_bound >= asset >= self.upper_bound
 
     def flip(self):
+        """Flip the concave asset into a convex asset.
+
+        Returns:
+            Convex: The flipped convex asset.
+        """
         from .convex import Convex  # pylint: disable=import-outside-toplevel
 
         return Convex(

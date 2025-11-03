@@ -1,4 +1,6 @@
-"""Package for defining asset classes. Available classes are:
+"""Package for defining asset classes.
+
+Available classes are:
 
 - `Asset`: The base and extendable class for all assets.
 - `Additive`: Represents a numeric asset where the aggregation is additive.

@@ -27,6 +27,7 @@ class TensorBoardReporter(Reporter):
     """Asynchronous reporter for simulation metrics in TensorBoardX format."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the TensorBoard reporter."""
         super().__init__(*args, **kwargs)
         self.report_path = self.report_path / "tensorboard"
         self._writer = None
@@ -48,6 +49,14 @@ class TensorBoardReporter(Reporter):
         """Generate TensorBoard-compatible metric tuples.
 
         Returns a list of (callback_name, metric_dict, event_idx) to be written.
+
+        Args:
+            _ (str): The name of the event.
+            event_idx (int): The index of the event trigger (tick).
+            callback (EclypseEvent): The executed callback containing the data to report.
+
+        Returns:
+            List[Any]: A list of tuples with (callback_name, metric_dict, event_idx).
         """
         if callback.type is None:
             return []
@@ -64,7 +73,13 @@ class TensorBoardReporter(Reporter):
     async def write(
         self, callback_type: str, data: list[tuple[str, dict[str, float], int]]
     ):
-        """Write the collected metrics to TensorBoard."""
+        """Write the collected metrics to TensorBoard.
+
+        Args:
+            callback_type (str): The type of the callback (used for organizing plots).
+            data (list[tuple[str, dict[str, float], int]]): List of tuples
+                containing (callback_name, metric_dict, event_idx).
+        """
         for cb_name, metric_dict, step in data:
             self.writer.add_scalars(f"{callback_type}/{cb_name}", metric_dict, step)
 

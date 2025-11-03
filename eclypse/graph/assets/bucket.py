@@ -121,7 +121,7 @@ class AssetBucket(Dict[str, Asset]):
         """Check if the asset belongs to the interval [lower_bound, upper_bound].
 
         Args:
-            asset (Dict[str, Any]): The asset to be checked.
+            assets (Dict[str, Any]): The assets to be checked.
             violations (bool, optional): If True, return a dictionary containing
                 only the violated keys and their asset/constraint values.
                 If False (default), return a boolean indicating overall satisfaction.
@@ -142,8 +142,9 @@ class AssetBucket(Dict[str, Asset]):
         return violated if violations else not violated
 
     def _init(self, random: Random) -> Dict[str, Any]:
-        """Initialize the assets of the bucket. This is done by calling the `init_fn`
-        function of each asset.
+        """Initialize the assets of the bucket.
+
+        This is done by calling the `init_fn` function of each asset.
 
         Args:
             random (Random): The random number generator to use.
@@ -158,8 +159,9 @@ class AssetBucket(Dict[str, Asset]):
         }
 
     def flip(self):
-        """Flip the assets of the bucket, thus moving from node capabilities to service
-        requirements.
+        """Flip the assets of the bucket.
+
+        It moves from node capabilities to service requirements.
 
         Returns:
             AssetBucket: The flipped asset bucket.
@@ -171,8 +173,9 @@ class AssetBucket(Dict[str, Asset]):
 
     @property
     def lower_bound(self) -> Dict[str, Any]:
-        """Return the lower bound of the asset bucket, i.e. the lower bound of each
-        asset in the bucket.
+        """Return the lower bound of the asset bucket.
+
+        i.e., the lower bound of each asset in the bucket.
 
         Returns:
             Dict[str, Any]: The lower bound of the asset bucket.
@@ -181,8 +184,9 @@ class AssetBucket(Dict[str, Asset]):
 
     @property
     def upper_bound(self) -> Dict[str, Any]:
-        """Return the upper bound of the asset bucket, i.e. the upper bound of each
-        asset in the bucket.
+        """Return the upper bound of the asset bucket.
+
+        i.e., the upper bound of each asset in the bucket.
 
         Returns:
             Dict[str, Any]: The upper bound of the asset bucket.

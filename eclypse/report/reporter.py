@@ -60,15 +60,14 @@ class Reporter(ABC):
         Args:
             event_name (str): The name of the event.
             event_idx (int): The index of the event trigger (tick).
-            executed (EclypseEvent): The executed event.
+            callback (EclypseEvent): The executed event.
 
         Returns:
             List[Any]: The list of entries to be written.
         """
 
     def dfs_data(self, data: Any) -> List:
-        """Perform DFS on the nested dictionary and build paths (concatenated keys) as
-        strings.
+        """Perform DFS on the nested dictionary and build paths (concatenated keys) as strings.
 
         Args:
             data (Any): The data to traverse.

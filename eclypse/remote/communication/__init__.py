@@ -1,5 +1,4 @@
-"""Package collectiong interfaces for communication among services into an
-application."""
+"""Package collecting interfaces for communication among services into an application."""
 
 from .interface import EclypseCommunicationInterface
 from .route import Route

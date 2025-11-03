@@ -1,5 +1,6 @@
-"""Module for the Asset class. It represents a node resource or a service requirement,
-such as CPU, GPU, RAM or node availability.
+"""Module for the Asset class.
+
+It represents a node resource or a service requirement, such as CPU, GPU, RAM or node availability.
 
 It provides the inteface for the basic algebraic functions between assets:
 - aggregate: aggregate the assets into a single asset.
@@ -28,8 +29,10 @@ if TYPE_CHECKING:
 
 
 class Asset:
-    """Asset represents a resource of the infrastructure, such as CPU, GPU, RAM or
-    Availability.
+    """The Asset class.
+
+    An Asset represents a resource of the infrastructure, such as CPU, GPU, RAM or
+    node availability.
 
     It provides the inteface for the basic algebraic functions between assets.
     """
@@ -145,9 +148,10 @@ class Asset:
         """Check if the asset has a feasible value."""
 
     def flip(self) -> Asset:
-        """Flip the asset. Move the perspective from being a "capability" to be a
-        "requirement" and vice versa. By default, the asset is left unchanged, thus the
-        method returns a copy of the asset.
+        """Flip the asset.
+
+        Move the perspective from being a "capability" to be a "requirement" and vice versa.
+        By default, the asset is left unchanged, thus the method returns a copy of the asset.
 
         Returns:
             Asset: The flipped asset.
@@ -155,6 +159,7 @@ class Asset:
         return deepcopy(self)
 
     def __str__(self):
+        """Return the string representation of the asset."""
         return "".join(
             [
                 f"Type: {self.__class__.__name__}\n",

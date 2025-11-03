@@ -1,5 +1,7 @@
-"""Module for Trigger class. A trigger abstracts the logic for when an EclypseEvent
-should be fired in the simulation workflow.
+"""Module for Trigger class.
+
+A trigger abstracts the logic for when an EclypseEvent should be fired
+in the simulation workflow.
 
 Available triggers include:
 - Trigger: Base class for all triggers (can be subclassed).
@@ -118,7 +120,7 @@ class ScheduledTrigger(Trigger):
         """Initialize the scheduled trigger.
 
         Args:
-            scheduled_times (Optional[Union[timedelta, List[timedelta]]]):
+            scheduled_timedelta (Optional[Union[timedelta, List[timedelta]]]):
                 Time(s) when the trigger should fire.
                 Defaults to None, which means no scheduled times.
         """
