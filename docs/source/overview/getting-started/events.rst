@@ -16,7 +16,7 @@ Defining an Event
 An event can be defined by:
 
 - decorating a function or a class with a `__call__` method
-- subclassing :class:`~eclypse_core.workflow.events.event.EclypseEvent` and overriding the `__call__` method
+- subclassing :class:`~eclypse.workflow.events.event.EclypseEvent` and overriding the `__call__` method
 
 .. seealso::
 
@@ -33,7 +33,7 @@ Here are the most relevant parameters to control event behaviour:
 
 - ``name`` *(str)*: The event name.
 - ``event_type``: The context where the event executes, (e.g., *"node"*, *"service"*, ...). It can be also None.
-- ``triggers``: A list of :class:`~eclypse_core.workflow.triggers.trigger.Trigger` objects, modelling the conditions that can activate the event.
+- ``triggers``: A list of :class:`~eclypse.workflow.triggers.trigger.Trigger` objects, modelling the conditions that can activate the event.
 - ``activates_on``: A more compact way to specify triggers, using a list of strings and tuples
 - ``trigger_condition``: Whether all triggers must activate or just one (*"all"* or *"any"*).
 - ``is_callback``: Whether the event is a post-trigger *callback*.
@@ -52,52 +52,52 @@ The event **type** also determines the arguments passed to its logic function. S
      - Parameters
    * - simulation (or None)
      -
-       - ``triggering_event`` (:class:`~eclypse_core.workflow.events.event.EclypseEvent`)
+       - ``triggering_event`` (:class:`~eclypse.workflow.events.event.EclypseEvent`)
    * - application
      -
        - ``application`` (:class:`~eclypse.graph.application.Application`)
-       - ``placement`` (:class:`~eclypse_core.placement.placement.Placement`)
+       - ``placement`` (:class:`~eclypse.placement.placement.Placement`)
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
        - ``**event_data`` (*Dict[str, Any]*)
    * - service
      -
        - ``service_id`` (*str*)
        - ``requirements`` (*Dict[str, Any]*)
-       - ``placement`` (:class:`~eclypse_core.placement.placement.Placement`)
+       - ``placement`` (:class:`~eclypse.placement.placement.Placement`)
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
        - ``**event_data`` (*Dict[str, Any]*)
    * - service (with ``remote=True``)
      -
-       - ``service`` (:class:`~eclypse_core.remote.service.service.Service`)
+       - ``service`` (:class:`~eclypse.remote.service.service.Service`)
    * - interaction
      -
        - ``source_id`` (*str*)
        - ``target_id`` (*str*)
        - ``requirements`` (*Dict[str, Any]*)
-       - ``placement`` (:class:`~eclypse_core.placement.placement.Placement`)
+       - ``placement`` (:class:`~eclypse.placement.placement.Placement`)
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
        - ``**event_data`` (*Dict[str, Any]*)
    * - infrastructure
      -
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
-       - ``placement_view`` (:class:`~eclypse_core.placement.view.PlacementView`)
+       - ``placement_view`` (:class:`~eclypse.placement.view.PlacementView`)
        - ``**event_data`` (*Dict[str, Any]*)
    * - node
      -
        - ``node_id`` (*str*)
        - ``resources`` (*Dict[str, Any]*)
-       - ``placements`` (*Dict[str,* :class:`~eclypse_core.placement.placement.Placement` *]*)
+       - ``placements`` (*Dict[str,* :class:`~eclypse.placement.placement.Placement` *]*)
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
-       - ``placement_view`` (:class:`~eclypse_core.placement.view.PlacementView`)
+       - ``placement_view`` (:class:`~eclypse.placement.view.PlacementView`)
        - ``**event_data`` (*Dict[str, Any]*)
    * - link
      -
        - ``source_id`` (*str*)
        - ``target_id`` (*str*)
        - ``resources`` (*Dict[str, Any]*)
-       - ``placements`` (*Dict[str,* :class:`~eclypse_core.placement.placement.Placement` *]*)
+       - ``placements`` (*Dict[str,* :class:`~eclypse.placement.placement.Placement` *]*)
        - ``infrastructure`` (:class:`~eclypse.graph.infrastructure.Infrastructure`)
-       - ``placement_view`` (:class:`~eclypse_core.placement.view.PlacementView`)
+       - ``placement_view`` (:class:`~eclypse.placement.view.PlacementView`)
        - ``**event_data`` (*Dict[str, Any]*)
 
 .. note::

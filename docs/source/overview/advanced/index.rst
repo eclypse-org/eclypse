@@ -15,7 +15,7 @@ Advanced Features
 
         .. card:: :octicon:`workflow;1em;info` **Triggers**
             :link-type: doc
-            :link: triggers/index
+            :link: triggers
 
             Learn how to define and use **triggers** to activate complex workflows in your simulation.
             Explore built-in triggers or create your own custom triggers to suit your simulation needs.
@@ -32,7 +32,7 @@ Advanced Features
 
         .. card:: :octicon:`log;1em;info` **Reporting**
             :link-type: doc
-            :link: reporting/index
+            :link: reporting
 
             Discover how to generate and manage **reports** in your simulation, including **custom reports** and **report templates**.
             Learn how to use and customise the **reporting engine** to create and manage simulation

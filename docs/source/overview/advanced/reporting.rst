@@ -48,7 +48,7 @@ Example:
 Reporters
 ---------
 
-To store or export metrics, ECLYPSE uses a list of :class:`~eclypse_core.report.reporter.Reporter`, which define how data is persisted.
+To store or export metrics, ECLYPSE uses a list of :class:`~eclypse.report.reporter.Reporter`, which define how data is persisted.
 It must implement a simple interface, and must be passed to the simulation before it starts.
 
 You can:
@@ -64,7 +64,7 @@ Default Reporters
 
 Eclypse includes a set of default reporters that can be selectively enabled to persist simulation data in various formats:
 
-- :class:`~eclypse_core.report.reporter.Reporter`: base class for all reporters, providing the customisable interface to implement your own reporters.
+- :class:`~eclypse.report.reporter.Reporter`: base class for all reporters, providing the customisable interface to implement your own reporters.
 - :class:`~eclypse.report.reporters.csv.CSVReporter`: saves all reported metrics in CSV files, grouped by event type. These files can later be accessed using the :class:`~eclypse.report.report.Report` object for analysis.
 - :class:`~eclypse.report.reporters.gml.GMLReporter`: exports the final state of application and infrastructure graph tpolologies in `GML <https://en.wikipedia.org/wiki/Geography_Markup_Language>`_ format.
 - :class:`~eclypse.report.reporters.json.JSONReporter`: serializes the final simulation results and graph structures in `JSONL <https://jsonlines.org>`_ format, useful for integration or external post-processing.

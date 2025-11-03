@@ -34,7 +34,7 @@ After you :doc:`define your application(s) and infrastructure <topology>`, in or
 
    For a complete list of configurable parameters, refer to the :class:`~eclypse.simulation.config.SimulationConfig` class documentation.
 
-#. Create an instance of the :class:`~eclypse_core.simulation.simulation.Simulation` class, passing the infrastructure and the configuration as parameters:
+#. Create an instance of the :class:`~eclypse.simulation.simulation.Simulation` class, passing the infrastructure and the configuration as parameters:
 
    .. code-block:: python
 
@@ -76,6 +76,6 @@ That's it! You have successfully set up and ran your first simulation using ECLY
 
    ECLYPSE also provides dedicated guides for more advanced topics:
 
-   - :doc:`Setup ECLYPSE in Emulation mode <../advanced/emulation>`
-   - :doc:`Exchange messages between services in an emulation <../advanced/messaging>`
+   - :doc:`Setup ECLYPSE in Emulation mode <../advanced/emulation/emulation>`
+   - :doc:`Exchange messages between services in an emulation <../advanced/emulation/messaging>`
    - ... TBA
