@@ -36,10 +36,10 @@ black = "^25.9.0"
 commitizen = "^4.9.1"
 pre-commit = "^4.3.0"
 isort = "^7.0.0"
-pycln = "^2.6.0"
-pylint = "^4.0.2"
-docformatter = { extras = ["tomli"], version = "^1.7.7" }
 ruff = "^0.14.3"
+# pycln = "^2.6.0"
+# pylint = "^4.0.2"
+# docformatter = { extras = ["tomli"], version = "^1.7.7" }
 
 [tool.poetry.group.deploy]
 optional = true
