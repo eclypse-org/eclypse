@@ -114,7 +114,7 @@ class EclypseREST(EclypseCommunicationInterface):
         return HTTPRequest(url, HTTPMethod.DELETE, data, self)
 
     def _handle_request(
-        self, *args, **kwargs
+        self, *_, **kwargs
     ) -> Union[
         Coroutine[Any, Any, Any], asyncio.Future[Tuple[HTTPStatusCode, Dict[str, Any]]]
     ]:
@@ -124,7 +124,7 @@ class EclypseREST(EclypseCommunicationInterface):
             endpoint (str): The endpoint to handle.
             method (HTTPMethod): The method of the request.
             route (Route): The route of the request.
-            *args: The positional arguments to be sent in the request.
+            *_: The positional arguments to be sent in the request.
             **kwargs: The data to be sent in the request.
 
         Returns:

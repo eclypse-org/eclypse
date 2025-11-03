@@ -26,7 +26,7 @@ repos:
     rev: v0.14.3
     hooks:
       - id: ruff-check
-        name: ruff-pycln
+        name: ruff pycln
         args: [--fix, --select, "F401"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
