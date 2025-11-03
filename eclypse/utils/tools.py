@@ -111,7 +111,7 @@ def shield_interrupt(func):
             return func(*args, **kwargs)
         except KeyboardInterrupt:
             simulation.logger.warning("SIMULATION INTERRUPTED.")
-            simulation.stop(blocking=True)
+            simulation.stop()
         return None
 
     return wrapper

@@ -23,6 +23,7 @@ from eclypse.utils.constants import (
     LOG_LEVEL,
     RND_SEED,
 )
+from eclypse.utils.tools import shield_interrupt
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -127,7 +128,7 @@ class Simulation:
         if blocking:
             self.wait()
 
-    # @shield_interrupt
+    @shield_interrupt
     def wait(self, timeout: Optional[float] = None):
         """Wait for the simulation to finish.
 
