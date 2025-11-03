@@ -1,12 +1,12 @@
 Messaging
 =========
 
-When running in :doc:`emulation mode <emulation>`, ECLYPSE allows services to communicate directly with one another using structured :class:`~eclypse_core.remote.communication.interface.EclypseCommunicationInterface`.
+When running in :doc:`emulation mode <emulation>`, ECLYPSE allows services to communicate directly with one another using structured :class:`~eclypse.remote.communication.interface.EclypseCommunicationInterface`.
 
 Two communication models are currently supported:
 
-- an **MPI-like interface** (:class:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI`), designed for low-latency message passing
-- a **REST-style interface** (:class:`~eclypse_core.remote.communication.rest.interface.EclypseREST`), designed for loosely coupled HTTP interactions
+- an **MPI-like interface** (:class:`~eclypse.remote.communication.mpi.interface.EclypseMPI`), designed for low-latency message passing
+- a **REST-style interface** (:class:`~eclypse.remote.communication.rest.interface.EclypseREST`), designed for loosely coupled HTTP interactions
 
 These APIs can be used from within emulated services to exchange information, coordinate behaviour, or simulate service-level protocols.
 
@@ -16,11 +16,11 @@ MPI-style messaging
 
 The MPI interface provides basic primitives to send and receive messages among services deployed in the same application.
 
-Each :class:`~eclypse_core.remote.service.service.Service` has access to an :py:attr:`~eclypse_core.remote.service.service.Service.mpi` attribute (an instance of the internal communication layer), through which it can:
+Each :class:`~eclypse.remote.service.service.Service` has access to an :py:attr:`~eclypse.remote.service.service.Service.mpi` attribute (an instance of the internal communication layer), through which it can:
 
-- send messages to specific services (:py:meth:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI.send`)
-- broadcast messages to all neighbours (:py:meth:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI.bcast`)
-- receive incoming messages (:py:meth:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI.recv`)
+- send messages to specific services (:py:meth:`~eclypse.remote.communication.mpi.interface.EclypseMPI.send`)
+- broadcast messages to all neighbours (:py:meth:`~eclypse.remote.communication.mpi.interface.EclypseMPI.bcast`)
+- receive incoming messages (:py:meth:`~eclypse.remote.communication.mpi.interface.EclypseMPI.recv`)
 
 All methods are **asynchronous** and simulate network cost using the placement and topology of the infrastructure.
 
@@ -41,7 +41,7 @@ All methods are **asynchronous** and simulate network cost using the placement a
 @exchange() decorator
 ~~~~~~~~~~~~~~~~~~~~~
 
-In addition to direct calls, the :class:`~eclypse_core.remote.communication.mpi.interface.EclypseMPI` interface provides a decorator (:py:func:`@echange() <eclypse_core.remote.communication.mpi.interface.exchange>`) to define communication behaviour declaratively inside service methods.
+In addition to direct calls, the :class:`~eclypse.remote.communication.mpi.interface.EclypseMPI` interface provides a decorator (:py:func:`@echange() <eclypse_core.remote.communication.mpi.interface.exchange>`) to define communication behaviour declaratively inside service methods.
 
 You can decorate a method to:
 
@@ -52,7 +52,7 @@ You can decorate a method to:
 **Sending and broadcasting are mutually exclusive.**
 
 .. code-block:: python
-   :caption: **Example:** Using the :py:func:`~eclypse_core.remote.communication.mpi.interface.exchange` decorator
+   :caption: **Example:** Using the :py:func:`~eclypse.remote.communication.mpi.interface.exchange` decorator
 
    from eclypse.remote.service import Service
    from eclypse.remote.communication.mpi import exchange
@@ -69,7 +69,7 @@ REST-style Messaging
 
 ECLYPSE also provides a REST-style communication interface for services. This mode models service interaction using HTTP-like semantics and is better suited for stateless, loosely coupled communication patterns.
 
-To use this, your service must subclass :class:`~eclypse_core.remote.communication.rest.interface.EclypseREST`. Each instance exposes a REST interface, backed by a Ray actor, which handles remote requests.
+To use this, your service must subclass :class:`~eclypse.remote.communication.rest.interface.EclypseREST`. Each instance exposes a REST interface, backed by a Ray actor, which handles remote requests.
 
 @endpoint() decorator
 ~~~~~~~~~~~~~~~~~~~~~
@@ -111,10 +111,10 @@ Making Requests
 
 From within a service, you can send requests using:
 
-- :py:func:`~eclypse_core.remote.communication.rest.interface.EclypseREST.get`
-- :py:func:`~eclypse_core.remote.communication.rest.interface.EclypseREST.post`
-- :py:func:`~eclypse_core.remote.communication.rest.interface.EclypseREST.put`
-- :py:func:`~eclypse_core.remote.communication.rest.interface.EclypseREST.delete`
+- :py:func:`~eclypse.remote.communication.rest.interface.EclypseREST.get`
+- :py:func:`~eclypse.remote.communication.rest.interface.EclypseREST.post`
+- :py:func:`~eclypse.remote.communication.rest.interface.EclypseREST.put`
+- :py:func:`~eclypse.remote.communication.rest.interface.EclypseREST.delete`
 
 .. code-block:: python
    :caption: **Example:** Make a POST request to another service

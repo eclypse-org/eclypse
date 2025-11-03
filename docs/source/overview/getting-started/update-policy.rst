@@ -52,4 +52,4 @@ You can define your own update policies by modifying the relevant asset values w
 .. important::
 
    Update policies must always ensure that modified asset values remain consistent.
-   Use the asset's :py:meth:`~eclypse_core.graph.assets.asset.Asset.is_consistent()` method if needed. Otherwise, placement and simulation logic may occur on inconsistent data.
+   Use the asset's :py:meth:`~eclypse.graph.assets.asset.Asset.is_consistent()` method if needed. Otherwise, placement and simulation logic may occur on inconsistent data.

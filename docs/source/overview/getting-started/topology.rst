@@ -68,7 +68,7 @@ The two classes share many structural similarities, but differ in purpose and in
       - ``seed``: random seed for reproducibility
       - ``flows``: list of service chains or communication flows
 
-These classes inherit from a common base (:class:`~eclypse_core.graph.asset_graph.AssetGraph`) and can be extended or composed via utility functions and default builders.
+These classes inherit from a common base (:class:`~eclypse.graph.asset_graph.AssetGraph`) and can be extended or composed via utility functions and default builders.
 
 .. _define-topology:
 
@@ -79,8 +79,8 @@ Once you have defined an Infrastructure or an Application object, you can increm
 
 Both classes expose two methods:
 
-- :py:meth:`~eclypse_core.graph.asset_graph.AssetGraph.add_node` — to add a node or service
-- :py:meth:`~eclypse_core.graph.asset_graph.AssetGraph.add_edge` — to add a link or interaction
+- :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_node` — to add a node or service
+- :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_edge` — to add a link or interaction
 
 These methods allow you to associate assets and automatically validate their values, according to the asset definitions you provided during initialisation.
 
@@ -149,7 +149,7 @@ These methods allow you to associate assets and automatically validate their val
 
 .. note::
 
-   All assets passed to :py:meth:`~eclypse_core.graph.asset_graph.AssetGraph.add_node` or :py:meth:`~eclypse_core.graph.asset_graph.AssetGraph.add_edge` are checked against the declared asset definitions.
+   All assets passed to :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_node` or :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_edge` are checked against the declared asset definitions.
    If validation fails and `strict` is `True`, an exception is raised. Otherwise, a warning is logged.
 
 Default Builders
@@ -157,7 +157,7 @@ Default Builders
 
 ECLYPSE provides several built-in builder functions that allow you to quickly instantiate commonly used topologies and reference applications.
 
-These builders return fully initialised :class:`~eclypse_core.graph.application.Application` or :class:`~eclypse_core.graph.infrastructure.Infrastructure` objects with pre-defined assets and flows.
+These builders return fully initialised :class:`~eclypse.graph.application.Application` or :class:`~eclypse.graph.infrastructure.Infrastructure` objects with pre-defined assets and flows.
 
 .. tab-set::
 

@@ -31,7 +31,7 @@ The `EchoService` class is the core component responsible for echoing messages w
         :language: python
         :linenos:
 
-We defined the `EchoService` class, which inherits from the :class:`~eclypse_core.remote.service.service.Service` class provided in ECLYPSE. The `dispatch` implements the logic of the `EchoService`, thus it is responsible for sending messages to neighbors and logging the communication statistics.
+We defined the `EchoService` class, which inherits from the :class:`~eclypse.remote.service.service.Service` class provided in ECLYPSE. The `dispatch` implements the logic of the `EchoService`, thus it is responsible for sending messages to neighbors and logging the communication statistics.
 
 
 Infrastructure

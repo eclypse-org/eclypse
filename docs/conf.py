@@ -12,11 +12,11 @@ from jinja2.filters import FILTERS
 
 sys.path.insert(0, os.path.abspath(".."))
 
-# -- Core package import -----------------------------------------------------
-core_dist = distribution("eclypse-core")
-core_path = os.path.join(core_dist.locate_file("."), "eclypse_core-stubs")
-print("Including", core_path)
-sys.path.insert(0, core_path)
+# # -- Core package import -----------------------------------------------------
+# core_dist = distribution("eclypse-core")
+# core_path = os.path.join(core_dist.locate_file("."), "eclypse_core-stubs")
+# print("Including", core_path)
+# sys.path.insert(0, core_path)
 
 
 # -- Project information -----------------------------------------------------

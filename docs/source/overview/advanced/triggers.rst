@@ -3,7 +3,7 @@ Triggers
 
 Triggers are conditions that determine **when an event should fire** during the simulation.
 
-Each trigger must implement a :py:meth:`~eclypse_core.workflow.triggers.trigger.Trigger.trigger`
+Each trigger must implement a :py:meth:`~eclypse.workflow.triggers.trigger.Trigger.trigger`
 method that returns ``True`` if the event should be executed at that moment.
 
 ECLYPSE provides both:
@@ -23,16 +23,16 @@ The tables below compares all available trigger types:
   * - Type
     - Description
     - Parameters
-  * - :class:`~eclypse_core.workflow.triggers.trigger.Trigger`
+  * - :class:`~eclypse.workflow.triggers.trigger.Trigger`
     - Abstract base class. Must override ``trigger()``.
     - *(none)*
-  * - :class:`~eclypse_core.workflow.triggers.trigger.PeriodicTrigger`
+  * - :class:`~eclypse.workflow.triggers.trigger.PeriodicTrigger`
     - Fires every fixed amount of milliseconds.
     - - ``trigger_every_ms: float``
-  * - :class:`~eclypse_core.workflow.triggers.trigger.ScheduledTrigger`
+  * - :class:`~eclypse.workflow.triggers.trigger.ScheduledTrigger`
     - Fires at predefined simulation times.
     - - `scheduled_timedelta: timedelta | List[timedelta]`
-  * - :class:`~eclypse_core.workflow.triggers.trigger.RandomTrigger`
+  * - :class:`~eclypse.workflow.triggers.trigger.RandomTrigger`
     - Fires randomly with given probability at each evaluation.
     - - ``probability: float``
       - ``seed: int (optional)``
@@ -47,18 +47,18 @@ The tables below compares all available trigger types:
   * - Type
     - Description
     - Parameters
-  * - :class:`~eclypse_core.workflow.triggers.cascade.CascadeTrigger`
+  * - :class:`~eclypse.workflow.triggers.cascade.CascadeTrigger`
     - Fires when another event (by name) is triggered.
     - - ``trigger_event: str``
-  * - :class:`~eclypse_core.workflow.triggers.cascade.PeriodicCascadeTrigger`
+  * - :class:`~eclypse.workflow.triggers.cascade.PeriodicCascadeTrigger`
     - Fires every N times a specific event is triggered.
     - - ``trigger_event: str``
       - ``every_n_triggers: int``
-  * - :class:`~eclypse_core.workflow.triggers.cascade.ScheduledCascadeTrigger`
+  * - :class:`~eclypse.workflow.triggers.cascade.ScheduledCascadeTrigger`
     - Fires at specific counts of another event's triggers.
     - - ``trigger_event: str``
       - ``scheduled_times: List[int]``
-  * - :class:`~eclypse_core.workflow.triggers.cascade.RandomCascadeTrigger`
+  * - :class:`~eclypse.workflow.triggers.cascade.RandomCascadeTrigger`
     - Fires randomly when a specific event is triggered.
     - - ``trigger_event: str``
       - ``probability: float``
@@ -105,7 +105,7 @@ When an event is associated with **multiple triggers**, the ``activates_on`` par
   def log_app_health(application, placement, infrastructure, **event_data):
       ...
 
-You can also set this field when manually instantiating an :class:`~eclypse_core.workflow.events.event.EclypseEvent`:
+You can also set this field when manually instantiating an :class:`~eclypse.workflow.events.event.EclypseEvent`:
 
 .. code-block:: python
 

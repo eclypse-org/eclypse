@@ -28,7 +28,7 @@ The MPI interface is made of just two methods: **send** and **recv**. The **send
 
 We can notice two ways of sending a message:
 
-- At lines 64 -- 72 we use the :py:meth:`~eclypse_core.remote.communication.mpi.interface.exchange` decorator, wrapping a function that must return a recipient and a message to be sent.
+- At lines 64 -- 72 we use the :py:meth:`~eclypse.remote.communication.mpi.interface.exchange` decorator, wrapping a function that must return a recipient and a message to be sent.
    Since on of the most common pattern in MPI is the *recv-send* pattern, the *@mpi.exchange* decorator is a convenient way to implement it. If also the *recv* parameter is set to ``True``
    the decorated function will be extended with two parameters, namely the sender and the message received. Then, the function will process the received message and return the recipient and the message to be sent.
 

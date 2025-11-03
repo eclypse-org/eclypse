@@ -26,10 +26,10 @@ ECLYPSE uses Ray actors to represent application services when running in emulat
 Enabling Emulation
 ------------------
 
-To activate emulation from a :doc:`simulation run <../getting-started/simulation>`, you must either:
+To activate emulation from a :doc:`simulation run <../../getting-started/simulation>`, you must either:
 
 - set the flag ``remote=True`` when creating the simulation, or
-- pass a :class:`~eclypse_core.remote.bootstrap.bootstrap.RemoteBootstrap` object, which defines the **Ray cluster configuration**.
+- pass a :class:`~eclypse.remote.bootstrap.bootstrap.RemoteBootstrap` object, which defines the **Ray cluster configuration**.
 
 Example:
 
@@ -47,20 +47,20 @@ Example:
 Implementing a Service
 ----------------------
 
-To define a service in emulation, you must subclass :class:`~eclypse_core.remote.service.service.Service` or :class:`~eclypse_core.remote.service.rest.RESTService`.
+To define a service in emulation, you must subclass :class:`~eclypse.remote.service.service.Service` or :class:`~eclypse.remote.service.rest.RESTService`.
 
 These classes wrap a Ray actor that runs a loop on a remote node.
 
 You must implement the method:
 
-- :py:meth:`~eclypse_core.remote.service.service.Service.step` -- defines one iteration of service behaviour.
+- :py:meth:`~eclypse.remote.service.service.Service.step` -- defines one iteration of service behaviour.
 
 Optionally, you can override:
 
-- :py:meth:`~eclypse_core.remote.service.service.Service.on_deploy` -- called just before the service starts executing.
-- :py:meth:`~eclypse_core.remote.service.service.Service.on_undeploy` -- called after the service stops.
+- :py:meth:`~eclypse.remote.service.service.Service.on_deploy` -- called just before the service starts executing.
+- :py:meth:`~eclypse.remote.service.service.Service.on_undeploy` -- called after the service stops.
 
-The return value of :py:meth:`~eclypse_core.remote.service.service.Service.step` is automatically pushed into the service's **result queue**. You can retrieve it via one of the :ref:`default metrics <default-metrics>` (e.g., `step_result`).
+The return value of :py:meth:`~eclypse.remote.service.service.Service.step` is automatically pushed into the service's **result queue**. You can retrieve it via one of the :ref:`default metrics <default-metrics>` (e.g., `step_result`).
 
 .. dropdown:: Example: Echo Service
 
@@ -86,7 +86,7 @@ The return value of :py:meth:`~eclypse_core.remote.service.service.Service.step`
 
         .. note::
 
-            The parameter ``store_step=True`` ensures that whatever is returned by :py:meth:`~eclypse_core.remote.service.service.Service.step` is captured and made available to reporting tools.
+            The parameter ``store_step=True`` ensures that whatever is returned by :py:meth:`~eclypse.remote.service.service.Service.step` is captured and made available to reporting tools.
 
 
 Messaging Protocols
@@ -102,4 +102,4 @@ In both cases, services may communicate with each other by sending structured me
 Reporting Emulation Results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The default metric ``step_result`` collects the **latest output** of the service's :py:meth:`~eclypse_core.remote.service.service.Service.step` method. This can be used to monitor application-level behaviour that depends on the services' logics, or produce time-series logs.
+The default metric ``step_result`` collects the **latest output** of the service's :py:meth:`~eclypse.remote.service.service.Service.step` method. This can be used to monitor application-level behaviour that depends on the services' logics, or produce time-series logs.

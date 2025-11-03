@@ -1,7 +1,7 @@
 Assets
 ======
 
-In ECLYPSE, an :class:`~eclypse_core.graph.assets.asset.Asset` represents either:
+In ECLYPSE, an :class:`~eclypse.graph.assets.asset.Asset` represents either:
 
 - a *capability* of a network node or link (e.g. CPU, bandwidth, availability), or
 - a *requirement* of an application service or communication (e.g. latency constraint, required RAM)
@@ -18,7 +18,7 @@ There are two ways to choose which asset to use:
         :link: extend-assets
         :link-type: ref
 
-        Subclass the abstract :class:`~eclypse_core.graph.assets.asset.Asset` base class or one of the built-in specialisations.
+        Subclass the abstract :class:`~eclypse.graph.assets.asset.Asset` base class or one of the built-in specialisations.
 
    .. grid-item::
 
@@ -33,17 +33,17 @@ There are two ways to choose which asset to use:
 Extend the Asset class
 ----------------------
 
-The base class :class:`~eclypse_core.graph.assets.asset.Asset` defines the interface and behaviour of all asset types. It provides:
+The base class :class:`~eclypse.graph.assets.asset.Asset` defines the interface and behaviour of all asset types. It provides:
 
 - **initialisation** via value, function, or sampling space.
 - a **total ordering** for comparison.
-- abstract methods for logic: :py:meth:`~eclypse_core.graph.assets.asset.Asset.aggregate`, :py:meth:`~eclypse_core.graph.assets.asset.Asset.satisfies`, :py:meth:`~eclypse_core.graph.assets.asset.Asset.is_consistent`.
+- abstract methods for logic: :py:meth:`~eclypse.graph.assets.asset.Asset.aggregate`, :py:meth:`~eclypse.graph.assets.asset.Asset.satisfies`, :py:meth:`~eclypse.graph.assets.asset.Asset.is_consistent`.
 
 .. important::
 
    When implementing the logic of a custom asset, always define it from the perspective of a **resource**, not a **requirement**.
 
-   This means you are modelling the available capability of a node or link. ECLYPSE automatically handles the dual interpretation—by calling :py:meth:`~eclypse_core.graph.assets.asset.Asset.flip`, when assets are used as service requirements during placement.
+   This means you are modelling the available capability of a node or link. ECLYPSE automatically handles the dual interpretation—by calling :py:meth:`~eclypse.graph.assets.asset.Asset.flip`, when assets are used as service requirements during placement.
 
    Designing assets as requirements will lead to incorrect compatibility or aggregation behaviour.
 
@@ -63,7 +63,7 @@ You can extend it to implement your own logic:
        def is_consistent(self, asset):
            return self.lower_bound <= asset <= self.upper_bound
 
-The method :py:meth:`~eclypse_core.graph.assets.asset.Asset.flip` can be overridden to define how the asset changes perspective from *capability* to *requirement*, and vice versa.
+The method :py:meth:`~eclypse.graph.assets.asset.Asset.flip` can be overridden to define how the asset changes perspective from *capability* to *requirement*, and vice versa.
 
 
 Predefined types
@@ -71,11 +71,11 @@ Predefined types
 
 ECLYPSE provides several built-in asset classes, each modelling a specific kind of algebra:
 
-- :class:`~eclypse_core.graph.assets.additive.Additive`: values are aggregated via summation (e.g., cpu, ram).
-- :class:`~eclypse_core.graph.assets.multiplicative.Multiplicative`: values are aggregated via product (e.g., availability).
-- :class:`~eclypse_core.graph.assets.concave.Concave`: models assets where the **largest value dominates** the aggregation (e.g. latency).
-- :class:`~eclypse_core.graph.assets.convex.Convex`: models assets where the **smallest value dominates**. For instance the ingress bandwidth on a node is the minimum of all the featured bandwidths of the links connected to it.
-- :class:`~eclypse_core.graph.assets.symbolic.Symbolic`: for categorical compatibility (e.g. region, label).
+- :class:`~eclypse.graph.assets.additive.Additive`: values are aggregated via summation (e.g., cpu, ram).
+- :class:`~eclypse.graph.assets.multiplicative.Multiplicative`: values are aggregated via product (e.g., availability).
+- :class:`~eclypse.graph.assets.concave.Concave`: models assets where the **largest value dominates** the aggregation (e.g. latency).
+- :class:`~eclypse.graph.assets.convex.Convex`: models assets where the **smallest value dominates**. For instance the ingress bandwidth on a node is the minimum of all the featured bandwidths of the links connected to it.
+- :class:`~eclypse.graph.assets.symbolic.Symbolic`: for categorical compatibility (e.g. region, label).
 
 .. dropdown:: Example: Using an additive asset
 
@@ -105,7 +105,7 @@ This can be done in three ways:
 
 - by providing a **fixed value** (e.g., `2.0`)
 - by passing a **callable** with no arguments (e.g., `lambda: random.choice(...)`)
-- by using an :class:`~eclypse_core.graph.assets.space.AssetSpace` (e.g., `Uniform`, `Choice`, etc.)
+- by using an :class:`~eclypse.graph.assets.space.AssetSpace` (e.g., `Uniform`, `Choice`, etc.)
 
 .. dropdown:: Example: Using an `AssetSpace`
 
@@ -130,12 +130,12 @@ Asset initialisation is evaluated when the simulation is initialised, ensuring c
 Asset Spaces
 ~~~~~~~~~~~~
 
-An :class:`~eclypse_core.graph.assets.space.AssetSpace` defines the domain from which an asset's initial value is sampled. These can be subclassed for custom behaviour, or you can use one of the predefined asset spaces included in ECLYPSE:
+An :class:`~eclypse.graph.assets.space.AssetSpace` defines the domain from which an asset's initial value is sampled. These can be subclassed for custom behaviour, or you can use one of the predefined asset spaces included in ECLYPSE:
 
-- :class:`~eclypse_core.graph.assets.space.Choice`: pick a value from a list of options.
-- :class:`~eclypse_core.graph.assets.space.Uniform`: pick a float from a continuous uniform distribution.
-- :class:`~eclypse_core.graph.assets.space.IntUniform`: pick an integer from a uniform range, with optional step.
-- :class:`~eclypse_core.graph.assets.space.Sample`: pick a sample (list of values) from a population.
+- :class:`~eclypse.graph.assets.space.Choice`: pick a value from a list of options.
+- :class:`~eclypse.graph.assets.space.Uniform`: pick a float from a continuous uniform distribution.
+- :class:`~eclypse.graph.assets.space.IntUniform`: pick an integer from a uniform range, with optional step.
+- :class:`~eclypse.graph.assets.space.Sample`: pick a sample (list of values) from a population.
 
 .. dropdown:: Example: Using a `Choice`
 
@@ -155,7 +155,7 @@ These classes all implement the ``__call__`` interface and expect a `random.Rand
 
 .. note::
 
-   You can define your own asset spaces by subclassing :class:`~eclypse_core.graph.assets.space.AssetSpace` and overriding the ``__call__`` method.
+   You can define your own asset spaces by subclassing :class:`~eclypse.graph.assets.space.AssetSpace` and overriding the ``__call__`` method.
 
 .. _default-assets:
 
