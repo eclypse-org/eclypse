@@ -22,7 +22,6 @@ exclude = [
 quote-style = "double"
 indent-style = "space"
 docstring-code-format = true
-docstring-code-line-length = 88
 skip-magic-trailing-comma = false
 
 [lint]
@@ -39,7 +38,7 @@ select = [
     "TCH",
     "PL",
     #"ARG",
-    # "D",
+    "D",
 ]
 
 ignore = [
@@ -89,5 +88,5 @@ strict = true
 banned-module-level-imports = ["ray", "tensorboardX"]
 
 [lint.per-file-ignores]
-"**/__init__.py" = ["F401", "I001"] # allow re-exported symbols
-"tests/**" = ["D"]                  # relax docstring requirements in tests
+"**/__init__.py" = ["I001"] # allow re-exported symbols
+"tests/**" = ["D"]
