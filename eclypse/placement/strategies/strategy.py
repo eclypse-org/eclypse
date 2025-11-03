@@ -63,7 +63,7 @@ class PlacementStrategy(ABC):
     def is_feasible(
         self,
         infrastructure: Infrastructure,
-        application: Application,  # pylint: disable=unused-argument
+        _: Application,  # pylint: disable=unused-argument
     ) -> bool:
         """Check if the application can be placed on the infrastructure.
 

@@ -438,11 +438,11 @@ class SimulationTime:
         """Initialize the start time to the current time."""
         self.start = time()
 
-    def __call__(self, event):
+    def __call__(self, _):
         """Return the elapsed time since the simulation started.
 
         Args:
-            event (EclypseEvent): The event triggering the reporting of the simulation time.
+            _ (EclypseEvent): The event triggering the reporting of the simulation time.
 
         Returns:
             Optional[float]: The elapsed time since the simulation started \

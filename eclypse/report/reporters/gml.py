@@ -29,15 +29,15 @@ class GMLReporter(Reporter):
 
     def report(
         self,
-        event_name: str,
-        event_idx: int,
+        _: str,
+        __: int,
         callback: EclypseEvent,
     ) -> List[tuple[str, nx.DiGraph]]:
         """Extract graph data from callback and prepare it for writing.
 
         Args:
-            event_name (str): The name of the event.
-            event_idx (int): The index of the event trigger (step).
+            _ (str): The name of the event.
+            __ (int): The index of the event trigger (step).
             callback (EclypseEvent): The executed callback containing the data to report.
 
         Returns:
