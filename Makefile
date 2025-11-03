@@ -16,10 +16,12 @@ setup:
 	poetry install --with=dev,deploy --no-root
 
 format:
-	docformatter --config pyproject.toml --in-place eclypse
-	black --config=pyproject.toml eclypse
-	pycln --config=pyproject.toml eclypse
+# 	docformatter --config pyproject.toml --in-place eclypse
+# 	black --config=pyproject.toml eclypse
+# 	pycln --config=pyproject.toml eclypse
 	isort eclypse
+	ruff check
+	ruff format
 
 build: format
 	poetry build -v --no-cache --format wheel
