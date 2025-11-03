@@ -1,3 +1,35 @@
+## 0.8.0 (2025-11-03)
+
+### BREAKING CHANGE
+
+- Import paths and dependencies have changed.
+
+### Feat
+
+- **core**: Integrate eclypse_core into eclypse and remove the external core dependency
+
+### Fix
+
+- Reintroduce shield_interrupt decorator to catch CTRL-C
+- Move nx import to make random generator working correctly
+
+### Refactor
+
+- Merge core files into public code
+- Remove placement view residual usage
+
+## 0.7.4 (2025-06-27)
+
+## 0.7.3 (2025-06-26)
+
+## 0.7.2 (2025-06-25)
+
+### Fix
+
+- Add activates_on to event decorator
+
+## 0.7.1 (2025-06-10)
+
 ## 0.7.0 (2025-06-10)
 
 ### Feat
