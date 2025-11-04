@@ -77,7 +77,7 @@ def camel_to_snake(s: str) -> str:
 
 
 def prune_assets(
-    assets: Optional[AssetBucket] = None,
+    assets: AssetBucket,
     **requirements,
 ):
     """Prune the requirements dictionary.
@@ -86,13 +86,13 @@ def prune_assets(
     assets dictionary.
 
     Args:
-        assets (Optional[AssetBucket]): The assets dictionary.
+        assets (AssetBucket): The assets dictionary.
         **requirements: The requirements dictionary.
 
     Returns:
         Dict: The pruned requirements dictionary.
     """
-    return {k: v for k, v in requirements.items() if assets.get(k)} if assets else {}
+    return {k: v for k, v in requirements.items() if assets.get(k)}
 
 
 def shield_interrupt(func):

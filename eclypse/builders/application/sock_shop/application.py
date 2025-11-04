@@ -245,7 +245,7 @@ def get_sock_shop(
         "OrderService",
         "PaymentService",
         symmetric=True,
-        **prune_assets(latency=50, bandwidth=10),
+        **prune_assets(app.edge_assets, latency=50, bandwidth=10),
     )
     app.add_edge(
         "OrderService",
