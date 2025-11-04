@@ -53,55 +53,68 @@ We enforce the usage of conventional commits in this repository. Please ensure t
 ## Code Formatting
 
 We use the following tools for code formatting:
-- [Black](https://github.com/psf/black): Python code formatter.
-- [isort](https://github.com/PyCQA/isort): Python import sorter.
-- [docformatter](https://github.com/PyCQA/docformatter): Docstring formatter.
+
+- [Ruff](https://github.com/astral-sh/ruff): for linting and formatting Python code.
+- [isort](https://github.com/PyCQA/isort): for sorting and organizing Python imports (*Ruff could also handle this, but we use some standards that are not already ported to Ruff*).
 
 Please make sure that your code adheres to these formatting standards before submitting a pull request.
+You can check and format your code automatically with:
+
+```bash
+isort eclypse
+ruff check
+ruff format
+```
 
 ## Linting
 
-We utilize the following tools for linting:
-- [pycln](https://github.com/hadialqattan/pycln): Cleaner for Python code. It removes unused imports and unused variables.
-- [mypy](https://github.com/python/mypy): Static type checker for Python.
-- [pylint](https://github.com/pylint-dev/pylint): Python code quality checker.
+Linting in this project is handled entirely by [Ruff](https://github.com/astral-sh/ruff).
 
-Ensure that your code passes linting checks without any errors or warnings.
+Ruff is an extremely fast Python linter and formatter that replaces multiple traditional tools (such as flake8, pycodestyle, pyflakes, pydocstyle, and others) with a single, unified command-line interface.
 
-## Docstring Checks
-
-We maintain high-quality docstrings in our codebase. To ensure consistency and correctness, we have a `check` makefile rule under `docs/Makefile` that exploits `pylint` with enablers for docstrings (C0114, C0115, C0116).
-
-Please run the docstring check before submitting your changes to ensure that your docstrings meet our standards. You can execute the following command from the root directory of the repository:
+Before submitting your pull request, ensure that your code passes all linting checks defined in the `.ruff.toml` file, by running:
 
 ```bash
-cd docs
-make check
+ruff check
 ```
 
-## Pre-commit Hooks
-Apart from docstring checks, we provide pre-commit hooks to automate the process of enforcing code formatting, linting, and other checks mentioned above. Follow the steps below to install and run the pre-commit hooks:
+If you want Ruff to automatically fix all fixable issues, you can run:
 
-2. **Install pre-commit hooks:** Once pre-commit is installed, navigate to the root directory of the repository and run the following command:
+```bash
+ruff check --fix
+```
+
+Ruff will detect and correct most common style, import, and docstring issues automatically.
+Please make sure that all warnings and errors are resolved before committing your changes.
+
+## Pre-commit Hooks
+
+We provide pre-commit hooks to automate formatting and linting checks. Follow the steps below to install and run them:
+
+1. **Install pre-commit:**
+
+    ```bash
+    pip install pre-commit
+    ```
+
+2. **Install the hooks:**
 
     ```bash
     pre-commit install
     ```
 
-    This will set up pre-commit hooks for your local repository.
-
-3. **Run pre-commit checks:** You can now run all pre-commit checks on your changes before committing them. Use the following command:
+3. **Run pre-commit checks manually (optional):**
 
     ```bash
-    pre-commit run --all-files
+    pre-commit run -a
     ```
 
-    You can also use the Makefile rule `check` to run the pre-commit checks:
+    Alternatively, you can use the Makefile rule:
 
     ```bash
     make check
     ```
 
-    This command will execute all pre-commit hooks on all files in your repository. Any issues found will be reported, and you'll need to address them before committing your changes.
+This will execute all pre-commit hooks (formatting and linting) across your repository. Any issues found will be reported, and you'll need to address them before committing your changes.
 
-By following these steps, you can ensure that your changes adhere to our coding standards and guidelines before committing them. If you encounter any issues or have questions about the pre-commit setup, feel free to reach out to us for assistance.
+By following these steps, you ensure that your contributions maintain consistency and quality across the codebase. If you encounter any issues or have questions about the setup, feel free to reach out for assistance.
