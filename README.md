@@ -9,9 +9,9 @@
 
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-[![Checked wit pylint](https://img.shields.io/badge/pylint-10/10-green)](https://pylint.pycqa.org/en/latest/)
+[![Checked with pylint](https://img.shields.io/badge/pylint-10/10-green)](https://pylint.pycqa.org/en/latest/)
 [![Import sorted with isort](https://img.shields.io/badge/isort-checked-brightgreen)](https://pycqa.github.io/isort/)
-[![IMport cleaned with pycln](https://img.shields.io/badge/pycln-checked-brightgreen)](https://github.com/hadialqattan/pycln)
+[![Import cleaned with pycln](https://img.shields.io/badge/pycln-checked-brightgreen)](https://github.com/hadialqattan/pycln)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-black)](https://github.com/psf/black)
 [![Doc style: docformatter](https://img.shields.io/badge/doc%20style-docformatter-black)](https://github.com/PyCQA/docformatter)
 
