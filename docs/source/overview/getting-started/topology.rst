@@ -145,7 +145,7 @@ These methods allow you to associate assets and automatically validate their val
       If you're building an application to run in **emulation mode** rather than *simulation*,
       each service must be implemented with actual logic and remote execution support.
 
-      See the :doc:`Emulation guide <../advanced/emulation>` for details.
+      See the :doc:`Emulation guide <../advanced/emulation/index>` for details.
 
 .. note::
 

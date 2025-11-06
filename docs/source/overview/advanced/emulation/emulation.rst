@@ -60,7 +60,7 @@ Optionally, you can override:
 - :py:meth:`~eclypse.remote.service.service.Service.on_deploy` -- called just before the service starts executing.
 - :py:meth:`~eclypse.remote.service.service.Service.on_undeploy` -- called after the service stops.
 
-The return value of :py:meth:`~eclypse.remote.service.service.Service.step` is automatically pushed into the service's **result queue**. You can retrieve it via one of the :ref:`default metrics <default-metrics>` (e.g., `step_result`).
+The return value of :py:meth:`~eclypse.remote.service.service.Service.step` is automatically pushed into the service's **result queue**. You can retrieve it via one of the :py:mod:`default metrics <eclypse.report.metrics.defaults>` (e.g., `step_result`).
 
 .. dropdown:: Example: Echo Service
 
