@@ -16,7 +16,6 @@ from typing import (
     Any,
     Callable,
     Dict,
-    List,
     Set,
     Tuple,
 )
@@ -141,80 +140,78 @@ class PlacementView(nx.DiGraph):
         self.residual = self._get_snapshot()
         self.nodes_used_by.clear()
 
-    def _update_view(self, placements: List[Placement]):
+    def _update_view(self, placement: Placement):
         """Creates a view of the infrastructure.
 
-        It considers the current placements, aggregating the resources they use.
+        It adds to the view the resources required by the placement.
 
         Args:
-            placements (List[Placement]): The placements to update the view with.
+            placement (Placement): The placement to update the view with.
         """
-        for p in placements:
-            if p.mapping:
-                for n, node_reqs in p.node_requirements_mapping().items():
-                    new_node_reqs: Dict[str, Any] = self.node_aggregate(
-                        self.get_node_view(n), node_reqs
-                    )
-                    self.add_node(n, **new_node_reqs)
-                    self.nodes_used_by[n].add(p.application.id)
-                    nx.set_node_attributes(
-                        self.residual,
-                        {
-                            n: self.node_assets.consume(
-                                self.residual.nodes[n], node_reqs
-                            )
-                        },
-                    )
+        if placement.mapping:
+            for n, node_reqs in placement.node_requirements_mapping().items():
+                new_node_reqs: Dict[str, Any] = self.node_aggregate(
+                    self.get_node_view(n), node_reqs
+                )
+                self.add_node(n, **new_node_reqs)
+                self.nodes_used_by[n].add(placement.application.id)
+                nx.set_node_attributes(
+                    self.residual,
+                    {n: self.node_assets.consume(self.residual.nodes[n], node_reqs)},
+                )
 
-                for s, t, int_reqs in p.application.edges(data=True):
-                    node_s, node_t = p.service_placement(s), p.service_placement(t)
-                    _path = p.infrastructure.path(node_s, node_t)
-                    if _path:
-                        path = _path[0]
-                        _int_reqs = {
-                            k: (
-                                self.edge_assets[k].lower_bound
-                                if k in self._concave_convex_assets
-                                else int_reqs[k]
-                            )
-                            for k in int_reqs
-                        }
-
-                        for n1, n2, _ in path:
-                            new_int_reqs = self.edge_aggregate(
-                                self.get_edge_view(n1, n2), _int_reqs
-                            )
-
-                            self.add_edge(n1, n2, **new_int_reqs)
-                            self.nodes_used_by[n1].add(p.application.id)
-                            self.nodes_used_by[n2].add(p.application.id)
-                            nx.set_edge_attributes(
-                                self.residual,
-                                {
-                                    (n1, n2): self.edge_assets.consume(
-                                        self.residual.edges[n1, n2], new_int_reqs
-                                    )
-                                },
-                            )
-
-                        edge_view = self.get_edge_view(node_s, node_t)
-                        _int_reqs = {
-                            k: (
-                                edge_view[k]
-                                if k not in self._concave_convex_assets
-                                else int_reqs[k]
-                            )
-                            for k in int_reqs
-                            if k in self.edge_assets and self.edge_assets[k].functional
-                        }
-
-                        self.add_edge(node_s, node_t, **_int_reqs)
-                    else:
-                        p.infrastructure.logger.warning(
-                            f"Stopping placement search for {p.application.id}"
+            for s, t, int_reqs in placement.application.edges(data=True):
+                node_s, node_t = (
+                    placement.service_placement(s),
+                    placement.service_placement(t),
+                )
+                _path = placement.infrastructure.path(node_s, node_t)
+                if _path:
+                    path = _path[0]
+                    _int_reqs = {
+                        k: (
+                            self.edge_assets[k].lower_bound
+                            if k in self._concave_convex_assets
+                            else int_reqs[k]
                         )
-                        p.infrastructure.logger.warning(
-                            f" [Path not found] {s} ({node_s}) -> {t} ({node_t})"
+                        for k in int_reqs
+                    }
+
+                    for n1, n2, _ in path:
+                        new_int_reqs = self.edge_aggregate(
+                            self.get_edge_view(n1, n2), _int_reqs
                         )
-                        p._to_reset = True  # pylint: disable=protected-access
-                        break
+
+                        self.add_edge(n1, n2, **new_int_reqs)
+                        self.nodes_used_by[n1].add(placement.application.id)
+                        self.nodes_used_by[n2].add(placement.application.id)
+                        nx.set_edge_attributes(
+                            self.residual,
+                            {
+                                (n1, n2): self.edge_assets.consume(
+                                    self.residual.edges[n1, n2], new_int_reqs
+                                )
+                            },
+                        )
+
+                    edge_view = self.get_edge_view(node_s, node_t)
+                    _int_reqs = {
+                        k: (
+                            edge_view[k]
+                            if k not in self._concave_convex_assets
+                            else int_reqs[k]
+                        )
+                        for k in int_reqs
+                        if k in self.edge_assets and self.edge_assets[k].functional
+                    }
+
+                    self.add_edge(node_s, node_t, **_int_reqs)
+                else:
+                    placement.infrastructure.logger.warning(
+                        f"Stopping placement search for {placement.application.id}"
+                    )
+                    placement.infrastructure.logger.warning(
+                        f" [Path not found] {s} ({node_s}) -> {t} ({node_t})"
+                    )
+                    placement._to_reset = True  # pylint: disable=protected-access
+                    break

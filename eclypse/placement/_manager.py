@@ -15,7 +15,6 @@ from typing import (
     List,
     Optional,
     Tuple,
-    Union,
 )
 
 from eclypse.placement import Placement
@@ -35,18 +34,12 @@ if TYPE_CHECKING:
 class PlacementManager:
     """PlacementManager manages the placement of applications in the infrastructure."""
 
-    def __init__(
-        self, infrastructure: Infrastructure, incremental_mapping_phase: bool = False
-    ):
+    def __init__(self, infrastructure: Infrastructure):
         """Initializes the PlacementManager.
 
         Args:
             infrastructure (Infrastructure): The infrastructure to place the applications onto.
-            incremental_mapping_phase (bool, optional): If True, the placement is incremental,
-                i.e. one application at a time. If False, the placement is done in batch.
-                Defaults to False.
         """
-        self._incremental = incremental_mapping_phase
         self.infrastructure = infrastructure
         self.placements: Dict[str, Placement] = {}
         self.placement_view: PlacementView = PlacementView(self.infrastructure)
@@ -128,10 +121,7 @@ class PlacementManager:
 
     def mapping_phase(
         self,
-    ) -> Union[
-        List[Tuple[Placement, List[str]]],
-        Generator[Tuple[Placement, List[str]], None, None],
-    ]:
+    ) -> Generator[Tuple[Placement, List[str]], None, None]:
         """Executes the mapping phase of the placement.
 
         If the placement is incremental, it will return a generator of tuples containing
@@ -139,54 +129,19 @@ class PlacementManager:
         placement is not incremental, it will return a list of such tuples.
 
         Returns:
-            Union[
-                List[Tuple[Placement, List[str]]],
-                Generator[Tuple[Placement, List[str]], None, None],
-            ]: A list of tuples containing the placement and the nodes that are not \
+            Generator[Tuple[Placement, List[str]], None, None]:
+                A list of tuples containing the placement and the nodes that are not \
                 respected by the placement, or a generator of such tuples.
         """
         self.placement_view._reset()
         placements = list(self.placements.values())
-        return (
-            self._batch_mapping_phase(placements)
-            if not self._incremental
-            else self._incremental_mapping_phase(placements)
-        )
 
-    def _batch_mapping_phase(self, placements: List[Placement]):
-        """Executes the mapping phase of the placement in batch mode.
-
-        Args:
-            placements (List[Placement]): The placements to map onto the infrastructure.
-
-        Returns:
-            List[Tuple[Placement, List[str]]]: A list of tuples containing the placement \
-                and the nodes that are not respected by the placement.
-        """
-        for p in placements:
-            if not p.mapping:
-                self.generate_mapping(p)
-
-        self.placement_view._update_view(placements)
-
-        not_respected = self.infrastructure.contains(self.placement_view)
-        return [(p, not_respected) for p in placements]
-
-    def _incremental_mapping_phase(self, placements: List[Placement]):
-        """Executes the mapping phase of the placement in incremental mode.
-
-        N.B. The placements are shuffled to avoid bias in the placement order.
-
-        Args:
-            placements (List[Placement]): The placements to map onto the infrastructure.
-        """
         shuffle(placements)
         for p in placements:
             if not p.mapping:
                 self.generate_mapping(p)
 
-            deployed_placements = [pl for pl in placements if not pl._to_reset] + [p]
-            self.placement_view._update_view(deployed_placements)
+            self.placement_view._update_view(p)
 
             not_respected = self.infrastructure.contains(self.placement_view)
             if not_respected:

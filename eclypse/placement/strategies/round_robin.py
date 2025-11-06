@@ -46,10 +46,10 @@ class RoundRobinStrategy(PlacementStrategy):
 
     def place(
         self,
-        infrastructure: Infrastructure,
+        _: Infrastructure,
         application: Application,
-        _: Dict[str, Placement],
-        __: PlacementView,
+        __: Dict[str, Placement],
+        placement_view: PlacementView,
     ) -> Dict[Any, Any]:
         """Performs the placement according to a round-robin logic.
 
@@ -57,18 +57,16 @@ class RoundRobinStrategy(PlacementStrategy):
         to distribute them evenly.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application on.
+            _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            _ (Dict[str, Placement]): The placement of all the applications in the simulations.
-            __ (PlacementView): The snapshot of the current state of the infrastructure.
+            __ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            placement_view (PlacementView): The snapshot of the current state of the infrastructure.
 
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.
         """
-        if not self.is_feasible(infrastructure, application):
-            return {}
         mapping = {}
-        infrastructure_nodes = list(infrastructure.available.nodes(data=True))
+        infrastructure_nodes = list(placement_view.residual.nodes(data=True))
         if self.sort_fn:
             infrastructure_nodes.sort(key=self.sort_fn)
 

@@ -71,10 +71,7 @@ class Simulator:
         self._logger = logger
 
         self._infrastructure = infrastructure
-        self._manager = PlacementManager(
-            infrastructure=self._infrastructure,
-            incremental_mapping_phase=self._config.incremental_mapping_phase,
-        )
+        self._manager = PlacementManager(infrastructure=self._infrastructure)
 
         self._events: Dict[str, EclypseEvent] = {
             event.name: event for event in self._config.events

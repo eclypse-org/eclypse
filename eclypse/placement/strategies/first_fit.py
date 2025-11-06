@@ -71,7 +71,7 @@ class FirstFitStrategy(PlacementStrategy):
             return {}
 
         mapping = {}
-        infrastructure_nodes = list(placement_view.residual.available.nodes(data=True))
+        infrastructure_nodes = list(placement_view.residual.nodes(data=True))
         if self.sort_fn:
             infrastructure_nodes.sort(key=self.sort_fn)
         else:

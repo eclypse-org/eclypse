@@ -49,24 +49,24 @@ class RandomStrategy(PlacementStrategy):
 
     def place(
         self,
-        infrastructure: Infrastructure,
+        _: Infrastructure,
         application: Application,
-        _: Dict[str, Placement],
-        __: PlacementView,
+        __: Dict[str, Placement],
+        placement_view: PlacementView,
     ) -> Dict[Any, Any]:
         """Places the services of an application on the infrastructure nodes, randomly.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application on.
+            _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            _ (Dict[str, Placement]): The placement of all the applications in the simulations.
-            __ (PlacementView): The snapshot of the current state of the \
+            __ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            placement_view (PlacementView): The snapshot of the current state of the \
                 infrastructure.
 
         Returns:
             Dict[str, str]: A mapping of services to infrastructure nodes.
         """
-        infrastructure_nodes = list(infrastructure.available.nodes())
+        infrastructure_nodes = list(placement_view.residual.nodes())
         if not infrastructure_nodes:
             return {}
 

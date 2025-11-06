@@ -70,7 +70,6 @@ class SimulationConfig(dict):
         max_steps: Optional[int] = None,
         reporters: Optional[Dict[str, Type[Reporter]]] = None,
         events: Optional[List[EclypseEvent]] = None,
-        incremental_mapping_phase: bool = True,
         include_default_metrics: bool = False,
         seed: Optional[int] = None,
         path: Optional[str] = None,
@@ -88,8 +87,6 @@ class SimulationConfig(dict):
                 Defaults to None.
             max_steps (Optional[int], optional): The number of iterations the simulation \
                 will run. Defaults to None.
-            incremental_mapping_phase (bool, optional): Whether the mapping phase will be \
-                incremental. Defaults to False.
             events (Optional[List[Callable]], optional): The list of events that will be \
                 triggered in the simulation. Defaults to None.
             reporters (Optional[Dict[str, Type[Reporter]]], optional): The list of reporters \
@@ -145,7 +142,6 @@ class SimulationConfig(dict):
             step_every_ms=_step_every_ms,
             timeout=timeout,
             max_steps=max_steps,
-            incremental_mapping_phase=incremental_mapping_phase,
             events=_events,
             reporters=_reporters,
             seed=seed,
@@ -250,15 +246,6 @@ class SimulationConfig(dict):
             int: The seed.
         """
         return self["seed"]
-
-    @property
-    def incremental_mapping_phase(self) -> bool:
-        """Returns whether the the placement mapping phase is incremental or in batch.
-
-        Returns:
-            bool: True if the mapping phase is incremental. False otherwise (batch).
-        """
-        return self["incremental_mapping_phase"]
 
     @property
     def events(self) -> List[EclypseEvent]:
