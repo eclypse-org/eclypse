@@ -22,7 +22,7 @@ loguru = "^0.7.3"
 pandas = "^2.3.3"
 aiofiles = "^25.1.0"
 tensorboardx = { version = "^2.6.4", optional = true }
-ray = { extras = ["default"], version = "^2.51.0", optional = true }
+ray = { extras = ["default"], version = "^2.52.1", optional = true }
 
 [tool.poetry.extras]
 remote = ["ray"]
