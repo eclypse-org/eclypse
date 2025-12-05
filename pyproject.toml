@@ -17,7 +17,7 @@ repository = "https://github.com/eclypse-org/eclypse"
 
 [tool.poetry.dependencies]
 python = ">=3.11, <3.14"
-networkx = "^3.5"
+networkx = "^3.6"
 loguru = "^0.7.3"
 pandas = "^2.3.3"
 aiofiles = "^25.1.0"
@@ -32,12 +32,12 @@ tboard = ["tensorboardX"]
 optional = true
 
 [tool.poetry.group.dev.dependencies]
-black = "^25.9.0"
-commitizen = "^4.9.1"
-pre-commit = "^4.3.0"
-mypy = "^1.18.2"
+black = "^25.11.0"
+commitizen = "^4.10.0"
+pre-commit = "^4.5.0"
+mypy = "^1.19.0"
 isort = "^7.0.0"
-ruff = "^0.14.3"
+ruff = "^0.14.8"
 # pycln = "^2.6.0"
 # pylint = "^4.0.2"
 # docformatter = { extras = ["tomli"], version = "^1.7.7" }

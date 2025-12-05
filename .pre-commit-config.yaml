@@ -9,10 +9,10 @@ repos:
       - id: detect-private-key
       - id: requirements-txt-fixer
 
-  # - repo: https://github.com/pycqa/isort
-  #   rev: 7.0.0
-  #   hooks:
-  #     - id: isort
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.9.1
@@ -30,7 +30,7 @@ repos:
         args: [--fix, --select, "F401"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.3
+    rev: v0.14.8
     hooks:
       - id: ruff-check
       - id: ruff-format
