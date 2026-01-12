@@ -1,111 +1,119 @@
-[tool.poetry]
+[project]
 name = "eclypse"
 version = "0.8.1"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
-authors = [
-    "Jacopo Massa <jacopo.massa@di.unipi.it>",
-    "Valerio De Caro <valerio.decaro@di.unipi.it>",
-]
-maintainers = [
-    "Jacopo Massa <jacopo.massa@di.unipi.it>",
-    "Valerio De Caro <valerio.decaro@di.unipi.it>",
-]
-license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/eclypse-org/eclypse"
-repository = "https://github.com/eclypse-org/eclypse"
+requires-python = ">=3.11,<3.14"
+license-files = ["LICENSE"]
 
-[tool.poetry.dependencies]
-python = ">=3.11, <3.14"
-networkx = "^3.6.1"
-loguru = "^0.7.3"
-pandas = "^2.3.3"
-aiofiles = "^25.1.0"
-tensorboardx = {version = "^2.6.4", optional = true}
-ray = {extras = ["default"], version = "^2.53.0", optional = true}
+authors = [
+    { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
+    { name = "Valerio De Caro", email = "valerio.decaro@di.unipi.it" },
+]
 
-[tool.poetry.extras]
-remote = ["ray"]
-tboard = ["tensorboardX"]
+maintainers = [
+    { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
+    { name = "Valerio De Caro", email = "valerio.decaro@di.unipi.it" },
+]
+
+dependencies = [
+    "networkx (>=3.6.1,<4.0.0)",
+    "loguru (>=0.7.3,<0.8.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "aiofiles (>=25.1.0,<26.0.0)",
+]
+
+[project.urls]
+Homepage = "https://github.com/eclypse-org/eclypse"
+Repository = "https://github.com/eclypse-org/eclypse"
+
+
+[project.optional-dependencies]
+remote = ["ray[default] (>=2.53.0,<3.0.0)"]
+tboard = ["tensorboardX (>=2.6.4,<3.0.0)"]
+
+
+# Dependency Groups
+[dependency-groups]
+dev = [
+    "black (>=25.12.0,<26.0.0)",
+    "commitizen (>=4.11.0,<5.0.0)",
+    "pre-commit (>=4.5.1,<5.0.0)",
+    "mypy (>=1.19.1,<2.0.0)",
+    "isort (>=7.0.0,<8.0.0)",
+    "ruff (>=0.14.10,<0.15.0)",
+]
+
+deploy = [
+    "wheel (>=0.45.1,<0.46.0)",
+    "setuptools (>=80.9.0,<81.0.0)",
+    "twine (>=6.2.0,<7.0.0)",
+]
+
+test = [
+    "pytest (>=8.4.2,<9.0.0)",
+    "pytest-cov (>=7.0.0,<8.0.0)",
+    "pytest-xdist (>=3.8.0,<4.0.0)",
+]
+
+docs = [
+    "myst-parser (>=4.0.1,<5.0.0)",
+    "sphinx-copybutton (>=0.5.2,<0.6.0)",
+    "jinja2 (>=3.1.6,<4.0.0)",
+    "docformatter[tomli] (>=1.7.7,<2.0.0)",
+    "sphinx-autobuild (>=2025.8.25,<2026.0.0)",
+    "enum-tools (>=0.13.0,<0.14.0)",
+    "sphinx-favicon (>=1.0.1,<2.0.0)",
+    "sphinx-design (>=0.6.1,<0.7.0)",
+    "sphinx-icon (>=0.2.2,<0.3.0)",
+    "pydata-sphinx-theme (>=0.16.1,<0.17.0)",
+    "sphinx (>=8.2.3,<9.0.0)",
+]
 
 [tool.poetry.group.dev]
 optional = true
 
-[tool.poetry.group.dev.dependencies]
-black = "^25.12.0"
-commitizen = "^4.11.0"
-pre-commit = "^4.5.1"
-mypy = "^1.19.1"
-isort = "^7.0.0"
-ruff = "^0.14.10"
-# pycln = "^2.6.0"
-# pylint = "^4.0.2"
-# docformatter = { extras = ["tomli"], version = "^1.7.7" }
-
 [tool.poetry.group.deploy]
 optional = true
-
-[tool.poetry.group.deploy.dependencies]
-wheel = "^0.45.1"
-setuptools = "^80.9.0"
-twine = "^6.2.0"
 
 [tool.poetry.group.test]
 optional = true
 
-[tool.poetry.group.test.dependencies]
-pytest = "^8.4.2"
-pytest-cov = "^7.0.0"
-pytest-xdist = "^3.8.0"
-
 [tool.poetry.group.docs]
 optional = true
 
-# To build the docs, at least python3.10 is required
-[tool.poetry.group.docs.dependencies]
-myst-parser = "^4.0.1"
-sphinx-copybutton = "^0.5.2"
-jinja2 = "^3.1.6"
-docformatter = { extras = ["tomli"], version = "^1.7.7" }
-sphinx-autobuild = "^2025.8.25"
-enum-tools = "^0.13.0"
-sphinx-favicon = "^1.0.1"
-sphinx-design = "^0.6.1"
-sphinx-icon = "^0.2.2"
-pydata-sphinx-theme = "^0.16.1"
-sphinx = "^8.2.3"
 
+# Build backend
 [build-system]
-requires = ["poetry-core", "setuptools", "wheel"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+
+# -------------------------
+# Third-party tool settings
+# -------------------------
 
 [tool.commitizen]
 name = "cz_conventional_commits"
 version = "0.8.1"
 tag_format = "$version"
 version_files = [
-    "pyproject.toml:version",
+    "pyproject.toml:^version",
     "eclypse/__init__.py:__version__",
     "CITATION.cff:version",
 ]
 
+
 [tool.isort]
+profile = "black"
 multi_line_output = 3
 include_trailing_comma = true
 force_grid_wrap = 2
 filter_files = true
 skip = ["__init__.py"]
 
-# [tool.docformatter]
-# recursive = true
-# black = true
-# diff = true
-# tab-width = 4
-
-# [tool.pycln]
-# all = true
 
 [tool.pytest.ini_options]
-testpaths = "tests"
+testpaths = ["tests"]
 addopts = "--cov-report=xml --cov-report=term-missing --cov"
 filterwarnings = ["ignore::DeprecationWarning"]
