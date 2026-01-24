@@ -38,19 +38,21 @@ The documentation for ECLYPSE can be found [here](https://eclypse.readthedocs.io
 ECLYPSE is described and assessed in:
 
 > Jacopo Massa, Valerio De Caro, Stefano Forti, Patrizio Dazzi, Davide Bacciu, Antonio Brogi<br>
-> [**ECLYPSE: a Python Framework for Simulation and Emulation of the Cloud-Edge Continuum**](https://arxiv.org/abs/2501.17126), <br>
-> arXiv preprint arXiv:2501.17126, 2025.
+> [**ECLYPSE: a Python Framework for Simulation and Emulation of the Cloud-Edge Continuum**](https://doi.org/10.1002/smr.70081), <br>
+> Journal of Software: Evolution and Process, 2026.
 
 If you want to cite ECLYPSE in your work, you can use the following BibTeX entry:
 ```bibtex
-@misc{massa2025eclypse,
-    title         = {{ECLYPSE: a Python Framework for Simulation and Emulation of the Cloud-Edge Continuum}},
-    author        = {Jacopo Massa and Valerio De Caro and Stefano Forti and Patrizio Dazzi and Davide Bacciu and Antonio Brogi},
-    year          = {2025},
-    eprint        = {2501.17126},
-    archivePrefix = {arXiv},
-    primaryClass  = {cs.NI},
-    url           = {https://arxiv.org/abs/2501.17126},
+@article{massa2025eclypse,
+  title     = {{ECLYPSE: A Python Framework for Simulation and Emulation of the Cloud-Edge Continuum}},
+  author    = {Massa, Jacopo and De Caro, Valerio and Forti, Stefano and Dazzi, Patrizio and Bacciu, Davide and Brogi, Antonio},
+  journal   = {Journal of Software: Evolution and Process},
+  volume    = {38},
+  number    = {1},
+  pages     = {e70081},
+  year      = {2026},
+  month     = {1},
+  doi       = {10.1002/smr.70081},
 }
 ```
 
