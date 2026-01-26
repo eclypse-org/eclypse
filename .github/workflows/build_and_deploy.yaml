@@ -5,7 +5,7 @@ jobs:
   build_and_deploy:
     strategy:
       matrix:
-        os: [ubuntu-22.04, ubuntu-latest, macos-13, macos-latest]
+        os: [ubuntu-22.04, ubuntu-latest, macos-14, macos-latest]
         python-version: ["3.11", "3.12", "3.13"]
     runs-on: ${{ matrix.os }}
     continue-on-error: true
