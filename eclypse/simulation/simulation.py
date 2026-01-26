@@ -231,7 +231,7 @@ class Simulation:
         """The report of the simulation."""
         if self._report is None:
             self.wait()
-            self._report = Report(self.path)
+            self._report = Report(self.path, self._sim_config.report_backend)
         return self._report
 
 

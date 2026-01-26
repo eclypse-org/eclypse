@@ -50,6 +50,7 @@ COST_RECOMPUTATION_THRESHOLD = 0.05  # 5% threshold to consider recomputation co
 
 DEFAULT_SIM_PATH = Path.home() / "eclypse-sim"
 DEFAULT_REPORT_TYPE = "csv"
+DEFAULT_REPORT_BACKEND = "pandas"
 DRIVING_EVENT = "enact"
 
 __all__ = [

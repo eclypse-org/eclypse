@@ -4,7 +4,12 @@ If you are interested in creating HTML reports, use the
 `eclypse-html-report <https://pypi.org/project/eclypse-html-report>` CLI tool.
 """
 
-from typing import Callable, Dict, List, Optional
+from typing import (
+    Callable,
+    Dict,
+    List,
+    Optional,
+)
 
 from eclypse.report import Reporter
 
@@ -18,6 +23,9 @@ def get_default_reporters(
     requested_reporters: Optional[List[str]],
 ) -> Dict[str, Callable[..., Reporter]]:
     """Get the default reporters, comprising CSV, GML, JSON, and TensorBoard.
+
+    Args:
+        requested_reporters (Optional[List[str]]): The list of requested reporters.
 
     Returns:
         Dict[str, Type[Reporter]]: The default reporters.

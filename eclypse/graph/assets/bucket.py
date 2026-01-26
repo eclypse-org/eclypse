@@ -32,7 +32,7 @@ class AssetBucket(Dict[str, Asset]):
         """
         super().__init__(assets)
 
-    def __setitem__(self, key: str, value: Asset) -> None:
+    def __setitem__(self, key: str, value: Asset):
         """Set an asset in the bucket.
 
         Args:

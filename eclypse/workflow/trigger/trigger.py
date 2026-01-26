@@ -136,7 +136,7 @@ class ScheduledTrigger(Trigger):
         self._init_time: Optional[datetime] = None
         self._scheduled_times: List[datetime] = []
 
-    def init(self) -> None:
+    def init(self):
         """Prepare the trigger by setting the initial time."""
         self._init_time = datetime.now()
         self._scheduled_timedelta = sorted(self._scheduled_timedelta)

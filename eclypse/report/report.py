@@ -1,9 +1,19 @@
-"""Module for the Report class."""
+"""Report class backed by a pluggable DataFrame backend.
+
+The Report reads CSV files produced by a simulation and provides convenient
+accessors (application, service, etc.) returning a filtered DataFrame.
+
+The backend is selectable (pandas, polars eager, polars lazy) and can be
+extended by providing custom FrameBackend subclasses.
+"""
+
+from __future__ import annotations
 
 import json
 from collections import defaultdict
 from pathlib import Path
 from typing import (
+    TYPE_CHECKING,
     Any,
     Dict,
     List,
@@ -13,46 +23,79 @@ from typing import (
     get_args,
 )
 
-import pandas as pd
-
-from eclypse.utils.constants import MAX_FLOAT
+from eclypse.report.backends import get_backend
+from eclypse.utils.constants import (
+    DEFAULT_REPORT_BACKEND,
+    MAX_FLOAT,
+)
 from eclypse.utils.types import EventType
+
+if TYPE_CHECKING:
+    from eclypse.report.backend import FrameBackend
 
 REPORT_TYPES = list(get_args(EventType))
 
 
+def to_float(value: Any) -> Any:
+    """Convert a value to float where possible.
+
+    Args:
+        value: The value to convert.
+
+    Returns:
+        The float value if conversion succeeds; otherwise the original value.
+    """
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return value
+
+
 class Report:
-    """Report class.
+    """Report class backed by a pluggable DataFrame backend.
 
-    It represents the report of a simulation, built from the CSV files, thus
-    *working only if the simulation reports metrics in CSV format*.
+    The report is built from CSV files produced by a simulation. It provides
+    methods to access report-specific DataFrames and filter them by event range,
+    step, and optional column filters.
 
-    It provides methods to access the dataframes for the different report types, such as
-    application, service, interaction, infrastructure, node, link, and simulation. It
-    also provides methods to filter the dataframes based on the report range, step, and
-    additional filters like event IDs, application IDs, service IDs, etc.
-
-    The report is initialised with the path to the simulation directory, where it
-    expects to find a "csv" directory containing the CSV files for the different report
-    types.
+    Note:
+        When using the polars lazy backend, DataFrame-returning methods will
+        return a LazyFrame. Call `.collect()` to materialise a DataFrame.
     """
 
-    def __init__(self, simulation_path: Union[str, Path]):
-        """Initialise the Report with the path to the simulation directory.
+    def __init__(
+        self,
+        simulation_path: Union[str, Path],
+        backend: Union[str, FrameBackend] = DEFAULT_REPORT_BACKEND,
+    ):
+        """Initialise the Report.
 
         Args:
-            simulation_path (Union[str, Path]): The path to the simulation directory.
+            simulation_path: Path to the simulation directory containing the "csv" folder.
+            backend: Backend name or a FrameBackend instance.
 
         Raises:
-            FileNotFoundError: If the "csv" directory does not exist in the simulation path.
+            FileNotFoundError: If the "csv" directory does not exist.
+            ValueError: If a backend name is unknown.
+            TypeError: If a backend object is not a FrameBackend.
         """
         self._sim_path = Path(simulation_path)
         self._stats_path = self._sim_path / "csv"
         if not self._stats_path.exists():
-            raise FileNotFoundError(f'No CSV files found at "{self._stats_path}."')
+            raise FileNotFoundError(f'No CSV files found at "{self._stats_path}".')
 
-        self.stats: Dict[EventType, Optional[pd.DataFrame]] = defaultdict()
+        self._backend = get_backend(backend)
+        self.stats: Dict[EventType, Optional[Any]] = defaultdict()
         self._config: Optional[Dict[str, Any]] = None
+
+    @property
+    def backend_name(self) -> str:
+        """Return the name of the currently selected backend.
+
+        Returns:
+            The backend name.
+        """
+        return self._backend.name
 
     def application(
         self,
@@ -60,23 +103,17 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing application metrics within the given range.
-
-        Get a dataframe for the application metrics, filtered by the given
-        report_range, report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing application metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): \
-                Application IDs to filter by. Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
+            application_ids: Application IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the application metrics.
+            A filtered DataFrame for application metrics.
         """
         return self.to_dataframe(
             "application",
@@ -93,25 +130,18 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
         service_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing service metrics within the given range.
-
-        Get a dataframe for the service metrics, filtered by the given report_range,
-        report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing service metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): \
-                Application IDs to filter by. Defaults to None.
-            service_ids (Optional[Union[str, List[str]]], optional): Service IDs to filter by. \
-                Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
+            application_ids: Application IDs to filter by.
+            service_ids: Service IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the service metrics.
+            A filtered DataFrame for service metrics.
         """
         return self.to_dataframe(
             "service",
@@ -130,27 +160,19 @@ class Report:
         sources: Optional[Union[str, List[str]]] = None,
         targets: Optional[Union[str, List[str]]] = None,
         application_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing interaction metrics within the given range.
-
-        Get a dataframe for the interaction metrics, filtered by the given
-        report_range, report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing interaction metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
-            sources (Optional[Union[str, List[str]]], optional): Source IDs to filter by. \
-                Defaults to None.
-            targets (Optional[Union[str, List[str]]], optional): Target IDs to filter by. \
-                Defaults to None.
-            application_ids (Optional[Union[str, List[str]]], optional): \
-                Application IDs to filter by. Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
+            sources: Source IDs to filter by.
+            targets: Target IDs to filter by.
+            application_ids: Application IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the interaction metrics.
+            A filtered DataFrame for interaction metrics.
         """
         return self.to_dataframe(
             "interaction",
@@ -167,21 +189,16 @@ class Report:
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing infrastructure metrics within the given range.
-
-        Get a dataframe for the infrastructure metrics, filtered by the given
-        report_range, report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing infrastructure metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the infrastructure metrics.
+            A filtered DataFrame for infrastructure metrics.
         """
         return self.to_dataframe(
             "infrastructure",
@@ -196,23 +213,17 @@ class Report:
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
         node_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing node metrics within the given range.
-
-        Get a dataframe for the node metrics, filtered by the given report_range,
-        report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing node metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
-            node_ids (Optional[Union[str, List[str]]], optional): Node IDs to filter by. \
-                Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
+            node_ids: Node IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the node metrics.
+            A filtered DataFrame for node metrics.
         """
         return self.to_dataframe(
             "node",
@@ -229,25 +240,18 @@ class Report:
         event_ids: Optional[Union[str, List[str]]] = None,
         sources: Optional[Union[str, List[str]]] = None,
         targets: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing link metrics within the given range.
-
-        Get a dataframe for the link metrics, filtered by the given report_range,
-        report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing link metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
-            sources (Optional[Union[str, List[str]]], optional): Source IDs to filter by. \
-                Defaults to None.
-            targets (Optional[Union[str, List[str]]], optional): Target IDs to filter by. \
-                Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
+            sources: Source IDs to filter by.
+            targets: Target IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the link metrics.
+            A filtered DataFrame for link metrics.
         """
         return self.to_dataframe(
             "link",
@@ -263,21 +267,16 @@ class Report:
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
-    ) -> pd.DataFrame:
-        """Return a filtered dataframe containing simulation metrics within the given range.
-
-        Get a dataframe for the simulation metrics, filtered by the given
-        report_range, report_step and additional filters.
+    ) -> Any:
+        """Return a filtered DataFrame containing simulation metrics.
 
         Args:
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
 
         Returns:
-            pd.DataFrame: The filtered dataframe for the simulation metrics.
+            A filtered DataFrame for simulation metrics.
         """
         return self.to_dataframe(
             "simulation",
@@ -292,24 +291,17 @@ class Report:
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         event_ids: Optional[Union[str, List[str]]] = None,
-    ) -> Dict[str, pd.DataFrame]:
-        """Get dataframes for the specified report types, filtered by the given range.
-
-        Get dataframes for the specified report types, filtered by the given
-        report_range, report_step and additional filters.
+    ) -> Dict[str, Any]:
+        """Return multiple report DataFrames for the specified report types.
 
         Args:
-            report_types (Optional[List[EventType]], optional): The types of reports to get. \
-                Defaults to None, which means all report types.
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            event_ids (Optional[Union[str, List[str]]], optional): Event IDs to filter by. \
-                Defaults to None.
+            report_types: List of report types to fetch. If None, all report types are returned.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            event_ids: Event IDs to filter by.
 
         Returns:
-            Dict[str, pd.DataFrame]: A dictionary where keys are report types and values are \
-                the corresponding filtered dataframes.
+            A mapping from report type to filtered DataFrame.
 
         Raises:
             ValueError: If an invalid report type is provided.
@@ -336,108 +328,90 @@ class Report:
         report_type: EventType,
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        **kwargs,
-    ) -> pd.DataFrame:
-        """Get a dataframe for the given report type, filtered by the given report_range.
-
-        Get a dataframe for the given report type, filtered by the given
-        report_range, report_step and additional filters.
+        **kwargs: Any,
+    ) -> Any:
+        """Return a DataFrame for the given report type, filtered by range and extra filters.
 
         Args:
-            report_type (str): The type of report to get (e.g. application, service, etc.).
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            **kwargs: Additional filters to apply to the dataframe. They must \
-                be columns in the dataframe.
+            report_type: The report type (e.g. "application", "service", etc.).
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            **kwargs: Additional filters to apply. Keys must be column names.
 
         Returns:
-            pd.DataFrame: The filtered dataframe.
+            A filtered DataFrame.
         """
         self._read_csv(report_type)
-
+        df = self.stats[report_type]
+        if df is None:
+            raise RuntimeError(f"Report data for {report_type!r} could not be loaded.")
         return self.filter(
-            self.stats[report_type],
-            report_range=report_range,
-            report_step=report_step,
-            **kwargs,
+            df, report_range=report_range, report_step=report_step, **kwargs
         )
 
     def _read_csv(self, report_type: EventType):
-        """Read a CSV file into a dataframe and store it in the stats dictionary.
+        """Read a CSV file into a DataFrame and cache it.
 
         Args:
-            report_type (str): The type of report to read (e.g. application, service, etc.).
-
-        Returns:
-            pd.DataFrame: The dataframe containing the report data.
+            report_type: The report type to read (e.g. "application", "service", etc.).
         """
         if report_type not in self.stats:
-            file_path = self._stats_path / f"{report_type}.csv"
-            df = pd.read_csv(file_path, converters={"value": _to_float})
-            self.stats[report_type] = df
+            file_path = str(self._stats_path / f"{report_type}.csv")
+            self.stats[report_type] = self._backend.read_csv(file_path)
 
     def filter(
         self,
-        df: pd.DataFrame,
+        df: Any,
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        **kwargs,
-    ):
-        """Filter a dataframe based on the given range and step, and the provided kwargs.
+        **kwargs: Any,
+    ) -> Any:
+        """Filter a DataFrame by n_event range/step and optional equality/membership filters.
 
         Args:
-            df (pd.DataFrame): The dataframe to filter.
-            report_range (Tuple[int, int], optional): The range of the dataframe to filter. \
-                Defaults to (0, MAX_FLOAT).
-            report_step (int, optional): The step to use when filtering. Defaults to 1.
-            **kwargs: Additional filters to apply to the dataframe. They must \
-                be columns in the dataframe.
+            df: The DataFrame to filter.
+            report_range: The inclusive range (start, end) of n_event values to include.
+            report_step: Step used when sampling n_event values.
+            **kwargs: Additional filters to apply. Values may be scalars or lists.
 
         Returns:
-            pd.DataFrame: The filtered dataframe.
+            A filtered DataFrame.
         """
-        if not df.empty:
-            max_event = min(df["n_event"].max(), report_range[1])
-            filtered = df[
-                df["n_event"].isin(
-                    list(range(report_range[0], max_event + 1, report_step))
-                )
-            ]
-            filters = {k: v for k, v in kwargs.items() if v is not None}
-            for key, value in filters.items():
-                if key in filtered.columns:
-                    if isinstance(value, list):
-                        filtered = filtered[filtered[key].isin(value)]
-                    else:
-                        filtered = filtered[filtered[key] == value]
-            return filtered
-        return df
+        b = self._backend
+
+        if b.is_empty(df):
+            return df
+
+        max_event = min(b.max(df, "n_event"), report_range[1])
+        events = range(report_range[0], max_event + 1, report_step)
+        filtered = b.filter_events(df, "n_event", events)
+
+        filters = {k: v for k, v in kwargs.items() if v is not None}
+        cols = b.columns(filtered)
+
+        for key, value in filters.items():
+            if key not in cols:
+                continue
+            if isinstance(value, list):
+                filtered = b.filter_in(filtered, key, value)
+            else:
+                filtered = b.filter_eq(filtered, key, value)
+
+        return filtered
 
     @property
     def config(self) -> Dict[str, Any]:
-        """Get the configuration of the simulation, loaded from the config.json file.
+        """Return the simulation configuration loaded from config.json.
 
         Returns:
-            Dict[str, Any]: The configuration of the simulation.
+            The configuration mapping.
+
+        Raises:
+            FileNotFoundError: If config.json is missing.
+            json.JSONDecodeError: If the JSON file is invalid.
         """
         if self._config is None:
             file_path = self._sim_path / "config.json"
             with open(file_path, encoding="utf-8") as config_file:
                 self._config = json.load(config_file)
         return self._config
-
-
-def _to_float(value: Any):
-    """Convert a value to a float if possible.
-
-    Args:
-        value: The value to convert.
-
-    Returns:
-        float: The float value, or the original value if it cannot be converted.
-    """
-    try:
-        return float(value)
-    except ValueError:
-        return value
