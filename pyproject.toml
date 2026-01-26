@@ -19,7 +19,6 @@ maintainers = [
 dependencies = [
     "networkx (>=3.6.1,<4.0.0)",
     "loguru (>=0.7.3,<0.8.0)",
-    "pandas (>=2.3.3,<3.0.0)",
     "aiofiles (>=25.1.0,<26.0.0)",
 ]
 
