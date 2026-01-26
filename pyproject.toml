@@ -35,8 +35,8 @@ tboard = ["tensorboardX (>=2.6.4,<3.0.0)"]
 # Dependency Groups
 [dependency-groups]
 dev = [
-    "black (>=25.12.0,<26.0.0)",
-    "commitizen (>=4.11.0,<5.0.0)",
+    "black (>=26.1.0,<27.0.0)",
+    "commitizen (>=4.12.1,<5.0.0)",
     "pre-commit (>=4.5.1,<5.0.0)",
     "mypy (>=1.19.1,<2.0.0)",
     "isort (>=7.0.0,<8.0.0)",
@@ -44,8 +44,8 @@ dev = [
 ]
 
 deploy = [
-    "wheel (>=0.45.1,<0.46.0)",
-    "setuptools (>=80.9.0,<81.0.0)",
+    "wheel (>=0.46.3,<0.47.0)",
+    "setuptools (>=80.10.2,<81.0.0)",
     "twine (>=6.2.0,<7.0.0)",
 ]
 
