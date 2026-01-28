@@ -67,7 +67,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             include_default_assets (bool): Whether to include the default assets. \
                 Defaults to False.
             requirement_init (Literal["min", "max"]): The initialization of the requirements.
-            flows (Optional[List[List[str]]): The flows of the application.
+            flows (Optional[List[List[str]]]): The flows of the application.
             seed (Optional[int]): The seed for the random number generator.
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}
@@ -96,10 +96,22 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             service (Service): The service to add.
             **assets : The assets to add to the service.
         """
+        # Strict Type Checking
         if not isinstance(service, Service):
-            raise ValueError("The service must be an instance of Service.")
+            raise TypeError(f"Expected Service instance, got {type(service).__name__}")
+
+        # Prevent Silent Overwrites
+        # We check if the service is already tethered to another application ID.
+        current_app_id = getattr(service, "application_id", None)
+        if current_app_id is not None and current_app_id != self.id:
+            raise ValueError(
+                f"Service '{service.id}' is already assigned to application '{current_app_id}'. "
+                f"Cannot reassign to '{self.id}'."
+            )
+
         service.application_id = self.id
         self.services[service.id] = service
+
         self.add_node(service.id, **assets)
 
     def set_flows(self):
@@ -127,5 +139,4 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         This property requires to be True for the remote execution.
         """
-        checks = [(x in self.services) for x in self.nodes]
-        return checks != [] and all(checks)
+        return all(x in self.services for x in self.nodes)
