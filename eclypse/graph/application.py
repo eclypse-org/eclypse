@@ -139,5 +139,4 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         This property requires to be True for the remote execution.
         """
-        checks = [(x in self.services) for x in self.nodes]
-        return checks != [] and all(checks)
+        return all(x in self.services for x in self.nodes)
