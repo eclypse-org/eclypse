@@ -67,7 +67,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             include_default_assets (bool): Whether to include the default assets. \
                 Defaults to False.
             requirement_init (Literal["min", "max"]): The initialization of the requirements.
-            flows (Optional[List[List[str]]): The flows of the application.
+            flows (Optional[List[List[str]]]): The flows of the application.
             seed (Optional[int]): The seed for the random number generator.
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}
