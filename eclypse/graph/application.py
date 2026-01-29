@@ -96,16 +96,15 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             service (Service): The service to add.
             **assets : The assets to add to the service.
         """
-        # Strict Type Checking
         if not isinstance(service, Service):
             raise TypeError(f"Expected Service instance, got {type(service).__name__}")
 
-        # Prevent Silent Overwrites
-        # We check if the service is already tethered to another application ID.
+        # prevent silent "application_id" overwrite
         current_app_id = getattr(service, "application_id", None)
         if current_app_id is not None and current_app_id != self.id:
             raise ValueError(
-                f"Service '{service.id}' is already assigned to application '{current_app_id}'. "
+                f"Service '{service.id}' is already assigned to "
+                f"application '{current_app_id}'. "
                 f"Cannot reassign to '{self.id}'."
             )
 
