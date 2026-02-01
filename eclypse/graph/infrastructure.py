@@ -148,6 +148,68 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._paths: Dict[str, Dict[str, List[str]]] = {}
         self._costs: Dict[str, Dict[str, Tuple[List[Tuple[str, str, Any]], float]]] = {}
 
+    def add_node(self, node_for_adding: str, strict: bool = False, **assets: Any):
+        """Add a node and invalidate the path cache.
+
+        Args:
+            node_for_adding (str): The node to add.
+            strict (bool): If True, raise an error if the node already exists.
+            **assets: Additional node assets.
+        """
+        super().add_node(node_for_adding, strict=strict, **assets)
+        self._invalidate_cache()
+
+    def add_edge(
+        self,
+        u_of_edge: str,
+        v_of_edge: str,
+        symmetric: bool = False,
+        strict: bool = False,
+        **assets: Any,
+    ):
+        """Add an edge and invalidate the path cache.
+
+        Args:
+            u_of_edge (str): The source node of the edge.
+            v_of_edge (str): The target node of the edge.
+            symmetric (bool): If True, add the edge in both directions.
+            strict (bool): If True, raise an error if the edge already exists.
+            **assets: Additional edge assets.
+        """
+        super().add_edge(
+            u_of_edge, v_of_edge, symmetric=symmetric, strict=strict, **assets
+        )
+        self._invalidate_cache()
+
+    def remove_node(self, n: str):
+        """Remove a node and invalidate the path cache.
+
+        Args:
+            n (str): The node to remove.
+        """
+        super().remove_node(n)
+        self._invalidate_cache()
+
+    def remove_edge(self, u: str, v: str):
+        """Remove an edge and invalidate the path cache.
+
+        Args:
+            u (str): The source node of the edge.
+            v (str): The target node of the edge.
+        """
+        super().remove_edge(u, v)
+        self._invalidate_cache()
+
+    def _invalidate_cache(self):
+        """Invalidate the path and cost caches, and reset the available view.
+
+        Must be called whenever the graph topology changes (node or edge
+        addition/removal), so that stale paths are not returned.
+        """
+        self._paths.clear()
+        self._costs.clear()
+        self._available = None
+
     def contains(self, other: nx.DiGraph) -> List[str]:
         """Comparison between requirements and infrastructure resources.
 
