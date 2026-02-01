@@ -112,15 +112,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             seed=seed,
         )
 
-        if (
-            path_assets_aggregators is not None
-            and edge_assets is not None
-            and not _edge_assets.keys() <= path_assets_aggregators.keys()
-        ):
-            raise ValueError(
-                "The path_assets_aggregators must be a subset of the edge_assets"
-            )
-
         default_path_aggregator = (
             get_default_path_aggregators() if include_default_assets else {}
         )
@@ -135,6 +126,13 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                         f'The path asset aggregator for "{k}" is not defined.'
                     )
                 _path_assets_aggregators[k] = default_path_aggregator[k]
+
+        missing = _edge_assets.keys() - _path_assets_aggregators.keys()
+        if missing:
+            raise ValueError(
+                "Every edge asset must have a corresponding path aggregator. "
+                f"Missing aggregators for: {missing}"
+            )
 
         self.path_assets_aggregators = _path_assets_aggregators
 
