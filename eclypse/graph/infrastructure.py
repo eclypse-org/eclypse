@@ -51,6 +51,24 @@ if TYPE_CHECKING:
     from eclypse.placement.strategies import PlacementStrategy
 
 
+def _cost_changed(current: float, cached: float) -> bool:
+    """Check whether a hop cost has changed beyond the recomputation threshold.
+
+    If the cached cost is zero and the current cost is not, the change
+    is considered significant by definition (avoids division by zero).
+
+    Args:
+        current (float): The current cost of the hop.
+        cached (float): The previously cached cost of the hop.
+
+    Returns:
+        bool: True if the cost changed beyond the threshold.
+    """
+    if cached == 0:
+        return current != 0
+    return abs(current - cached) / cached >= COST_RECOMPUTATION_THRESHOLD
+
+
 class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     """Class to represent a Cloud-Edge infrastructure."""
 
@@ -246,15 +264,15 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         If the path does not exist, it is computed and cached, with costs for each hop.
         Both the path and the costs are recomputed if any of the hop costs has changed
-        by more than 5%.
+        by more than the configured threshold.
 
         Args:
             source (str): The name of the source node.
             target (str): The name of the target node.
 
         Returns:
-            Optional[List[Tuple[str, str, float]]]: The path between the two nodes in the \
-                form (source, target, cost), or None if the path does not exist.
+            Optional[Tuple[List[Tuple[str, str, Dict]], float]]: The path between \
+                the two nodes as (hops, total_processing_time), or None if no path exists.
         """
         try:
             if source not in self._paths or target not in self._paths[source]:
@@ -270,9 +288,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                     cc.get("latency", 1) for _, _, cc in self._costs[source][target][0]
                 ]
 
-                # check if any hop cost changed by more than 5%
                 if len(costs) != len(cached_costs) or any(
-                    (abs(c - cc) / cc >= COST_RECOMPUTATION_THRESHOLD if cc != 0 else 0)
+                    _cost_changed(c, cc)
                     for c, cc in zip(costs, cached_costs, strict=False)
                 ):
                     self._compute_path(source, target)
@@ -326,14 +343,20 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     ) -> Tuple[List[Tuple[str, str, Dict[str, Any]]], float]:
         """Compute the costs of a path in the form (source, target, cost).
 
+        The processing time is summed only over intermediate nodes (excluding
+        source and target), because the processing times of the endpoints
+        are already accounted for in their respective node placements.
+
         Args:
             path (List[str]): The path as a list of node IDs.
 
         Returns:
-            List[Tuple[str, str, float]]: The costs of the path in the form (source, target, cost).
+            Tuple[List[Tuple[str, str, Dict]], float]: The per-hop costs and \
+                the total processing time of intermediate nodes.
         """
+        intermediate_nodes = path[1:-1] if len(path) > 2 else []  # noqa: PLR2004
         total_processing_time = sum(
-            self.nodes[n].get("processing_time", MIN_FLOAT) for n in path
+            self.nodes[n].get("processing_time", MIN_FLOAT) for n in intermediate_nodes
         )
         costs = [(s, t, self.edges[s, t]) for s, t in nx.utils.pairwise(path)]
         return costs, total_processing_time
