@@ -343,22 +343,19 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     ) -> Tuple[List[Tuple[str, str, Dict[str, Any]]], float]:
         """Compute the costs of a path in the form (source, target, cost).
 
-        The processing time is summed only over intermediate nodes (excluding
-        source and target), because the processing times of the endpoints
-        are already accounted for in their respective node placements.
-
         Args:
             path (List[str]): The path as a list of node IDs.
 
         Returns:
-            Tuple[List[Tuple[str, str, Dict]], float]: The per-hop costs and \
-                the total processing time of intermediate nodes.
+            Tuple[List[Tuple[str, str, Dict]], float]: The per-hop costs and
+                the total processing time of all nodes in the path.
         """
-        intermediate_nodes = path[1:-1] if len(path) > 2 else []  # noqa: PLR2004
         total_processing_time = sum(
-            self.nodes[n].get("processing_time", MIN_FLOAT) for n in intermediate_nodes
+            self.nodes[n].get("processing_time", MIN_FLOAT) for n in path
         )
+
         costs = [(s, t, self.edges[s, t]) for s, t in nx.utils.pairwise(path)]
+
         return costs, total_processing_time
 
     @property
