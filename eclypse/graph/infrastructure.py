@@ -51,24 +51,6 @@ if TYPE_CHECKING:
     from eclypse.placement.strategies import PlacementStrategy
 
 
-def _cost_changed(current: float, cached: float) -> bool:
-    """Check whether a hop cost has changed beyond the recomputation threshold.
-
-    If the cached cost is zero and the current cost is not, the change
-    is considered significant by definition (avoids division by zero).
-
-    Args:
-        current (float): The current cost of the hop.
-        cached (float): The previously cached cost of the hop.
-
-    Returns:
-        bool: True if the cost changed beyond the threshold.
-    """
-    if cached == 0:
-        return current != 0
-    return abs(current - cached) / cached >= COST_RECOMPUTATION_THRESHOLD
-
-
 class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     """Class to represent a Cloud-Edge infrastructure."""
 
@@ -214,16 +196,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         super().remove_edge(u, v)
         self._invalidate_cache()
 
-    def _invalidate_cache(self):
-        """Invalidate the path and cost caches, and reset the available view.
-
-        Must be called whenever the graph topology changes (node or edge
-        addition/removal), so that stale paths are not returned.
-        """
-        self._paths.clear()
-        self._costs.clear()
-        self._available = None
-
     def contains(self, other: nx.DiGraph) -> List[str]:
         """Comparison between requirements and infrastructure resources.
 
@@ -323,6 +295,16 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             k: (aggr([c[k] for _, _, c in path[0]]))
             for k, aggr in self.path_assets_aggregators.items()
         }
+
+    def _invalidate_cache(self):
+        """Invalidate the path and cost caches, and reset the available view.
+
+        Must be called whenever the graph topology changes (node or edge
+        addition/removal), so that stale paths are not returned.
+        """
+        self._paths.clear()
+        self._costs.clear()
+        self._available = None
 
     def _compute_path(self, source: str, target: str):
         """Compute the path between two nodes using the given algorithm, and cache it.
@@ -430,3 +412,23 @@ def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> List[s
         List[str]: The list of node IDs in the shortest path.
     """
     return nx.dijkstra_path(g, source, target, weight=_default_weight_function)
+
+
+def _cost_changed(current: float, cached: float) -> bool:
+    """Check whether a hop cost has changed beyond the recomputation threshold.
+
+    If the cached cost is zero and the current cost is not, the change
+    is considered significant by definition (avoids division by zero).
+
+    Args:
+        current (float): The current cost of the hop.
+        cached (float): The previously cached cost of the hop.
+
+    Returns:
+        bool: True if the cost changed beyond the threshold.
+    """
+    return (
+        current != 0
+        if cached == 0
+        else abs(current - cached) / cached >= COST_RECOMPUTATION_THRESHOLD
+    )
