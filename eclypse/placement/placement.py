@@ -114,7 +114,7 @@ class Placement:
 
                 path = self.infrastructure.path(caller_node, target)
 
-                if path and any(u == source and v == target for (u, v, _) in path[0]):
+                if path and any(u == source and v == target for (u, v, _) in path):
                     interactions.append((caller, callee))
 
         # interactions starting from services placed on source
@@ -126,7 +126,7 @@ class Placement:
                     continue  # skip local interactions
 
                 path = self.infrastructure.path(source, callee_node)
-                if path and any(u == source and v == target for (u, v, _) in path[0]):
+                if path and any(u == source and v == target for (u, v, _) in path):
                     interactions.append((caller, callee))
 
         return interactions
