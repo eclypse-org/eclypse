@@ -167,7 +167,6 @@ class PlacementView(nx.DiGraph):
                 )
                 _path = placement.infrastructure.path(node_s, node_t)
                 if _path:
-                    path = _path[0]
                     _int_reqs = {
                         k: (
                             self.edge_assets[k].lower_bound
@@ -177,7 +176,7 @@ class PlacementView(nx.DiGraph):
                         for k in int_reqs
                     }
 
-                    for n1, n2, _ in path:
+                    for n1, n2, _ in _path:
                         new_int_reqs = self.edge_aggregate(
                             self.get_edge_view(n1, n2), _int_reqs
                         )

@@ -114,20 +114,19 @@ class RemoteSimulator(Simulator):
         path = (
             self.infrastructure.path(source_node, dest_node)
             if source_node != dest_node
-            else ([], 0)
+            else []
         )
 
-        return (
-            None
-            if path is None
-            else Route(
-                sender_id=source_id,
-                sender_node_id=source_node,
-                recipient_id=dest_id,
-                recipient_node_id=dest_node,
-                processing_time=path[1],
-                hops=path[0],
-            )
+        if path is None:
+            return None
+
+        return Route(
+            sender_id=source_id,
+            sender_node_id=source_node,
+            recipient_id=dest_id,
+            recipient_node_id=dest_node,
+            processing_time=self.infrastructure.processing_time(source_node, dest_node),
+            hops=path,
         )
 
     async def get_neighbors(self, application_id: str, service_id: str) -> List[str]:
