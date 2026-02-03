@@ -143,7 +143,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._available: Optional[nx.DiGraph] = None
         self._paths: Dict[str, Dict[str, List[str]]] = {}
         self._costs: Dict[str, Dict[str, List[Tuple[str, str, Any]]]] = {}
-        self._processing_times: Dict[str, Dict[str, float]] = {}
 
     def add_node(self, node_for_adding: str, strict: bool = False, **assets: Any):
         """Add a node and invalidate the path cache.
@@ -232,20 +231,19 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
     def path(
         self, source: str, target: str
-    ) -> Optional[Tuple[List[Tuple[str, str, Dict[str, Any]]], float]]:
-        """Retrieve the path between two nodes, if it exists.
+    ) -> Optional[List[Tuple[str, str, Dict[str, Any]]]]:
+        """Retrieve the hop-level path between two nodes, if it exists.
 
-        If the path does not exist, it is computed and cached, with costs for each hop.
-        Both the path and the costs are recomputed if any of the hop costs has changed
-        by more than the configured threshold.
+        If the path has not been computed yet, or if any hop cost has changed
+        by more than the configured threshold, the path is recomputed and cached.
 
         Args:
             source (str): The name of the source node.
             target (str): The name of the target node.
 
         Returns:
-            Optional[Tuple[List[Tuple[str, str, Dict]], float]]: The path between \
-                the two nodes as (hops, total_processing_time), or None if no path exists.
+            Optional[List[Tuple[str, str, Dict[str, Any]]]]: The per-hop costs as \
+                (source, target, edge_attributes), or None if no path exists.
         """
         try:
             if source not in self._paths or target not in self._paths[source]:
@@ -267,9 +265,32 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                 ):
                     self._compute_path(source, target)
 
-            return self._costs[source][target], self._processing_times[source][target]
+            return self._costs[source][target]
         except (nx.NetworkXNoPath, nx.NodeNotFound):
             return None
+
+    def processing_time(self, source: str, target: str) -> float:
+        """Compute the total processing time of all nodes along the path.
+
+        Calls :py:meth:`path` first to ensure the node list is cached, then
+        sums the ``processing_time`` attribute of every node on that path.
+        Returns 0.0 when source and target are the same node or when no path
+        exists.
+
+        Args:
+            source (str): The name of the source node.
+            target (str): The name of the target node.
+
+        Returns:
+            float: The total processing time along the path, in the same unit \
+                as the individual node ``processing_time`` attributes.
+        """
+        if source == target or self.path(source, target) is None:
+            return 0.0
+        return sum(
+            self.nodes[n].get("processing_time", MIN_FLOAT)
+            for n in self._paths[source][target]
+        )
 
     def path_resources(self, source: str, target: str) -> Dict[str, Any]:
         """Retrieve the resources of the path between two nodes, if it exists.
@@ -293,7 +314,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             return self.edge_assets.lower_bound
 
         return {
-            k: (aggr([c[k] for _, _, c in path[0]]))
+            k: (aggr([c[k] for _, _, c in path]))
             for k, aggr in self.path_assets_aggregators.items()
         }
 
@@ -305,14 +326,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         """
         self._paths.clear()
         self._costs.clear()
-        self._processing_times.clear()
         self._available = None
 
     def _compute_path(self, source: str, target: str):
         """Compute the path between two nodes using the given algorithm, and cache it.
-
-        Hop costs and processing time are stored in separate caches so that
-        each one can be reasoned about independently.
 
         Args:
             source (str): The name of the source node.
@@ -322,9 +339,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         self._paths.setdefault(source, {})[target] = path_nodes
         self._costs.setdefault(source, {})[target] = self._path_costs(path_nodes)
-        self._processing_times.setdefault(source, {})[target] = sum(
-            self.nodes[n].get("processing_time", MIN_FLOAT) for n in path_nodes
-        )
 
     def _path_costs(self, path: List[str]) -> List[Tuple[str, str, Dict[str, Any]]]:
         """Compute the per-hop costs of a path.
