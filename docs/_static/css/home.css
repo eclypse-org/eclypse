@@ -1,0 +1,193 @@
+:root{
+  --ec-bg: #111111;
+  --ec-text: #BFC0C0;
+  --ec-accent: #ff9e47;
+  --ec-flare: rgba(243,157,18,0.65);
+
+  /* Asset paths */
+  --ec-stars: url(../landing/stars.png);
+  --ec-sparkle: url(../landing/twinkling.png);
+  --ec-mist: url(../landing/clouds.png);
+  --ec-logo: url(../landing/logo.png);
+  --ec-name: url(../landing/name.png);
+}
+
+/* =========================
+   BACKGROUND LAYERS
+========================= */
+.ec-bg{
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: #000;
+}
+
+.ec-bg__layer{
+  position: absolute;
+  inset: 0;
+}
+
+.ec-bg__layer--stars{
+  background: #000 var(--ec-stars) repeat top center;
+}
+
+.ec-bg__layer--sparkle{
+  background: transparent var(--ec-sparkle) repeat top center;
+  animation: ec-pan-sparkle 200s linear infinite;
+}
+
+.ec-bg__layer--mist{
+  background: transparent var(--ec-mist) repeat top center;
+  animation: ec-pan-mist 200s linear infinite;
+  opacity: 0.9;
+}
+
+/* =========================
+   ECLYPSE WIDGET
+========================= */
+.ec-eclypse{
+  position: relative;
+  width: min(520px, 80vw);
+  aspect-ratio: 1 / 1;
+
+  /* micro alignment control */
+  --ec-center-x: 0px;
+  --ec-center-y: 0px;
+}
+
+/* shared anchor */
+.ec-eclypse__core,
+.ec-eclypse__logo{
+  position: absolute;
+  left: 50%;
+  top: 50%;
+}
+
+/* sun glow */
+.ec-eclypse__core{
+  width: 70%;
+  height: 70%;
+  border-radius: 9999px;
+  transform: translate(
+    calc(-50% + var(--ec-center-x)),
+    calc(-50% + var(--ec-center-y))
+  );
+  box-shadow: 0 0 0 var(--ec-flare);
+  animation: ec-flare 2.5s ease-out forwards;
+}
+
+/* logo */
+.ec-eclypse__logo{
+  width: 140%;
+  height: 140%;
+  opacity: 0;
+  background-image: var(--ec-logo);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 0 18px rgba(255,158,71,0.25));
+
+  transform: translate(
+    calc(-50% - 900px + var(--ec-center-x)),
+    calc(-50% + var(--ec-center-y))
+  );
+
+  animation: ec-logo-in 2.5s ease-out forwards;
+}
+
+/* wordmark */
+.ec-wordmark{
+  width: min(420px, 78vw);
+  height: calc(min(420px, 78vw) * 0.25);
+  background-image: var(--ec-name);
+  background-size: cover;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transform: translateX(1000px);
+  animation: ec-name-in 2.5s ease-out forwards;
+}
+
+/* =========================
+   ANIMATIONS
+========================= */
+@keyframes ec-logo-in{
+  0%{
+    opacity: 0;
+    transform: translate(
+      calc(-50% - 900px + var(--ec-center-x)),
+      calc(-50% + var(--ec-center-y))
+    );
+  }
+  55%{
+    opacity: 0;
+    transform: translate(
+      calc(-50% - 220px + var(--ec-center-x)),
+      calc(-50% + var(--ec-center-y))
+    );
+  }
+  100%{
+    opacity: 1;
+    transform: translate(
+      calc(-50% + var(--ec-center-x)),
+      calc(-50% + var(--ec-center-y))
+    );
+  }
+}
+
+@keyframes ec-name-in{
+  0%{ opacity: 0; transform: translateX(1000px); }
+  45%{ opacity: 0; }
+  100%{ opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ec-flare{
+  0%{ box-shadow: 0 0 0 var(--ec-flare); }
+  90%{ box-shadow: 0 0 20px var(--ec-flare); }
+  95%{ box-shadow: 0 0 100px var(--ec-flare); }
+  100%{ box-shadow: 0 0 30px var(--ec-flare); }
+}
+
+@keyframes ec-pan-sparkle{
+  from{ background-position: 0 0; }
+  to{ background-position: -10000px 5000px; }
+}
+
+@keyframes ec-pan-mist{
+  from{ background-position: 0 0; }
+  to{ background-position: 10000px 0; }
+}
+
+/* =========================
+   ACCESSIBILITY
+========================= */
+@media (prefers-reduced-motion: reduce){
+  .ec-bg__layer--sparkle,
+  .ec-bg__layer--mist,
+  .ec-eclypse__core,
+  .ec-eclypse__logo,
+  .ec-wordmark{
+    animation: none !important;
+  }
+
+  .ec-eclypse__logo{
+    opacity: 1;
+    transform: translate(
+      calc(-50% + var(--ec-center-x)),
+      calc(-50% + var(--ec-center-y))
+    );
+  }
+
+  .ec-eclypse__core{
+    transform: translate(
+      calc(-50% + var(--ec-center-x)),
+      calc(-50% + var(--ec-center-y))
+    );
+    box-shadow: 0 0 30px var(--ec-flare);
+  }
+
+  .ec-wordmark{
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

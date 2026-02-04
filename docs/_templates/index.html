@@ -1,78 +1,287 @@
-<html>
-
-<head>
-    <title>ECLYPSE Documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/css/landing.css?v=3">
-    <link rel="stylesheet" type="text/css"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+<!doctype html>
+<html lang="en">
+  <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" sizes="16x16" href="_static/favicon/favicon-16x16.png" type="image/png">
-    <link rel="icon" sizes="32x32" href="_static/favicon/favicon-32x32.png" type="image/png">
-    <link rel="apple-touch-icon" sizes="180x180" href="_static/favicon/apple-touch-icon.png" color="#000000"
-        type="image/png">
-    <link rel="android-chrome" sizes="192x192" href="_static/favicon/android-chrome-192x192.png" type="image/png">
-    <link rel="android-chrome" sizes="512x512" href="_static/favicon/android-chrome-512x512.png" type="image/png">
-    <link rel="manifest" href="_static/favicon/site.webmanifest">
-    <link rel="shortcut icon" href="_static/favicon/favicon.ico" type="image/x-icon">
-</head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ECLYPSE Documentation</title>
 
-<body class="l-body">
-    <div class="sun"></div>
-    <div class="l-logo"></div>
-    <div class="l-name"></div>
-    <div class="stars"></div>
-    <div class="twinkling"></div>
-    <div class="clouds"></div>
+    <!-- Favicons -->
+    <link rel="icon" sizes="16x16" href="_static/favicon/favicon-16x16.png" type="image/png" />
+    <link rel="icon" sizes="32x32" href="_static/favicon/favicon-32x32.png" type="image/png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="_static/favicon/apple-touch-icon.png" type="image/png" />
+    <link rel="manifest" href="_static/favicon/site.webmanifest" />
+    <link rel="shortcut icon" href="_static/favicon/favicon.ico" type="image/x-icon" />
 
-    <div class="l-button-container">
-        <a class="l-btn" href="source/overview/install.html">
-            <span>Install</span>
-            <i class="arrow-hover fa-solid fa-download fa-xl"></i>
-        </a>
-        <a class="l-btn" href="source/overview/getting-started/index.html">
-            <span>Get Started</span>
-            <i class="arrow-hover fa-solid fa-play fa-xl"></i>
-        </a>
-        <a class="l-btn" href="https://github.com/eclypse-org/eclypse">
-            <span>Source Code</span>
-            <i class="arrow-hover fa-brands fa-github fa-xl"></i>
-        </a>
-        <a class="l-btn" href="source/overview/examples/index.html">
-            <span>Examples</span>
-            <i class="arrow-hover fa-solid fa-book-bookmark fa-xl"></i>
-        </a>
-        <a class="l-btn" href="source/overview/advanced/index.html">
-            <span>Advanced</span>
-            <i class="arrow-hover fa-solid fa-screwdriver-wrench fa-xl"></i>
-        </a>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css" />
+
+    <!-- Font (optional) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Montserrat", "ui-sans-serif", "system-ui", "sans-serif"],
+            },
+            colors: {
+              ink: "#111111",
+              fog: "#BFC0C0",
+              ember: "#ff9e47",
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- Custom CSS (separato) -->
+    <link rel="stylesheet" href="_static/css/home.css" />
+  </head>
+
+  <body class="bg-ink text-fog font-sans antialiased overflow-x-hidden">
+    <!-- Background layers -->
+    <div class="ec-bg" aria-hidden="true">
+      <div class="ec-bg__layer ec-bg__layer--stars"></div>
+      <div class="ec-bg__layer ec-bg__layer--sparkle"></div>
+      <div class="ec-bg__layer ec-bg__layer--mist"></div>
     </div>
 
-    <div class="text-container">
-        <div class="feature feat-1">
-            <span class="feat-title">Entirely written in Python</span>
-            <span class="feat-text">Accessible and adaptable for a wide range of users.</span>
-        </div>
-        <div class="feature feat-2">
-            <span class="feat-title">Easy to use</span>
-            <span class="feat-text">Intuitive interface for seamless experimentation and analysis.</span>
-        </div>
-        <div class="feature feat-3">
-            <span class="feat-title">Actual implementation of services</span>
-            <span class="feat-text">Simulate real-world scenarios with precise deployment strategies.</span>
-        </div>
-        <div class="feature feat-4">
-            <span class="feat-title">Placement Strategies & Update Policies</span>
-            <span class="feat-text">Tailor context-aware simulations for specific needs.</span>
-        </div>
-        <div class="feature feat-5">
-            <span class="feat-title">Metrics & Reporting</span>
-            <span class="feat-text">Gain insights into performance through various formats.</span>
-        </div>
-        <div class="feature feat-6">
-            <span class="feat-title">Logging capabilities</span>
-            <span class="feat-text">Track and analyze activities for troubleshooting and optimization.</span>
-        </div>
-    </div>
+    <main class="relative z-10 min-h-screen">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="min-h-screen py-10 sm:py-14 flex flex-col justify-center gap-10">
+          <!-- Top badge -->
+          <div class="flex justify-center lg:justify-start">
+            <div class="inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/20 px-4 py-2 text-sm backdrop-blur">
+              <span class="h-2 w-2 rounded-full bg-ember shadow-[0_0_18px_rgba(255,158,71,0.65)]"></span>
+              <span class="text-fog/90 tracking-wide">ECLYPSE</span>
+              <span class="text-fog/40">•</span>
+              <span class="text-fog/70">Documentation</span>
+            </div>
+          </div>
 
+          <!-- Hero -->
+          <section class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+            <!-- Copy -->
+            <div class="lg:col-span-6">
+              <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-white">
+                Build, deploy, and measure
+                <span class="block mt-2 text-fog/80">experiments in Python.</span>
+              </h1>
+
+              <p class="mt-5 text-base sm:text-lg leading-relaxed text-fog/80 max-w-xl">
+                ECLYPSE helps you model services, apply strategies, run scenarios, and export metrics — with a clean, composable workflow.
+              </p>
+
+              <!-- CTA row -->
+              <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                <a
+                  href="source/overview/getting-started/index.html"
+                  class="group inline-flex items-center justify-center gap-3 rounded-xl bg-white/10 px-5 py-3 text-sm sm:text-base font-semibold text-white backdrop-blur border border-white/10 hover:border-ember/60 hover:bg-white/15 transition">
+                  Get Started
+                  <i class="fa-solid fa-play text-ember group-hover:translate-x-0.5 transition-transform"></i>
+                </a>
+
+                <a
+                  href="source/overview/install.html"
+                  class="group inline-flex items-center justify-center gap-3 rounded-xl px-5 py-3 text-sm sm:text-base font-semibold text-fog border border-fog/30 bg-black/20 backdrop-blur hover:border-ember/60 hover:text-white transition">
+                  Install
+                  <i class="fa-solid fa-download text-ember/90 group-hover:-translate-y-0.5 transition-transform"></i>
+                </a>
+              </div>
+
+              <!-- Quick links -->
+              <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-xl">
+                <a
+                  href="source/overview/examples/index.html"
+                  class="rounded-2xl border border-white/10 bg-black/25 backdrop-blur p-4 hover:border-ember/50 transition">
+                  <div class="flex items-center justify-between gap-4">
+                    <div>
+                      <div class="text-white font-semibold">Examples</div>
+                      <div class="text-fog/70 text-sm mt-1">Recipes & scenarios</div>
+                    </div>
+                    <i class="fa-solid fa-book-bookmark text-ember"></i>
+                  </div>
+                </a>
+
+                <a
+                  href="source/overview/advanced/index.html"
+                  class="rounded-2xl border border-white/10 bg-black/25 backdrop-blur p-4 hover:border-ember/50 transition">
+                  <div class="flex items-center justify-between gap-4">
+                    <div>
+                      <div class="text-white font-semibold">Advanced</div>
+                      <div class="text-fog/70 text-sm mt-1">Strategies & policies</div>
+                    </div>
+                    <i class="fa-solid fa-screwdriver-wrench text-ember"></i>
+                  </div>
+                </a>
+              </div>
+
+              <!-- GitHub -->
+              <div class="mt-6">
+                <a href="https://github.com/eclypse-org/eclypse" class="inline-flex items-center gap-3 text-fog/80 hover:text-white transition">
+                  <i class="fa-brands fa-github text-xl"></i>
+                  <span class="text-sm sm:text-base font-semibold">Source Code</span>
+                  <i class="fa-solid fa-arrow-up-right-from-square text-ember/90"></i>
+                </a>
+              </div>
+            </div>
+
+            <!-- Visual -->
+            <div class="lg:col-span-6">
+              <div class="flex flex-col items-center">
+                <!-- eclypse widget -->
+                <div class="ec-eclypse" role="img" aria-label="ECLYPSE eclypse animation">
+                  <div class="ec-eclypse__core" aria-hidden="true"></div>
+                  <div class="ec-eclypse__logo" aria-hidden="true"></div>
+                </div>
+
+                <!-- Name mark -->
+                <div class="ec-wordmark mt-6" aria-label="ECLYPSE"></div>
+
+                <!-- Spotlight / slider (single component) -->
+                <div class="relative mt-8 w-full max-w-xl overflow-hidden rounded-2xl border border-white/10 bg-black/25 backdrop-blur px-5 py-5">
+                  <div class="pointer-events-none absolute inset-0">
+                    <div class="absolute -top-24 -right-24 h-56 w-56 rounded-full bg-ember/10 blur-2xl"></div>
+                    <div class="absolute -bottom-24 -left-24 h-56 w-56 rounded-full bg-white/5 blur-2xl"></div>
+                  </div>
+
+                  <div class="relative">
+                    <div class="text-xs uppercase tracking-widest text-fog/60">Highlights</div>
+
+                    <div class="mt-3 min-h-[3.5rem] sm:min-h-[3rem]">
+                      <div id="ec-spot-title" class="text-white font-semibold transition-opacity duration-300">—</div>
+                      <div id="ec-spot-sub" class="text-fog/75 text-sm mt-1 transition-opacity duration-300">—</div>
+                    </div>
+
+                    <div class="mt-5 flex items-center justify-between">
+                      <div class="flex items-center gap-2 text-xs text-fog/60">
+                        <span class="h-1.5 w-1.5 rounded-full bg-ember/80"></span>
+                        <span id="ec-spot-index">1 / 6</span>
+                      </div>
+
+                      <div class="flex items-center gap-2">
+                        <button
+                          id="ec-prev"
+                          class="inline-flex items-center justify-center rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-fog hover:text-white hover:border-ember/50 transition"
+                          type="button"
+                          aria-label="Previous highlight">
+                          <i class="fa-solid fa-chevron-left"></i>
+                        </button>
+                        <button
+                          id="ec-next"
+                          class="inline-flex items-center justify-center rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-sm text-fog hover:text-white hover:border-ember/50 transition"
+                          type="button"
+                          aria-label="Next highlight">
+                          <i class="fa-solid fa-chevron-right"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Optional: tiny hint -->
+                <p class="mt-4 text-xs text-fog/50 text-center max-w-xl">
+                  Tip: the page respects <span class="text-fog/70">prefers-reduced-motion</span>.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- Footer -->
+          <footer class="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="text-sm text-fog/60">© <span id="ec-year"></span> ECLYPSE • Documentation</div>
+
+            <div class="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm">
+              <a class="text-fog/70 hover:text-white transition" href="source/overview/install.html">Install</a>
+              <a class="text-fog/70 hover:text-white transition" href="source/overview/getting-started/index.html">Get Started</a>
+              <a class="text-fog/70 hover:text-white transition" href="source/overview/examples/index.html">Examples</a>
+              <a class="text-fog/70 hover:text-white transition" href="source/overview/advanced/index.html">Advanced</a>
+              <a class="text-fog/70 hover:text-white transition" href="https://github.com/eclypse-org/eclypse">GitHub</a>
+            </div>
+          </footer>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Year
+      document.getElementById("ec-year").textContent = new Date().getFullYear();
+
+      // Smarter spotlight (single component + controls + reduced motion)
+      const slides = [
+        { t: "Entirely written in Python", s: "Accessible and adaptable for a wide range of users." },
+        { t: "Easy to use", s: "Intuitive interface for seamless experimentation and analysis." },
+        { t: "Actual implementation of services", s: "Simulate real-world deployments with precise strategies." },
+        { t: "Placement Strategies & Update Policies", s: "Context-aware simulations tailored to your needs." },
+        { t: "Metrics & Reporting", s: "Export insights in multiple formats for comparison and review." },
+        { t: "Logging capabilities", s: "Track and debug runs with consistent event traces." },
+      ];
+
+      const titleEl = document.getElementById("ec-spot-title");
+      const subEl = document.getElementById("ec-spot-sub");
+      const idxEl = document.getElementById("ec-spot-index");
+      const btnPrev = document.getElementById("ec-prev");
+      const btnNext = document.getElementById("ec-next");
+
+      const prefersReduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let i = 0;
+      let timer = null;
+
+      function render(nextIndex, withFade = true) {
+        i = (nextIndex + slides.length) % slides.length;
+
+        idxEl.textContent = `${i + 1} / ${slides.length}`;
+
+        if (!withFade || prefersReduced) {
+          titleEl.textContent = slides[i].t;
+          subEl.textContent = slides[i].s;
+          titleEl.style.opacity = 1;
+          subEl.style.opacity = 1;
+          return;
+        }
+
+        titleEl.style.opacity = 0;
+        subEl.style.opacity = 0;
+
+        window.setTimeout(() => {
+          titleEl.textContent = slides[i].t;
+          subEl.textContent = slides[i].s;
+          titleEl.style.opacity = 1;
+          subEl.style.opacity = 1;
+        }, 180);
+      }
+
+      function next() {
+        render(i + 1, true);
+      }
+
+      function prev() {
+        render(i - 1, true);
+      }
+
+      btnNext.addEventListener("click", () => {
+        next();
+        restartAuto();
+      });
+
+      btnPrev.addEventListener("click", () => {
+        prev();
+        restartAuto();
+      });
+
+      function restartAuto() {
+        if (timer) window.clearInterval(timer);
+        if (!prefersReduced) timer = window.setInterval(next, 5000);
+      }
+
+      render(0, false);
+      restartAuto();
+    </script>
+  </body>
 </html>

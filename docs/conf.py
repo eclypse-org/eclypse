@@ -69,7 +69,7 @@ html_logo = "_static/images/light.png"
 
 html_static_path = ["_static"]
 html_extra_path = ["_static/landing"]
-html_css_files = ["css/custom.css", "css/landing.css"]
+html_css_files = ["css/home.css"]  # ["css/custom.css", "css/landing.css"]
 html_js_files = ["js/custom.js"]
 
 html_context = {
