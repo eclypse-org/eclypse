@@ -15,7 +15,7 @@ repos:
       - id: isort
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.9.1
+    rev: v4.13.4
     hooks:
       - id: commitizen
       - id: commitizen-branch
@@ -23,20 +23,20 @@ repos:
           - pre-push
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.4
+    rev: v0.15.0
     hooks:
       - id: ruff-check
         name: ruff pycln
         args: [--fix, --select, "F401"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.8
+    rev: v0.15.0
     hooks:
       - id: ruff-check
       - id: ruff-format
 
   # - repo: https://github.com/psf/black
-  #   rev: 24.2.0
+  #   rev: 26.1.0
   #   hooks:
   #     - id: black
 
@@ -47,13 +47,13 @@ repos:
   #       args: [--in-place, --config, ./pyproject.toml]
 
   # - repo: https://github.com/hadialqattan/pycln
-  #   rev: v2.4.0
+  #   rev: v2.6.0
   #   hooks:
   #     - id: pycln
   #       args: [--config, ./pyproject.toml]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.18.2
+    rev: v1.19.1
     hooks:
       - id: mypy
         exclude: ^docs/

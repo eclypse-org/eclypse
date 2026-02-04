@@ -3,10 +3,10 @@
 It defines the http metohds supported by the `EclypseREST` communication interface.
 """
 
-from enum import Enum
+from enum import StrEnum
 
 
-class HTTPMethod(str, Enum):
+class HTTPMethod(StrEnum):
     """HTTP methods supported by the `EclypseREST` communication interface.
 
     Attributes:

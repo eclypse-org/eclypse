@@ -47,7 +47,7 @@ class HTTPRequest(EclypseRequest):
             data (Dict[Any, Any]): The data to send in the request.
             _rest (EclypseREST): The REST interface used to send the request.
         """
-        recipient_id = url.split("/")[0]
+        recipient_id = url.split("/", maxsplit=1)[0]
         data["url"] = url
         data["method"] = method
 
