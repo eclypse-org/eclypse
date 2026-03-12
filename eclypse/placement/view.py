@@ -165,6 +165,8 @@ class PlacementView(nx.DiGraph):
                     placement.service_placement(s),
                     placement.service_placement(t),
                 )
+                if node_s == node_t:
+                    continue
                 _path = placement.infrastructure.path(node_s, node_t)
                 if _path:
                     _int_reqs = {
