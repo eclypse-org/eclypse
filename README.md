@@ -21,6 +21,7 @@
 ## Installation
 
 To install ECLYPSE and all its dependencies, you can run the following commands:
+
 ```bash
 
 pip install eclypse
@@ -42,8 +43,9 @@ ECLYPSE is described and assessed in:
 > Journal of Software: Evolution and Process, 2026.
 
 If you want to cite ECLYPSE in your work, you can use the following BibTeX entry:
+
 ```bibtex
-@article{massa2025eclypse,
+@article{massa2026eclypse,
   title     = {{ECLYPSE: A Python Framework for Simulation and Emulation of the Cloud-Edge Continuum}},
   author    = {Massa, Jacopo and De Caro, Valerio and Forti, Stefano and Dazzi, Patrizio and Bacciu, Davide and Brogi, Antonio},
   journal   = {Journal of Software: Evolution and Process},
@@ -59,11 +61,12 @@ If you want to cite ECLYPSE in your work, you can use the following BibTeX entry
 ## Authors
 
 - **Jacopo Massa**
-    - Website: [https://pages.di.unipi.it/massa](https://pages.di.unipi.it/massa)
-    - GitHub: [jacopo-massa](https://github.com/jacopo-massa)
+  - Website: [https://pages.di.unipi.it/massa](https://pages.di.unipi.it/massa)
+  - GitHub: [jacopo-massa](https://github.com/jacopo-massa)
 - **Valerio De Caro**
-    - Website: [https://vdecaro.github.io](https://vdecaro.github.io)
-    - GitHub: [vdecaro](https://github.com/vdecaro)
+  - Website: [https://vdecaro.github.io](https://vdecaro.github.io)
+  - GitHub: [vdecaro](https://github.com/vdecaro)
 
 ## Contact Us
+
 If you want to get in touch with us, [drop us an e-mail](mailto:jacopo.massa@di.unipi.it,valerio.decaro@di.unipi.it?subject=[ECLYPSE]%20Request%20for%20information)!

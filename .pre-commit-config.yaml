@@ -23,14 +23,14 @@ repos:
           - pre-push
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.15.6
     hooks:
       - id: ruff-check
         name: ruff pycln
         args: [--fix, --select, "F401"]
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.0
+    rev: v0.15.6
     hooks:
       - id: ruff-check
       - id: ruff-format
