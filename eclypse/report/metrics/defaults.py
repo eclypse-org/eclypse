@@ -490,7 +490,7 @@ def step_result(service: Service) -> Optional[Any]:
     Returns:
         Optional[Any]: The result of the step executed by the service.
     """
-    return service._step_queue.pop(0) if service._step_queue else None
+    return service._step_queue.popleft() if service._step_queue else None
 
 
 def get_default_metrics():

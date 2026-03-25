@@ -63,6 +63,7 @@ class RemoteNode:
         self._engine_ops_thread = RemoteOpsThread(self, self._engine_loop)
         self._thread_pool_fn = ThreadPoolExecutor()
         self._services: Dict[str, Service] = {}
+        self._actor_cache: Dict[str, Any] = {}
 
         rnd.seed(os.getenv(RND_SEED))
         config_logger()  # re-do for remote node

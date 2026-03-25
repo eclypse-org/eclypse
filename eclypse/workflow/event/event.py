@@ -326,8 +326,9 @@ def _remote_service_fn(
                 )
 
     results = ray_backend.get(remotes)
+    results_iter = iter(results)
     return {
-        pl.application.id: {s: results.pop(0) for s in pl.application.nodes}
+        pl.application.id: {s: next(results_iter) for s in pl.application.nodes}
         for pl in placements.values()
         if pl.mapping
     }

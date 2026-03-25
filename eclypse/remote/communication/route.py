@@ -75,8 +75,9 @@ class Route:
         Returns:
             float: The function that computes the cost of the route.
         """
+        msg_size = get_bytes_size(msg)
         return self.processing_time / 1000 + sum(
-            (get_bytes_size(msg) * 8 * 1e-6 / link.get("bandwidth", float("inf")))
+            (msg_size * 8 * 1e-6 / link.get("bandwidth", float("inf")))
             + (link.get("latency", MIN_LATENCY) / 1000)
             for _, _, link in self.hops
         )

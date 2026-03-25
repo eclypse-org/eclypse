@@ -137,9 +137,13 @@ class RemoteSimOpsHandler:
                 the remote nodes and the services to perform the operation.
         """
         node_serv = []
+        actor_cache = {}
         for service_id in placement.application.services:
             node_name = placement.service_placement(service_id)
-            node = ray_backend.get_actor(f"{placement.infrastructure.id}/{node_name}")
+            actor_name = f"{placement.infrastructure.id}/{node_name}"
+            if actor_name not in actor_cache:
+                actor_cache[actor_name] = ray_backend.get_actor(actor_name)
+            node = actor_cache[actor_name]
             service = placement.application.services[service_id]
             node_serv.append((node, service))
         return node_serv  # type: ignore[return-value]
