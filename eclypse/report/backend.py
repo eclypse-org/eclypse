@@ -99,6 +99,24 @@ class FrameBackend(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    def filter_range_step(
+        self, df: Any, col: str, start: int, stop: int, step: int
+    ) -> Any:
+        """Filter rows where `col` is in the inclusive range and matches the step.
+
+        Args:
+            df: The DataFrame to filter.
+            col: The column name to filter on.
+            start: Inclusive range start.
+            stop: Inclusive range end.
+            step: Allowed step from `start`.
+
+        Returns:
+            A filtered DataFrame.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def filter_eq(self, df: Any, col: str, value: Any) -> Any:
         """Filter rows where `col` equals `value`.
 

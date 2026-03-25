@@ -117,6 +117,16 @@ class PolarsLazyBackend(FrameBackend):
         pl = self._pl
         return df.filter(pl.col(col).is_in(list(events)))
 
+    def filter_range_step(
+        self, df: LazyFrame, col: str, start: int, stop: int, step: int
+    ) -> LazyFrame:
+        """Filter rows where `col` is within a range and matches the given step."""
+        pl = self._pl
+        expr = (pl.col(col) >= start) & (pl.col(col) <= stop)
+        if step > 1:
+            expr = expr & (((pl.col(col) - start) % step) == 0)
+        return df.filter(expr)
+
     def filter_eq(self, df: LazyFrame, col: str, value: Any) -> LazyFrame:
         """Filter rows where `col` equals `value`.
 

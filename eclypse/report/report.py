@@ -383,8 +383,13 @@ class Report:
             return df
 
         max_event = min(b.max(df, "n_event"), report_range[1])
-        events = range(report_range[0], max_event + 1, report_step)
-        filtered = b.filter_events(df, "n_event", events)
+        filtered = b.filter_range_step(
+            df,
+            "n_event",
+            report_range[0],
+            max_event,
+            report_step,
+        )
 
         filters = {k: v for k, v in kwargs.items() if v is not None}
         cols = b.columns(filtered)
