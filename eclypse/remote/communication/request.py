@@ -176,9 +176,11 @@ async def _process_request(
         )
     else:
         infrastructure_id = _comm.service._node.infrastructure_id  # type: ignore[union-attr]
-        handle: RemoteNode = ray_backend.get_actor(
-            f"{infrastructure_id}/{_route.recipient_node_id}"
-        )
+        actor_name = f"{infrastructure_id}/{_route.recipient_node_id}"
+        actor_cache = _comm.service._node._actor_cache  # type: ignore[union-attr]
+        if actor_name not in actor_cache:
+            actor_cache[actor_name] = ray_backend.get_actor(actor_name)
+        handle: RemoteNode = actor_cache[actor_name]
         await asyncio.sleep(_route.cost(args))
         future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
             _route,

@@ -20,11 +20,12 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from collections import deque
 from typing import (
     TYPE_CHECKING,
     Any,
     Callable,
-    List,
+    Deque,
     Literal,
     Optional,
     cast,
@@ -73,7 +74,7 @@ class Service:
         self._run_task: Optional[asyncio.Task] = None
         self._run_task_fn: Optional[Callable[[], asyncio.Task]] = None
         self._running: bool = False
-        self._step_queue: List[Any] = []
+        self._step_queue: Deque[Any] = deque(maxlen=1024)
 
     async def run(self):
         """Runs the service.
