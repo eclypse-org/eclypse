@@ -105,6 +105,16 @@ class PolarsBackend(FrameBackend):
         pl = self._pl
         return df.filter(pl.col(col).is_in(list(events)))
 
+    def filter_range_step(
+        self, df: DataFrame, col: str, start: int, stop: int, step: int
+    ) -> DataFrame:
+        """Filter rows where `col` is within a range and matches the given step."""
+        pl = self._pl
+        expr = (pl.col(col) >= start) & (pl.col(col) <= stop)
+        if step > 1:
+            expr = expr & (((pl.col(col) - start) % step) == 0)
+        return df.filter(expr)
+
     def filter_eq(self, df: DataFrame, col: str, value: Any) -> DataFrame:
         """Filter rows where `col` equals `value`.
 

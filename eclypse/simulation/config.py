@@ -79,7 +79,7 @@ class SimulationConfig(dict):
         path: Optional[str] = None,
         log_to_file: bool = False,
         log_level: LogLevel = "ECLYPSE",
-        report_chunk_size: int = 1,
+        report_chunk_size: int = 100,
         report_backend: Optional[
             Union[Literal["pandas", "polars", "polars_lazy"], FrameBackend]
         ] = None,

@@ -107,6 +107,16 @@ class PandasBackend(FrameBackend):
         """
         return df[df[col].isin(list(events))]
 
+    def filter_range_step(
+        self, df: DataFrame, col: str, start: int, stop: int, step: int
+    ) -> DataFrame:
+        """Filter rows where `col` is within a range and matches the given step."""
+        series = df[col]
+        mask = (series >= start) & (series <= stop)
+        if step > 1:
+            mask &= ((series - start) % step) == 0
+        return df[mask]
+
     def filter_eq(self, df: DataFrame, col: str, value: Any) -> DataFrame:
         """Filter rows where `col` equals `value`.
 

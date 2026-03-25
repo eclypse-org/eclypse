@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
+    Generator,
     List,
     Union,
 )
@@ -66,7 +67,7 @@ class Reporter(ABC):
             List[Any]: The list of entries to be written.
         """
 
-    def dfs_data(self, data: Any) -> List:
+    def dfs_data(self, data: Any) -> Generator[List[Any], None, None]:
         """Perform DFS on the nested dictionary and build paths (concatenated keys) as strings.
 
         Args:
@@ -87,5 +88,4 @@ class Reporter(ABC):
             else:
                 yield [d]
 
-        # Start the DFS from the root of the dictionary
-        return list(dfs(data))
+        yield from dfs(data)
