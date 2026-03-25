@@ -6,9 +6,11 @@ ccording to a placement strategy.
 
 from __future__ import annotations
 
+from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
+    DefaultDict,
     Dict,
     List,
     Optional,
@@ -102,33 +104,81 @@ class Placement:
         Returns:
             List[Tuple[str, str]]: The names of the services interactions crossing the link.
         """
-        interactions = []
+        services_by_node = self.node_service_mapping()
+        path_cache: Dict[
+            Tuple[str, str], Optional[List[Tuple[str, str, Dict[str, Any]]]]
+        ] = {}
+        return self._incoming_interactions_on_link(
+            source, target, services_by_node, path_cache
+        ) + self._outgoing_interactions_on_link(
+            source, target, services_by_node, path_cache
+        )
 
-        # interactions ending on services placed on target
-        for callee in self.services_on_node(target):
+    def _get_cached_path(
+        self,
+        path_cache: Dict[
+            Tuple[str, str], Optional[List[Tuple[str, str, Dict[str, Any]]]]
+        ],
+        source: str,
+        target: str,
+    ) -> Optional[List[Tuple[str, str, Dict[str, Any]]]]:
+        """Return a cached infrastructure path between two nodes."""
+        key = (source, target)
+        if key not in path_cache:
+            path_cache[key] = self.infrastructure.path(source, target)
+        return path_cache[key]
+
+    @staticmethod
+    def _path_crosses_link(
+        path: Optional[List[Tuple[str, str, Dict[str, Any]]]],
+        source: str,
+        target: str,
+    ) -> bool:
+        """Check whether a path traverses the given infrastructure link."""
+        if path is None:
+            return False
+        return any(u == source and v == target for u, v, _ in path)
+
+    def _incoming_interactions_on_link(
+        self,
+        source: str,
+        target: str,
+        services_by_node: Dict[str, List[str]],
+        path_cache: Dict[
+            Tuple[str, str], Optional[List[Tuple[str, str, Dict[str, Any]]]]
+        ],
+    ) -> List[Tuple[str, str]]:
+        """Collect interactions whose callee is placed on the target node."""
+        interactions = []
+        for callee in services_by_node[target]:
             for caller in self.application.neighbors(callee):
                 caller_node = self.service_placement(caller)
-
                 if caller_node == target:
-                    continue  # skip local interactions
-
-                path = self.infrastructure.path(caller_node, target)
-
-                if path and any(u == source and v == target for (u, v, _) in path):
+                    continue
+                path = self._get_cached_path(path_cache, caller_node, target)
+                if self._path_crosses_link(path, source, target):
                     interactions.append((caller, callee))
+        return interactions
 
-        # interactions starting from services placed on source
-        for caller in self.services_on_node(source):
+    def _outgoing_interactions_on_link(
+        self,
+        source: str,
+        target: str,
+        services_by_node: Dict[str, List[str]],
+        path_cache: Dict[
+            Tuple[str, str], Optional[List[Tuple[str, str, Dict[str, Any]]]]
+        ],
+    ) -> List[Tuple[str, str]]:
+        """Collect interactions whose caller is placed on the source node."""
+        interactions = []
+        for caller in services_by_node[source]:
             for callee in self.application.neighbors(caller):
                 callee_node = self.service_placement(callee)
-
                 if callee_node == source:
-                    continue  # skip local interactions
-
-                path = self.infrastructure.path(source, callee_node)
-                if path and any(u == source and v == target for (u, v, _) in path):
+                    continue
+                path = self._get_cached_path(path_cache, source, callee_node)
+                if self._path_crosses_link(path, source, target):
                     interactions.append((caller, callee))
-
         return interactions
 
     def node_service_mapping(self) -> Dict[str, List[str]]:
@@ -137,7 +187,12 @@ class Placement:
         Returns:
             Dict[str, List[str]]: The mapping of nodes to the list of services placed on them.
         """
-        return {node: self.services_on_node(node) for node in self.infrastructure.nodes}
+        node_services: DefaultDict[str, List[str]] = defaultdict(list)
+        for node in self.infrastructure.nodes:
+            node_services[node]
+        for service_id, node in self.mapping.items():
+            node_services[node].append(service_id)
+        return dict(node_services)
 
     def link_interaction_mapping(self) -> Dict[Tuple[str, str], List[Tuple[str, str]]]:
         """Return a view of the placement.

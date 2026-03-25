@@ -78,11 +78,12 @@ class FirstFitStrategy(PlacementStrategy):
             rnd.shuffle(infrastructure_nodes)
 
         for service, sattr in application.nodes(data=True):
-            for node, nattr in infrastructure_nodes:
+            for idx, (node, nattr) in enumerate(infrastructure_nodes):
                 if infrastructure.node_assets.satisfies(nattr, sattr):
                     mapping[service] = node
-                    new_res = infrastructure.node_assets.consume(nattr, sattr)
-                    infrastructure_nodes.remove((node, nattr))
-                    infrastructure_nodes.append((node, new_res))
+                    infrastructure_nodes[idx] = (
+                        node,
+                        infrastructure.node_assets.consume(nattr, sattr),
+                    )
                     break
         return mapping
