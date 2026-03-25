@@ -83,6 +83,12 @@ class Simulator:
         # Simulation state
         self._event_loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
         self._events_queue: asyncio.Queue = asyncio.Queue()
+        self._ordered_events = tuple(
+            sorted(
+                self._events.values(),
+                key=lambda event: not event.is_callback,
+            )
+        )
 
         self.thread: Thread = Thread(target=_run_loop, args=(self,), daemon=True)
         self._status: SimulationState = SimulationState.IDLE
@@ -146,11 +152,7 @@ class Simulator:
             self._status = SimulationState.STOPPING
 
         if not self._events[event_name].is_callback:
-            sorted_events = sorted(
-                self._events.values(),
-                key=lambda e: not e.is_callback,
-            )
-            for curr_evt in sorted_events:
+            for curr_evt in self._ordered_events:
                 if curr_evt.name != event_name and curr_evt._trigger(
                     self._events[event_name]
                 ):
@@ -172,9 +174,15 @@ class Simulator:
                         if event._trigger():
                             await self.enqueue_event(event.name)
 
-                event_meta = self._events_queue.get_nowait()
+                if self.status == SimulationState.STOPPING:
+                    event_meta = self._events_queue.get_nowait()
+                else:
+                    event_meta = await asyncio.wait_for(
+                        self._events_queue.get(),
+                        timeout=FLOAT_EPSILON,
+                    )
                 await self.fire(**event_meta)
-            except asyncio.QueueEmpty:
+            except (asyncio.QueueEmpty, TimeoutError):
                 pass
             except Exception as e:
                 print_exception(e, self.__class__.__name__)
