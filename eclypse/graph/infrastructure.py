@@ -143,6 +143,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._available: Optional[nx.DiGraph] = None
         self._paths: Dict[str, Dict[str, List[str]]] = {}
         self._costs: Dict[str, Dict[str, List[Tuple[str, str, Any]]]] = {}
+        self._path_resources: Dict[str, Dict[str, Dict[str, Any]]] = {}
+        self._processing_times: Dict[str, Dict[str, float]] = {}
 
     def add_node(self, node_for_adding: str, strict: bool = False, **assets: Any):
         """Add a node and invalidate the path cache.
@@ -287,10 +289,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         """
         if source == target or self.path(source, target) is None:
             return 0.0
-        return sum(
-            self.nodes[n].get("processing_time", MIN_FLOAT)
-            for n in self._paths[source][target]
-        )
+        return self._processing_times[source][target]
 
     def path_resources(self, source: str, target: str) -> Dict[str, Any]:
         """Retrieve the resources of the path between two nodes, if it exists.
@@ -313,10 +312,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         if path is None:
             return self.edge_assets.lower_bound
 
-        return {
-            k: (aggr([c[k] for _, _, c in path]))
-            for k, aggr in self.path_assets_aggregators.items()
-        }
+        return self._path_resources[source][target]
 
     def _invalidate_cache(self):
         """Invalidate the path and cost caches, and reset the available view.
@@ -326,6 +322,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         """
         self._paths.clear()
         self._costs.clear()
+        self._path_resources.clear()
+        self._processing_times.clear()
         self._available = None
 
     def _compute_path(self, source: str, target: str):
@@ -336,9 +334,17 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             target (str): The name of the target node.
         """
         path_nodes = self._path_algorithm(self.available, source, target)
+        path_costs = self._path_costs(path_nodes)
 
         self._paths.setdefault(source, {})[target] = path_nodes
-        self._costs.setdefault(source, {})[target] = self._path_costs(path_nodes)
+        self._costs.setdefault(source, {})[target] = path_costs
+        self._path_resources.setdefault(source, {})[target] = {
+            k: aggr([c[k] for _, _, c in path_costs])
+            for k, aggr in self.path_assets_aggregators.items()
+        }
+        self._processing_times.setdefault(source, {})[target] = sum(
+            self.nodes[n].get("processing_time", MIN_FLOAT) for n in path_nodes
+        )
 
     def _path_costs(self, path: List[str]) -> List[Tuple[str, str, Dict[str, Any]]]:
         """Compute the per-hop costs of a path.

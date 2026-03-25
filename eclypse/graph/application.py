@@ -124,13 +124,16 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         if self.flows == []:
             gateway_name = next((s for s in self.nodes if "gateway" in s.lower()), None)
             if gateway_name is not None:
-                self.flows = list(
-                    nx.all_simple_paths(
-                        self,
-                        source=gateway_name,
-                        target=[x for x in self.nodes if x != gateway_name],
-                    )
-                )
+                self.flows = []
+                for target in self.nodes:
+                    if target == gateway_name:
+                        continue
+                    try:
+                        self.flows.append(
+                            nx.shortest_path(self, source=gateway_name, target=target)
+                        )
+                    except nx.NetworkXNoPath:
+                        continue
 
     @cached_property
     def has_logic(self) -> bool:
