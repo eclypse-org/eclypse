@@ -134,10 +134,26 @@ class PlacementView(nx.DiGraph):
             snapshot.add_edge(u, v, strict=False, **attrs)
         return snapshot
 
+    def _reset_residual(self):
+        """Reset residual resources without rebuilding the snapshot when possible."""
+        if set(self.residual.nodes) != set(self.infrastructure.nodes) or set(
+            self.residual.edges
+        ) != set(self.infrastructure.edges):
+            self.residual = self._get_snapshot()
+            return
+
+        for n, attrs in self.infrastructure.nodes(data=True):
+            self.residual.nodes[n].clear()
+            self.residual.nodes[n].update(attrs)
+
+        for u, v, attrs in self.infrastructure.edges(data=True):
+            self.residual.edges[u, v].clear()
+            self.residual.edges[u, v].update(attrs)
+
     def _reset(self):
         """Resets the PlacementView to its initial state."""
         self.clear()
-        self.residual = self._get_snapshot()
+        self._reset_residual()
         self.nodes_used_by.clear()
 
     def _update_view(self, placement: Placement):
@@ -155,9 +171,8 @@ class PlacementView(nx.DiGraph):
                 )
                 self.add_node(n, **new_node_reqs)
                 self.nodes_used_by[n].add(placement.application.id)
-                nx.set_node_attributes(
-                    self.residual,
-                    {n: self.node_assets.consume(self.residual.nodes[n], node_reqs)},
+                self.residual.nodes[n].update(
+                    self.node_assets.consume(self.residual.nodes[n], node_reqs)
                 )
 
             for s, t, int_reqs in placement.application.edges(data=True):
@@ -168,6 +183,7 @@ class PlacementView(nx.DiGraph):
                 if node_s == node_t:
                     continue
                 _path = placement.infrastructure.path(node_s, node_t)
+
                 if _path:
                     _int_reqs = {
                         k: (
@@ -186,13 +202,10 @@ class PlacementView(nx.DiGraph):
                         self.add_edge(n1, n2, **new_int_reqs)
                         self.nodes_used_by[n1].add(placement.application.id)
                         self.nodes_used_by[n2].add(placement.application.id)
-                        nx.set_edge_attributes(
-                            self.residual,
-                            {
-                                (n1, n2): self.edge_assets.consume(
-                                    self.residual.edges[n1, n2], new_int_reqs
-                                )
-                            },
+                        self.residual.edges[n1, n2].update(
+                            self.edge_assets.consume(
+                                self.residual.edges[n1, n2], new_int_reqs
+                            )
                         )
 
                     edge_view = self.get_edge_view(node_s, node_t)

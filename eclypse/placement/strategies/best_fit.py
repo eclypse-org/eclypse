@@ -68,7 +68,8 @@ class BestFitStrategy(PlacementStrategy):
         for service, sattr in application.nodes(data=True):
             best_fit: Optional[str] = None
             best_nattr: Optional[Dict[str, Any]] = None
-            for node, nattr in infrastructure_nodes:
+            best_idx: Optional[int] = None
+            for idx, (node, nattr) in enumerate(infrastructure_nodes):
                 if infrastructure.node_assets.satisfies(nattr, sattr) and (
                     best_fit is None
                     or infrastructure.node_assets.satisfies(
@@ -77,11 +78,13 @@ class BestFitStrategy(PlacementStrategy):
                 ):
                     best_fit = node
                     best_nattr = nattr
+                    best_idx = idx
             mapping[service] = best_fit
-            if best_fit is None or best_nattr is None:
+            if best_fit is None or best_nattr is None or best_idx is None:
                 continue
 
-            new_res = infrastructure.node_assets.consume(best_nattr, sattr)
-            infrastructure_nodes.remove((best_fit, best_nattr))
-            infrastructure_nodes.append((best_fit, new_res))
+            infrastructure_nodes[best_idx] = (
+                best_fit,
+                infrastructure.node_assets.consume(best_nattr, sattr),
+            )
         return mapping
