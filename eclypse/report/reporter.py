@@ -45,6 +45,10 @@ class Reporter(ABC):
         """Perform any preparation logic (file creation, folder setup, headers, etc)."""
         self.report_path.mkdir(parents=True, exist_ok=True)
 
+    async def close(self):
+        """Perform any shutdown logic (closing file handles, flushing state, etc)."""
+        return None
+
     @abstractmethod
     async def write(self, callback_type: str, data: Any):
         """Write a batch of buffered data to the destination (file, db, etc)."""
@@ -55,7 +59,7 @@ class Reporter(ABC):
         event_name: str,
         event_idx: int,
         callback: EclypseEvent,
-    ) -> List[Any]:
+    ) -> Generator[Any, None, None]:
         """Report the simulation reportable callbacks.
 
         Args:
@@ -64,7 +68,7 @@ class Reporter(ABC):
             callback (EclypseEvent): The executed event.
 
         Returns:
-            List[Any]: The list of entries to be written.
+            Generator[Any, None, None]: The entries to be written lazily.
         """
 
     def dfs_data(self, data: Any) -> Generator[List[Any], None, None]:

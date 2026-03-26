@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    List,
+    Generator,
 )
 
 from eclypse.report.reporter import Reporter
@@ -40,15 +40,19 @@ class TensorBoardReporter(Reporter):
 
         self._writer = SummaryWriter(log_dir=self.report_path)
 
+    async def close(self):
+        """Close the TensorBoard writer."""
+        if self._writer is not None:
+            self._writer.close()
+            self._writer = None
+
     def report(
         self,
         _: str,
         event_idx: int,
         callback: EclypseEvent,
-    ) -> List[Any]:
+    ) -> Generator[Any, None, None]:
         """Generate TensorBoard-compatible metric tuples.
-
-        Returns a list of (callback_name, metric_dict, event_idx) to be written.
 
         Args:
             _ (str): The name of the event.
@@ -56,19 +60,16 @@ class TensorBoardReporter(Reporter):
             callback (EclypseEvent): The executed callback containing the data to report.
 
         Returns:
-            List[Any]: A list of tuples with (callback_name, metric_dict, event_idx).
+            Generator[Any, None, None]: Tuples with (callback_name, metric_dict, event_idx).
         """
         if callback.type is None:
-            return []
+            return
 
-        entries = []
         for line in self.dfs_data(callback.data):
             if line[-1] is None:
                 continue
             metric_name = "/".join(line[:-1]) or "value"
-            entries.append((callback.name, {metric_name: line[-1]}, event_idx))
-
-        return entries
+            yield (callback.name, {metric_name: line[-1]}, event_idx)
 
     async def write(
         self, callback_type: str, data: list[tuple[str, dict[str, float], int]]

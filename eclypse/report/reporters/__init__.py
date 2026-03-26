@@ -1,8 +1,4 @@
-"""Package for managing simulation reporters, including the off-the-shelf ones.
-
-If you are interested in creating HTML reports, use the
-`eclypse-html-report <https://pypi.org/project/eclypse-html-report>` CLI tool.
-"""
+"""Package for managing simulation reporters, including the off-the-shelf ones."""
 
 from typing import (
     Callable,

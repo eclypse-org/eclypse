@@ -6,12 +6,10 @@ It provides the interface for the simulation reporters.
 from __future__ import annotations
 
 import asyncio
-from collections import defaultdict
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    DefaultDict,
     Dict,
     List,
     Type,
@@ -41,14 +39,16 @@ class SimulationReporter:
         self.reporters: Dict[str, Reporter] = {
             rtype: rep(report_path) for rtype, rep in reporters.items()
         }
-        self.queues: Dict[str, asyncio.Queue] = {
-            rtype: asyncio.Queue() for rtype in self.reporters
+        self.queues: Dict[str, Dict[str, asyncio.Queue]] = {
+            rtype: {} for rtype in self.reporters
         }
-        self.buffers: Dict[str, DefaultDict[str, List[Any]]] = {
-            rtype: defaultdict(list) for rtype in self.reporters
+        self.buffers: Dict[str, Dict[str, List[Any]]] = {
+            rtype: {} for rtype in self.reporters
         }
-
-        self.writer_tasks: Dict[str, asyncio.Task] = {}
+        self.writer_tasks: Dict[str, Dict[str, asyncio.Task]] = {
+            rtype: {} for rtype in self.reporters
+        }
+        self._loop: asyncio.AbstractEventLoop | None = None
         self._running = False
 
     def add_reporter(self, rtype: str, reporter: Type[Reporter]):
@@ -58,90 +58,119 @@ class SimulationReporter:
             return
 
         self.reporters[rtype] = reporter(self.report_path)
-        self.queues[rtype] = asyncio.Queue()
-        self.buffers[rtype] = defaultdict(list)
+        self.queues[rtype] = {}
+        self.buffers[rtype] = {}
+        self.writer_tasks[rtype] = {}
 
     async def start(self, loop: asyncio.AbstractEventLoop):
         """Start the background writer loop(s)."""
         if self._running:
             return
-        for rtype, reporter in self.reporters.items():
-            self.writer_tasks[rtype] = loop.create_task(self._writer_loop(rtype))
+        self._loop = loop
+        for _, reporter in self.reporters.items():
             await reporter.init()
         self._running = True
 
     async def stop(self):
         """Shut down all writer tasks cleanly."""
-        for rtype, queue in self.queues.items():
-            self.logger.trace(f"[{rtype}] Waiting for queue to flush...")
-            await queue.join()
+        for rtype, queues in self.queues.items():
+            for cb_type, queue in queues.items():
+                self.logger.trace(f"[{rtype}/{cb_type}] Waiting for queue to flush...")
+                await queue.join()
 
-        for _, queue in self.queues.items():
-            await queue.put(None)  # Signal the writer to stop
+        for queues in self.queues.values():
+            for queue in queues.values():
+                await queue.put(None)  # Signal the writer to stop
 
-        await asyncio.gather(*self.writer_tasks.values())
+        tasks = [
+            task
+            for reporter_tasks in self.writer_tasks.values()
+            for task in reporter_tasks.values()
+        ]
+        if tasks:
+            await asyncio.gather(*tasks)
+
+        for reporter in self.reporters.values():
+            await reporter.close()
 
         self.logger.trace("All writer tasks terminated.")
 
     async def report(self, event_name: str, event_idx: int, callback: EclypseEvent):
         """Queue a callback for all applicable reporters."""
+        if callback.type is None:
+            return
         for rtype in callback.report_types:
-            if rtype not in self.queues:
+            if rtype not in self.reporters:
                 self.logger.warning(f"[{rtype}] No reporter registered, skipping.")
                 continue
 
             data = self.reporters[rtype].report(event_name, event_idx, callback)
             if data is None:
                 continue
-            await self.queues[rtype].put((callback.type, data))
+            queue = self._ensure_queue(rtype, callback.type)
+            await queue.put(data)
 
-    async def _writer_loop(self, rtype: str):
-        """Writer loop for a specific reporter type."""
-        queue = self.queues[rtype]
+    def _ensure_queue(self, rtype: str, cb_type: str) -> asyncio.Queue:
+        """Create the queue, buffer, and writer task for a reporter/callback pair."""
+        if cb_type in self.queues[rtype]:
+            return self.queues[rtype][cb_type]
+
+        if self._loop is None:
+            raise RuntimeError("Reporter loop not initialised. Call start() first.")
+
+        queue: asyncio.Queue = asyncio.Queue()
+        self.queues[rtype][cb_type] = queue
+        self.buffers[rtype][cb_type] = []
+        self.writer_tasks[rtype][cb_type] = self._loop.create_task(
+            self._writer_loop(rtype, cb_type)
+        )
+        return queue
+
+    async def _writer_loop(self, rtype: str, cb_type: str):
+        """Writer loop for a specific reporter/callback pair."""
+        queue = self.queues[rtype][cb_type]
         reporter = self.reporters[rtype]
-        buffer = self.buffers[rtype]
+        buffer = self.buffers[rtype][cb_type]
 
-        self.logger.trace(f"[{rtype}] Writer loop started.")
+        self.logger.trace(f"[{rtype}/{cb_type}] Writer loop started.")
 
         try:
             while True:
                 item = await queue.get()
-
-                if item is None:
-                    self.logger.trace(f"[{rtype}] Shutdown signal received.")
-                    break
-
                 try:
-                    cb_type, data = item
-                    buffer[cb_type].extend(data)
-
-                    if len(buffer[cb_type]) >= self.chunk_size:
+                    if item is None:
                         self.logger.trace(
-                            f"[{rtype}] Writing: {cb_type} - {len(buffer[cb_type])} items"
+                            f"[{rtype}/{cb_type}] Shutdown signal received."
                         )
-                        await reporter.write(cb_type, buffer[cb_type])
-                        buffer[cb_type].clear()
+                        break
+
+                    buffer.extend(item)
+
+                    if len(buffer) >= self.chunk_size:
+                        self.logger.trace(
+                            f"[{rtype}] Writing: {cb_type} - {len(buffer)} items"
+                        )
+                        await reporter.write(cb_type, buffer)
+                        buffer.clear()
                 except Exception as e:
-                    self.logger.error(f"[{rtype}] Error during write: {e}")
+                    self.logger.error(f"[{rtype}/{cb_type}] Error during write: {e}")
                     return
                 finally:
                     queue.task_done()
                     # await asyncio.sleep(FLOAT_EPSILON)
 
         except asyncio.CancelledError:
-            self.logger.trace(f"[{rtype}] Writer task cancelled.")
+            self.logger.trace(f"[{rtype}/{cb_type}] Writer task cancelled.")
 
-        # Final flush of all remaining buffered data
-        for cb_type, data in buffer.items():
-            if data:
-                self.logger.trace(
-                    f"[{rtype}] Final flush {len(data)} items of type {cb_type}"
-                )
-                try:
-                    await reporter.write(cb_type, data)
-                except Exception as e:
-                    self.logger.error(f"[{rtype}] Error during final flush: {e}")
-        self.logger.trace(f"[{rtype}] Writer loop terminated.")
+        if buffer:
+            self.logger.trace(
+                f"[{rtype}] Final flush {len(buffer)} items of type {cb_type}"
+            )
+            try:
+                await reporter.write(cb_type, buffer)
+            except Exception as e:
+                self.logger.error(f"[{rtype}/{cb_type}] Error during final flush: {e}")
+        self.logger.trace(f"[{rtype}/{cb_type}] Writer loop terminated.")
 
     @property
     def logger(self) -> Logger:
