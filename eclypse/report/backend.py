@@ -9,21 +9,26 @@ Backends are implemented as subclasses providing concrete behaviour.
 
 from __future__ import annotations
 
+import json
 from abc import (
     ABC,
     abstractmethod,
 )
+from pathlib import Path
 from typing import (
     Any,
     Iterable,
+    List,
     Set,
 )
+
+from eclypse.report._schema import DEFAULT_REPORT_HEADERS
 
 
 class FrameBackend(ABC):
     """Abstract base class defining the minimal DataFrame backend API.
 
-    Subclasses must implement CSV reading and filtering primitives required by
+    Subclasses must implement tabular reading and filtering primitives required by
     Report. This keeps Report independent from a concrete DataFrame library.
     """
 
@@ -36,11 +41,13 @@ class FrameBackend(ABC):
         self._name = name
 
     @abstractmethod
-    def read_csv(self, path: str) -> Any:
-        """Read a CSV file into a backend-specific DataFrame.
+    def read_frame(self, stats_path: Path, report_type: str, report_format: str) -> Any:
+        """Read a report into a backend-specific DataFrame.
 
         Args:
-            path: Path to the CSV file.
+            stats_path: Base path of the selected report format folder.
+            report_type: Event report type to load.
+            report_format: Storage format, e.g. ``csv``, ``parquet``, ``json``.
 
         Returns:
             A backend-specific DataFrame instance.
@@ -152,3 +159,73 @@ class FrameBackend(ABC):
             A short backend identifier (e.g. "pandas", "polars", "polars_lazy").
         """
         return self._name
+
+
+def get_report_columns(report_type: str) -> List[str]:
+    """Return the expected tabular columns for a report type."""
+    return DEFAULT_REPORT_HEADERS[report_type]
+
+
+def get_report_source(stats_path: Path, report_type: str, report_format: str) -> Path:
+    """Return the source path for a given report type and format."""
+    stats_path = Path(stats_path)
+    if report_format == "csv":
+        return stats_path / f"{report_type}.csv"
+    if report_format == "json":
+        return stats_path / f"{report_type}.jsonl"
+    if report_format == "parquet":
+        return stats_path / report_type
+    raise ValueError(f"Unsupported report format: {report_format}")
+
+
+def list_parquet_parts(path: Path) -> List[Path]:
+    """List parquet part files under a report directory."""
+    path = Path(path)
+    parts = sorted(path.rglob("*.parquet"))
+    if not parts:
+        raise FileNotFoundError(f'No parquet files found at "{path}".')
+    return parts
+
+
+def load_jsonl_rows(path: Path, report_type: str) -> List[dict[str, Any]]:
+    """Load JSONL report entries and normalise them into tabular rows."""
+    path = Path(path)
+    if not path.exists():
+        raise FileNotFoundError(f'No JSONL file found at "{path}".')
+
+    rows: List[dict[str, Any]] = []
+    columns = get_report_columns(report_type)
+    payload_columns = columns[4:]
+
+    with open(path, encoding="utf-8") as handle:
+        for raw_line in handle:
+            stripped_line = raw_line.strip()
+            if not stripped_line:
+                continue
+
+            item = json.loads(stripped_line)
+            base_row = {
+                "timestamp": item["timestamp"],
+                "event_id": item["event_name"],
+                "n_event": item["event_idx"],
+                "callback_id": item["callback_name"],
+            }
+            for payload in _iter_json_payload_rows(item.get("data")):
+                row = base_row.copy()
+                for idx, column in enumerate(payload_columns):
+                    row[column] = payload[idx] if idx < len(payload) else None
+                rows.append(row)
+
+    return rows
+
+
+def _iter_json_payload_rows(data: Any) -> Iterable[list[Any]]:
+    """Yield row payloads from a JSON-serialised callback data field."""
+    if isinstance(data, list):
+        if not data:
+            return []
+        if isinstance(data[0], list):
+            return [list(row) for row in data]
+        return [list(data)]
+
+    return [[data]]

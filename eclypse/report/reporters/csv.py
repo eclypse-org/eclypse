@@ -17,23 +17,13 @@ from typing import (
 
 import aiofiles  # type: ignore[import-untyped]
 
+from eclypse.report._schema import DEFAULT_REPORT_HEADERS
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
     from eclypse.workflow.event import EclypseEvent
 
 CSV_DELIMITER = ","
-DEFAULT_IDX_HEADER = ["timestamp", "event_id", "n_event", "callback_id"]
-
-DEFAULT_CSV_HEADERS = {
-    "simulation": [*DEFAULT_IDX_HEADER, "value"],
-    "application": [*DEFAULT_IDX_HEADER, "application_id", "value"],
-    "service": [*DEFAULT_IDX_HEADER, "application_id", "service_id", "value"],
-    "interaction": [*DEFAULT_IDX_HEADER, "application_id", "source", "target", "value"],
-    "infrastructure": [*DEFAULT_IDX_HEADER, "value"],
-    "node": [*DEFAULT_IDX_HEADER, "node_id", "value"],
-    "link": [*DEFAULT_IDX_HEADER, "source", "target", "value"],
-}
 
 
 class CSVReporter(Reporter):
@@ -79,7 +69,7 @@ class CSVReporter(Reporter):
         handle = await aiofiles.open(path, "a", encoding="utf-8")
         if not exists:
             await handle.write(
-                f"{CSV_DELIMITER.join(DEFAULT_CSV_HEADERS[callback_type])}\n"
+                f"{CSV_DELIMITER.join(DEFAULT_REPORT_HEADERS[callback_type])}\n"
             )
         self._files[callback_type] = handle
         return handle

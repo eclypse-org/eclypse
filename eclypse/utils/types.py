@@ -66,6 +66,12 @@ EventType = Literal[
     "simulation",
 ]
 
+ReportFormat = Literal[
+    "csv",
+    "parquet",
+    "json",
+]
+
 LogLevel = Literal[
     "TRACE",
     "DEBUG",

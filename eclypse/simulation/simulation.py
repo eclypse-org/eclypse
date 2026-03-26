@@ -6,6 +6,7 @@ import json
 import os
 from typing import (
     TYPE_CHECKING,
+    Any,
     Dict,
     Optional,
     Union,
@@ -34,7 +35,6 @@ if TYPE_CHECKING:
     from eclypse.remote.bootstrap.bootstrap import RemoteBootstrap
     from eclypse.simulation._simulator.local import SimulationState
     from eclypse.simulation._simulator.remote import RemoteSimulator
-    from eclypse.utils._logging import Logger
 
 
 class Simulation:
@@ -195,7 +195,7 @@ class Simulation:
         return self.simulator.applications
 
     @property
-    def logger(self) -> Logger:
+    def logger(self) -> Any:
         """Get the logger of the simulation.
 
         Returns:
@@ -231,7 +231,11 @@ class Simulation:
         """The report of the simulation."""
         if self._report is None:
             self.wait()
-            self._report = Report(self.path, self._sim_config.report_backend)
+            self._report = Report(
+                self.path,
+                self._sim_config.report_backend,
+                self._sim_config.report_format,
+            )
         return self._report
 
 
