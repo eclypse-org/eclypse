@@ -25,10 +25,10 @@ from typing import (
 )
 
 from eclypse.report.backends import get_backend
-from eclypse.utils.constants import (
+from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
     DEFAULT_REPORT_TYPE,
-    MAX_FLOAT,
 )
 from eclypse.utils.types import EventType
 
