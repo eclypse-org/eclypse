@@ -93,3 +93,12 @@ class Reporter(ABC):
                 yield [d]
 
         yield from dfs(data)
+
+    def callback_rows(self, callback: EclypseEvent) -> Generator[List[Any], None, None]:
+        """Return callback tuple rows directly, otherwise DFS-flatten the payload."""
+        if callback.is_callback and isinstance(callback.data, tuple):
+            for row in callback.data:
+                yield list(row)
+            return
+
+        yield from self.dfs_data(callback.data)

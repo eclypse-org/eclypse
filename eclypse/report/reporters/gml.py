@@ -44,7 +44,7 @@ class GMLReporter(Reporter):
         Returns:
             Generator[tuple[str, nx.DiGraph], None, None]: Graph entries to write lazily.
         """
-        for d in self.dfs_data(callback.data):
+        for d in self.callback_rows(callback):
             if not d or d[-1] is None:
                 continue
             graph = d[-1]
