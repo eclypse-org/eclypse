@@ -13,10 +13,15 @@ from typing import (
     Set,
 )
 
-from eclypse.report.backend import FrameBackend
+from eclypse.report.backend import (
+    FrameBackend,
+    get_report_source,
+    list_parquet_parts,
+    load_jsonl_rows,
+)
 
 if TYPE_CHECKING:
-    from pandas import DataFrame
+    from pandas import DataFrame  # type: ignore[import-untyped]
 
 
 def _to_float(value: Any) -> Any:
@@ -47,16 +52,23 @@ class PandasBackend(FrameBackend):
 
         self._pd = pd
 
-    def read_csv(self, path: str) -> DataFrame:
-        """Read a CSV file into a pandas DataFrame.
+    def read_frame(self, stats_path, report_type: str, report_format: str) -> DataFrame:
+        """Read a report into a pandas DataFrame."""
+        source = get_report_source(stats_path, report_type, report_format)
 
-        Args:
-            path: Path to the CSV file.
+        if report_format == "csv":
+            return self._pd.read_csv(source, converters={"value": _to_float})
 
-        Returns:
-            A pandas DataFrame with the `value` column converted via `_to_float`.
-        """
-        return self._pd.read_csv(path, converters={"value": _to_float})
+        if report_format == "parquet":
+            return self._pd.concat(
+                [self._pd.read_parquet(part) for part in list_parquet_parts(source)],
+                ignore_index=True,
+            )
+
+        if report_format == "json":
+            return self._pd.DataFrame(load_jsonl_rows(source, report_type))
+
+        raise ValueError(f"Unsupported report format: {report_format}")
 
     def is_empty(self, df: DataFrame) -> bool:
         """Return whether the DataFrame is empty.

@@ -20,18 +20,21 @@ from typing import (
     Optional,
     Tuple,
     Union,
+    cast,
     get_args,
 )
 
 from eclypse.report.backends import get_backend
 from eclypse.utils.constants import (
     DEFAULT_REPORT_BACKEND,
+    DEFAULT_REPORT_TYPE,
     MAX_FLOAT,
 )
 from eclypse.utils.types import EventType
 
 if TYPE_CHECKING:
     from eclypse.report.backend import FrameBackend
+    from eclypse.utils.types import ReportFormat
 
 REPORT_TYPES = list(get_args(EventType))
 
@@ -67,26 +70,33 @@ class Report:
         self,
         simulation_path: Union[str, Path],
         backend: Union[str, FrameBackend] = DEFAULT_REPORT_BACKEND,
+        report_format: Optional[ReportFormat] = None,
     ):
         """Initialise the Report.
 
         Args:
-            simulation_path: Path to the simulation directory containing the "csv" folder.
+            simulation_path: Path to the simulation directory containing report outputs.
             backend: Backend name or a FrameBackend instance.
+            report_format: Storage format to read from. If omitted, uses the value
+                stored in ``config.json`` when available, otherwise
+                ``DEFAULT_REPORT_TYPE``.
 
         Raises:
-            FileNotFoundError: If the "csv" directory does not exist.
+            FileNotFoundError: If the selected report format directory does not exist.
             ValueError: If a backend name is unknown.
             TypeError: If a backend object is not a FrameBackend.
         """
         self._sim_path = Path(simulation_path)
-        self._stats_path = self._sim_path / "csv"
+        self._config: Optional[Dict[str, Any]] = None
+        self._report_format: ReportFormat = self._resolve_report_format(report_format)
+        self._stats_path = self._sim_path / self._report_format
         if not self._stats_path.exists():
-            raise FileNotFoundError(f'No CSV files found at "{self._stats_path}".')
+            raise FileNotFoundError(
+                f'No {self._report_format} report files found at "{self._stats_path}".'
+            )
 
         self._backend = get_backend(backend)
         self.stats: Dict[EventType, Optional[Any]] = defaultdict()
-        self._config: Optional[Dict[str, Any]] = None
 
     @property
     def backend_name(self) -> str:
@@ -341,7 +351,7 @@ class Report:
         Returns:
             A filtered DataFrame.
         """
-        self._read_csv(report_type)
+        self._read_frame(report_type)
         df = self.stats[report_type]
         if df is None:
             raise RuntimeError(f"Report data for {report_type!r} could not be loaded.")
@@ -349,15 +359,18 @@ class Report:
             df, report_range=report_range, report_step=report_step, **kwargs
         )
 
-    def _read_csv(self, report_type: EventType):
-        """Read a CSV file into a DataFrame and cache it.
+    def _read_frame(self, report_type: EventType):
+        """Read a report file into a DataFrame and cache it.
 
         Args:
             report_type: The report type to read (e.g. "application", "service", etc.).
         """
         if report_type not in self.stats:
-            file_path = str(self._stats_path / f"{report_type}.csv")
-            self.stats[report_type] = self._backend.read_csv(file_path)
+            self.stats[report_type] = self._backend.read_frame(
+                self._stats_path,
+                report_type,
+                self._report_format,
+            )
 
     def filter(
         self,
@@ -420,3 +433,25 @@ class Report:
             with open(file_path, encoding="utf-8") as config_file:
                 self._config = json.load(config_file)
         return self._config
+
+    @property
+    def report_format(self) -> ReportFormat:
+        """Return the on-disk report format used for loading."""
+        return self._report_format
+
+    def _resolve_report_format(
+        self, report_format: Optional[ReportFormat]
+    ) -> ReportFormat:
+        """Resolve report format from argument, config file, or default."""
+        if report_format is not None:
+            return report_format
+
+        config_path = self._sim_path / "config.json"
+        if config_path.exists():
+            with open(config_path, encoding="utf-8") as config_file:
+                self._config = json.load(config_file)
+            config_format = self._config.get("report_format")
+            if config_format is not None:
+                return cast("ReportFormat", config_format)
+
+        return cast("ReportFormat", DEFAULT_REPORT_TYPE)

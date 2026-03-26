@@ -15,7 +15,12 @@ from typing import (
     Set,
 )
 
-from eclypse.report.backend import FrameBackend
+from eclypse.report.backend import (
+    FrameBackend,
+    get_report_source,
+    list_parquet_parts,
+    load_jsonl_rows,
+)
 
 if TYPE_CHECKING:
     from polars import LazyFrame
@@ -39,20 +44,19 @@ class PolarsLazyBackend(FrameBackend):
 
         self._pl = pl
 
-    def read_csv(self, path: str) -> LazyFrame:
-        """Scan a CSV file into a polars LazyFrame.
-
-        The `value` column is cast to Float64 with `strict=False`, so non-parsable
-        values become null rather than raising.
-
-        Args:
-            path: Path to the CSV file.
-
-        Returns:
-            A polars LazyFrame representing the CSV scan.
-        """
+    def read_frame(self, stats_path, report_type: str, report_format: str) -> LazyFrame:
+        """Read a report into a polars LazyFrame."""
         pl = self._pl
-        lf = pl.scan_csv(path)
+        source = get_report_source(stats_path, report_type, report_format)
+
+        if report_format == "csv":
+            lf = pl.scan_csv(source)
+        elif report_format == "parquet":
+            lf = pl.scan_parquet([str(part) for part in list_parquet_parts(source)])
+        elif report_format == "json":
+            lf = pl.DataFrame(load_jsonl_rows(source, report_type)).lazy()
+        else:
+            raise ValueError(f"Unsupported report format: {report_format}")
 
         schema = lf.collect_schema()
         if "value" in schema:
