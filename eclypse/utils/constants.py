@@ -1,4 +1,4 @@
-"""Module containing constants used throughout the ECLYPSE package.
+"""Module containing domain and low-level constants used throughout ECLYPSE.
 
 Attributes:
     MIN_FLOAT (float): Minimum float value. Default is ``0.0``
@@ -15,12 +15,6 @@ Attributes:
     MIN_AVAILABILITY (float): Minimum availability value. Default is ``0.0``
     MAX_AVAILABILITY (float): Maximum availability value. Default is ``1.0``
 
-    DEFAULT_SIM_PATH (Path): Default path to the simulation folder.
-        Default is ``~/eclypse-sim``
-
-    DEFAULT_REPORT_TYPE (str): Default report type used in simulations.
-        Default is ``csv``
-
     RND_SEED (str): Environment variable key to configure the random seed.
         Value is ``ECLYPSE_RND_SEED``
     LOG_LEVEL (str): Environment variable key to configure the logging level.
@@ -30,7 +24,12 @@ Attributes:
 """
 
 import sys
-from pathlib import Path
+
+from eclypse.utils.defaults import (
+    DEFAULT_REPORT_BACKEND,
+    DEFAULT_REPORT_TYPE,
+    get_default_sim_path,
+)
 
 MIN_FLOAT, MAX_FLOAT = 0.0, 1e9
 FLOAT_EPSILON = sys.float_info.min
@@ -48,14 +47,12 @@ COST_RECOMPUTATION_THRESHOLD = 0.05  # 5% threshold to consider recomputation co
 
 ### Simulation metrics
 
-DEFAULT_SIM_PATH = Path.home() / "eclypse-sim"
-DEFAULT_REPORT_TYPE = "csv"
-DEFAULT_REPORT_BACKEND = "pandas"
 DRIVING_EVENT = "enact"
 
 __all__ = [
+    "DEFAULT_REPORT_BACKEND",
     "DEFAULT_REPORT_TYPE",
-    "DEFAULT_SIM_PATH",
+    "DRIVING_EVENT",
     "FLOAT_EPSILON",
     "MAX_AVAILABILITY",
     "MAX_BANDWIDTH",
@@ -65,4 +62,5 @@ __all__ = [
     "MIN_BANDWIDTH",
     "MIN_FLOAT",
     "MIN_LATENCY",
+    "get_default_sim_path",
 ]

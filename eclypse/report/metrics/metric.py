@@ -11,10 +11,10 @@ from typing import (
 )
 
 from eclypse.utils.constants import (
-    DEFAULT_REPORT_TYPE,
     DRIVING_EVENT,
     MAX_FLOAT,
 )
+from eclypse.utils.defaults import DEFAULT_REPORT_TYPE
 from eclypse.workflow.event import event
 
 if TYPE_CHECKING:

@@ -37,13 +37,15 @@ from eclypse.utils._logging import (
     logger,
 )
 from eclypse.utils.constants import (
-    DEFAULT_REPORT_BACKEND,
-    DEFAULT_REPORT_TYPE,
-    DEFAULT_SIM_PATH,
     DRIVING_EVENT,
     LOG_FILE,
     LOG_LEVEL,
     RND_SEED,
+)
+from eclypse.utils.defaults import (
+    DEFAULT_REPORT_BACKEND,
+    DEFAULT_REPORT_TYPE,
+    get_default_sim_path,
 )
 from eclypse.workflow.event.defaults import get_default_events
 from eclypse.workflow.trigger import (
@@ -169,7 +171,7 @@ class SimulationConfig(dict):
             raise ValueError("step_every_ms must be a float, 'manual', 'auto' or None.")
 
         # Simulation path
-        _path = DEFAULT_SIM_PATH if path is None else Path(path)
+        _path = get_default_sim_path() if path is None else Path(path)
         if _path.exists():
             _path = Path(f"{_path}-{strftime('%Y%m%d_%H%M%S')}")
 
