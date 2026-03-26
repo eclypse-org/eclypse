@@ -65,7 +65,7 @@ class TensorBoardReporter(Reporter):
         if callback.type is None:
             return
 
-        for line in self.dfs_data(callback.data):
+        for line in self.callback_rows(callback):
             if line[-1] is None:
                 continue
             metric_name = "/".join(line[:-1]) or "value"

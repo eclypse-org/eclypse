@@ -62,7 +62,7 @@ class CSVReporter(Reporter):
             event_idx (int): The index of the event trigger (step).
             callback (EclypseEvent): The executed callback containing the data to report.
         """
-        for line in self.dfs_data(callback.data):
+        for line in self.callback_rows(callback):
             if line[-1] is None:
                 continue
 
