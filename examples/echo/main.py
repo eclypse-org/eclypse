@@ -6,7 +6,7 @@ from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
-from eclypse.utils.constants import DEFAULT_SIM_PATH
+from eclypse.utils.defaults import get_default_sim_path
 
 if __name__ == "__main__":
 
@@ -16,7 +16,7 @@ if __name__ == "__main__":
         max_steps=30,
         step_every_ms=500,
         log_to_file=True,
-        path=DEFAULT_SIM_PATH / "EchoApp",
+        path=get_default_sim_path() / "EchoApp",
         # remote=True,
         # log_level="TRACE",
         include_default_metrics=True,
