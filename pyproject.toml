@@ -66,7 +66,8 @@ docs = [
     "sphinx-design (>=0.7.0,<0.8.0)",
     "sphinx-icon (>=0.2.2,<0.3.0)",
     "pydata-sphinx-theme (>=0.16.1,<0.17.0)",
-    "sphinx (>=9.1.0,<10.0.0) ; python_version >= \"3.12\" and python_version < \"3.14\"",
+    "sphinx (>=9.1.0,<10.0.0) ; python_version >= '3.12'",
+    "sphinx (>=9.0.4,<9.1.0) ; python_version < '3.12'",
 ]
 
 [tool.poetry.group.dev]
@@ -80,6 +81,9 @@ optional = true
 
 [tool.poetry.group.docs]
 optional = true
+
+# [tool.poetry.group.docs.dependencies]
+# sphinx = { version = ">=9.1.0,<10.0.0", python = ">=3.12,<3.14" }
 
 
 # Build backend
