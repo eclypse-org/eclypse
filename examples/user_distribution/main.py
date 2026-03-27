@@ -9,7 +9,7 @@ from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
-from eclypse.utils.constants import DEFAULT_SIM_PATH
+from eclypse.utils.defaults import get_default_sim_path
 
 SEED = 42
 STEPS = 4167
@@ -21,7 +21,7 @@ sim_config = SimulationConfig(
     step_every_ms="auto",
     seed=SEED,
     max_steps=STEPS,
-    path=DEFAULT_SIM_PATH / "user-distribution",
+    path=get_default_sim_path() / "user-distribution",
     events=get_metrics(),
     log_to_file=True,
 )
