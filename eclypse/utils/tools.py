@@ -7,15 +7,10 @@ from sys import getsizeof
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Optional,
 )
-
-from . import constants
 
 if TYPE_CHECKING:
     from eclypse.graph.assets import AssetBucket
-    from eclypse.simulation import Simulation
 
 
 def get_bytes_size(d: Any) -> int:
@@ -44,18 +39,6 @@ def get_bytes_size(d: Any) -> int:
     if hasattr(d, "__dict__"):
         return get_bytes_size(d.__dict__)
     return getsizeof(d)
-
-
-def get_constant(name: str) -> Any:
-    """Get the value of a constant in the `constants` module, given its name.
-
-    Args:
-        name (str): The name of the constant to retrieve
-
-    Returns:
-        Any: The value of the constant
-    """
-    return getattr(constants, name)
 
 
 def camel_to_snake(s: str) -> str:
@@ -95,31 +78,8 @@ def prune_assets(
     return {k: v for k, v in requirements.items() if assets.get(k)}
 
 
-def shield_interrupt(func):
-    """Decorator to catch the KeyboardInterrupt exception and stop the simulation.
-
-    Args:
-        func (Callable): The function to be wrapped.
-
-    Returns:
-        Callable: The wrapped function with the KeyboardInterrupt exception handling.
-    """
-
-    def wrapper(*args, **kwargs) -> Optional[Callable]:
-        simulation: Simulation = args[0]
-        try:
-            return func(*args, **kwargs)
-        except KeyboardInterrupt:
-            simulation.logger.warning("SIMULATION INTERRUPTED.")
-            simulation.stop(blocking=False)
-        return None
-
-    return wrapper
-
-
 __all__ = [
     "camel_to_snake",
     "get_bytes_size",
-    "get_constant",
-    "shield_interrupt",
+    "prune_assets",
 ]
