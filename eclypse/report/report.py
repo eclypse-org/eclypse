@@ -39,21 +39,6 @@ if TYPE_CHECKING:
 REPORT_TYPES = list(get_args(EventType))
 
 
-def to_float(value: Any) -> Any:
-    """Convert a value to float where possible.
-
-    Args:
-        value: The value to convert.
-
-    Returns:
-        The float value if conversion succeeds; otherwise the original value.
-    """
-    try:
-        return float(value)
-    except (TypeError, ValueError):
-        return value
-
-
 class Report:
     """Report class backed by a pluggable DataFrame backend.
 
