@@ -8,7 +8,7 @@ from eclypse.builders.infrastructure import hierarchical
 from eclypse.placement.strategies import RandomStrategy
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
-from eclypse.utils.constants import DEFAULT_SIM_PATH
+from eclypse.utils.defaults import get_default_sim_path
 
 if __name__ == "__main__":
     seed = 22
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         seed=seed,
         step_every_ms=500,
         max_steps=100,
-        path=DEFAULT_SIM_PATH / "SockShopMPI",
+        path=get_default_sim_path() / "SockShopMPI",
         remote=True,
         include_default_metrics=True,
     )

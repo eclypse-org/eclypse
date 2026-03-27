@@ -1,9 +1,9 @@
 import torchvision
 from torchvision.datasets import MNIST
 
-from eclypse.utils.constants import DEFAULT_SIM_PATH
+from eclypse.utils.defaults import get_default_sim_path
 
-BASE_PATH = DEFAULT_SIM_PATH / "image_prediction"
+BASE_PATH = get_default_sim_path() / "image_prediction"
 RUNTIME_PATH = BASE_PATH / "runtime"
 LEARNING_RATE = 0.001
 EPOCHS = 100

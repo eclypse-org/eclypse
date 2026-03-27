@@ -18,7 +18,7 @@ from eclypse.placement.strategies import (
 )
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
-from eclypse.utils.constants import DEFAULT_SIM_PATH
+from eclypse.utils.defaults import get_default_sim_path
 
 
 def eclypse_grid(config):
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     ray.init(address="auto")
 
     start_time = time()
-    run_config = train.RunConfig(storage_path=(DEFAULT_SIM_PATH).resolve())
+    run_config = train.RunConfig(storage_path=get_default_sim_path().resolve())
     tuner = tune.Tuner(
         # tune.with_resources(eclypse_grid, {"cpu": 0.5}),
         eclypse_grid,
