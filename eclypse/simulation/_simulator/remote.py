@@ -14,7 +14,6 @@ costs of such interactions.
 from __future__ import annotations
 
 import asyncio
-from datetime import timedelta
 from typing import (
     List,
     Optional,
@@ -22,10 +21,8 @@ from typing import (
 
 from eclypse.remote.communication.route import Route
 from eclypse.utils._logging import config_logger
-from eclypse.workflow.trigger.trigger import ScheduledTrigger
 
 from .local import (
-    SimulationState,
     Simulator,
 )
 from .ops_handler import RemoteSimOpsHandler
@@ -63,17 +60,7 @@ class RemoteSimulator(Simulator):
             timeout (Optional[float]): The maximum time to wait for the simulation to
                 finish. If None, it waits indefinitely. Defaults to None.
         """
-        if timeout:
-            stop_event = self._events["stop"]
-            trigger = ScheduledTrigger(timedelta(seconds=timeout))
-            trigger.init()
-            stop_event.triggers.append(trigger)
-
-        t0 = self._event_loop.time()
-        while self._status != SimulationState.IDLE and (
-            timeout is None or self._event_loop.time() - t0 < timeout
-        ):
-            await asyncio.sleep(0.5)
+        await asyncio.to_thread(super().wait, timeout)
 
     def cleanup(self):
         """Cleans up the emulation status by stopping and undeploying all placements."""
@@ -81,6 +68,13 @@ class RemoteSimulator(Simulator):
             if p._deployed:
                 RemoteSimOpsHandler.stop(p)
                 RemoteSimOpsHandler.undeploy(p)
+
+    async def _finalize_shutdown(self):
+        """Stop remote services before flushing local simulator resources."""
+        try:
+            self.cleanup()
+        finally:
+            await super()._finalize_shutdown()
 
     async def route(
         self,

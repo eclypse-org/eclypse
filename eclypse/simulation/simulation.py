@@ -24,7 +24,6 @@ from eclypse.utils.constants import (
     LOG_LEVEL,
     RND_SEED,
 )
-from eclypse.utils.tools import shield_interrupt
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -128,17 +127,29 @@ class Simulation:
         if blocking:
             self.wait()
 
-    @shield_interrupt
     def wait(self, timeout: Optional[float] = None):
         """Wait for the simulation to finish.
 
         This method is blocking and will wait until the simulation is finished. It can
         be interrupted by pressing `Ctrl+C`.
         """
-        if self.remote:
-            ray_backend.get(self.simulator.wait.remote(timeout=timeout))  # type: ignore[union-attr]
-        else:
-            self.simulator.wait(timeout=timeout)
+        interrupted = False
+        while True:
+            try:
+                if self.remote:
+                    ray_backend.get(self.simulator.wait.remote(timeout=timeout))  # type: ignore[union-attr]
+                else:
+                    self.simulator.wait(timeout=timeout)
+                return
+            except KeyboardInterrupt:
+                if interrupted:
+                    raise
+
+                interrupted = True
+                self.logger.warning("SIMULATION INTERRUPTED. Requesting graceful stop.")
+                self.logger.warning("Press Ctrl+C again to stop the simulation.")
+                self.stop(blocking=False)
+                timeout = None
 
     def register(
         self,
