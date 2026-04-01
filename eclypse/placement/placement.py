@@ -68,7 +68,23 @@ class Placement:
     def _reset_mapping(self):
         """Reset the mapping of the placement."""
         self.mapping = {}
+        self.clear_reset()
+
+    def mark_for_reset(self):
+        """Mark the placement so it will be reset during enactment."""
+        self._to_reset = True
+
+    def clear_reset(self):
+        """Clear the pending reset marker."""
         self._to_reset = False
+
+    def mark_deployed(self):
+        """Mark the placement as deployed on the remote infrastructure."""
+        self._deployed = True
+
+    def mark_undeployed(self):
+        """Mark the placement as no longer deployed."""
+        self._deployed = False
 
     def service_placement(self, service_id: str) -> str:
         """Return the node where a service is placed.
@@ -282,3 +298,13 @@ class Placement:
             for service in self.application.nodes
             if service not in self.mapping or self.mapping[service] is None
         )
+
+    @property
+    def reset_requested(self) -> bool:
+        """Return whether the placement is marked for reset."""
+        return self._to_reset
+
+    @property
+    def deployed(self) -> bool:
+        """Return whether the placement has been remotely deployed."""
+        return self._deployed

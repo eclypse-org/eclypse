@@ -227,5 +227,5 @@ class PlacementView(nx.DiGraph):
                     placement.infrastructure.logger.warning(
                         f" [Path not found] {s} ({node_s}) -> {t} ({node_t})"
                     )
-                    placement._to_reset = True  # pylint: disable=protected-access
+                    placement.mark_for_reset()
                     break
