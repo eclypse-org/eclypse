@@ -40,7 +40,7 @@ def get_orion_cev(
     node_update_policy: Optional[Callable[[NodeView], None]] = None,
     link_update_policy: Optional[Callable[[EdgeView], None]] = None,
     node_assets: Optional[Dict[str, Asset]] = None,
-    edge_assets: Optional[Dict[str, Asset]] = None,
+    link_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "max",
     path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
@@ -56,7 +56,7 @@ def get_orion_cev(
         link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
             Defaults to None.
         node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        edge_assets (Optional[Dict[str, Asset]]): The assets for the edges. Defaults to None.
+        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "max".
@@ -74,7 +74,7 @@ def get_orion_cev(
         node_update_policy=node_update_policy,
         edge_update_policy=link_update_policy,
         node_assets=node_assets,
-        edge_assets=edge_assets,
+        edge_assets=link_assets,
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
