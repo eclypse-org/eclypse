@@ -19,7 +19,7 @@ class FrontendService(Service):
 
     def __init__(self, name):
         """Initialize the Frontend service, setting the communication interface to REST."""
-        super().__init__(name, comm_interface="rest")
+        super().__init__(name, communication_interface="rest")
         self.user_id = 12345
 
     async def step(self):
