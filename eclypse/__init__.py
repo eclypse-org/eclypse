@@ -1,6 +1,3 @@
-import os
+"""Top-level package for ECLYPSE."""
 
 __version__ = "0.8.3"
-
-os.environ["RAY_DEDUP_LOGS"] = "0"
-os.environ["RAY_COLOR_PREFIX"] = "1"

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import os
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -18,12 +17,7 @@ from eclypse.report import Report
 from eclypse.simulation._simulator.local import Simulator
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils._logging import logger
-from eclypse.utils.constants import (
-    DRIVING_EVENT,
-    LOG_FILE,
-    LOG_LEVEL,
-    RND_SEED,
-)
+from eclypse.utils.constants import DRIVING_EVENT
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -32,6 +26,7 @@ if TYPE_CHECKING:
     from eclypse.graph.infrastructure import Infrastructure
     from eclypse.placement.strategies.strategy import PlacementStrategy
     from eclypse.remote.bootstrap.bootstrap import RemoteBootstrap
+    from eclypse.report import FrameBackend
     from eclypse.simulation._simulator.local import SimulationState
     from eclypse.simulation._simulator.remote import RemoteSimulator
 
@@ -44,81 +39,60 @@ class Simulation:
         infrastructure: Infrastructure,
         simulation_config: Optional[SimulationConfig] = None,
     ):
-        """Create a new Simulation.
-
-        It instantiates a Simulator or RemoteSimulator based
-        on the simulation configuration, than can be either local or remote.
-
-        It also registers an exit handler to ensure the simulation is properly closed
-        and the reporting (if enabled) is done properly.
-
-        Args:
-            infrastructure (Infrastructure): The infrastructure to simulate.
-            simulation_config (SimulationConfig, optional): The configuration of the \
-                simulation. Defaults to SimulationConfig().
-
-        Raises:
-            ValueError: If all services do not have a logic when including them in a remote
-                simulation.
-        """
+        """Create a simulation bound to an infrastructure and configuration."""
         self.infrastructure = infrastructure
         self._sim_config = (
             simulation_config if simulation_config is not None else SimulationConfig()
         )
+        self._sim_config.prepare_runtime()
 
-        self.remote = self._sim_config.remote
-
-        env_vars = {
-            RND_SEED: os.environ[RND_SEED],
-            LOG_LEVEL: os.environ[LOG_LEVEL],
-        }
-        if LOG_FILE in os.environ:
-            env_vars[LOG_FILE] = os.environ[LOG_FILE]
-
+        self.remote: Optional[RemoteBootstrap] = cast(
+            "Optional[RemoteBootstrap]",
+            self._sim_config.remote,
+        )
         self._logger = logger
 
         if self.remote:
-            self.remote.env_vars = env_vars
+            self.remote.env_vars = self._sim_config.runtime_env()
             _simulator = self.remote.build(
-                infrastructure=infrastructure, simulation_config=self._sim_config
+                infrastructure=infrastructure,
+                simulation_config=self._sim_config,
             )
         else:
             _simulator = Simulator(
-                infrastructure=infrastructure, simulation_config=self._sim_config
+                infrastructure=infrastructure,
+                simulation_config=self._sim_config,
             )
         self.simulator: Union[Simulator, RemoteSimulator] = _simulator
-
         self._report: Optional[Report] = None
 
-    def start(
-        self,
-    ):
+    def prepare_runtime(self):
+        """Prepare the process environment required by the simulation runtime."""
+        self._sim_config.prepare_runtime()
+
+    def start(self):
         """Start the simulation."""
-        # Dump the simulation configuration to a file
+        self.prepare_runtime()
         if self._sim_config.path is not None:
             self._sim_config.path.mkdir(parents=True, exist_ok=True)
             with open(
                 self._sim_config.path / "config.json", "w", encoding="utf-8"
-            ) as f:
-                json.dump(self._sim_config.__dict__(), f, indent=4)
+            ) as handle:
+                json.dump(self._sim_config.to_dict(), handle, indent=4)
 
         _local_remote_event_call(self.simulator, self.remote, "start")
 
     def trigger(self, event_name: str):
-        """Fire an event in the simulation.
-
-        Args:
-            event_name (str): The event to fire.
-        """
+        """Fire an event in the simulation."""
         return _local_remote_event_call(
-            self.simulator, self.remote, "trigger", event_name
+            self.simulator,
+            self.remote,
+            "trigger",
+            event_name,
         )
 
     def step(self):
-        """Run a single step of the simulation.
-
-        It triggers the DRIVING_EVENT, thus the 'enact' event, by default.
-        """
+        """Run a single step of the simulation by triggering the driving event."""
         return self.trigger(DRIVING_EVENT)
 
     def stop(self, blocking: bool = True):
@@ -128,11 +102,7 @@ class Simulation:
             self.wait()
 
     def wait(self, timeout: Optional[float] = None):
-        """Wait for the simulation to finish.
-
-        This method is blocking and will wait until the simulation is finished. It can
-        be interrupted by pressing `Ctrl+C`.
-        """
+        """Wait for the simulation to finish, with graceful Ctrl+C handling."""
         interrupted = False
         while True:
             try:
@@ -156,17 +126,7 @@ class Simulation:
         application: Application,
         placement_strategy: Optional[PlacementStrategy] = None,
     ):
-        """Include an application in the simulation.
-
-        Args:
-            application (Application): The application to include.
-            placement_strategy (PlacementStrategy): The placement strategy to use \
-                to place the application on the infrastructure.
-
-        Raises:
-            ValueError: If all services do not have a logic when including them \
-                in a remote simulation.
-        """
+        """Include an application in the simulation."""
         if placement_strategy is None:
             if not self.infrastructure.has_strategy:
                 raise ValueError(
@@ -192,35 +152,22 @@ class Simulation:
                     "All services must have a logic for including them in a remote"
                     + " simulation."
                 )
-
         else:
             self.simulator.register(application, placement_strategy)
 
     @property
     def applications(self) -> Dict[str, Application]:
-        """Get the applications in the simulation.
-
-        Returns:
-            Dict[str, Application]: The applications in the simulation.
-        """
+        """Applications currently registered in the simulation."""
         return self.simulator.applications
 
     @property
     def logger(self) -> Any:
-        """Get the logger of the simulation.
-
-        Returns:
-            Logger: The logger of the simulation.
-        """
+        """Logger bound to the simulation component."""
         return self._logger.bind(id="Simulation")
 
     @property
     def status(self) -> SimulationState:
-        """Check if the simulation is stopped.
-
-        Returns:
-            bool: True if the simulation is stopped. False otherwise.
-        """
+        """Current lifecycle state of the simulator."""
         if self.remote:
             return cast(
                 "SimulationState",
@@ -230,21 +177,17 @@ class Simulation:
 
     @property
     def path(self) -> Path:
-        """Get the path to the simulation configuration.
-
-        Returns:
-            Path: The path to the simulation configuration.
-        """
-        return self._sim_config.path
+        """Filesystem path where simulation outputs are stored."""
+        return cast("Path", self._sim_config.path)
 
     @property
-    def report(self):
-        """The report of the simulation."""
+    def report(self) -> Report:
+        """Lazy-loaded report view for the finished simulation."""
         if self._report is None:
             self.wait()
             self._report = Report(
                 self.path,
-                self._sim_config.report_backend,
+                cast("Union[str, FrameBackend]", self._sim_config.report_backend),
                 self._sim_config.report_format,
             )
         return self._report
@@ -257,16 +200,7 @@ def _local_remote_event_call(
     *args,
     **kwargs,
 ):
-    """Call an event on the simulator, locally or remotely.
-
-    Args:
-        sim (Simulator): The simulator to call the event on.
-        remote (Optional[RemoteBootstrap]): The remote bootstrap to use.
-        blocking (bool): Whether to block the call or not.
-        fn (str): The event to call.
-        *args: The arguments to pass to the event.
-        **kwargs: The keyword arguments to pass to the event.
-    """
+    """Call an event on the simulator, locally or remotely."""
     if remote:
         sim_fn = (
             getattr(sim, fn).remote
