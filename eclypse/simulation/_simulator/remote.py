@@ -1,5 +1,4 @@
 # mypy: disable-error-code="override"
-# pylint: disable=protected-access
 """Module for the RemoteSimulator class.
 
 It operates like the local simulator, but performs the simulation using ray actors.
@@ -43,10 +42,10 @@ class RemoteSimulator(Simulator):
     def enact(self):
         """Enacts the placements within the remote infrastructure."""
         for p in self._manager.placements.values():
-            if p._to_reset and p._deployed:
+            if p.reset_requested and p.deployed:
                 RemoteSimOpsHandler.stop(p)
                 RemoteSimOpsHandler.undeploy(p)
-            elif not p._to_reset and p.mapping and not p._deployed:
+            elif not p.reset_requested and p.mapping and not p.deployed:
                 RemoteSimOpsHandler.deploy(p)
                 RemoteSimOpsHandler.start(p)
 
@@ -65,7 +64,7 @@ class RemoteSimulator(Simulator):
     def cleanup(self):
         """Cleans up the emulation status by stopping and undeploying all placements."""
         for p in self.placements.values():
-            if p._deployed:
+            if p.deployed:
                 RemoteSimOpsHandler.stop(p)
                 RemoteSimOpsHandler.undeploy(p)
 

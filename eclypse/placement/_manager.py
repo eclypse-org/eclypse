@@ -1,4 +1,3 @@
-# pylint: disable=protected-access
 """Module for the PlacementManager class.
 
 It manages the placement of applications in the infrastructure and is responsible for
@@ -10,6 +9,7 @@ from __future__ import annotations
 from random import shuffle
 from typing import (
     TYPE_CHECKING,
+    Any,
     Dict,
     Generator,
     List,
@@ -28,7 +28,6 @@ if TYPE_CHECKING:
         Infrastructure,
     )
     from eclypse.placement import PlacementStrategy
-    from eclypse.utils._logging import Logger
 
 
 class PlacementManager:
@@ -59,12 +58,12 @@ class PlacementManager:
                     if n in not_respected:
                         for app in apps:
                             p = self.get(app)
-                            p._to_reset = True
+                            p.mark_for_reset()
 
     def enact(self):
         """Manage and apply (or reset) the placement of applications on the infrastructure."""
         for p in self.placements.values():
-            if p._to_reset:
+            if p.reset_requested:
                 self.logger.warning(f"Resetting placement of {p.application.id}")
                 self.logger.trace(p)
                 p._reset_mapping()
@@ -145,7 +144,7 @@ class PlacementManager:
 
             not_respected = self.infrastructure.contains(self.placement_view)
             if not_respected:
-                p._to_reset = True
+                p.mark_for_reset()
             yield (p, not_respected)
 
     def register(
@@ -186,7 +185,7 @@ class PlacementManager:
         return self.placements[application_id]
 
     @property
-    def logger(self) -> Logger:
+    def logger(self) -> Any:
         """Get a logger for the PlacementManager.
 
         Returns:
