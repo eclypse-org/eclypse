@@ -1,14 +1,13 @@
 """Package for managing simulation reporters, including the off-the-shelf ones."""
 
 from typing import (
-    Callable,
     Dict,
     List,
     Optional,
+    Type,
 )
 
-from eclypse.report import Reporter
-
+from eclypse.report.reporter import Reporter
 from .csv import CSVReporter
 from .gml import GMLReporter
 from .json import JSONReporter
@@ -18,7 +17,7 @@ from .tensorboard import TensorBoardReporter
 
 def get_default_reporters(
     requested_reporters: Optional[List[str]],
-) -> Dict[str, Callable[..., Reporter]]:
+) -> Dict[str, Type[Reporter]]:
     """Get the default reporters, comprising CSV, GML, JSON, Parquet, and TensorBoard.
 
     Args:
@@ -27,7 +26,7 @@ def get_default_reporters(
     Returns:
         Dict[str, Type[Reporter]]: The default reporters.
     """
-    default_reporters = {
+    default_reporters: Dict[str, Type[Reporter]] = {
         "csv": CSVReporter,
         "gml": GMLReporter,
         "json": JSONReporter,
@@ -47,7 +46,6 @@ __all__ = [
     "GMLReporter",
     "JSONReporter",
     "ParquetReporter",
-    "Reporter",
     "TensorBoardReporter",
     "get_default_reporters",
 ]

@@ -33,9 +33,9 @@ class CSVReporter(Reporter):
     reportable.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, report_path: str | Path):
         """Initialize the CSV reporter."""
-        super().__init__(*args, **kwargs)
+        super().__init__(report_path)
         self.report_path = self.report_path / "csv"
         self._files: Dict[str, Any] = {}
 

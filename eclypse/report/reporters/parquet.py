@@ -22,9 +22,9 @@ if TYPE_CHECKING:
 class ParquetReporter(Reporter):
     """Class to report simulation metrics in partitioned Parquet files."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, report_path: str | Path):
         """Initialize the Parquet reporter."""
-        super().__init__(*args, **kwargs)
+        super().__init__(report_path)
         self.report_path = self.report_path / "parquet"
         self._partitions: Dict[str, int] = {}
         self._pl = None

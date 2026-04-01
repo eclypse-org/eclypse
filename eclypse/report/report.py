@@ -39,6 +39,42 @@ if TYPE_CHECKING:
 REPORT_TYPES = list(get_args(EventType))
 
 
+class ReportQuery:
+    """Composable query builder for report frames."""
+
+    def __init__(self, report: Report, report_type: EventType):
+        """Create a query builder bound to a report type."""
+        self._report = report
+        self._report_type = report_type
+        self._report_range: Tuple[int, int] = (0, int(MAX_FLOAT))
+        self._report_step = 1
+        self._filters: Dict[str, Any] = {}
+
+    def range(self, start: int, stop: int) -> ReportQuery:
+        """Set the inclusive event range."""
+        self._report_range = (start, stop)
+        return self
+
+    def step(self, step: int) -> ReportQuery:
+        """Set the report step."""
+        self._report_step = step
+        return self
+
+    def where(self, **filters: Any) -> ReportQuery:
+        """Add equality or membership filters."""
+        self._filters.update(filters)
+        return self
+
+    def to_frame(self) -> Any:
+        """Materialize the current query into a backend frame."""
+        return self._report.frame(
+            self._report_type,
+            report_range=self._report_range,
+            report_step=self._report_step,
+            **self._filters,
+        )
+
+
 class Report:
     """Report class backed by a pluggable DataFrame backend.
 
@@ -110,7 +146,7 @@ class Report:
         Returns:
             A filtered DataFrame for application metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "application",
             report_range=report_range,
             report_step=report_step,
@@ -138,7 +174,7 @@ class Report:
         Returns:
             A filtered DataFrame for service metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "service",
             report_range=report_range,
             report_step=report_step,
@@ -169,7 +205,7 @@ class Report:
         Returns:
             A filtered DataFrame for interaction metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "interaction",
             report_range=report_range,
             report_step=report_step,
@@ -195,7 +231,7 @@ class Report:
         Returns:
             A filtered DataFrame for infrastructure metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "infrastructure",
             report_range=report_range,
             report_step=report_step,
@@ -220,7 +256,7 @@ class Report:
         Returns:
             A filtered DataFrame for node metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "node",
             report_range=report_range,
             report_step=report_step,
@@ -248,7 +284,7 @@ class Report:
         Returns:
             A filtered DataFrame for link metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "link",
             report_range=report_range,
             report_step=report_step,
@@ -273,12 +309,16 @@ class Report:
         Returns:
             A filtered DataFrame for simulation metrics.
         """
-        return self.to_dataframe(
+        return self.frame(
             "simulation",
             report_range=report_range,
             report_step=report_step,
             event_ids=event_ids,
         )
+
+    def query(self, report_type: EventType) -> ReportQuery:
+        """Create a composable query for the given report type."""
+        return ReportQuery(self, report_type)
 
     def get_dataframes(
         self,
@@ -309,7 +349,7 @@ class Report:
                     raise ValueError(f"Invalid report type: {rt}")
 
         return {
-            report_type: self.to_dataframe(
+            report_type: self.frame(
                 report_type,
                 report_range=report_range,
                 report_step=report_step,
@@ -318,14 +358,14 @@ class Report:
             for report_type in report_types
         }
 
-    def to_dataframe(
+    def frame(
         self,
         report_type: EventType,
         report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         **kwargs: Any,
     ) -> Any:
-        """Return a DataFrame for the given report type, filtered by range and extra filters.
+        """Return a frame for the given report type, filtered by range and extra filters.
 
         Args:
             report_type: The report type (e.g. "application", "service", etc.).
@@ -334,7 +374,7 @@ class Report:
             **kwargs: Additional filters to apply. Keys must be column names.
 
         Returns:
-            A filtered DataFrame.
+            A filtered frame.
         """
         self._read_frame(report_type)
         df = self.stats[report_type]

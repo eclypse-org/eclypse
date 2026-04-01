@@ -17,15 +17,17 @@ import networkx as nx
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from eclypse.workflow.event import EclypseEvent
 
 
 class GMLReporter(Reporter):
     """Class to report simulation metrics in GML format using NetworkX."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, report_path: str | Path):
         """Initialize the GML reporter."""
-        super().__init__(*args, **kwargs)
+        super().__init__(report_path)
         self.report_path = self.report_path / "gml"
 
     def report(

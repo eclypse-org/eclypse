@@ -18,6 +18,8 @@ from typing import (
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from pathlib import Path
+
     from tensorboardX import SummaryWriter
 
     from eclypse.workflow.event import EclypseEvent
@@ -26,9 +28,9 @@ if TYPE_CHECKING:
 class TensorBoardReporter(Reporter):
     """Asynchronous reporter for simulation metrics in TensorBoardX format."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, report_path: str | Path):
         """Initialize the TensorBoard reporter."""
-        super().__init__(*args, **kwargs)
+        super().__init__(report_path)
         self.report_path = self.report_path / "tensorboard"
         self._writer = None
 
