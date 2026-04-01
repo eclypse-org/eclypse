@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
+    Any,
     List,
     Tuple,
     cast,
@@ -15,14 +16,15 @@ from typing import (
 
 from eclypse.remote import ray_backend
 from eclypse.remote.utils import (
+    RemoteOpResult,
     RemoteOps,
-    ResponseCode,
 )
 
 if TYPE_CHECKING:
     from eclypse.placement import Placement
     from eclypse.remote._node import RemoteNode
     from eclypse.remote.service import Service
+    from eclypse.remote.utils import RemoteOpResult
 
 
 class RemoteSimOpsHandler:
@@ -41,19 +43,25 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-        deployments = ray_backend.get(
-            [
-                node.ops_entrypoint.remote(  # type: ignore[attr-defined]
-                    RemoteOps.DEPLOY,
-                    service_id=service.id,
-                    service=service,
+        deployments = cast(
+            "List[RemoteOpResult]",
+            ray_backend.get(
+                cast(
+                    "Any",
+                    [
+                        node.ops_entrypoint.remote(  # type: ignore[attr-defined]
+                            RemoteOps.DEPLOY,
+                            service_id=service.id,
+                            service=service,
+                        )
+                        for node, service in RemoteSimOpsHandler._get_remotes(placement)
+                    ],
                 )
-                for node, service in RemoteSimOpsHandler._get_remotes(placement)
-            ]
+            ),
         )
 
         _handle_error(deployments)
-        placement._deployed = True  # pylint: disable=protected-access
+        placement.mark_deployed()
 
     @staticmethod
     def start(placement: Placement):
@@ -65,14 +73,20 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-        starts = ray_backend.get(
-            [
-                node.ops_entrypoint.remote(  # type: ignore[attr-defined]
-                    RemoteOps.START,
-                    service_id=service.id,
+        starts = cast(
+            "List[RemoteOpResult]",
+            ray_backend.get(
+                cast(
+                    "Any",
+                    [
+                        node.ops_entrypoint.remote(  # type: ignore[attr-defined]
+                            RemoteOps.START,
+                            service_id=service.id,
+                        )
+                        for node, service in RemoteSimOpsHandler._get_remotes(placement)
+                    ],
                 )
-                for node, service in RemoteSimOpsHandler._get_remotes(placement)
-            ]
+            ),
         )
         _handle_error(starts)
 
@@ -86,14 +100,20 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-        stops = ray_backend.get(
-            [
-                node.ops_entrypoint.remote(  # type: ignore[attr-defined]
-                    RemoteOps.STOP,
-                    service_id=service.id,
+        stops = cast(
+            "List[RemoteOpResult]",
+            ray_backend.get(
+                cast(
+                    "Any",
+                    [
+                        node.ops_entrypoint.remote(  # type: ignore[attr-defined]
+                            RemoteOps.STOP,
+                            service_id=service.id,
+                        )
+                        for node, service in RemoteSimOpsHandler._get_remotes(placement)
+                    ],
                 )
-                for node, service in RemoteSimOpsHandler._get_remotes(placement)
-            ]
+            ),
         )
 
         _handle_error(stops)
@@ -108,22 +128,28 @@ class RemoteSimOpsHandler:
         Raises:
             ValueError: If any of the responses from the remote nodes is an error.
         """
-        undeploy_result = ray_backend.get(
-            [
-                node.ops_entrypoint.remote(  # type: ignore[attr-defined]
-                    RemoteOps.UNDEPLOY,
-                    service_id=service.id,
+        undeploy_result = cast(
+            "List[RemoteOpResult]",
+            ray_backend.get(
+                cast(
+                    "Any",
+                    [
+                        node.ops_entrypoint.remote(  # type: ignore[attr-defined]
+                            RemoteOps.UNDEPLOY,
+                            service_id=service.id,
+                        )
+                        for node, service in RemoteSimOpsHandler._get_remotes(placement)
+                    ],
                 )
-                for node, service in RemoteSimOpsHandler._get_remotes(placement)
-            ]
+            ),
         )
-        codes, new_services = zip(*undeploy_result, strict=False)
-        _handle_error(cast("List[ResponseCode]", codes))
+        _handle_error(undeploy_result)
 
-        for new_service in new_services:
-            placement.application.services[new_service.id] = new_service
+        for result in undeploy_result:
+            if result.service is not None:
+                placement.application.services[result.service.id] = result.service
 
-        placement._deployed = False  # pylint: disable=protected-access
+        placement.mark_undeployed()
 
     @staticmethod
     def _get_remotes(placement: Placement) -> List[Tuple[RemoteNode, Service]]:
@@ -149,14 +175,25 @@ class RemoteSimOpsHandler:
         return node_serv  # type: ignore[return-value]
 
 
-def _handle_error(response_codes: List[ResponseCode]):
-    """Handle the error response codes from the remote nodes.
+def _handle_error(results: List[RemoteOpResult]):
+    """Handle remote operation results and surface actionable error details.
 
     Args:
-        response_codes (List[ResponseCode]): The response codes from the remote nodes.
+        results (List[RemoteOpResult]): The results returned by the remote nodes.
 
     Raises:
-        ValueError: If any of the response codes is an error.
+        ValueError: If any of the remote operations failed.
     """
-    if any(code == ResponseCode.ERROR for code in response_codes):
-        raise ValueError(f"Error in the operation: {response_codes}")
+    failures = [result for result in results if result.code.name == "ERROR"]
+    if not failures:
+        return
+
+    details = [
+        (
+            f"{result.operation.name} failed on node '{result.node_id}' "
+            f"for service '{result.service_id}'"
+            + (f": {result.error}" if result.error else "")
+        )
+        for result in failures
+    ]
+    raise ValueError("Remote operation errors:\n- " + "\n- ".join(details))

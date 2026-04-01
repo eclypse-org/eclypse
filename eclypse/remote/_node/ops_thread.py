@@ -13,16 +13,17 @@ from typing import (
     TYPE_CHECKING,
     Any,
     Dict,
-    Optional,
-    Tuple,
 )
 
-from eclypse.remote.utils import ResponseCode
+from eclypse.remote.utils import (
+    RemoteOpResult,
+    RemoteOps,
+    ResponseCode,
+)
 
 if TYPE_CHECKING:
     from eclypse.remote._node.node import RemoteNode
     from eclypse.remote.service import Service
-    from eclypse.remote.utils import RemoteOps
 
 
 class RemoteOpsThread(Thread):
@@ -66,7 +67,7 @@ class RemoteOpsThread(Thread):
                 self.set_future_result(future, result), self._engine_loop
             )
 
-    def deploy(self, service_id: str, service: Service) -> ResponseCode:
+    def deploy(self, service_id: str, service: Service) -> RemoteOpResult:
         """Deploys a service on the node.
 
         Args:
@@ -74,61 +75,105 @@ class RemoteOpsThread(Thread):
             service (Service): The service to deploy.
 
         Returns:
-            ResponseCode: The result of the operation: OK if successful, ERROR otherwise.
+            RemoteOpResult: The result of the operation.
         """
         try:
             self._node.services[service_id] = service
             service._deploy(self._node)
-            return ResponseCode.OK
-        except RuntimeError:
-            return ResponseCode.ERROR
+            return RemoteOpResult(
+                code=ResponseCode.OK,
+                operation=RemoteOps.DEPLOY,
+                node_id=self._node.id,
+                service_id=service_id,
+            )
+        except RuntimeError as exc:
+            return RemoteOpResult(
+                code=ResponseCode.ERROR,
+                operation=RemoteOps.DEPLOY,
+                node_id=self._node.id,
+                service_id=service_id,
+                error=str(exc),
+            )
 
-    def undeploy(self, service_id: str) -> Tuple[ResponseCode, Optional[Service]]:
+    def undeploy(self, service_id: str) -> RemoteOpResult:
         """Undeploys a service from the node, retrieving the Service object.
 
         Args:
             service_id (str): The ID of the service to undeploy.
 
         Returns:
-            Tuple[ResponseCode, Optional[Service]]: The result of the operation: \
-                (OK, service) if successful, (ERROR, None) otherwise.
+            RemoteOpResult: The result of the operation.
         """
         try:
             self._node.services[service_id]._undeploy()
             service = self._node.services.pop(service_id)
-            return (ResponseCode.OK, service)
-        except RuntimeError:
-            return (ResponseCode.ERROR, None)
+            return RemoteOpResult(
+                code=ResponseCode.OK,
+                operation=RemoteOps.UNDEPLOY,
+                node_id=self._node.id,
+                service_id=service_id,
+                service=service,
+            )
+        except RuntimeError as exc:
+            return RemoteOpResult(
+                code=ResponseCode.ERROR,
+                operation=RemoteOps.UNDEPLOY,
+                node_id=self._node.id,
+                service_id=service_id,
+                error=str(exc),
+            )
 
-    def start_service(self, service_id: str) -> ResponseCode:
+    def start_service(self, service_id: str) -> RemoteOpResult:
         """Starts a service on the node.
 
         Args:
             service_id (str): The ID of the service to start.
 
         Returns:
-            ResponseCode: The result of the operation: OK if successful, ERROR otherwise.
+            RemoteOpResult: The result of the operation.
         """
         try:
             self._node.services[service_id]._start()
-            return ResponseCode.OK
-        except RuntimeError:
-            return ResponseCode.ERROR
+            return RemoteOpResult(
+                code=ResponseCode.OK,
+                operation=RemoteOps.START,
+                node_id=self._node.id,
+                service_id=service_id,
+            )
+        except RuntimeError as exc:
+            return RemoteOpResult(
+                code=ResponseCode.ERROR,
+                operation=RemoteOps.START,
+                node_id=self._node.id,
+                service_id=service_id,
+                error=str(exc),
+            )
 
-    def stop_service(self, service_id: str) -> ResponseCode:
+    def stop_service(self, service_id: str) -> RemoteOpResult:
         """Stops a service on the node.
 
         Args:
             service_id (str): The ID of the service to stop.
 
         Returns:
-            ResponseCode: The result of the operation: OK if successful, ERROR otherwise.
+            RemoteOpResult: The result of the operation.
         """
         try:
             self._node.services[service_id]._stop()
-            return ResponseCode.OK
-        except RuntimeError:
-            return ResponseCode.ERROR
+            return RemoteOpResult(
+                code=ResponseCode.OK,
+                operation=RemoteOps.STOP,
+                node_id=self._node.id,
+                service_id=service_id,
+            )
+        except RuntimeError as exc:
+            return RemoteOpResult(
+                code=ResponseCode.ERROR,
+                operation=RemoteOps.STOP,
+                node_id=self._node.id,
+                service_id=service_id,
+                error=str(exc),
+            )
 
     async def set_future_result(self, future: asyncio.Future, result: Any):
         """Sets the result of the future.
