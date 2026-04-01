@@ -69,6 +69,18 @@ class Simulator:
 
         self._config = simulation_config
         self._logger = logger
+        if self._config.events is None:
+            raise RuntimeError(
+                "Simulation events must be resolved before simulator init."
+            )
+        if self._config.path is None:
+            raise RuntimeError(
+                "Simulation path must be resolved before simulator init."
+            )
+        if self._config.reporters is None:
+            raise RuntimeError(
+                "Simulation reporters must be resolved before simulator init."
+            )
 
         self._infrastructure = infrastructure
         self._manager = PlacementManager(infrastructure=self._infrastructure)
@@ -77,7 +89,7 @@ class Simulator:
             event.name: event for event in self._config.events
         }
         for event in self._events.values():
-            event._simulator = self
+            event.attach_simulator(self)
             event.trigger_bucket.init()
 
         # Simulation state
@@ -304,7 +316,7 @@ class Simulator:
         Returns:
             Logger: The logger of the simulation.
         """
-        return self._logger.bind(id="Simulation")
+        return self._logger.bind(id="Simulation")  # type: ignore[return-value]
 
     @property
     def status(self) -> SimulationState:
