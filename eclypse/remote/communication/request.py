@@ -56,7 +56,7 @@ class EclypseRequest:
         self._routes: List[Future[Route]] = [
             asyncio.wrap_future(
                 _comm.request_route(recipient_id).future(),  # type: ignore[attr-defined]
-                loop=_comm.service._node.engine_loop,  # type: ignore[union-attr]
+                loop=_comm.service.node.engine_loop,
             )
             for recipient_id in self._recipient_ids
         ]
@@ -67,7 +67,7 @@ class EclypseRequest:
                     _process_request(
                         self.data, self._ref_args, route, recipient_id, _comm
                     ),
-                    loop=_comm.service._node.engine_loop,  # type: ignore[union-attr]
+                    loop=_comm.service.node.engine_loop,
                 )
             )
             for route, recipient_id in zip(
@@ -169,18 +169,15 @@ async def _process_request(
         raise RuntimeError(f"Route to {recipient_id} not found")
 
     if _route.no_hop:
-        future = _comm.service._node.service_comm_entrypoint(  # type: ignore[union-attr]
+        future = _comm.service.node.service_comm_entrypoint(
             _route,
             _comm.__class__,
             **args,
         )
     else:
-        infrastructure_id = _comm.service._node.infrastructure_id  # type: ignore[union-attr]
+        infrastructure_id = _comm.service.infrastructure_id
         actor_name = f"{infrastructure_id}/{_route.recipient_node_id}"
-        actor_cache = _comm.service._node._actor_cache  # type: ignore[union-attr]
-        if actor_name not in actor_cache:
-            actor_cache[actor_name] = ray_backend.get_actor(actor_name)
-        handle: RemoteNode = actor_cache[actor_name]
+        handle: RemoteNode = _comm.service.node.get_actor(actor_name)
         await asyncio.sleep(_route.cost(args))
         future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
             _route,

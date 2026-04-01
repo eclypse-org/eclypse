@@ -179,9 +179,9 @@ def exchange(
                 next_args = func(self, *args, **kwargs)
 
             if send:
-                return self.mpi.send(*next_args)
+                return await self.mpi.send(*next_args)
             if broadcast:
-                return self.mpi.bcast(next_args)
+                return await self.mpi.bcast(next_args)
             return next_args
 
         return wrapper

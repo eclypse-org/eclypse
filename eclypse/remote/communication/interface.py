@@ -51,9 +51,7 @@ class EclypseCommunicationInterface:
 
     def connect(self):
         """Connects the communication interface to the `RemoteSimulator`."""
-        self._im = ray_backend.get_actor(
-            name=f"{self._service._node.infrastructure_id}/manager"  # pylint: disable=protected-access
-        )
+        self._im = ray_backend.get_actor(name=self.service.node.manager_actor_name)
 
     def disconnect(self):
         """Disconnects the communication interface from the `RemoteSimulator`."""
