@@ -40,7 +40,6 @@ class FrameBackend(ABC):
         """
         self._name = name
 
-    @abstractmethod
     def read_frame(self, stats_path: Path, report_type: str, report_format: str) -> Any:
         """Read a report into a backend-specific DataFrame.
 
@@ -52,6 +51,28 @@ class FrameBackend(ABC):
         Returns:
             A backend-specific DataFrame instance.
         """
+        source = get_report_source(stats_path, report_type, report_format)
+        if report_format == "csv":
+            return self._read_csv(source)
+        if report_format == "parquet":
+            return self._read_parquet(source)
+        if report_format == "json":
+            return self._read_json(source, report_type)
+        raise ValueError(f"Unsupported report format: {report_format}")
+
+    @abstractmethod
+    def _read_csv(self, source: Path) -> Any:
+        """Read a CSV report source."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def _read_parquet(self, source: Path) -> Any:
+        """Read a parquet report source."""
+        raise NotImplementedError
+
+    @abstractmethod
+    def _read_json(self, source: Path, report_type: str) -> Any:
+        """Read a JSONL report source."""
         raise NotImplementedError
 
     @abstractmethod

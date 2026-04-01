@@ -23,9 +23,9 @@ if TYPE_CHECKING:
 class JSONReporter(Reporter):
     """Class to report the simulation metrics in JSON lines format."""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, report_path: str | Path):
         """Initialize the JSON reporter."""
-        super().__init__(*args, **kwargs)
+        super().__init__(report_path)
         self.report_path = self.report_path / "json"
         self._files: Dict[str, Any] = {}
 

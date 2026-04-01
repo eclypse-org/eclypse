@@ -17,7 +17,6 @@ from typing import (
 
 from eclypse.report.backend import (
     FrameBackend,
-    get_report_source,
     list_parquet_parts,
     load_jsonl_rows,
 )
@@ -44,26 +43,32 @@ class PolarsLazyBackend(FrameBackend):
 
         self._pl = pl
 
-    def read_frame(self, stats_path, report_type: str, report_format: str) -> LazyFrame:
-        """Read a report into a polars LazyFrame."""
+    def _read_csv(self, source) -> LazyFrame:
+        """Read a CSV report into a polars LazyFrame."""
         pl = self._pl
-        source = get_report_source(stats_path, report_type, report_format)
+        return self._coerce_value_column(pl.scan_csv(source))
 
-        if report_format == "csv":
-            lf = pl.scan_csv(source)
-        elif report_format == "parquet":
-            lf = pl.scan_parquet([str(part) for part in list_parquet_parts(source)])
-        elif report_format == "json":
-            lf = pl.DataFrame(load_jsonl_rows(source, report_type)).lazy()
-        else:
-            raise ValueError(f"Unsupported report format: {report_format}")
+    def _read_parquet(self, source) -> LazyFrame:
+        """Read partitioned parquet data into a polars LazyFrame."""
+        pl = self._pl
+        return self._coerce_value_column(
+            pl.scan_parquet([str(part) for part in list_parquet_parts(source)])
+        )
 
-        schema = lf.collect_schema()
-        if "value" in schema:
-            lf = lf.with_columns(
+    def _read_json(self, source, report_type: str) -> LazyFrame:
+        """Read JSONL report data into a polars LazyFrame."""
+        pl = self._pl
+        return self._coerce_value_column(
+            pl.DataFrame(load_jsonl_rows(source, report_type)).lazy()
+        )
+
+    def _coerce_value_column(self, lf: LazyFrame) -> LazyFrame:
+        """Cast the common ``value`` column when present."""
+        pl = self._pl
+        if "value" in lf.collect_schema():
+            return lf.with_columns(
                 pl.col("value").cast(pl.Float64, strict=False).alias("value")
             )
-
         return lf
 
     def is_empty(self, df: LazyFrame) -> bool:

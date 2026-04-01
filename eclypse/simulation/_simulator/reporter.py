@@ -14,6 +14,7 @@ from typing import (
     List,
     Type,
     Union,
+    cast,
 )
 
 from eclypse.utils._logging import logger
@@ -179,4 +180,4 @@ class SimulationReporter:
         Returns:
             Logger: The logger of the simulation.
         """
-        return logger.bind(id="Reporter")
+        return cast("Logger", logger.bind(id="Reporter"))
