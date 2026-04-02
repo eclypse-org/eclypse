@@ -111,14 +111,14 @@ This can be done in three ways:
 
     .. code-block:: python
 
-    from eclypse.graph.assets import Additive
-    from eclypse.asset.assets.space import Uniform
+        from eclypse.graph.assets import Additive
+        from eclypse.asset.assets.space import Uniform
 
-    cpu = Additive(
-        lower_bound=0.0,
-        upper_bound=16.0,
-        init_fn_or_value=Uniform(2.0, 8.0),
-    )
+        cpu = Additive(
+            lower_bound=0.0,
+            upper_bound=16.0,
+            init_fn_or_value=Uniform(2.0, 8.0),
+        )
 
 Asset initialisation is evaluated when the simulation is initialised, ensuring consistent sampling across scenarios.
 
@@ -141,15 +141,15 @@ An :class:`~eclypse.graph.assets.space.AssetSpace` defines the domain from which
 
     .. code-block:: python
 
-    from eclypse.graph.assets.space import Choice
+        from eclypse.graph.assets.space import Choice
 
-    storage_class = Choice(["fast", "standard", "archival"])
+        storage_class = Choice(["fast", "standard", "archival"])
 
-    asset = Symbolic(
-        lower_bound="fast",
-        upper_bound="archival",
-        init_fn_or_value=storage_class,
-    )
+        asset = Symbolic(
+            lower_bound="fast",
+            upper_bound="archival",
+            init_fn_or_value=storage_class,
+        )
 
 These classes all implement the ``__call__`` interface and expect a `random.Random` generator, provided automatically by the simulation engine.
 

@@ -46,10 +46,11 @@ extensions = [
 ]
 viewcode_follow_imported_members = True
 autosummary_generate = True
+autosectionlabel_prefix_document = True
 myst_enable_extensions = ["colon_fence"]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
+exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md"]
 
 coverage_show_missing_items = True
 # Automatically extract typehints when specified and place them in

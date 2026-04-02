@@ -7,16 +7,16 @@ from enum import StrEnum
 
 
 class HTTPMethod(StrEnum):
-    """HTTP methods supported by the `EclypseREST` communication interface.
-
-    Attributes:
-        GET: The GET HTTP method.
-        POST: The POST HTTP method.
-        PUT: The PUT HTTP method.
-        DELETE: The DELETE HTTP method.
-    """
+    """HTTP methods supported by the `EclypseREST` communication interface."""
 
     GET = "GET"
+    """The HTTP GET method."""
+
     POST = "POST"
+    """The HTTP POST method."""
+
     PUT = "PUT"
+    """The HTTP PUT method."""
+
     DELETE = "DELETE"
+    """The HTTP DELETE method."""

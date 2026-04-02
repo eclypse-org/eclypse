@@ -40,16 +40,21 @@ class OrderService(RESTService):
             dict: The response body.
 
         Example:
-            (201, {
-                "order_id": "54321",
-                "transaction_id": "12345",
-                "shipping_details": {
-                    "carrier": "UPS",
-                    "tracking_number": "1234567890",
-                    "estimated_delivery_date": "2024-04-09",
-                },
-                "status": "success",
-            })
+            .. code-block:: python
+
+                (
+                    201,
+                    {
+                        "order_id": "54321",
+                        "transaction_id": "12345",
+                        "shipping_details": {
+                            "carrier": "UPS",
+                            "tracking_number": "1234567890",
+                            "estimated_delivery_date": "2024-04-09",
+                        },
+                        "status": "success",
+                    },
+                )
         """
         amount = sum(item["amount"] for item in items)
         payment_r = self.rest.post(

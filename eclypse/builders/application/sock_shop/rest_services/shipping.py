@@ -27,15 +27,20 @@ class ShippingService(RESTService):
             dict: The response body.
 
         Example:
-            (200, {
-                "order_id": "12345",
-                "status": "success",
-                "shipping_details": {
-                    "carrier": "UPS",
-                    "tracking_number": "1234567890",
-                    "estimated_delivery_date": "2024-04-09",
-                },
-            })
+            .. code-block:: python
+
+                (
+                    200,
+                    {
+                        "order_id": "12345",
+                        "status": "success",
+                        "shipping_details": {
+                            "carrier": "UPS",
+                            "tracking_number": "1234567890",
+                            "estimated_delivery_date": "2024-04-09",
+                        },
+                    },
+                )
         """
         return 200, {
             "order_id": order_id,

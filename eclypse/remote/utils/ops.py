@@ -11,15 +11,16 @@ class RemoteOps(StrEnum):
 
     The operations are executed via the `ops_entrypoint` method of the
     RemoteEngine class.
-
-    Attributes:
-        DEPLOY: Deploy the service.
-        UNDEPLOY: Undeploy the service.
-        START: Start the service.
-        STOP: Stop the service.
     """
 
     DEPLOY = "deploy"
+    """The operation that deploys a service."""
+
     UNDEPLOY = "undeploy"
+    """The operation that undeploys a service."""
+
     START = "start_service"
+    """The operation that starts a service."""
+
     STOP = "stop_service"
+    """The operation that stops a service."""
