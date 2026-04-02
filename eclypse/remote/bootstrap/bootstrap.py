@@ -33,7 +33,6 @@ class RemoteBootstrap:
         sim_class: Optional[Type[RemoteSimulator]] = None,
         node_class: Optional[Type[RemoteNode]] = None,
         ray_options_factory: Optional[RayOptionsFactory] = None,
-        # resume_if_exists: bool = False,
         **node_args,
     ):
         """Create a new RemoteBootstrap.
@@ -42,7 +41,6 @@ class RemoteBootstrap:
             sim_class (Optional[Type[RemoteSimulator]]): The remote simulator class.
             node_class (Optional[Type[RemoteNode]]): The remote node class.
             ray_options_factory (Optional[RayOptionsFactory]): The Ray options factory.
-            resume_if_exists (bool): Whether to resume the simulation if it exists.
             **node_args: The arguments for the remote node.
         """
         self._sim_class = sim_class if sim_class else "sim-core"
@@ -50,7 +48,6 @@ class RemoteBootstrap:
         self.ray_options_factory = (
             ray_options_factory if ray_options_factory else RayOptionsFactory()
         )
-        # self.resume_if_exists = resume_if_exists
 
         self.env_vars: Dict[str, str] = {}
         self.node_args = node_args
@@ -61,13 +58,6 @@ class RemoteBootstrap:
         simulation_config: Optional[SimulationConfig] = None,
     ):
         """Build the remote simulation."""
-        # if self.resume_if_exists:
-        #     ray.init(address="auto", runtime_env={"env_vars": self.env_vars})
-        #     return ray.get_actor(f"{infrastructure.id}/manager"), [
-        #         ray.get_actor(f"{infrastructure.id}/{node}")
-        #         for node in infrastructure.nodes
-        #     ]
-
         ray_backend.init(runtime_env={"env_vars": self.env_vars})
 
         remote_nodes = [

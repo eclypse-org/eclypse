@@ -30,6 +30,15 @@ if TYPE_CHECKING:
     from .route import Route
 
 
+class RouteNotFoundError(RuntimeError):
+    """Raised when no route can be found for a remote service request."""
+
+    def __init__(self, recipient_id: str):
+        """Create an error describing the recipient that could not be reached."""
+        self.recipient_id = recipient_id
+        super().__init__(f"Route to {recipient_id} not found")
+
+
 class EclypseRequest:
     """Class for an Eclypse request."""
 
@@ -166,7 +175,7 @@ async def _process_request(
 ) -> Dict[str, Union[Any, datetime]]:
     _route = route.result() if route.done() else await route
     if _route is None:
-        raise RuntimeError(f"Route to {recipient_id} not found")
+        raise RouteNotFoundError(recipient_id)
 
     if _route.no_hop:
         future = _comm.service.node.service_comm_entrypoint(
