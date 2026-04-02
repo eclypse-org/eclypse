@@ -27,13 +27,18 @@ class UserService(RESTService):
             dict: The response body.
 
         Example:
-            (200, {
-                "user_id": 12345,
-                "name": "John Doe",
-                "email": "
-                "address": "123 Main St",
-                "phone": "555-1234",
-            })
+            .. code-block:: python
+
+                (
+                    200,
+                    {
+                        "user_id": 12345,
+                        "name": "John Doe",
+                        "email": "john@example.com",
+                        "address": "123 Main St",
+                        "phone": "555-1234",
+                    },
+                )
         """
         return 200, {
             "user_id": user_id,

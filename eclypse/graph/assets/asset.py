@@ -5,10 +5,12 @@ GPU, RAM or node availability.
 
 It provides the inteface for the basic algebraic functions between
 assets:
-- aggregate: aggregate the assets into a single asset.
-- satisfies: check if the asset satisfies a constraint based on the
+
+- `aggregate`: aggregate the assets into a single asset.
+- `satisfies`: check if the asset satisfies a constraint based on the
   total ordering of the asset.
-- is_consistent: check if the asset has a feasible value, i.e., it is within the bounds.
+- `is_consistent`: check if the asset has a feasible value, i.e. it is
+  within the bounds.
 """
 
 from __future__ import annotations

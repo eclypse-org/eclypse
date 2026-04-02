@@ -10,12 +10,10 @@ from enum import (
 
 
 class ResponseCode(Enum):
-    """Enum class, denoting possible responses to an `EclypseRequest`.
-
-    Attributes:
-        OK: The request was processed successfully.
-        ERROR: An error occurred while processing the request.
-    """
+    """Enum class, denoting possible responses to an `EclypseRequest`."""
 
     OK = auto()
+    """The request was processed successfully."""
+
     ERROR = auto()
+    """An error occurred while processing the request."""

@@ -41,11 +41,16 @@ class PaymentService(RESTService):
             dict: The response body.
 
         Example:
-            (200, {
-                "order_id": 12345,
-                "transaction_id": 54321,
-                "status": "success",
-            })
+            .. code-block:: python
+
+                (
+                    200,
+                    {
+                        "order_id": 12345,
+                        "transaction_id": 54321,
+                        "status": "success",
+                    },
+                )
         """
         return 200, {
             "order_id": order_id,
