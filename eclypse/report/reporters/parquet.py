@@ -10,8 +10,8 @@ from typing import (
     Any,
 )
 
-from eclypse.report._schema import DEFAULT_REPORT_HEADERS
 from eclypse.report.reporter import Reporter
+from eclypse.report.schema import DEFAULT_REPORT_HEADERS
 
 if TYPE_CHECKING:
     from collections.abc import (
