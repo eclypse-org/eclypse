@@ -60,10 +60,13 @@ class FirstFitStrategy(PlacementStrategy):
         the first node that satisfies the requirements of the service.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application on.
+            infrastructure (Infrastructure):
+                The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            _ (dict[str, Placement]): The placement of all the applications in the simulations.
-            placement_view (PlacementView): The snapshot of the current state of the infrastructure.
+            _ (dict[str, Placement]):
+                The placement of all the applications in the simulations.
+            placement_view (PlacementView):
+                The snapshot of the current state of the infrastructure.
 
         Returns:
             dict[str, str]: A mapping of services to infrastructure nodes.

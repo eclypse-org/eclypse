@@ -87,7 +87,8 @@ class RayInterface:
     def backend(self):
         """Get the Ray backend.
 
-        If the backend is not initialised, it will attempt to import Ray and set it as the backend.
+        If the backend is not initialised, it will attempt to import
+        Ray and set it as the backend.
 
         Returns:
             Any: The Ray backend.

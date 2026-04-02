@@ -61,10 +61,12 @@ class TensorBoardReporter(Reporter):
         Args:
             _ (str): The name of the event.
             event_idx (int): The index of the event trigger (step).
-            callback (EclypseEvent): The executed callback containing the data to report.
+            callback (EclypseEvent):
+                The executed callback containing the data to report.
 
         Returns:
-            Generator[Any, None, None]: Tuples with (callback_name, metric_dict, event_idx).
+            Generator[Any, None, None]:
+                Tuples with (callback_name, metric_dict, event_idx).
         """
         if callback.type is None:
             return

@@ -1,10 +1,13 @@
 """Module for the Asset class.
 
-It represents a node resource or a service requirement, such as CPU, GPU, RAM or node availability.
+It represents a node resource or a service requirement, such as CPU,
+GPU, RAM or node availability.
 
-It provides the inteface for the basic algebraic functions between assets:
+It provides the inteface for the basic algebraic functions between
+assets:
 - aggregate: aggregate the assets into a single asset.
-- satisfies: check if the asset satisfies a constraint based on the total ordering of the asset.
+- satisfies: check if the asset satisfies a constraint based on the
+  total ordering of the asset.
 - is_consistent: check if the asset has a feasible value, i.e., it is within the bounds.
 """
 
@@ -46,9 +49,10 @@ class Asset:
     ):
         """Initialize the asset with the lower and upper bounds.
 
-        The lower and the upper bounds represent the element which is always contained in
-        and the element the always contains the asset, respectively. Thus, they must
-        respect the total ordering of the asset.
+        The lower and the upper bounds represent the element which is
+        always contained in and the element the always contains the
+        asset, respectively. Thus, they must respect the total ordering
+        of the asset.
 
         The `init_fn_or_value` parameter is the function to initialize the asset. It can
         be a primitive type, a callable with no arguments or an `AssetSpace` object.
@@ -148,8 +152,9 @@ class Asset:
     def flip(self) -> Asset:
         """Flip the asset.
 
-        Move the perspective from being a "capability" to be a "requirement" and vice versa.
-        By default, the asset is left unchanged, thus the method returns a copy of the asset.
+        Move the perspective from being a "capability" to be a
+        "requirement" and vice versa. By default, the asset is left
+        unchanged, thus the method returns a copy of the asset.
 
         Returns:
             Asset: The flipped asset.

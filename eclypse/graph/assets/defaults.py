@@ -253,7 +253,9 @@ def get_default_path_aggregators():
     """Get the set of default path aggregators.
 
     Returns:
-        dict[str, Callable]: The default path aggregators: latency (sum), bandwidth (min).
+        dict[str, Callable]:
+            The default path aggregators: latency (sum), bandwidth
+            (min).
     """
     return {
         "latency": lambda x: sum(list(x)) if x else MAX_LATENCY,

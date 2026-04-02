@@ -36,8 +36,10 @@ class Placement:
         """Initializes the Placement.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application onto.
-            application (Application): The application to place onto the infrastructure.
+            infrastructure (Infrastructure):
+                The infrastructure to place the application onto.
+            application (Application):
+                The application to place onto the infrastructure.
             strategy (PlacementStrategy): The strategy to use for the placement.
         """
         self.strategy: PlacementStrategy | None = strategy
@@ -113,7 +115,8 @@ class Placement:
             target (str): The name of the target node.
 
         Returns:
-            list[tuple[str, str]]: The names of the services interactions crossing the link.
+            list[tuple[str, str]]:
+                The names of the services interactions crossing the link.
         """
         services_by_node = self.node_service_mapping()
         path_cache: dict[
@@ -190,7 +193,9 @@ class Placement:
         """Return a view of the placement.
 
         Returns:
-            dict[str, list[str]]: The mapping of nodes to the list of services placed on them.
+            dict[str, list[str]]:
+                The mapping of nodes to the list of services placed on
+                them.
         """
         node_services: defaultdict[str, list[str]] = defaultdict(list)
         for node in self.infrastructure.nodes:
@@ -203,8 +208,9 @@ class Placement:
         """Return a view of the placement.
 
         Returns:
-            dict[tuple[str, str], list[tuple[str, str]]]: The mapping of links to the list
-                of services interactions crossing them.
+            dict[tuple[str, str], list[tuple[str, str]]]:
+                The mapping of links to the list of services
+                interactions crossing them.
         """
         return {
             (source, target): self.interactions_on_link(source, target)
@@ -215,8 +221,9 @@ class Placement:
         """Return a view of the placement.
 
         Returns:
-            dict[str, ServiceRequirements]: The mapping of nodes to the total requirements
-                of the services placed on them.
+            dict[str, ServiceRequirements]:
+                The mapping of nodes to the total requirements of the
+                services placed on them.
         """
         return {
             node: self.application.node_assets.aggregate(

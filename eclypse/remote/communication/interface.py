@@ -29,12 +29,12 @@ if TYPE_CHECKING:
 class EclypseCommunicationInterface:
     """EclypseCommunicationInterface class.
 
-    It is used to implement and simulate the interactions between services deployed
-    and running in the same infrastructure.
+    It is used to implement and simulate the interactions between
+    services deployed and running in the same infrastructure.
 
-    It allows to interact with the `RemoteSimulator`, which provides the details regarding
-    the current state of the infrastructure, and simulate the behaviour of the services
-    accordingly.
+    It allows to interact with the `RemoteSimulator`, which provides the
+    details regarding the current state of the infrastructure, and
+    simulate the behaviour of the services accordingly.
     """
 
     def __init__(self, service: Service):
@@ -55,7 +55,7 @@ class EclypseCommunicationInterface:
         self._im = None
 
     def request_route(self, recipient_id: str) -> Future[Route]:
-        """Interacts with the `RemoteSimulator` to request a route to a desired recipient service.
+        """Interact with the `RemoteSimulator` to request a service route.
 
         The result of the function can be obtained by calling
         `ray.get` or by awaiting it.
@@ -77,9 +77,10 @@ class EclypseCommunicationInterface:
         )
 
     def get_neighbors(self) -> Task[list[str]]:
-        """Interacts with the InfrastructureManager to request the list of service neighbors.
+        """Interact with the InfrastructureManager to request service neighbours.
 
-        The result of the function can be obtained by calling `ray.get` or by awaiting it.
+        The result of the function can be obtained by calling `ray.get`
+        or by awaiting it.
 
         Returns:
             Task[list[str]]: The list of neighbor service IDs.
@@ -141,7 +142,7 @@ class EclypseCommunicationInterface:
 
     @property
     def connected(self) -> bool:
-        """Returns True if the communication interface is connected to the RemoteSimulator.
+        """Return True if the communication interface is connected to the simulator.
 
         Returns:
             bool: True if the communication interface is connected.

@@ -42,7 +42,8 @@ class JSONReporter(Reporter):
         Args:
             event_name (str): The name of the event.
             event_idx (int): The index of the event trigger (step).
-            callback (EclypseEvent): The executed callback containing the data to report.
+            callback (EclypseEvent):
+                The executed callback containing the data to report.
 
         Returns:
             Generator[dict[str, Any], None, None]: JSON lines entries to report lazily.

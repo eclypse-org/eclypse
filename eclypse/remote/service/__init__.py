@@ -1,4 +1,4 @@
-"""Package for classes allowing the definition of services logic in ECLYPSE remote simulations."""
+"""Package for classes defining service logic in ECLYPSE remote simulations."""
 
 from .service import Service
 from .rest import RESTService

@@ -60,8 +60,10 @@ class RoundRobinStrategy(PlacementStrategy):
         Args:
             _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            __ (dict[str, Placement]): The placement of all the applications in the simulations.
-            placement_view (PlacementView): The snapshot of the current state of the infrastructure.
+            __ (dict[str, Placement]):
+                The placement of all the applications in the simulations.
+            placement_view (PlacementView):
+                The snapshot of the current state of the infrastructure.
 
         Returns:
             dict[str, str]: A mapping of services to infrastructure nodes.

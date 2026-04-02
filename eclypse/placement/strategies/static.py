@@ -36,7 +36,8 @@ class StaticStrategy(PlacementStrategy):
         """Initializes the StaticPlacementStrategy object.
 
         Args:
-            mapping (dict[str, str] | None): A dictionary mapping service IDs to node IDs.
+            mapping (dict[str, str] | None):
+                A dictionary mapping service IDs to node IDs.
         """
         if not mapping:
             raise ValueError("Please provide a valid mapping of services to nodes.")

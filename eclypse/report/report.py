@@ -360,7 +360,7 @@ class Report:
         report_step: int = 1,
         **kwargs: Any,
     ) -> Any:
-        """Return a frame for the given report type, filtered by range and extra filters.
+        """Return a frame for the given report type with range and extra filters.
 
         Args:
             report_type: The report type (e.g. "application", "service", etc.).
@@ -399,7 +399,7 @@ class Report:
         report_step: int = 1,
         **kwargs: Any,
     ) -> Any:
-        """Filter a DataFrame by n_event range/step and optional equality/membership filters.
+        """Filter a DataFrame by n_event range or step and optional equality filters.
 
         Args:
             df: The DataFrame to filter.

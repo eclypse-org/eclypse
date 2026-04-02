@@ -6,7 +6,8 @@ functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via the maximum value.
 - `satisfies`: Check if the asset is contained in another asset.
-- `is_consistent`: Check if the asset belongs to the interval [lower_bound, upper_bound].
+- `is_consistent`: Check if the asset belongs to the interval
+  [lower_bound, upper_bound].
 """
 
 from __future__ import annotations

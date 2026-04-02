@@ -3,8 +3,9 @@
 Services are the basic building blocks of ECLYPSE remote applications.
 
 In its lifecycle, a `Service` object has the following capabilities:
-    1. To be included in an `Application`, implementing the business logic of a given
-        service. This is done by overriding the `run` method, which must be asynchronous.
+    1. To be included in an `Application`, implementing the business
+        logic of a given service. This is done by overriding the `run`
+        method, which must be asynchronous.
     2. To be deployed in a `RemoteEngine` application after a successful placement. This
         will execute the business logic of the service.
     3. To be started and stopped. This will start and stop the execution of the business
@@ -58,8 +59,8 @@ class Service:
             service_id (str): The name of the service.
             communication_interface (Literal["mpi", "rest"], optional): The
                 communication interface of the service. Defaults to "mpi".
-            store_step (bool, optional): Whether to store the results of each step. Defaults
-                to False.
+            store_step (bool, optional): Whether to store the results of
+                each step. Defaults to False.
         """
         if communication_interface not in ["mpi", "rest"]:
             raise ValueError("Invalid communication interface.")
@@ -190,7 +191,8 @@ class Service:
             raise RuntimeError(f"Service {self.id} is not deployed on any node.")
         if self._communication_interface != "mpi":
             raise RuntimeError(
-                f"Service {self.id} implements {self._communication_interface}, not mpi."
+                f"Service {self.id} implements "
+                f"{self._communication_interface}, not mpi."
             )
         return cast("EclypseMPI", self._comm)
 
@@ -201,7 +203,8 @@ class Service:
             raise RuntimeError(f"Service {self.id} is not deployed on any node.")
         if self._communication_interface != "rest":
             raise RuntimeError(
-                f"Service {self.id} implements {self._communication_interface}, not rest."
+                f"Service {self.id} implements "
+                f"{self._communication_interface}, not rest."
             )
         return cast("EclypseREST", self._comm)
 

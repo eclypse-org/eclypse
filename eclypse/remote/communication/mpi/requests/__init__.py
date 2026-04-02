@@ -1,4 +1,4 @@
-"""Package collecting requests that can be sent to the remote nodes, using MPI protocol."""
+"""Package collecting MPI requests that can be sent to remote nodes."""
 
 from .multicast import MulticastRequest
 from .broadcast import BroadcastRequest

@@ -134,7 +134,7 @@ class RemoteNode:
     async def service_comm_entrypoint(
         self, route: Route, communication_interface: type, **handle_args
     ) -> Any:
-        """Entry point for the communication interface of a service deployed in the node.
+        """Entry point for the communication interface of a deployed service.
 
         It is used to allow the interaction among services by leveraging the Ray
         Actor's remote method invocation.

@@ -5,10 +5,10 @@ providing the user-facing components of the store.
 
 - Key Responsibilities:
     - Displays product catalogs, shopping carts, and order information to users.
-    - Interacts with backend services \
-        (e.g., `CatalogService`, `UserService`, `OrderService`) to display real-time data.
-    - Manages user input and interactions such as product searches, \
-        cart updates, and order placements.
+    - Interacts with backend services (e.g., `CatalogService`,
+      `UserService`, `OrderService`) to display real-time data.
+    - Manages user input and interactions such as product searches,
+      cart updates, and order placements.
 """
 
 from eclypse.remote.communication import mpi
@@ -30,7 +30,8 @@ class FrontendService(Service):
     async def step(self):
         """Example workflow of the `Frontend` service.
 
-        It starts with fetching the catalog, user data, and cart items, then placing an order.
+        It starts with fetching the catalog, user data, and cart items,
+        then placing an order.
         """
         # Send request to CatalogService
         await self.catalog_request()

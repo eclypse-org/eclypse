@@ -136,9 +136,9 @@ class EclypseRequest:
     def responses(self) -> list[Any | None]:
         """Wait for the responses to the MPI request.
 
-        This method can be called explicitly to wait for the responses to the EclypseRequest
-        Otherwise, it is called implicitly when the `EclypseRequest` object is awaited to
-        process the request.
+        This method can be called explicitly to wait for the responses
+        to the EclypseRequest. Otherwise, it is called implicitly when
+        the `EclypseRequest` object is awaited to process the request.
         """
         return [(f.result()["future"] if f.done() else None) for f in self._futures]
 

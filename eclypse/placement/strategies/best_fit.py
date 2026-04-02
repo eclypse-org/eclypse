@@ -1,9 +1,10 @@
 """Module for a Best Fit placement strategy.
 
 It overrides the `place` method of the
-PlacementStrategy class to place services of an application on infrastructure nodes
-based on the node that best fits the requirements of the service (i.e., the node that
-satisfies the requirements and has the least amount of resources left after the placement).
+PlacementStrategy class to place services of an application on
+infrastructure nodes based on the node that best fits the requirements
+of the service, i.e. the node that satisfies the requirements and has
+the least amount of resources left after the placement.
 """
 
 from __future__ import annotations
@@ -47,11 +48,13 @@ class BestFitStrategy(PlacementStrategy):
         the node that best fits the requirements of the service.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application on.
+            infrastructure (Infrastructure):
+                The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            _ (dict[str, Placement]): The placement of all the applications in the simulations.
-            placement_view (PlacementView): The snapshot of the current state of the \
-                infrastructure.
+            _ (dict[str, Placement]):
+                The placement of all the applications in the simulations.
+            placement_view (PlacementView):
+                The snapshot of the current state of the infrastructure.
 
         Returns:
             dict[str, str]: A mapping of services to infrastructure nodes.

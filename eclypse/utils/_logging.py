@@ -92,8 +92,9 @@ def log_placement_violations(vlogger: Logger, violations: dict[str, dict[str, An
 
     Args:
         vlogger (loguru.Logger): A logger instance used to emit warning messages.
-        violations (dict[str, dict[str, Any]]): A dictionary of violations, where each key
-            maps to a dict with 'asset' and 'constraint' values.
+        violations (dict[str, dict[str, Any]]):
+            A dictionary of violations, where each key maps to a dict
+            with 'asset' and 'constraint' values.
     """
     total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]
 
@@ -115,8 +116,9 @@ def log_assets_violations(
     Args:
         vlogger (loguru.Logger): A logger instance used to emit warning messages.
         bucket (AssetBucket): The AssetBucket instance containing the assets.
-        violations (dict[str, dict[str, Any]]): A dictionary of violations, where each key
-            maps to a dict with 'asset' and 'constraint' values.
+        violations (dict[str, dict[str, Any]]):
+            A dictionary of violations, where each key maps to a dict
+            with 'asset' and 'constraint' values.
     """
     total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]
 
