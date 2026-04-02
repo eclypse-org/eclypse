@@ -16,10 +16,6 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    Optional,
-    Type,
 )
 
 from eclypse.remote import ray_backend
@@ -34,6 +30,10 @@ from eclypse.utils.constants import RND_SEED
 from .ops_thread import RemoteOpsThread
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.remote.communication import Route
     from eclypse.remote.service import Service
     from eclypse.remote.utils import RemoteOps
@@ -61,8 +61,8 @@ class RemoteNode:
 
         self._engine_ops_thread = RemoteOpsThread(self, self._engine_loop)
         self._thread_pool_fn = ThreadPoolExecutor()
-        self._services: Dict[str, Service] = {}
-        self._actor_cache: Dict[str, Any] = {}
+        self._services: dict[str, Service] = {}
+        self._actor_cache: dict[str, Any] = {}
 
         rnd.seed(os.getenv(RND_SEED))
         config_logger()  # re-do for remote node
@@ -114,7 +114,7 @@ class RemoteNode:
 
     async def entrypoint(
         self,
-        service_id: Optional[str],
+        service_id: str | None,
         fn: Callable,
         **fn_args,
     ) -> Any:
@@ -132,7 +132,7 @@ class RemoteNode:
         return await future
 
     async def service_comm_entrypoint(
-        self, route: Route, communication_interface: Type, **handle_args
+        self, route: Route, communication_interface: type, **handle_args
     ) -> Any:
         """Entry point for the communication interface of a service deployed in the node.
 
@@ -181,7 +181,7 @@ class RemoteNode:
         return self._actor_cache[actor_name]
 
     @property
-    def services(self) -> Dict[str, Service]:
+    def services(self) -> dict[str, Service]:
         """Returns the dictionary of services deployed in the node."""
         return self._services
 

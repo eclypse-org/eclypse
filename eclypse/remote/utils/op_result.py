@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import (
     TYPE_CHECKING,
-    Optional,
 )
 
 if TYPE_CHECKING:
@@ -24,5 +23,5 @@ class RemoteOpResult:
     operation: RemoteOps
     node_id: str
     service_id: str
-    error: Optional[str] = None
-    service: Optional[Service] = None
+    error: str | None = None
+    service: Service | None = None

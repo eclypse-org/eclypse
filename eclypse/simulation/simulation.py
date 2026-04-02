@@ -6,9 +6,6 @@ import json
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Optional,
-    Union,
     cast,
 )
 
@@ -37,7 +34,7 @@ class Simulation:
     def __init__(
         self,
         infrastructure: Infrastructure,
-        simulation_config: Optional[SimulationConfig] = None,
+        simulation_config: SimulationConfig | None = None,
     ):
         """Create a simulation bound to an infrastructure and configuration."""
         self.infrastructure = infrastructure
@@ -46,8 +43,8 @@ class Simulation:
         )
         self._sim_config.prepare_runtime()
 
-        self.remote: Optional[RemoteBootstrap] = cast(
-            "Optional[RemoteBootstrap]",
+        self.remote: RemoteBootstrap | None = cast(
+            "RemoteBootstrap | None",
             self._sim_config.remote,
         )
         self._logger = logger
@@ -63,8 +60,8 @@ class Simulation:
                 infrastructure=infrastructure,
                 simulation_config=self._sim_config,
             )
-        self.simulator: Union[Simulator, RemoteSimulator] = _simulator
-        self._report: Optional[Report] = None
+        self.simulator: Simulator | RemoteSimulator = _simulator
+        self._report: Report | None = None
 
     def prepare_runtime(self):
         """Prepare the process environment required by the simulation runtime."""
@@ -101,7 +98,7 @@ class Simulation:
         if blocking:
             self.wait()
 
-    def wait(self, timeout: Optional[float] = None):
+    def wait(self, timeout: float | None = None):
         """Wait for the simulation to finish, with graceful Ctrl+C handling."""
         interrupted = False
         while True:
@@ -124,7 +121,7 @@ class Simulation:
     def register(
         self,
         application: Application,
-        placement_strategy: Optional[PlacementStrategy] = None,
+        placement_strategy: PlacementStrategy | None = None,
     ):
         """Include an application in the simulation."""
         if placement_strategy is None:
@@ -156,7 +153,7 @@ class Simulation:
             self.simulator.register(application, placement_strategy)
 
     @property
-    def applications(self) -> Dict[str, Application]:
+    def applications(self) -> dict[str, Application]:
         """Applications currently registered in the simulation."""
         return self.simulator.applications
 
@@ -187,7 +184,7 @@ class Simulation:
             self.wait()
             self._report = Report(
                 self.path,
-                cast("Union[str, FrameBackend]", self._sim_config.report_backend),
+                cast("str | FrameBackend", self._sim_config.report_backend),
                 self._sim_config.report_format,
             )
         return self._report
@@ -195,7 +192,7 @@ class Simulation:
 
 def _local_remote_event_call(
     sim: Simulator,
-    remote: Optional[RemoteBootstrap],
+    remote: RemoteBootstrap | None,
     fn: str,
     *args,
     **kwargs,

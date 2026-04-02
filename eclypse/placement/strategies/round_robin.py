@@ -9,14 +9,15 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    Optional,
 )
 
 from .strategy import PlacementStrategy
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.graph import (
         Application,
         Infrastructure,
@@ -34,11 +35,11 @@ class RoundRobinStrategy(PlacementStrategy):
     round-robin fashion.
     """
 
-    def __init__(self, sort_fn: Optional[Callable[[Any], Any]] = None):
+    def __init__(self, sort_fn: Callable[[Any], Any] | None = None):
         """Initializes the `RoundRobin` placement strategy.
 
         Args:
-            sort_fn (Optional[Callable[[Any], Any]], optional): A function to sort the
+            sort_fn (Callable[[Any], Any] | None, optional): A function to sort the
             infrastructure nodes. Defaults to None.
         """
         self.sort_fn = sort_fn
@@ -48,9 +49,9 @@ class RoundRobinStrategy(PlacementStrategy):
         self,
         _: Infrastructure,
         application: Application,
-        __: Dict[str, Placement],
+        __: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> Dict[Any, Any]:
+    ) -> dict[Any, Any]:
         """Performs the placement according to a round-robin logic.
 
         Places the services of an application on the infrastructure nodes, attempting
@@ -59,11 +60,11 @@ class RoundRobinStrategy(PlacementStrategy):
         Args:
             _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            __ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            __ (dict[str, Placement]): The placement of all the applications in the simulations.
             placement_view (PlacementView): The snapshot of the current state of the infrastructure.
 
         Returns:
-            Dict[str, str]: A mapping of services to infrastructure nodes.
+            dict[str, str]: A mapping of services to infrastructure nodes.
         """
         mapping = {}
         infrastructure_nodes = list(placement_view.residual.nodes(data=True))

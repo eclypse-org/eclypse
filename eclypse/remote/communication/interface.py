@@ -9,10 +9,6 @@ import asyncio
 from typing import (
     TYPE_CHECKING,
     Any,
-    Coroutine,
-    List,
-    Optional,
-    Union,
 )
 
 from eclypse.remote import ray_backend
@@ -22,6 +18,7 @@ if TYPE_CHECKING:
         Future,
         Task,
     )
+    from collections.abc import Coroutine
 
     from eclypse.remote.service import Service
     from eclypse.simulation._simulator.remote import RemoteSimulator
@@ -47,7 +44,7 @@ class EclypseCommunicationInterface:
             service (Service): The service that uses the communication interface.
         """
         self._service: Service = service
-        self._im: Optional[RemoteSimulator] = None
+        self._im: RemoteSimulator | None = None
 
     def connect(self):
         """Connects the communication interface to the `RemoteSimulator`."""
@@ -79,13 +76,13 @@ class EclypseCommunicationInterface:
             "The communication interface is not connected to the RemoteSimulator."
         )
 
-    def get_neighbors(self) -> Task[List[str]]:
+    def get_neighbors(self) -> Task[list[str]]:
         """Interacts with the InfrastructureManager to request the list of service neighbors.
 
         The result of the function can be obtained by calling `ray.get` or by awaiting it.
 
         Returns:
-            Task[List[str]]: The list of neighbor service IDs.
+            Task[list[str]]: The list of neighbor service IDs.
         """
         if self._im:
             return self._im.get_neighbors.remote(  # type: ignore[attr-defined]
@@ -98,7 +95,7 @@ class EclypseCommunicationInterface:
 
     def _handle_request(
         self, *args, **kwargs
-    ) -> Union[Coroutine[Any, Any, Any], Future[Any]]:
+    ) -> Coroutine[Any, Any, Any] | Future[Any]:
         """Enqueue a message in the input queue.
 
         This method is called internally by the communication interface.

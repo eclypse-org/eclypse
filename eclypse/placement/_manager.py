@@ -10,11 +10,6 @@ from random import shuffle
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
 )
 
 from eclypse.placement import Placement
@@ -23,6 +18,10 @@ from eclypse.utils._logging import logger
 from .view import PlacementView
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.graph import (
         Application,
         Infrastructure,
@@ -40,7 +39,7 @@ class PlacementManager:
             infrastructure (Infrastructure): The infrastructure to place the applications onto.
         """
         self.infrastructure = infrastructure
-        self.placements: Dict[str, Placement] = {}
+        self.placements: dict[str, Placement] = {}
         self.placement_view: PlacementView = PlacementView(self.infrastructure)
 
     def audit(self):
@@ -120,7 +119,7 @@ class PlacementManager:
 
     def mapping_phase(
         self,
-    ) -> Generator[Tuple[Placement, List[str]], None, None]:
+    ) -> Generator[tuple[Placement, list[str]], None, None]:
         """Executes the mapping phase of the placement.
 
         If the placement is incremental, it will return a generator of tuples containing
@@ -128,7 +127,7 @@ class PlacementManager:
         placement is not incremental, it will return a list of such tuples.
 
         Returns:
-            Generator[Tuple[Placement, List[str]], None, None]:
+            Generator[tuple[Placement, list[str]], None, None]:
                 A list of tuples containing the placement and the nodes that are not \
                 respected by the placement, or a generator of such tuples.
         """
@@ -150,7 +149,7 @@ class PlacementManager:
     def register(
         self,
         application: Application,
-        placement_strategy: Optional[PlacementStrategy] = None,
+        placement_strategy: PlacementStrategy | None = None,
     ):
         """Include an application in the simulation.
 

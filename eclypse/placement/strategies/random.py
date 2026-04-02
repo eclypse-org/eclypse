@@ -12,8 +12,6 @@ import random as rnd
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Optional,
 )
 
 from eclypse.utils.constants import RND_SEED
@@ -34,13 +32,13 @@ if TYPE_CHECKING:
 class RandomStrategy(PlacementStrategy):
     """A placement strategy that places services randomly onto nodes."""
 
-    def __init__(self, spread: bool = False, seed: Optional[int] = None):
+    def __init__(self, spread: bool = False, seed: int | None = None):
         """Initializes the Random placement strategy.
 
         Args:
             spread (bool, optional): Whether to spread the services across different nodes. \
                 Defaults to False.
-            seed (Optional[int], optional): The seed for the random number generator. \
+            seed (int | None, optional): The seed for the random number generator. \
                 Defaults to None.
         """
         self._rnd = rnd.Random(seed if seed is not None else os.environ[RND_SEED])
@@ -51,20 +49,20 @@ class RandomStrategy(PlacementStrategy):
         self,
         _: Infrastructure,
         application: Application,
-        __: Dict[str, Placement],
+        __: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> Dict[Any, Any]:
+    ) -> dict[Any, Any]:
         """Places the services of an application on the infrastructure nodes, randomly.
 
         Args:
             _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            __ (Dict[str, Placement]): The placement of all the applications in the simulations.
+            __ (dict[str, Placement]): The placement of all the applications in the simulations.
             placement_view (PlacementView): The snapshot of the current state of the \
                 infrastructure.
 
         Returns:
-            Dict[str, str]: A mapping of services to infrastructure nodes.
+            dict[str, str]: A mapping of services to infrastructure nodes.
         """
         infrastructure_nodes = list(placement_view.residual.nodes())
         if not infrastructure_nodes:

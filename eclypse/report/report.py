@@ -15,11 +15,6 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Union,
     cast,
     get_args,
 )
@@ -46,9 +41,9 @@ class ReportQuery:
         """Create a query builder bound to a report type."""
         self._report = report
         self._report_type = report_type
-        self._report_range: Tuple[int, int] = (0, int(MAX_FLOAT))
+        self._report_range: tuple[int, int] = (0, int(MAX_FLOAT))
         self._report_step = 1
-        self._filters: Dict[str, Any] = {}
+        self._filters: dict[str, Any] = {}
 
     def range(self, start: int, stop: int) -> ReportQuery:
         """Set the inclusive event range."""
@@ -89,9 +84,9 @@ class Report:
 
     def __init__(
         self,
-        simulation_path: Union[str, Path],
-        backend: Union[str, FrameBackend] = DEFAULT_REPORT_BACKEND,
-        report_format: Optional[ReportFormat] = None,
+        simulation_path: str | Path,
+        backend: str | FrameBackend = DEFAULT_REPORT_BACKEND,
+        report_format: ReportFormat | None = None,
     ):
         """Initialise the Report.
 
@@ -108,7 +103,7 @@ class Report:
             TypeError: If a backend object is not a FrameBackend.
         """
         self._sim_path = Path(simulation_path)
-        self._config: Optional[Dict[str, Any]] = None
+        self._config: dict[str, Any] | None = None
         self._report_format: ReportFormat = self._resolve_report_format(report_format)
         self._stats_path = self._sim_path / self._report_format
         if not self._stats_path.exists():
@@ -117,7 +112,7 @@ class Report:
             )
 
         self._backend = get_backend(backend)
-        self.stats: Dict[EventType, Optional[Any]] = defaultdict()
+        self.stats: dict[EventType, Any | None] = defaultdict()
 
     @property
     def backend_name(self) -> str:
@@ -130,10 +125,10 @@ class Report:
 
     def application(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-        application_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
+        application_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing application metrics.
 
@@ -156,11 +151,11 @@ class Report:
 
     def service(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-        application_ids: Optional[Union[str, List[str]]] = None,
-        service_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
+        application_ids: str | list[str] | None = None,
+        service_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing service metrics.
 
@@ -185,12 +180,12 @@ class Report:
 
     def interaction(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-        sources: Optional[Union[str, List[str]]] = None,
-        targets: Optional[Union[str, List[str]]] = None,
-        application_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
+        sources: str | list[str] | None = None,
+        targets: str | list[str] | None = None,
+        application_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing interaction metrics.
 
@@ -217,9 +212,9 @@ class Report:
 
     def infrastructure(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing infrastructure metrics.
 
@@ -240,10 +235,10 @@ class Report:
 
     def node(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-        node_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
+        node_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing node metrics.
 
@@ -266,11 +261,11 @@ class Report:
 
     def link(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-        sources: Optional[Union[str, List[str]]] = None,
-        targets: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
+        sources: str | list[str] | None = None,
+        targets: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing link metrics.
 
@@ -295,9 +290,9 @@ class Report:
 
     def simulation(
         self,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
+        event_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing simulation metrics.
 
@@ -322,15 +317,15 @@ class Report:
 
     def get_dataframes(
         self,
-        report_types: Optional[List[EventType]] = None,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_types: list[EventType] | None = None,
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
-        event_ids: Optional[Union[str, List[str]]] = None,
-    ) -> Dict[str, Any]:
+        event_ids: str | list[str] | None = None,
+    ) -> dict[str, Any]:
         """Return multiple report DataFrames for the specified report types.
 
         Args:
-            report_types: List of report types to fetch. If None, all report types are returned.
+            report_types: Report types to fetch. If None, all report types are returned.
             report_range: The inclusive range (start, end) of n_event values to include.
             report_step: Step used when sampling n_event values.
             event_ids: Event IDs to filter by.
@@ -361,7 +356,7 @@ class Report:
     def frame(
         self,
         report_type: EventType,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         **kwargs: Any,
     ) -> Any:
@@ -400,7 +395,7 @@ class Report:
     def filter(
         self,
         df: Any,
-        report_range: Tuple[int, int] = (0, int(MAX_FLOAT)),
+        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
         report_step: int = 1,
         **kwargs: Any,
     ) -> Any:
@@ -443,7 +438,7 @@ class Report:
         return filtered
 
     @property
-    def config(self) -> Dict[str, Any]:
+    def config(self) -> dict[str, Any]:
         """Return the simulation configuration loaded from config.json.
 
         Returns:
@@ -465,7 +460,7 @@ class Report:
         return self._report_format
 
     def _resolve_report_format(
-        self, report_format: Optional[ReportFormat]
+        self, report_format: ReportFormat | None
     ) -> ReportFormat:
         """Resolve report format from argument, config file, or default."""
         if report_format is not None:

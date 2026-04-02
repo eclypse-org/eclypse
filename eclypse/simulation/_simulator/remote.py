@@ -13,10 +13,6 @@ costs of such interactions.
 from __future__ import annotations
 
 import asyncio
-from typing import (
-    List,
-    Optional,
-)
 
 from eclypse.remote.communication.route import Route
 from eclypse.utils._logging import config_logger
@@ -51,12 +47,12 @@ class RemoteSimulator(Simulator):
 
         super().enact()
 
-    async def wait(self, timeout: Optional[float] = None):
+    async def wait(self, timeout: float | None = None):
         # pylint: disable=invalid-overridden-method
         """Wait for the simulation to finish.
 
         Args:
-            timeout (Optional[float]): The maximum time to wait for the simulation to
+            timeout (float | None): The maximum time to wait for the simulation to
                 finish. If None, it waits indefinitely. Defaults to None.
         """
         await asyncio.to_thread(super().wait, timeout)
@@ -80,7 +76,7 @@ class RemoteSimulator(Simulator):
         application_id: str,
         source_id: str,
         dest_id: str,
-    ) -> Optional[Route]:
+    ) -> Route | None:
         """Computes the route between two logically neighbor services.
 
         If the services are not logically neighbors, it returns None.
@@ -122,7 +118,7 @@ class RemoteSimulator(Simulator):
             hops=path,
         )
 
-    async def get_neighbors(self, application_id: str, service_id: str) -> List[str]:
+    async def get_neighbors(self, application_id: str, service_id: str) -> list[str]:
         """Returns the logical neighbors of a service in an application.
 
         Args:
@@ -130,7 +126,7 @@ class RemoteSimulator(Simulator):
             service_id (str): The ID of the service for which to retrieve the neighbors.
 
         Returns:
-            List[str]: A list of service IDs.
+            list[str]: A list of service IDs.
         """
         application = self._manager.get(application_id).application
         neighbors = list(application.neighbors(service_id))

@@ -9,8 +9,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Iterable,
-    Set,
 )
 
 from eclypse.report.backend import (
@@ -20,6 +18,10 @@ from eclypse.report.backend import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Iterable,
+    )
+
     from polars import DataFrame
 
 
@@ -75,7 +77,7 @@ class PolarsBackend(FrameBackend):
         """
         return df.height == 0
 
-    def columns(self, df: DataFrame) -> Set[str]:
+    def columns(self, df: DataFrame) -> set[str]:
         """Return the set of column names.
 
         Args:

@@ -24,10 +24,7 @@ from collections import deque
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Deque,
     Literal,
-    Optional,
     cast,
 )
 
@@ -37,6 +34,10 @@ from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import print_exception
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.remote._node import RemoteNode
     from eclypse.remote.communication import EclypseCommunicationInterface
     from eclypse.utils._logging import Logger
@@ -67,16 +68,16 @@ class Service:
         self._communication_interface: Literal["mpi", "rest"] = communication_interface
         self._store_step: bool = store_step
 
-        self._application_id: Optional[str] = None
-        self._node: Optional[RemoteNode] = None
-        self._thread: Optional[threading.Thread] = None
-        self._comm: Optional[EclypseCommunicationInterface] = None
-        self._loop: Optional[asyncio.AbstractEventLoop] = None
-        self._run_task: Optional[asyncio.Task] = None
-        self._run_task_fn: Optional[Callable[[], asyncio.Task]] = None
+        self._application_id: str | None = None
+        self._node: RemoteNode | None = None
+        self._thread: threading.Thread | None = None
+        self._comm: EclypseCommunicationInterface | None = None
+        self._loop: asyncio.AbstractEventLoop | None = None
+        self._run_task: asyncio.Task | None = None
+        self._run_task_fn: Callable[[], asyncio.Task] | None = None
         self._running: bool = False
         self._step_count: int = 0
-        self._step_queue: Deque[Any] = deque(maxlen=1024)
+        self._step_queue: deque[Any] = deque(maxlen=1024)
 
     async def run(self):
         """Runs the service.

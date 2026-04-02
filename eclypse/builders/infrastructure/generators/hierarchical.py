@@ -15,14 +15,7 @@ import math
 import random as rnd
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    Dict,
-    Generator,
-    List,
     Literal,
-    Optional,
-    Tuple,
-    Union,
     no_type_check,
 )
 
@@ -31,6 +24,11 @@ import numpy as np
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+        Generator,
+    )
+
     from networkx import nx
     from networkx.classes.reportviews import (
         EdgeView,
@@ -48,19 +46,19 @@ def hierarchical(
     n: int,
     infrastructure_id: str = "hierarchical",
     symmetric: bool = False,
-    node_partitioning: Optional[List[float]] = None,
-    connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
-    cross_level_connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
+    node_partitioning: list[float] | None = None,
+    connectivity: ConnectivityFn | list[float] | None = None,
+    cross_level_connectivity: ConnectivityFn | list[float] | None = None,
+    node_update_policy: Callable[[NodeView], None] | None = None,
+    link_update_policy: Callable[[EdgeView], None] | None = None,
+    node_assets: dict[str, Asset] | None = None,
+    link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: Literal["min", "max"] = "max",
-    placement_strategy: Optional[PlacementStrategy] = None,
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    seed: Optional[int] = None,
+    placement_strategy: PlacementStrategy | None = None,
+    path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
+    seed: int | None = None,
 ):
     """Create a hierarchical infrastructure made of `n` nodes.
 
@@ -73,30 +71,30 @@ def hierarchical(
         infrastructure_id (str): The ID of the infrastructure.
         n (int): The number of nodes in the infrastructure.
         symmetric (bool): Whether the connections are symmetric. Defaults to False.
-        node_partitioning (Optional[List[float]]]):
+        node_partitioning (list[float] | None]):
             The partitioning of the nodes into groups, specified as a list of
             probabilities. The sum of the probabilities must be 1. Defaults to None.
-        connectivity (Optional[Union[ConnectivityFn, List[float]]]): The connectivity \
+        connectivity (ConnectivityFn | list[float] | None): The connectivity \
             function or list of probabilities for the connections between levels. Defaults to None.
-        cross_level_connectivity (Optional[Union[ConnectivityFn, List[float]]]):
+        cross_level_connectivity (ConnectivityFn | list[float] | None):
             The connectivity function or list of probabilities for the connections between nodes\
             in the same level. Defaults to None.
-        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
+        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
             Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
+        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
             Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
+        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
-        placement_strategy (Optional[PlacementStrategy]): The placement strategy for the\
+        placement_strategy (PlacementStrategy | None): The placement strategy for the\
             infrastructure. Defaults to None.
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
             compute the paths between nodes. Defaults to None.
-        seed (Optional[int]): The seed for the random number generator. Defaults to None.
+        seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:
         Infrastructure: The hierarchical infrastructure.
@@ -163,22 +161,22 @@ def hierarchical(
 
 @no_type_check
 def _get_connectivity_functions(
-    connectivity: Optional[Union[ConnectivityFn, List[float]]] = None,
+    connectivity: ConnectivityFn | list[float] | None = None,
     length: int = 0,
     default_prob: float = 0.0,
-    seed: Optional[int] = None,
-) -> List[ConnectivityFn]:
+    seed: int | None = None,
+) -> list[ConnectivityFn]:
     """Retrieve the connectivity functions for a hierarchical infrastructure.
 
     Args:
-        connectivity (Optional[Union[ConnectivityFn, List[float]]]): The connectivity function or\
+        connectivity (ConnectivityFn | list[float] | None): The connectivity function or\
             list of probabilities for the connections between levels.
         length (int): The number of levels in the infrastructure.
         default_prob (float): The default probability for the connections between levels.
-        seed (Optional[int]): The seed for the random number generator.
+        seed (int | None): The seed for the random number generator.
 
     Returns:
-        List[ConnectivityFn]: The list of connectivity functions for the levels.
+        list[ConnectivityFn]: The list of connectivity functions for the levels.
     """
     if connectivity is None:
         connectivity_fn = [
@@ -207,18 +205,18 @@ def _get_connectivity_functions(
 
 
 def _uniform_level_connectivity(
-    layer: List[str], layer1: List[str], p: float, seed: Optional[int] = None
-) -> Generator[Tuple[str, str], None, None]:
+    layer: list[str], layer1: list[str], p: float, seed: int | None = None
+) -> Generator[tuple[str, str], None, None]:
     """Generates the connectivity between levels in a hierarchical infrastructure.
 
     Args:
-        layer (List[str]): The nodes in the higher level.
-        layer1 (List[str]): The nodes in the lower level.
+        layer (list[str]): The nodes in the higher level.
+        layer1 (list[str]): The nodes in the lower level.
         p (float): The probability of connecting two nodes.
-        seed (Optional[int]): The seed for the random number generator.
+        seed (int | None): The seed for the random number generator.
 
     Yields:
-        Tuple[str, str]: The links between nodes in the higher and lower levels.
+        tuple[str, str]: The links between nodes in the higher and lower levels.
     """
     r = rnd.Random(seed)
     connected = [False for _ in layer1]
@@ -228,7 +226,7 @@ def _uniform_level_connectivity(
                 yield parent, child
                 connected[i] = True
 
-    # ensure at least one connection per child
+                # ensure at least one connection per child
     for i, child in enumerate(layer1):
         if not connected[i]:
             yield r.choice(layer), child

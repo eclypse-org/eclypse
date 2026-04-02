@@ -2,11 +2,6 @@
 
 from __future__ import annotations
 
-from typing import (
-    List,
-    Optional,
-)
-
 from eclypse.workflow.event import EclypseEvent
 from eclypse.workflow.trigger import CascadeTrigger
 
@@ -39,7 +34,7 @@ class EnactEvent(EclypseEvent):
             verbose=True,
         )
 
-    def __call__(self, _: Optional[EclypseEvent] = None):
+    def __call__(self, _: EclypseEvent | None = None):
         """Enact placement decisions.
 
         It calls the audit and enact methods of the simulator.
@@ -87,11 +82,11 @@ class StopEvent(EclypseEvent):
             verbose=True,
         )
 
-    def __call__(self, _: Optional[EclypseEvent] = None):
+    def __call__(self, _: EclypseEvent | None = None):
         """Empty by default."""
 
 
-def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
+def get_default_events(user_events: list[EclypseEvent]) -> list[EclypseEvent]:
     """Returns the default events to be managed by the ECLYPSE simulator.
 
     Events are:
@@ -99,10 +94,10 @@ def get_default_events(user_events: List[EclypseEvent]) -> List[EclypseEvent]:
     name as one of the default events, the default event is overridden.
 
     Args:
-        user_events (List[EclypseEvent]): The user-defined events.
+        user_events (list[EclypseEvent]): The user-defined events.
 
     Returns:
-        List[EclypseEvent]: The default events.
+        list[EclypseEvent]: The default events.
     """
     user_event_names = [event.name for event in user_events]
     return list(

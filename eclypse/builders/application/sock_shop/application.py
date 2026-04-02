@@ -14,18 +14,17 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
-    Union,
 )
 
 from eclypse.graph import Application
 from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
@@ -36,29 +35,29 @@ if TYPE_CHECKING:
 
 def get_sock_shop(
     application_id: str = "SockShop",
-    communication_interface: Optional[Literal["mpi", "rest"]] = None,
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    edge_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    edge_assets: Optional[Dict[str, Asset]] = None,
+    communication_interface: Literal["mpi", "rest"] | None = None,
+    node_update_policy: Callable[[NodeView], None] | None = None,
+    edge_update_policy: Callable[[EdgeView], None] | None = None,
+    node_assets: dict[str, Asset] | None = None,
+    edge_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     requirement_init: Literal["min", "max"] = "min",
-    flows: Union[Literal["default"], List[List[str]]] = "default",
-    seed: Optional[int] = None,
+    flows: Literal["default"] | list[list[str]] = "default",
+    seed: int | None = None,
 ) -> Application:
     """Get the Sock Shop application.
 
     Args:
         application_id (str): The ID of the application.
-        communication_interface (Optional[Literal["mpi", "rest"]]): The communication interface.
-        node_update_policy (Optional[Callable[[NodeView], None]]): A function to update the nodes.
-        edge_update_policy (Optional[Callable[[EdgeView], None]]): A function to update the edges.
-        node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
-        edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
+        communication_interface (Literal["mpi", "rest"] | None): The communication interface.
+        node_update_policy (Callable[[NodeView], None] | None): A function to update the nodes.
+        edge_update_policy (Callable[[EdgeView], None] | None): A function to update the edges.
+        node_assets (dict[str, Asset] | None): The assets of the nodes.
+        edge_assets (dict[str, Asset] | None): The assets of the edges.
         include_default_assets (bool): Whether to include the default assets. Default is False.
         requirement_init (Literal["min", "max"]): The initialization of the requirements.
-        flows (Optional[List[List[str]]): The flows of the application.
-        seed (Optional[int]): The seed for the random number generator.
+        flows (Literal["default"] | list[list[str]]): The flows of the application.
+        seed (int | None): The seed for the random number generator.
 
     Returns:
         Application: The Sock Shop application.

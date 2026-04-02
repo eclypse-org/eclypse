@@ -4,7 +4,6 @@ It is used to acknowledge the processing of a message exchange within an MPIRequ
 """
 
 from datetime import datetime
-from typing import Optional
 
 from eclypse.remote.utils import ResponseCode
 
@@ -19,7 +18,7 @@ class Response:
     def __init__(
         self,
         code: ResponseCode = ResponseCode.OK,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ):
         """Initializes a Response object.
 

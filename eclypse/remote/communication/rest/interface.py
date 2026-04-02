@@ -14,11 +14,6 @@ from collections import defaultdict
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Coroutine,
-    Dict,
-    Tuple,
-    Union,
 )
 
 from eclypse.remote.communication.interface import (
@@ -30,6 +25,11 @@ from .codes import HTTPStatusCode
 from .methods import HTTPMethod
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+        Coroutine,
+    )
+
     from eclypse.remote.communication.route import Route
     from eclypse.remote.service import Service
     from eclypse.utils.types import HTTPMethodLiteral
@@ -52,7 +52,7 @@ class EclypseREST(EclypseCommunicationInterface):
             service (Service): The service that uses the REST interface.
         """
         super().__init__(service=service)
-        self.endpoints: Dict[str, Dict[HTTPMethod, Callable]] = defaultdict(lambda: {})
+        self.endpoints: dict[str, dict[HTTPMethod, Callable]] = defaultdict(lambda: {})
 
     def connect(self):
         """Connects the REST interface to the service.
@@ -115,9 +115,9 @@ class EclypseREST(EclypseCommunicationInterface):
 
     def _handle_request(
         self, *_, **kwargs
-    ) -> Union[
-        Coroutine[Any, Any, Any], asyncio.Future[Tuple[HTTPStatusCode, Dict[str, Any]]]
-    ]:
+    ) -> (
+        Coroutine[Any, Any, Any] | asyncio.Future[tuple[HTTPStatusCode, dict[str, Any]]]
+    ):
         """Handles a request to an endpoint.
 
         Args:
@@ -128,7 +128,7 @@ class EclypseREST(EclypseCommunicationInterface):
             **kwargs: The data to be sent in the request.
 
         Returns:
-            asyncio.Future[Tuple[HTTPStatusCode, Dict[str, Any]]]: The result of the \
+            asyncio.Future[tuple[HTTPStatusCode, dict[str, Any]]]: The result of the \
                 request, as a future.
         """
         if self.service._run_task is not None:  # pylint: disable=protected-access
@@ -136,7 +136,7 @@ class EclypseREST(EclypseCommunicationInterface):
 
         return super()._handle_request(**kwargs)
 
-    async def _not_connected_response(self) -> Tuple[HTTPStatusCode, Dict[str, Any]]:
+    async def _not_connected_response(self) -> tuple[HTTPStatusCode, dict[str, Any]]:
         """Returns a response when the service is not connected."""
         return HTTPStatusCode.INTERNAL_SERVER_ERROR, {
             "message": f"{self.service.id} not connected"
@@ -148,7 +148,7 @@ class EclypseREST(EclypseCommunicationInterface):
         method: HTTPMethod,
         route: Route,
         **kwargs,
-    ) -> Tuple[HTTPStatusCode, Dict[str, Any]]:
+    ) -> tuple[HTTPStatusCode, dict[str, Any]]:
         """Executes a request to an endpoint.
 
         Args:
@@ -159,7 +159,7 @@ class EclypseREST(EclypseCommunicationInterface):
             **kwargs: The data to be sent in the request.
 
         Returns:
-            Tuple[HTTPStatusCode, Dict[str, Any]]: The result of the request.
+            tuple[HTTPStatusCode, dict[str, Any]]: The result of the request.
         """
         if url not in self.endpoints:
             return HTTPStatusCode.NOT_FOUND, {"message": "Endpoint not found"}
@@ -193,12 +193,12 @@ class EclypseREST(EclypseCommunicationInterface):
         return http_code, result
 
 
-def register_endpoint(endpoint: str, method: Union[HTTPMethod, HTTPMethodLiteral]):
+def register_endpoint(endpoint: str, method: HTTPMethod | HTTPMethodLiteral):
     """Decorator to register an endpoint in a service.
 
     Args:
         endpoint (str): The endpoint to register.
-        method (Union[HTTPMethod, HTTPMethodLiteral]): The method allowed for the endpoint.
+        method (HTTPMethod | HTTPMethodLiteral): The method allowed for the endpoint.
 
     Returns:
         Callable: The decorated function.

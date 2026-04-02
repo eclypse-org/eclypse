@@ -8,10 +8,6 @@ from __future__ import annotations
 
 from typing import (
     Any,
-    Dict,
-    List,
-    Optional,
-    Tuple,
 )
 
 from eclypse.utils.constants import MIN_LATENCY
@@ -33,7 +29,7 @@ class Route:
         recipient_id: str,
         recipient_node_id: str,
         processing_time: float,
-        hops: Optional[List[Tuple[str, str, Dict[str, Any]]]] = None,
+        hops: list[tuple[str, str, dict[str, Any]]] | None = None,
     ):
         """Initializes a Route object.
 
@@ -45,7 +41,7 @@ class Route:
                 deployed.
             processing_time (float): The processing time of the nodes traversed by the \
                 route.
-            hops (Optional[List[Tuple[str, str, Dict[str, Any]]]]): The list \
+            hops (list[tuple[str, str, dict[str, Any]]] | None): The list \
                 of hops in the route. Each hop is a triplet containing the source node \
                 ID, the target node ID, and the cost of the link. Defaults to None.
         """

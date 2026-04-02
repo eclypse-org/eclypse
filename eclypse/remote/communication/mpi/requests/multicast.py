@@ -8,15 +8,14 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    List,
-    Optional,
 )
 
 from eclypse.remote.communication import EclypseRequest
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
     from datetime import datetime
 
     from eclypse.remote.communication.mpi import EclypseMPI
@@ -27,18 +26,18 @@ class MulticastRequest(EclypseRequest):
 
     def __init__(
         self,
-        recipient_ids: List[str],
-        body: Dict[str, Any],
+        recipient_ids: list[str],
+        body: dict[str, Any],
         _mpi: EclypseMPI,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ):
         """Initializes a MulticastRequest object.
 
         Args:
-            recipient_ids (List[str]): The IDs of the recipient nodes.
-            body (Dict[str, Any]): The body of the request.
+            recipient_ids (list[str]): The IDs of the recipient nodes.
+            body (dict[str, Any]): The body of the request.
             _mpi (EclypseMPI): The MPI interface.
-            timestamp (Optional[datetime], optional): The timestamp of the request.
+            timestamp (datetime | None, optional): The timestamp of the request.
                 Defaults to None.
         """
         super().__init__(

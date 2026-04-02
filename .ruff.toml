@@ -48,15 +48,10 @@ ignore = [
     "D104",
     "E501",
     "PLC0415",
-    "UP006",
-    "UP007",
     "UP008",
-    "UP035",
-    "UP045",
 ]
 
 fixable = ["ALL"]
-unfixable = ["UP045", "UP035"]
 
 [lint.mccabe]
 max-complexity = 10

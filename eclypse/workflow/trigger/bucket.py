@@ -9,10 +9,7 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    List,
     Literal,
-    Optional,
-    Union,
 )
 
 from eclypse.utils.constants import MAX_FLOAT
@@ -29,26 +26,26 @@ class TriggerBucket:
 
     def __init__(
         self,
-        triggers: Optional[Union[Trigger, List[Trigger]]] = None,
+        triggers: Trigger | list[Trigger] | None = None,
         condition: Literal["any", "all"] = "any",
         max_triggers: int = int(MAX_FLOAT),
     ):
         """Initialize the trigger.
 
         Args:
-            triggers (Optional[Union[Trigger, List[Trigger]]]): A single trigger or
+            triggers (Trigger | list[Trigger] | None): A single trigger or
                 a list of triggers that can activate the event. Defaults to None.
             condition (str): The condition for the triggers to fire the event. If "any",
                 the event fires if any trigger is active. If "all", the event fires only
                 if all triggers are active. Defaults to "any".
-            max_triggers (Optional[int]): The maximum number of times the trigger
+            max_triggers (int | None): The maximum number of times the trigger
                 can be called. Defaults to `no limit`.
         """
         triggers = (
             (triggers if isinstance(triggers, list) else [triggers]) if triggers else []
         )
 
-        self.event: Optional[EclypseEvent] = None
+        self.event: EclypseEvent | None = None
         self.triggers = triggers
         self.condition = condition
         self.max_triggers = max_triggers
@@ -65,7 +62,7 @@ class TriggerBucket:
         for trigger in self.triggers:
             trigger.init()
 
-    def trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire.
 
         Returns:
@@ -77,7 +74,7 @@ class TriggerBucket:
             self._manual_activation -= 1
         else:
             t_conditions = []
-            _triggers: List[Trigger] = []
+            _triggers: list[Trigger] = []
             if trigger_event:
                 _triggers = [t for t in self.triggers if isinstance(t, CascadeTrigger)]
             else:

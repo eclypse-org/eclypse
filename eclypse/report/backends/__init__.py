@@ -6,16 +6,18 @@ This package exposes:
 - A small factory helper to resolve backends by name.
 """
 
-from typing import Callable, Dict, Union
-
 from eclypse.report import FrameBackend
 
 from .pandas_backend import PandasBackend
 from .polars_backend import PolarsBackend
 from .polars_lazy_backend import PolarsLazyBackend
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 
-def get_backend(backend: Union[str, FrameBackend]) -> FrameBackend:
+def get_backend(backend: str | FrameBackend) -> FrameBackend:
     """Resolve a backend from a name or an already-instantiated backend object.
 
     Args:
@@ -34,7 +36,7 @@ def get_backend(backend: Union[str, FrameBackend]) -> FrameBackend:
             raise TypeError("The provided backend is not an instance of FrameBackend.")
         return backend
 
-    default_backends: Dict[str, Callable[[], FrameBackend]] = {
+    default_backends: dict[str, Callable[[], FrameBackend]] = {
         "pandas": PandasBackend,
         "polars": PolarsBackend,
         "polars_lazy": PolarsLazyBackend,

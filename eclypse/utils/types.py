@@ -1,16 +1,16 @@
 """Module containing type aliases used throughout the ECLYPSE package.
 
 Attributes:
-    PrimitiveType (Union): Type alias for primitive types.\
+    PrimitiveType (type alias): Type alias for primitive types.\
         Possible values are ``int``, ``float``, ``str``, ``bool``, ``list``,\
         ``tuple``, ``dict``, ``set``.
-    CascadeTriggerType (Union): Type alias for cascade trigger types.\
+    CascadeTriggerType (type alias): Type alias for cascade trigger types.\
         Possible values are:
         - ``str``: CascadeTrigger
-        - ``Tuple[str, int]``: PeriodicCascadeTrigger
-        - ``Tuple[str, List[int]]``: ScheduledCascadeTrigger
-        - ``Tuple[str, float]``: RandomCascadeTrigger
-    ActivatesOnType (Union): Type alias for the activates on types.\
+        - ``tuple[str, int]``: PeriodicCascadeTrigger
+        - ``tuple[str, list[int]]``: ScheduledCascadeTrigger
+        - ``tuple[str, float]``: RandomCascadeTrigger
+    ActivatesOnType (type alias): Type alias for the activates on types.\
         It can be a single `CascadeTriggerType` or a list of them.
     HTTPMethodLiteral (Literal): Literal type for HTTP methods.\
         Possible values are ``"GET"``, ``"POST"``, ``"PUT"``, ``"DELETE"``.
@@ -26,24 +26,23 @@ Attributes:
 
 from __future__ import annotations
 
-from typing import (
+from collections.abc import (
     Callable,
     Generator,
-    List,
+)
+from typing import (
     Literal,
-    Tuple,
-    Union,
 )
 
-PrimitiveType = Union[int, float, str, bool, list, tuple, dict, set]
+type PrimitiveType = int | float | str | bool | list | tuple | dict | set
 
-CascadeTriggerType = Union[
-    str,  # CascadeTrigger
-    Tuple[str, int],  # PeriodicCascadeTrigger
-    Tuple[str, List[int]],  # ScheduledCascadeTrigger
-    Tuple[str, float],  # RandomCascadeTrigger
-]
-ActivatesOnType = Union[CascadeTriggerType, List[CascadeTriggerType]]
+type CascadeTriggerType = (
+    str  # CascadeTrigger
+    | tuple[str, int]  # PeriodicCascadeTrigger
+    | tuple[str, list[int]]  # ScheduledCascadeTrigger
+    | tuple[str, float]  # RandomCascadeTrigger
+)
+type ActivatesOnType = CascadeTriggerType | list[CascadeTriggerType]
 
 HTTPMethodLiteral = Literal[
     "GET",
@@ -53,7 +52,7 @@ HTTPMethodLiteral = Literal[
 ]
 
 ConnectivityFn = Callable[
-    [List[str], List[str]], Generator[Tuple[str, str], None, None]
+    [list[str], list[str]], Generator[tuple[str, str], None, None]
 ]
 
 EventType = Literal[

@@ -14,17 +14,17 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
 )
 
 from eclypse.graph import Infrastructure
 from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
@@ -37,34 +37,34 @@ if TYPE_CHECKING:
 
 def get_orion_cev(
     infrastructure_id: str = "orion_cev",
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
+    node_update_policy: Callable[[NodeView], None] | None = None,
+    link_update_policy: Callable[[EdgeView], None] | None = None,
+    node_assets: dict[str, Asset] | None = None,
+    link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     resource_init: Literal["min", "max"] = "max",
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    placement_strategy: Optional[PlacementStrategy] = None,
-    seed: Optional[int] = None,
+    path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
+    placement_strategy: PlacementStrategy | None = None,
+    seed: int | None = None,
 ) -> Infrastructure:
     """Create the Orion CEV infrastructure.
 
     Args:
         infrastructure_id (str): The ID of the infrastructure. Defaults to "OrionCEV".
-        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
+        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
             Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
+        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
             Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
+        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "max".
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
             compute the paths between nodes. Defaults to None.
-        placement_strategy (Optional[PlacementStrategy]): The strategy to place the resources.\
+        placement_strategy (PlacementStrategy | None): The strategy to place the resources.\
             Defaults to None.
-        seed (Optional[int]): The seed for the random number generator. Defaults to None.
+        seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:
         Infrastructure: The Orion CEV infrastructure.

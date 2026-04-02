@@ -8,8 +8,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Generator,
-    List,
 )
 
 import networkx as nx
@@ -17,6 +15,9 @@ import networkx as nx
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
     from pathlib import Path
 
     from eclypse.workflow.event import EclypseEvent
@@ -55,12 +56,12 @@ class GMLReporter(Reporter):
             name = f"{callback.name}{'-' + graph.id if hasattr(graph, 'id') else ''}"
             yield (name, graph)
 
-    async def write(self, _: str, data: List[tuple[str, nx.DiGraph]]):
+    async def write(self, _: str, data: list[tuple[str, nx.DiGraph]]):
         """Write graphs in GML format.
 
         Args:
             callback_type (str): The type of the callback.
-            data (List[Tuple[str, nx.DiGraph]]): The graphs to write.
+            data (list[tuple[str, nx.DiGraph]]): The graphs to write.
         """
         for name, graph in data:
             path = self.report_path / f"{name}.gml"

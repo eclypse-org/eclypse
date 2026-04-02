@@ -15,12 +15,13 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Generator,
-    List,
-    Union,
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.workflow.event.event import EclypseEvent
 
 
@@ -32,12 +33,12 @@ class Reporter(ABC):
 
     def __init__(
         self,
-        report_path: Union[str, Path],
+        report_path: str | Path,
     ):
         """Create a new Reporter.
 
         Args:
-            report_path (Union[str, Path]): The path to save the reports.
+            report_path (str | Path): The path to save the reports.
         """
         self.report_path = Path(report_path)
 
@@ -71,14 +72,14 @@ class Reporter(ABC):
             Generator[Any, None, None]: The entries to be written lazily.
         """
 
-    def dfs_data(self, data: Any) -> Generator[List[Any], None, None]:
+    def dfs_data(self, data: Any) -> Generator[list[Any], None, None]:
         """Perform DFS on the nested dictionary and build paths (concatenated keys) as strings.
 
         Args:
             data (Any): The data to traverse.
 
         Returns:
-            List: The list of paths.
+            list: The list of paths.
         """
 
         def dfs(d):
@@ -94,7 +95,7 @@ class Reporter(ABC):
 
         yield from dfs(data)
 
-    def callback_rows(self, callback: EclypseEvent) -> Generator[List[Any], None, None]:
+    def callback_rows(self, callback: EclypseEvent) -> Generator[list[Any], None, None]:
         """Return callback tuple rows directly, otherwise DFS-flatten the payload."""
         if callback.is_callback and isinstance(callback.data, tuple):
             for row in callback.data:

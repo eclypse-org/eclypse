@@ -12,10 +12,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    List,
-    Optional,
-    Tuple,
-    Union,
 )
 
 if TYPE_CHECKING:
@@ -43,11 +39,11 @@ class AssetSpace:
 class Choice(AssetSpace):
     """Class to represent a choice between a set of values."""
 
-    def __init__(self, choices: List[Any]):
+    def __init__(self, choices: list[Any]):
         """Create a new Choice asset space.
 
         Args:
-            choices (List[Any]): The possible values to choose from.
+            choices (list[Any]): The possible values to choose from.
         """
         self.choices = choices
 
@@ -121,9 +117,9 @@ class Sample(AssetSpace):
 
     def __init__(
         self,
-        population: List[Any],
-        k: Union[int, Tuple[int, int]],
-        counts: Optional[List[int]] = None,
+        population: list[Any],
+        k: int | tuple[int, int],
+        counts: list[int] | None = None,
     ):
         """Create a new Sample asset space.
 
@@ -132,9 +128,9 @@ class Sample(AssetSpace):
         range from which to draw the sample size.
 
         Args:
-            population (List[Any]): The population to sample from.
-            k (Union[int, Tuple[int, int]]): The number of values to sample.
-            counts (Optional[List[int]]): The counts for each element in the population.
+            population (list[Any]): The population to sample from.
+            k (int | tuple[int, int]): The number of values to sample.
+            counts (list[int] | None): The counts for each element in the population.
         """
         self.population = population
         self.k = k
@@ -147,7 +143,7 @@ class Sample(AssetSpace):
             random (Random): The random number generator.
 
         Returns:
-            List[Any]: A sample of values from the population.
+            list[Any]: A sample of values from the population.
         """
         _k = self.k if isinstance(self.k, int) else random.randint(*self.k)
         return random.sample(self.population, _k, counts=self.counts)

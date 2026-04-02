@@ -4,10 +4,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    List,
-    Optional,
-    Union,
 )
 
 from eclypse.utils.constants import (
@@ -18,45 +14,49 @@ from eclypse.utils.defaults import DEFAULT_REPORT_TYPE
 from eclypse.workflow.event import event
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.utils.types import ActivatesOnType
     from eclypse.workflow.trigger import Trigger
 
 
 def simulation(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create a simulation metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (Optional[EventType], optional): The type of the event. Defaults to None.
+        event_type (EventType | None, optional): The type of the event. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -82,40 +82,40 @@ def simulation(
 
 
 def application(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create an application metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
         is_callback (bool, optional): Whether the event is a callback. Defaults to False.
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -141,39 +141,39 @@ def application(
 
 
 def service(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create a service metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -199,39 +199,39 @@ def service(
 
 
 def interaction(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create an interaction metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -257,39 +257,39 @@ def interaction(
 
 
 def infrastructure(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create an infrastructure metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -315,38 +315,38 @@ def infrastructure(
 
 
 def node(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create a node metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         verbose (bool, optional): Whether to print verbose output. Defaults to False.
@@ -370,39 +370,39 @@ def node(
 
 
 def link(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
+    name: str | None = None,
     activates_on: ActivatesOnType = DRIVING_EVENT,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
-    report: Optional[Union[str, List[str]]] = DEFAULT_REPORT_TYPE,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
+    report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """Decorator to create an application metric.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
         activates_on (ActivatesOnType, optional): The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
 
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.
