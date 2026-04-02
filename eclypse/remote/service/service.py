@@ -32,6 +32,7 @@ from typing import (
 )
 
 from eclypse.remote.communication.mpi import EclypseMPI
+from eclypse.remote.communication.request import RouteNotFoundError
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import print_exception
 
@@ -74,6 +75,7 @@ class Service:
         self._run_task: Optional[asyncio.Task] = None
         self._run_task_fn: Optional[Callable[[], asyncio.Task]] = None
         self._running: bool = False
+        self._step_count: int = 0
         self._step_queue: Deque[Any] = deque(maxlen=1024)
 
     async def run(self):
@@ -85,7 +87,16 @@ class Service:
         This method can be overridden by the user to provide a custom behaviour.
         """
         while self.running:
-            step_result = await self.step()
+            self._step_count += 1
+            try:
+                step_result = await self.step()
+            except RouteNotFoundError as error:
+                self.logger.error(
+                    "Skipping service step "
+                    f"{self.step_count} because route to {error.recipient_id} "
+                    "was not found."
+                )
+                continue
             if step_result is not None and self._store_step:
                 self._step_queue.append(step_result)
 
@@ -251,6 +262,11 @@ class Service:
     def running(self):
         """Returns True if the service is running."""
         return self._running
+
+    @property
+    def step_count(self) -> int:
+        """Return the number of attempted service loop iterations."""
+        return self._step_count
 
     @property
     def logger(self) -> Logger:

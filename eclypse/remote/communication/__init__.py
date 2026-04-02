@@ -2,10 +2,14 @@
 
 from .interface import EclypseCommunicationInterface
 from .route import Route
-from .request import EclypseRequest
+from .request import (
+    EclypseRequest,
+    RouteNotFoundError,
+)
 
 __all__ = [
     "EclypseCommunicationInterface",
     "EclypseRequest",
     "Route",
+    "RouteNotFoundError",
 ]
