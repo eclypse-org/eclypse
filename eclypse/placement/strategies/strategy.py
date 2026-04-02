@@ -1,7 +1,7 @@
 """Module for defining a global placement strategy.
 
-It provides an abstract class that must be implemented by the user to define a global
-placement strategy for the entire infrastructure.
+It provides an abstract class that must be implemented by the user to
+define a global placement strategy for the entire infrastructure.
 """
 
 from __future__ import annotations
@@ -29,7 +29,8 @@ if TYPE_CHECKING:
 class PlacementStrategy(ABC):
     """PlacementStrategy abstract class.
 
-    A global placement strategy that places services of an application on infrastructure nodes.
+    A global placement strategy that places services of an application
+    on infrastructure nodes.
     """
 
     @abstractmethod
@@ -49,14 +50,17 @@ class PlacementStrategy(ABC):
         This method must be overridden by the user.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application onto.
-            application (Application): The application to place onto the infrastructure.
+            infrastructure (Infrastructure):
+                The infrastructure to place the application onto.
+            application (Application):
+                The application to place onto the infrastructure.
             placements (dict[str, Placement]): A dictionary of placements.
             placement_view (PlacementView): The placement view to use for the placement.
 
         Returns:
-            dict[Any, Any]: A dictionary mapping service IDs to node IDs, or None if the \
-                application cannot be placed onto the infrastructure.
+            dict[Any, Any]:
+                A dictionary mapping service IDs to node IDs, or None if
+                the application cannot be placed onto the infrastructure.
         """
 
     def is_feasible(
@@ -67,8 +71,10 @@ class PlacementStrategy(ABC):
         """Check if the application can be placed on the infrastructure.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the application onto.
-            application (Application): The application to place onto the infrastructure.
+            infrastructure (Infrastructure):
+                The infrastructure to place the application onto.
+            application (Application):
+                The application to place onto the infrastructure.
 
         Returns:
             bool: True if the application can be placed on the infrastructure, False \

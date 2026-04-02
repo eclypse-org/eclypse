@@ -6,7 +6,8 @@ different services like payment, inventory, and shipping.
 
 - Key Responsibilities:
     - Creates, updates, and manages customer orders.
-    - Interacts with the `PaymentService` and `ShippingService` to complete the order transaction.
+    - Interacts with the `PaymentService` and `ShippingService` to
+      complete the order transaction.
     - Tracks the status of placed orders (e.g., pending, confirmed, shipped).
 """
 

@@ -1,7 +1,8 @@
 """Module for the PlacementManager class.
 
-It manages the placement of applications in the infrastructure and is responsible for
-the mapping phase, where the application services are mapped to the infrastructure nodes.
+It manages the placement of applications in the infrastructure and is
+responsible for the mapping phase, where the application services are
+mapped to the infrastructure nodes.
 """
 
 from __future__ import annotations
@@ -36,14 +37,15 @@ class PlacementManager:
         """Initializes the PlacementManager.
 
         Args:
-            infrastructure (Infrastructure): The infrastructure to place the applications onto.
+            infrastructure (Infrastructure):
+                The infrastructure to place the applications onto.
         """
         self.infrastructure = infrastructure
         self.placements: dict[str, Placement] = {}
         self.placement_view: PlacementView = PlacementView(self.infrastructure)
 
     def audit(self):
-        """Check application placements and reset those violating infrastructure constraints.
+        """Check placements and reset those violating infrastructure constraints.
 
         Iterates over the placements of all the involved applications, checking if
         the placement constraints are respected by the infrastructure capabilities.
@@ -60,7 +62,7 @@ class PlacementManager:
                             p.mark_for_reset()
 
     def enact(self):
-        """Manage and apply (or reset) the placement of applications on the infrastructure."""
+        """Manage and apply, or reset, application placements."""
         for p in self.placements.values():
             if p.reset_requested:
                 self.logger.warning(f"Resetting placement of {p.application.id}")
@@ -75,7 +77,7 @@ class PlacementManager:
                 self.logger.log("ECLYPSE", p)
 
     def generate_mapping(self, placement: Placement):
-        """Create application-to-infrastructure mapping based on available placement strategy.
+        """Create application-to-infrastructure mapping from a placement strategy.
 
         Generate the mapping of the applications onto the infrastructure, using the
         placement strategy if available. If no placement strategy is available, the
@@ -128,8 +130,9 @@ class PlacementManager:
 
         Returns:
             Generator[tuple[Placement, list[str]], None, None]:
-                A list of tuples containing the placement and the nodes that are not \
-                respected by the placement, or a generator of such tuples.
+                A list of tuples containing the placement and the nodes
+                that are not respected by the placement, or a generator
+                of such tuples.
         """
         self.placement_view._reset()
         placements = list(self.placements.values())

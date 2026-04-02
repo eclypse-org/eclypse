@@ -73,7 +73,7 @@ class Reporter(ABC):
         """
 
     def dfs_data(self, data: Any) -> Generator[list[Any], None, None]:
-        """Perform DFS on the nested dictionary and build paths (concatenated keys) as strings.
+        """Perform DFS on nested dictionaries and build concatenated key paths.
 
         Args:
             data (Any): The data to traverse.

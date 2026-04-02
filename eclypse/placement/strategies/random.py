@@ -36,10 +36,12 @@ class RandomStrategy(PlacementStrategy):
         """Initializes the Random placement strategy.
 
         Args:
-            spread (bool, optional): Whether to spread the services across different nodes. \
+            spread (bool, optional):
+                Whether to spread the services across different nodes.
                 Defaults to False.
-            seed (int | None, optional): The seed for the random number generator. \
-                Defaults to None.
+            seed (int | None, optional):
+                The seed for the random number generator. Defaults to
+                None.
         """
         self._rnd = rnd.Random(seed if seed is not None else os.environ[RND_SEED])
         self.spread = spread
@@ -57,9 +59,10 @@ class RandomStrategy(PlacementStrategy):
         Args:
             _ (Infrastructure): The infrastructure to place the application on.
             application (Application): The application to place on the infrastructure.
-            __ (dict[str, Placement]): The placement of all the applications in the simulations.
-            placement_view (PlacementView): The snapshot of the current state of the \
-                infrastructure.
+            __ (dict[str, Placement]):
+                The placement of all the applications in the simulations.
+            placement_view (PlacementView):
+                The snapshot of the current state of the infrastructure.
 
         Returns:
             dict[str, str]: A mapping of services to infrastructure nodes.

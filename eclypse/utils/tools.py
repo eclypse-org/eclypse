@@ -19,10 +19,12 @@ def get_bytes_size(d: Any) -> int:
     The size is computed according to the following rules:
 
     - int, float, str, bool: the size is the size of the object itself.
-    - list, tuple, set: the size is the sum of the sizes of the elements in the collection.
+    - list, tuple, set: the size is the sum of the sizes of the
+      elements in the collection.
     - dict: the size is the sum of the sizes of the keys and values in the dictionary.
     - objects with a __dict__ attribute: the size is the size of the __dict__ attribute.
-    - other objects: the size is the size of the object itself, computed using `sys.getsizeof`.
+    - other objects: the size is the size of the object itself,
+      computed using `sys.getsizeof`.
 
     Args:
         d (Any): The object to be measured.

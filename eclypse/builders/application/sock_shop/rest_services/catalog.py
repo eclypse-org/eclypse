@@ -16,7 +16,7 @@ class CatalogService(RESTService):
 
     @rest.endpoint("/catalog", "GET")
     def get_catalog(self, **_):
-        """Get the catalog, retrieving product details such as name, price, and description.
+        """Get the catalog with product names, prices, and descriptions.
 
         Returns:
             int: The HTTP status code.

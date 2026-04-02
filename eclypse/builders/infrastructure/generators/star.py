@@ -1,12 +1,13 @@
 """Star infrastructure generator.
 
-This module provides a generator for building star-shaped network topologies, where a
-central node is connected directly to multiple peripheral client nodes. The center can
-be configured separately from the outer nodes in terms of resource assets and roles.
+This module provides a generator for building star-shaped network
+topologies, where a central node is connected directly to multiple
+peripheral client nodes. The centre can be configured separately from
+the outer nodes in terms of resource assets and roles.
 
-This topology is useful for modeling centralized communication systems such as access
-points, base stations, master-slave control, or cloud-edge scenarios with a hub-spoke
-structure.
+This topology is useful for modelling centralised communication systems
+such as access points, base stations, master-slave control, or
+cloud-edge scenarios with a hub-spoke structure.
 """
 
 from __future__ import annotations
@@ -51,7 +52,7 @@ def star(
     placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ):
-    """Create a star infrastructure with `n_clients` clients connected to a central node.
+    """Create a star infrastructure with `n_clients` clients around a central node.
 
     The group of the clients can be specified.
 
@@ -59,25 +60,30 @@ def star(
         n_clients (int): The number of clients in the infrastructure.
         infrastructure_id (str): The ID of the infrastructure.
         symmetric (bool): Whether the links are symmetric. Defaults to False.
-        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
-            Defaults to None.
-        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
-        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
-        center_assets_values (dict[str, Any] | None): The assets for the center node. \
-            Defaults to None.
-        outer_assets_values (dict[str, Any] | None): The assets for the outer nodes. \
-            Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        node_update_policy (Callable[[NodeView], None] | None):
+            The policy to update the nodes. Defaults to None.
+        link_update_policy (Callable[[EdgeView], None] | None):
+            The policy to update the links. Defaults to None.
+        node_assets (dict[str, Asset] | None):
+            The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None):
+            The assets for the links. Defaults to None.
+        center_assets_values (dict[str, Any] | None):
+            The assets for the center node. Defaults to None.
+        outer_assets_values (dict[str, Any] | None):
+            The assets for the outer nodes. Defaults to None.
+        include_default_assets (bool):
+            Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "min".
-        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
-            compute the paths between nodes. Defaults to None.
-        placement_strategy (PlacementStrategy | None): The placement strategy for the\
-            infrastructure. Defaults to None.
+        resource_init (Literal["min", "max"]):
+            The initialization policy for the resources. Defaults to "min".
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
+            The algorithm to compute the paths between nodes. Defaults to
+            None.
+        placement_strategy (PlacementStrategy | None):
+            The placement strategy for the infrastructure. Defaults to
+            None.
         seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:

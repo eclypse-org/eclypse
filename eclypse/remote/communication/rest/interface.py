@@ -181,7 +181,10 @@ class EclypseREST(EclypseCommunicationInterface):
             error_code = "Invalid return type for handler: data must be a dictionary."
             return HTTPStatusCode.INTERNAL_SERVER_ERROR, {"message": error_code}
         if http_code not in iter(HTTPStatusCode):
-            error_code = "Invalid return type for handler: status code must be a valid HTTP code."
+            error_code = (
+                "Invalid return type for handler: status code must be "
+                "a valid HTTP code."
+            )
             return HTTPStatusCode.INTERNAL_SERVER_ERROR, {"message": error_code}
 
         if not isinstance(http_code, HTTPStatusCode):

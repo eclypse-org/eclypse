@@ -50,7 +50,8 @@ def event(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (EventType | None, optional): The type of the event. Defaults to None.
+        event_type (EventType | None, optional):
+            The type of the event. Defaults to None.
         activates_on (ActivatesOnType | None, optional): The conditions that will
             trigger the event. Defaults to None.
         trigger_every_ms (float | None, optional): The time in milliseconds between
@@ -58,12 +59,14 @@ def event(
         max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        is_callback (bool, optional): Whether the event is a callback. Defaults to False.
+        is_callback (bool, optional):
+            Whether the event is a callback. Defaults to False.
         report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.

@@ -1,9 +1,10 @@
 # pylint: disable=import-outside-toplevel
 """Factory for the SockShop microservice application.
 
-Defines the SockShop e-commerce demo as an Application object, modeling typical user interactions
-such as browsing, cart updates, checkout, and order tracking. Each microservice is assigned
-realistic compute and performance requirements.
+Defines the SockShop e-commerce demo as an Application object, modelling
+typical user interactions such as browsing, cart updates, checkout, and
+order tracking. Each microservice is assigned realistic compute and
+performance requirements.
 
 Service interactions and structure are based on:
 Sock Shop — A Microservices Demo Application,
@@ -49,13 +50,18 @@ def get_sock_shop(
 
     Args:
         application_id (str): The ID of the application.
-        communication_interface (Literal["mpi", "rest"] | None): The communication interface.
-        node_update_policy (Callable[[NodeView], None] | None): A function to update the nodes.
-        edge_update_policy (Callable[[EdgeView], None] | None): A function to update the edges.
+        communication_interface (Literal["mpi", "rest"] | None):
+            The communication interface.
+        node_update_policy (Callable[[NodeView], None] | None):
+            A function to update the nodes.
+        edge_update_policy (Callable[[EdgeView], None] | None):
+            A function to update the edges.
         node_assets (dict[str, Asset] | None): The assets of the nodes.
         edge_assets (dict[str, Asset] | None): The assets of the edges.
-        include_default_assets (bool): Whether to include the default assets. Default is False.
-        requirement_init (Literal["min", "max"]): The initialization of the requirements.
+        include_default_assets (bool):
+            Whether to include the default assets. Default is False.
+        requirement_init (Literal["min", "max"]):
+            The initialization of the requirements.
         flows (Literal["default"] | list[list[str]]): The flows of the application.
         seed (int | None): The seed for the random number generator.
 

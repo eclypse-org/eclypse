@@ -240,7 +240,7 @@ class Simulator:
         self._finished.wait(timeout=timeout)
 
     async def _finalize_shutdown(self):
-        """Ensure all background work is flushed and the completion state is signalled."""
+        """Ensure background work is flushed and completion is signalled."""
         try:
             await self._reporter.stop()
         finally:

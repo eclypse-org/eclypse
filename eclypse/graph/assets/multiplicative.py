@@ -1,11 +1,13 @@
 """Module for the Multiplicative Asset class.
 
-It represents a numeric asset where the aggregation is the multiplication of the provided assets.
+It represents a numeric asset where the aggregation is the
+multiplication of the provided assets.
 It provides the interface for the basic algebraic functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via product.
 - `satisfies`: Check if the asset contains another asset and is positive.
-- `is_consistent`: Check if the asset belongs to the interval [lower_bound, upper_bound].
+- `is_consistent`: Check if the asset belongs to the interval
+  [lower_bound, upper_bound].
 """
 
 from __future__ import annotations
@@ -30,7 +32,7 @@ if TYPE_CHECKING:
 
 
 class Multiplicative(Asset):
-    """Multiplicative represents a numeric asset where the aggregation is multiplicative."""
+    """Represent a numeric asset where the aggregation is multiplicative."""
 
     def __init__(
         self,

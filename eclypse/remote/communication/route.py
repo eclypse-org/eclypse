@@ -35,7 +35,8 @@ class Route:
 
         Args:
             sender_id (str): The ID of the sender service.
-            sender_node_id (str): The ID of the node where the sender service is deployed.
+            sender_node_id (str):
+                The ID of the node where the sender service is deployed.
             recipient_id (str): The ID of the recipient service.
             recipient_node_id (str): The ID of the node where the recipient service is \
                 deployed.

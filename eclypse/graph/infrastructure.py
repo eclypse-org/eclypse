@@ -88,7 +88,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                 The aggregators to use for the path assets.
             path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
                 The algorithm to use to compute the paths.
-            resource_init (Literal["min", "max"]): The initialization method for the resources.
+            resource_init (Literal["min", "max"]):
+                The initialization method for the resources.
             seed (int | None): The seed for the random number generator.
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}

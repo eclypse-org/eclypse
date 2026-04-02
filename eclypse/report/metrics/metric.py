@@ -42,8 +42,10 @@ def simulation(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (EventType | None, optional): The type of the event. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        event_type (EventType | None, optional):
+            The type of the event. Defaults to None.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -51,7 +53,8 @@ def simulation(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
@@ -101,7 +104,8 @@ def application(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -109,12 +113,14 @@ def application(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        is_callback (bool, optional): Whether the event is a callback. Defaults to False.
+        is_callback (bool, optional):
+            Whether the event is a callback. Defaults to False.
         report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
@@ -160,7 +166,8 @@ def service(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -168,7 +175,8 @@ def service(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
@@ -218,7 +226,8 @@ def interaction(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -226,7 +235,8 @@ def interaction(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
@@ -276,7 +286,8 @@ def infrastructure(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -284,7 +295,8 @@ def infrastructure(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
@@ -333,7 +345,8 @@ def node(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -341,7 +354,8 @@ def node(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
@@ -389,7 +403,8 @@ def link(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        activates_on (ActivatesOnType, optional): The events that will trigger the metric.
+        activates_on (ActivatesOnType, optional):
+            The events that will trigger the metric.
             Defaults to DRIVING_EVENT.
         trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
@@ -397,7 +412,8 @@ def link(
             can be triggered. Defaults to no limit.
 
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
-            trigger the event. If not provided, the event will not be triggered by any triggers.
+            trigger the event. If not provided, the event will not be
+            triggered by any triggers.
             Defaults to None.
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",

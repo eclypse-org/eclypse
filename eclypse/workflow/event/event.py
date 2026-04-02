@@ -71,7 +71,8 @@ class EclypseEvent:
                 right after the event that triggered it. Defaults to False.
             report (str | list[str] | None): The type of report to generate for
                 the event. Defaults to DEFAULT_REPORT_TYPE.
-            remote (bool): If True, the event will be executed remotely. Defaults to False.
+            remote (bool): If True, the event will be executed remotely.
+                Defaults to False.
             verbose (bool): If True, the event will log its firing. Defaults to False.
 
         Raises:
@@ -112,7 +113,8 @@ class EclypseEvent:
             NotImplementedError: The event logic is not implemented.
         """
         raise NotImplementedError(
-            "The event logic must be implemented in two ways: 1. decorate a function or",
+            "The event logic must be implemented in two ways: 1. decorate "
+            "a function or",
             "a class with a __call__ method; 2. subclass the EclypseEvent class and",
             "implement the __call__ method.",
         )

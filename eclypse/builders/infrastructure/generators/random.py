@@ -1,12 +1,14 @@
 """Random infrastructure generator.
 
-This module provides a generator for creating unstructured network topologies using
-the Erdos-Rényi random graph model. Each pair of nodes has a configurable probability
-`p` of being connected, allowing the simulation of a wide variety of sparse or dense graphs.
+This module provides a generator for creating unstructured network
+topologies using the Erdos-Rényi random graph model. Each pair of nodes
+has a configurable probability `p` of being connected, allowing the
+simulation of a wide variety of sparse or dense graphs.
 
-This is useful for stress-testing placement or routing algorithms, comparing performance
-against structured topologies, or modeling loosely connected networks such as P2P overlays
-or ad-hoc wireless systems.
+This is useful for stress-testing placement or routing algorithms,
+comparing performance against structured topologies, or modelling
+loosely connected networks such as P2P overlays or ad-hoc wireless
+systems.
 """
 
 from __future__ import annotations
@@ -60,21 +62,25 @@ def random(
         infrastructure_id (str): The ID of the infrastructure.
         p (float): The probability of connecting two nodes. Defaults to 0.5.
         symmetric (bool): Whether the links are symmetric. Defaults to False.
-        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
-            Defaults to None.
-        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
-        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
+        node_update_policy (Callable[[NodeView], None] | None):
+            The policy to update the nodes. Defaults to None.
+        link_update_policy (Callable[[EdgeView], None] | None):
+            The policy to update the links. Defaults to None.
+        node_assets (dict[str, Asset] | None):
+            The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None):
+            The assets for the links. Defaults to None.
+        include_default_assets (bool):
+            Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "min".
-        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
-            compute the paths between nodes. Defaults to None.
-        placement_strategy (PlacementStrategy | None): The strategy to place the resources.\
-            Defaults to None.
+        resource_init (Literal["min", "max"]):
+            The initialization policy for the resources. Defaults to "min".
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
+            The algorithm to compute the paths between nodes. Defaults to
+            None.
+        placement_strategy (PlacementStrategy | None):
+            The strategy to place the resources. Defaults to None.
         seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:

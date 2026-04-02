@@ -1,13 +1,15 @@
 """Factory for the Orion CEV infrastructure topology.
 
-Defines the Orion Crew Exploration Vehicle (CEV) network as an Infrastructure object,
-including switches and end systems such as sensors, controllers, and processing units.
-Links and node resources (CPU, RAM, availability, etc.) are assigned based on realistic
-values for mixed-criticality embedded platforms.
+Defines the Orion Crew Exploration Vehicle (CEV) network as an
+Infrastructure object, including switches and end systems such as
+sensors, controllers, and processing units. Links and node resources
+(CPU, RAM, availability, etc.) are assigned based on realistic values
+for mixed-criticality embedded platforms.
 
 The topology and resource model are inspired by:
-Berisa et al., "AVB-aware Routing and Scheduling for Critical Traffic in Time-sensitive
-Networks with Preemption", RTNS 2022, https://dl.acm.org/doi/10.1145/3534879.3534926.
+Berisa et al., "AVB-aware Routing and Scheduling for Critical Traffic in
+Time-sensitive Networks with Preemption", RTNS 2022,
+https://dl.acm.org/doi/10.1145/3534879.3534926.
 """
 
 from __future__ import annotations
@@ -50,20 +52,25 @@ def get_orion_cev(
     """Create the Orion CEV infrastructure.
 
     Args:
-        infrastructure_id (str): The ID of the infrastructure. Defaults to "OrionCEV".
-        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
-            Defaults to None.
-        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
-        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "max".
-        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
-            compute the paths between nodes. Defaults to None.
-        placement_strategy (PlacementStrategy | None): The strategy to place the resources.\
-            Defaults to None.
+        infrastructure_id (str):
+            The ID of the infrastructure. Defaults to "OrionCEV".
+        node_update_policy (Callable[[NodeView], None] | None):
+            The policy to update the nodes. Defaults to None.
+        link_update_policy (Callable[[EdgeView], None] | None):
+            The policy to update the links. Defaults to None.
+        node_assets (dict[str, Asset] | None):
+            The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None):
+            The assets for the links. Defaults to None.
+        include_default_assets (bool):
+            Whether to include the default assets. Defaults to False.
+        resource_init (Literal["min", "max"]):
+            The initialization policy for the resources. Defaults to "max".
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
+            The algorithm to compute the paths between nodes. Defaults to
+            None.
+        placement_strategy (PlacementStrategy | None):
+            The strategy to place the resources. Defaults to None.
         seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:

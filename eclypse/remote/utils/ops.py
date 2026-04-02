@@ -9,7 +9,8 @@ from enum import StrEnum
 class RemoteOps(StrEnum):
     """Enum class for the operations that can be performed on a service.
 
-    The operations are executed via the `ops_entrypoint` method of the RemoteEngine class.
+    The operations are executed via the `ops_entrypoint` method of the
+    RemoteEngine class.
 
     Attributes:
         DEPLOY: Deploy the service.

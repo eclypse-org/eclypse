@@ -74,26 +74,32 @@ def hierarchical(
         node_partitioning (list[float] | None]):
             The partitioning of the nodes into groups, specified as a list of
             probabilities. The sum of the probabilities must be 1. Defaults to None.
-        connectivity (ConnectivityFn | list[float] | None): The connectivity \
-            function or list of probabilities for the connections between levels. Defaults to None.
+        connectivity (ConnectivityFn | list[float] | None):
+            The connectivity function or list of probabilities for the
+            connections between levels. Defaults to None.
         cross_level_connectivity (ConnectivityFn | list[float] | None):
-            The connectivity function or list of probabilities for the connections between nodes\
-            in the same level. Defaults to None.
-        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
-            Defaults to None.
-        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
-        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
-        include_default_assets (bool): Whether to include the default assets. Defaults to False.
+            The connectivity function or list of probabilities for the
+            connections between nodes in the same level. Defaults to None.
+        node_update_policy (Callable[[NodeView], None] | None):
+            The policy to update the nodes. Defaults to None.
+        link_update_policy (Callable[[EdgeView], None] | None):
+            The policy to update the links. Defaults to None.
+        node_assets (dict[str, Asset] | None):
+            The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None):
+            The assets for the links. Defaults to None.
+        include_default_assets (bool):
+            Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]): The initialization policy for the resources.\
-            Defaults to "min".
-        placement_strategy (PlacementStrategy | None): The placement strategy for the\
-            infrastructure. Defaults to None.
-        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
-            compute the paths between nodes. Defaults to None.
+        resource_init (Literal["min", "max"]):
+            The initialization policy for the resources. Defaults to "min".
+        placement_strategy (PlacementStrategy | None):
+            The placement strategy for the infrastructure. Defaults to
+            None.
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
+            The algorithm to compute the paths between nodes. Defaults to
+            None.
         seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:
@@ -169,10 +175,12 @@ def _get_connectivity_functions(
     """Retrieve the connectivity functions for a hierarchical infrastructure.
 
     Args:
-        connectivity (ConnectivityFn | list[float] | None): The connectivity function or\
-            list of probabilities for the connections between levels.
+        connectivity (ConnectivityFn | list[float] | None):
+            The connectivity function or list of probabilities for the
+            connections between levels.
         length (int): The number of levels in the infrastructure.
-        default_prob (float): The default probability for the connections between levels.
+        default_prob (float):
+            The default probability for the connections between levels.
         seed (int | None): The seed for the random number generator.
 
     Returns:

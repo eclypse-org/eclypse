@@ -6,7 +6,8 @@ defined in terms of a set of constraints:
 
 - `aggregate`: Aggregate the assets into a single asset via intersection.
 - `satisfies`: Check if all the elements in the constraint are present in the asset.
-- `is_consistent`: Check if the asset belongs to the interval [lower_bound, upper_bound].
+- `is_consistent`: Check if the asset belongs to the interval
+  [lower_bound, upper_bound].
 """
 
 from __future__ import annotations

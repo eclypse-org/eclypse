@@ -5,7 +5,8 @@ It provides the interface for the basic algebraic functions between assets:
 
 - `aggregate`: Aggregate the assets into a single asset via summation.
 - `satisfies`: Check if the asset contains another asset.
-- `is_consistent`: Check if the asset belongs to the interval [lower_bound, upper_bound].
+- `is_consistent`: Check if the asset belongs to the interval
+  [lower_bound, upper_bound].
 """
 
 from __future__ import annotations
