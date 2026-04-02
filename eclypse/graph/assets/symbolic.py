@@ -13,7 +13,6 @@ from __future__ import annotations
 
 from typing import (
     Any,
-    Set,
 )
 
 from .asset import Asset
@@ -36,7 +35,7 @@ class Symbolic(Asset):
         """
         # return list(set().union(*assets))
 
-        uniques: Set[Any] = set()
+        uniques: set[Any] = set()
         for asset in assets:
             _asset = [asset] if isinstance(asset, str) else asset
             uniques.update(_asset)

@@ -20,8 +20,6 @@ from threading import (
 )
 from typing import (
     TYPE_CHECKING,
-    Dict,
-    Optional,
 )
 
 from eclypse.placement import PlacementManager
@@ -85,14 +83,14 @@ class Simulator:
         self._infrastructure = infrastructure
         self._manager = PlacementManager(infrastructure=self._infrastructure)
 
-        self._events: Dict[str, EclypseEvent] = {
+        self._events: dict[str, EclypseEvent] = {
             event.name: event for event in self._config.events
         }
         for event in self._events.values():
             event.attach_simulator(self)
             event.trigger_bucket.init()
 
-        # Simulation state
+            # Simulation state
         self._event_loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
         self._events_queue: asyncio.Queue = asyncio.Queue()
         self._ordered_events = tuple(
@@ -126,7 +124,7 @@ class Simulator:
             **kwargs: The arguments to pass to the event.
 
         Returns:
-            Optional[Dict[str, Any]]: The result of the events activated on the \
+            dict[str, Any] | None: The result of the events activated on the \
                 given event.
         """
         event = self._events[event_name]
@@ -151,12 +149,12 @@ class Simulator:
         self._stop_requested = True
         asyncio.run_coroutine_threadsafe(self.enqueue_event("stop"), self._event_loop)
 
-    async def enqueue_event(self, event_name: str, triggered_by: Optional[str] = None):
+    async def enqueue_event(self, event_name: str, triggered_by: str | None = None):
         """Enqueue an event to be processed by the simulation.
 
         Args:
             event_name (str): The name of the event to enqueue.
-            triggered_by (Optional[str], optional): The name of the event that
+            triggered_by (str | None, optional): The name of the event that
                 triggered this event. Defaults to None.
         """
         await self._events_queue.put(
@@ -219,7 +217,7 @@ class Simulator:
     async def fire(
         self,
         event_name: str,
-        triggered_by: Optional[str] = None,
+        triggered_by: str | None = None,
     ):
         """Fire the event."""
         event = self._events[event_name]
@@ -232,11 +230,11 @@ class Simulator:
                 callback=event,
             )
 
-    def wait(self, timeout: Optional[float] = None):
+    def wait(self, timeout: float | None = None):
         """Wait for the simulation to finish.
 
         Args:
-            timeout (Optional[float], optional): The maximum time to wait for the
+            timeout (float | None, optional): The maximum time to wait for the
                 simulation to finish. Defaults to None, meaning indefinite wait.
         """
         self._finished.wait(timeout=timeout)
@@ -253,7 +251,7 @@ class Simulator:
     def register(
         self,
         application: Application,
-        placement_strategy: Optional[PlacementStrategy] = None,
+        placement_strategy: PlacementStrategy | None = None,
     ):
         """Include an application in the simulation.
 
@@ -283,20 +281,20 @@ class Simulator:
         return self._infrastructure
 
     @property
-    def applications(self) -> Dict[str, Application]:
+    def applications(self) -> dict[str, Application]:
         """Get the applications included in the simulation.
 
         Returns:
-            Dict[str, Application]: The dictionary of Applications.
+            dict[str, Application]: The dictionary of Applications.
         """
         return {p.application.id: p.application for p in self.placements.values()}
 
     @property
-    def placements(self) -> Dict[str, Placement]:
+    def placements(self) -> dict[str, Placement]:
         """Get the placements of the applications in the simulation.
 
         Returns:
-            Dict[str, Placement]: The placements of the applications.
+            dict[str, Placement]: The placements of the applications.
         """
         return self._manager.placements
 

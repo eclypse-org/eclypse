@@ -9,15 +9,15 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    Optional,
-    Tuple,
 )
 
 from eclypse.remote.communication import EclypseRequest
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.remote.communication import Route
 
     from .codes import HTTPStatusCode
@@ -36,7 +36,7 @@ class HTTPRequest(EclypseRequest):
         self,
         url: str,
         method: HTTPMethod,
-        data: Dict[Any, Any],
+        data: dict[Any, Any],
         _rest: EclypseREST,
     ):
         """Initializes an HTTPRequest object.
@@ -44,7 +44,7 @@ class HTTPRequest(EclypseRequest):
         Args:
             url (str): The URL of the request.
             method (HTTPMethod): The HTTP method of the request.
-            data (Dict[Any, Any]): The data to send in the request.
+            data (dict[Any, Any]): The data to send in the request.
             _rest (EclypseREST): The REST interface used to send the request.
         """
         recipient_id = url.split("/", maxsplit=1)[0]
@@ -66,20 +66,20 @@ class HTTPRequest(EclypseRequest):
         return super().__await__()  # type: ignore[return-value]
 
     @property
-    def route(self) -> Optional[Route]:
+    def route(self) -> Route | None:
         """Get the route of the request.
 
         Returns:
-            Optional[Route]: The route of the request.
+            Route | None: The route of the request.
         """
         return self.routes[0]
 
     @property
-    def response(self) -> Optional[Tuple[HTTPStatusCode, Dict[str, Any]]]:
+    def response(self) -> tuple[HTTPStatusCode, dict[str, Any]] | None:
         """Get the response of the request.
 
         Returns:
-            Tuple[HTTPStatusCode, Dict[str, Any]]: The response of the request.
+            tuple[HTTPStatusCode, dict[str, Any]]: The response of the request.
         """
         return self.responses[0]
 
@@ -98,11 +98,11 @@ class HTTPRequest(EclypseRequest):
         return self.response[0]
 
     @property
-    def body(self) -> Dict[str, Any]:
+    def body(self) -> dict[str, Any]:
         """Get the body of the response.
 
         Returns:
-            Dict[str, Any]: The body of the response.
+            dict[str, Any]: The body of the response.
 
         Raises:
             RuntimeError: If the request is not completed yet.

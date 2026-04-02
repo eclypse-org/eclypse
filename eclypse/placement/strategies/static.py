@@ -10,7 +10,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
 )
 
 from .strategy import PlacementStrategy
@@ -33,11 +32,11 @@ class StaticStrategy(PlacementStrategy):
     to nodes in the form of a dictionary.
     """
 
-    def __init__(self, mapping: Dict[str, str]):
+    def __init__(self, mapping: dict[str, str]):
         """Initializes the StaticPlacementStrategy object.
 
         Args:
-            mapping (Optional[Dict[str, str]]): A dictionary mapping service IDs to node IDs.
+            mapping (dict[str, str] | None): A dictionary mapping service IDs to node IDs.
         """
         if not mapping:
             raise ValueError("Please provide a valid mapping of services to nodes.")
@@ -49,13 +48,13 @@ class StaticStrategy(PlacementStrategy):
         self,
         infrastructure: Infrastructure,
         application: Application,
-        _: Dict[str, Placement],
+        _: dict[str, Placement],
         __: PlacementView,
-    ) -> Dict[Any, Any]:
+    ) -> dict[Any, Any]:
         """Returns the static mapping of services to nodes, given at initialization.
 
         Returns:
-            Dict[str, str]: the static mapping.
+            dict[str, str]: the static mapping.
         """
         if not self.is_feasible(infrastructure, application):
             return {}

@@ -14,16 +14,16 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
 )
 
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
@@ -38,18 +38,18 @@ def star(
     n_clients: int,
     infrastructure_id: str = "star",
     symmetric: bool = False,
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
-    center_assets_values: Optional[Dict[str, Any]] = None,
-    outer_assets_values: Optional[Dict[str, Any]] = None,
+    node_update_policy: Callable[[NodeView], None] | None = None,
+    link_update_policy: Callable[[EdgeView], None] | None = None,
+    node_assets: dict[str, Asset] | None = None,
+    link_assets: dict[str, Asset] | None = None,
+    center_assets_values: dict[str, Any] | None = None,
+    outer_assets_values: dict[str, Any] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: Literal["min", "max"] = "min",
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    placement_strategy: Optional[PlacementStrategy] = None,
-    seed: Optional[int] = None,
+    path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
+    placement_strategy: PlacementStrategy | None = None,
+    seed: int | None = None,
 ):
     """Create a star infrastructure with `n_clients` clients connected to a central node.
 
@@ -59,26 +59,26 @@ def star(
         n_clients (int): The number of clients in the infrastructure.
         infrastructure_id (str): The ID of the infrastructure.
         symmetric (bool): Whether the links are symmetric. Defaults to False.
-        node_update_policy (Optional[Callable[[NodeView], None]]): The policy to update the nodes.\
+        node_update_policy (Callable[[NodeView], None] | None): The policy to update the nodes.\
             Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): The policy to update the links.\
+        link_update_policy (Callable[[EdgeView], None] | None): The policy to update the links.\
             Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): The assets for the nodes. Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): The assets for the links. Defaults to None.
-        center_assets_values (Optional[Dict[str, Any]]): The assets for the center node. \
+        node_assets (dict[str, Asset] | None): The assets for the nodes. Defaults to None.
+        link_assets (dict[str, Asset] | None): The assets for the links. Defaults to None.
+        center_assets_values (dict[str, Any] | None): The assets for the center node. \
             Defaults to None.
-        outer_assets_values (Optional[Dict[str, Any]]): The assets for the outer nodes. \
+        outer_assets_values (dict[str, Any] | None): The assets for the outer nodes. \
             Defaults to None.
         include_default_assets (bool): Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): The initialization policy for the resources.\
             Defaults to "min".
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): The algorithm to\
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): The algorithm to\
             compute the paths between nodes. Defaults to None.
-        placement_strategy (Optional[PlacementStrategy]): The placement strategy for the\
+        placement_strategy (PlacementStrategy | None): The placement strategy for the\
             infrastructure. Defaults to None.
-        seed (Optional[int]): The seed for the random number generator. Defaults to None.
+        seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:
         Infrastructure: The star infrastructure.

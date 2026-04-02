@@ -8,10 +8,6 @@ from __future__ import annotations
 import inspect
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    List,
-    Optional,
-    Union,
 )
 
 from eclypse.utils.constants import MAX_FLOAT
@@ -21,6 +17,10 @@ from .event import EclypseEvent
 from .wrapper import EventWrapper
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.utils.types import (
         ActivatesOnType,
         EventType,
@@ -29,42 +29,42 @@ if TYPE_CHECKING:
 
 
 def event(
-    fn_or_class: Optional[Callable] = None,
+    fn_or_class: Callable | None = None,
     *,
-    name: Optional[str] = None,
-    event_type: Optional[EventType] = None,
-    activates_on: Optional[ActivatesOnType] = None,
-    trigger_every_ms: Optional[float] = None,
-    max_triggers: Optional[int] = int(MAX_FLOAT),
-    triggers: Optional[Union[Trigger, List[Trigger]]] = None,
-    trigger_condition: Optional[str] = "any",
+    name: str | None = None,
+    event_type: EventType | None = None,
+    activates_on: ActivatesOnType | None = None,
+    trigger_every_ms: float | None = None,
+    max_triggers: int | None = int(MAX_FLOAT),
+    triggers: Trigger | list[Trigger] | None = None,
+    trigger_condition: str | None = "any",
     is_callback: bool = False,
-    report: Optional[Union[str, List[str]]] = None,
+    report: str | list[str] | None = None,
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
     """A decorator to define an event in the simulation.
 
     Args:
-        fn_or_class (Optional[Callable], optional): The function or class to decorate
+        fn_or_class (Callable | None, optional): The function or class to decorate
             as an event. Defaults to None.
-        name (Optional[str], optional): The name of the event. If not provided,
+        name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (Optional[EventType], optional): The type of the event. Defaults to None.
-        activates_on (Optional[ActivatesOnType], optional): The conditions that will
+        event_type (EventType | None, optional): The type of the event. Defaults to None.
+        activates_on (ActivatesOnType | None, optional): The conditions that will
             trigger the event. Defaults to None.
-        trigger_every_ms (Optional[float], optional): The time in milliseconds between
+        trigger_every_ms (float | None, optional): The time in milliseconds between
             each trigger of the event. Defaults to None.
-        max_triggers (Optional[int], optional): The maximum number of times the event
+        max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
-        triggers (Optional[Union[Trigger, List[Trigger]]], optional): The triggers that will
+        triggers (Trigger | list[Trigger] | None, optional): The triggers that will
             trigger the event. If not provided, the event will not be triggered by any triggers.
             Defaults to None.
-        trigger_condition (Optional[str]): The condition for the triggers to fire the
+        trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
         is_callback (bool, optional): Whether the event is a callback. Defaults to False.
-        report (Optional[Union[str, List[str]]], optional): The type of report to generate
+        report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
         remote (bool, optional): Whether the event is remote. Defaults to False.

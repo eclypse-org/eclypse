@@ -24,9 +24,6 @@ from datetime import (
 )
 from typing import (
     TYPE_CHECKING,
-    List,
-    Optional,
-    Union,
 )
 
 from eclypse.utils.constants import RND_SEED
@@ -39,11 +36,11 @@ class Trigger(ABC):
     """Base class for triggers."""
 
     @abstractmethod
-    def trigger(self, _: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire.
 
         Args:
-            trigger_event (Optional[EclypseEvent]): The event that triggered the check.
+            trigger_event (EclypseEvent | None): The event that triggered the check.
 
         Returns:
             bool: True if the trigger should fire, False otherwise.
@@ -82,10 +79,10 @@ class PeriodicTrigger(Trigger):
         """
         super().__init__()
         self.trigger_every_ms = timedelta(milliseconds=trigger_every_ms)
-        self.last_exec_time: Optional[datetime] = None
+        self.last_exec_time: datetime | None = None
         self.first_trigger: bool = False
 
-    def trigger(self, _: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its interval."""
         # Implement logic to check the time since the last trigger
         if self.last_exec_time is None:
@@ -115,12 +112,12 @@ class ScheduledTrigger(Trigger):
 
     def __init__(
         self,
-        scheduled_timedelta: Optional[Union[timedelta, List[timedelta]]] = None,
+        scheduled_timedelta: timedelta | list[timedelta] | None = None,
     ):
         """Initialize the scheduled trigger.
 
         Args:
-            scheduled_timedelta (Optional[Union[timedelta, List[timedelta]]]):
+            scheduled_timedelta (timedelta | list[timedelta] | None):
                 Time(s) when the trigger should fire.
                 Defaults to None, which means no scheduled times.
         """
@@ -133,8 +130,8 @@ class ScheduledTrigger(Trigger):
         else:
             self._scheduled_timedelta = []
 
-        self._init_time: Optional[datetime] = None
-        self._scheduled_times: List[datetime] = []
+        self._init_time: datetime | None = None
+        self._scheduled_times: list[datetime] = []
 
     def init(self):
         """Prepare the trigger by setting the initial time."""
@@ -144,7 +141,7 @@ class ScheduledTrigger(Trigger):
             self._init_time + delta for delta in self._scheduled_timedelta
         ]
 
-    def trigger(self, _: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Return True if the current call count matches a scheduled time."""
         if self._init_time is None:
             raise RuntimeError("Trigger not initialised. Call init() before trigger().")
@@ -160,12 +157,12 @@ class ScheduledTrigger(Trigger):
 class RandomTrigger(Trigger):
     """A trigger that fires randomly."""
 
-    def __init__(self, probability: float = 0.5, seed: Optional[int] = None):
+    def __init__(self, probability: float = 0.5, seed: int | None = None):
         """Initialize the random trigger.
 
         Args:
             probability (float): The probability of the trigger firing. Defaults to 0.5.
-            seed (Optional[int]): An optional seed for the random number generator.
+            seed (int | None): An optional seed for the random number generator.
                 Defaults to None, which means that the random number generator gets
                 the RND_SEED from the simulator.
         """
@@ -178,7 +175,7 @@ class RandomTrigger(Trigger):
         self.seed = int(os.getenv(RND_SEED)) if self.seed is None else self.seed
         self.rnd = random.Random(self.seed)
 
-    def trigger(self, _: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its probability."""
         if self.rnd is None:
             raise RuntimeError("Trigger not initialised. Call init() before trigger().")

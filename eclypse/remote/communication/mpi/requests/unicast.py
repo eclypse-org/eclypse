@@ -8,14 +8,14 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    Optional,
 )
 
 from eclypse.remote.communication.mpi.requests import MulticastRequest
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
     from datetime import (
         datetime,
         timedelta,
@@ -34,17 +34,17 @@ class UnicastRequest(MulticastRequest):
     def __init__(
         self,
         recipient_id: str,
-        body: Dict[str, Any],
+        body: dict[str, Any],
         _mpi: EclypseMPI,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ):
         """Initializes a UnicastRequest object.
 
         Args:
             recipient_id (str): The ID of the recipient node.
-            body (Dict[str, Any]): The body of the request.
+            body (dict[str, Any]): The body of the request.
             _mpi (EclypseMPI): The MPI interface.
-            timestamp (Optional[datetime], optional): The timestamp of the request.
+            timestamp (datetime | None, optional): The timestamp of the request.
                 Defaults to None.
         """
         super().__init__(
@@ -72,29 +72,29 @@ class UnicastRequest(MulticastRequest):
         return self._recipient_ids[0]
 
     @property
-    def response(self) -> Optional[Response]:
+    def response(self) -> Response | None:
         """The response to the request.
 
         Returns:
-            Optional[Response]: The response to the request if available, None otherwise.
+            Response | None: The response to the request if available, None otherwise.
         """
         return self.responses[0]
 
     @property
-    def route(self) -> Optional[Route]:
+    def route(self) -> Route | None:
         """The route to the recipient.
 
         Returns:
-            Optional[Route]: The route to the recipient if available, None otherwise.
+            Route | None: The route to the recipient if available, None otherwise.
         """
         return self.routes[0]
 
     @property
-    def elapsed_time(self) -> Optional[timedelta]:
+    def elapsed_time(self) -> timedelta | None:
         """The elapsed time until the response was received.
 
         Returns:
-            Optional[timedelta]: The elapsed time until the response was received,
+            timedelta | None: The elapsed time until the response was received,
                 or None if the response is not yet available.
         """
         return self.elapsed_times[0]

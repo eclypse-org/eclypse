@@ -9,9 +9,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Optional,
-    Type,
 )
 
 from eclypse.remote import ray_backend
@@ -30,17 +27,17 @@ class RemoteBootstrap:
 
     def __init__(
         self,
-        sim_class: Optional[Type[RemoteSimulator]] = None,
-        node_class: Optional[Type[RemoteNode]] = None,
-        ray_options_factory: Optional[RayOptionsFactory] = None,
+        sim_class: type[RemoteSimulator] | None = None,
+        node_class: type[RemoteNode] | None = None,
+        ray_options_factory: RayOptionsFactory | None = None,
         **node_args,
     ):
         """Create a new RemoteBootstrap.
 
         Args:
-            sim_class (Optional[Type[RemoteSimulator]]): The remote simulator class.
-            node_class (Optional[Type[RemoteNode]]): The remote node class.
-            ray_options_factory (Optional[RayOptionsFactory]): The Ray options factory.
+            sim_class (type[RemoteSimulator] | None): The remote simulator class.
+            node_class (type[RemoteNode] | None): The remote node class.
+            ray_options_factory (RayOptionsFactory | None): The Ray options factory.
             **node_args: The arguments for the remote node.
         """
         self._sim_class = sim_class if sim_class else "sim-core"
@@ -49,13 +46,13 @@ class RemoteBootstrap:
             ray_options_factory if ray_options_factory else RayOptionsFactory()
         )
 
-        self.env_vars: Dict[str, str] = {}
+        self.env_vars: dict[str, str] = {}
         self.node_args = node_args
 
     def build(
         self,
         infrastructure: Infrastructure,
-        simulation_config: Optional[SimulationConfig] = None,
+        simulation_config: SimulationConfig | None = None,
     ):
         """Build the remote simulation."""
         ray_backend.init(runtime_env={"env_vars": self.env_vars})

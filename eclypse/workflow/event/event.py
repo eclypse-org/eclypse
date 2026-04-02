@@ -14,14 +14,7 @@ from itertools import product
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    Generator,
-    List,
     Literal,
-    Optional,
-    Tuple,
-    Union,
 )
 
 from eclypse.remote import ray_backend
@@ -30,6 +23,11 @@ from eclypse.utils.constants import MAX_FLOAT
 from eclypse.workflow.trigger.bucket import TriggerBucket
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+        Generator,
+    )
+
     from ray.actor import ActorHandle
 
     from eclypse.graph import Infrastructure
@@ -48,12 +46,12 @@ class EclypseEvent:
     def __init__(
         self,
         name: str,
-        event_type: Optional[EventType] = None,
-        triggers: Optional[List[Trigger]] = None,
+        event_type: EventType | None = None,
+        triggers: list[Trigger] | None = None,
         trigger_condition: Literal["any", "all"] = "any",
         max_triggers: int = int(MAX_FLOAT),
         is_callback: bool = False,
-        report: Optional[Union[str, List[str]]] = None,
+        report: str | list[str] | None = None,
         remote: bool = False,
         verbose: bool = False,
     ):
@@ -62,16 +60,16 @@ class EclypseEvent:
         Args:
             name (str): The name of the event.
             event_type (EventType): The type of the event. Defaults to None.
-            triggers (Optional[List[Trigger]]): A list of triggers that can trigger the
+            triggers (list[Trigger] | None): A list of triggers that can trigger the
                 event. Defaults to None.
-            trigger_condition (Optional[str]): The condition for the triggers to fire the
+            trigger_condition (str | None): The condition for the triggers to fire the
                 event. If "any", the event fires if any trigger is active. If "all",
                 the event fires only if all triggers are active. Defaults to "any".
-            max_triggers (Optional[int]): The maximum number of times the trigger can be
+            max_triggers (int | None): The maximum number of times the trigger can be
                 called. Defaults to no limit (MAX_FLOAT).
             is_callback (bool): If True, the event is a callback and will be executed
                 right after the event that triggered it. Defaults to False.
-            report (Optional[Union[str, List[str]]]): The type of report to generate for
+            report (str | list[str] | None): The type of report to generate for
                 the event. Defaults to DEFAULT_REPORT_TYPE.
             remote (bool): If True, the event will be executed remotely. Defaults to False.
             verbose (bool): If True, the event will log its firing. Defaults to False.
@@ -95,7 +93,7 @@ class EclypseEvent:
         self._remote = remote
         self._verbose = verbose
 
-        self._simulator: Optional[Simulator] = None
+        self._simulator: Simulator | None = None
         self._data: Any = {}
 
         if report:
@@ -119,11 +117,11 @@ class EclypseEvent:
             "implement the __call__ method.",
         )
 
-    def _call_by_type(self, trigger_event: Optional[EclypseEvent]) -> Any:
+    def _call_by_type(self, trigger_event: EclypseEvent | None) -> Any:
         """Execute the event function according to the type of the event.
 
         Args:
-            trigger_event (Optional[EclypseEvent]): The event that triggered this event.\
+            trigger_event (EclypseEvent | None): The event that triggered this event.\
                 Defaults to None.
 
         Returns:
@@ -203,7 +201,7 @@ class EclypseEvent:
 
         return result_fn
 
-    def _trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def _trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Trigger the event, if possible.
 
         Returns:
@@ -216,11 +214,11 @@ class EclypseEvent:
             )
         return condition
 
-    def _fire(self, trigger_event: Optional[EclypseEvent] = None) -> Any:
+    def _fire(self, trigger_event: EclypseEvent | None = None) -> Any:
         """Fire the event.
 
         Args:
-            trigger_event (Optional[EclypseEvent]): The event that triggered\
+            trigger_event (EclypseEvent | None): The event that triggered\
                 this event. Defaults to None.
 
         Raises:
@@ -267,11 +265,11 @@ class EclypseEvent:
         return self.trigger_bucket._n_triggers
 
     @property
-    def triggers(self) -> List[Trigger]:
+    def triggers(self) -> list[Trigger]:
         """The triggers associated with the event.
 
         Returns:
-            List[Trigger]: The triggers associated with the event.
+            list[Trigger]: The triggers associated with the event.
         """
         return self.trigger_bucket.triggers
 
@@ -318,22 +316,22 @@ class EclypseEvent:
         return logger.bind(id=self.name)
 
     @property
-    def report_types(self) -> List[str]:
+    def report_types(self) -> list[str]:
         """Get the report types for the event.
 
         Returns:
-            List[str]: The report types for the event.
+            list[str]: The report types for the event.
         """
         return self._report
 
-    def set_report_types(self, report_types: List[str]):
+    def set_report_types(self, report_types: list[str]):
         """Replace the report formats associated with the event."""
         self._report = list(report_types)
 
 
 def _application_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     flatten: bool = False,
     **event_data,
@@ -354,7 +352,7 @@ def _application_fn(
 
 def _service_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     flatten: bool = False,
     **event_data,
@@ -379,12 +377,12 @@ def _service_fn(
 
 def _remote_service_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    engines: Dict[str, Optional[ActorHandle]] = defaultdict(lambda: None)
+    engines: dict[str, ActorHandle | None] = defaultdict(lambda: None)
     remotes = []
     for pl in placements.values():
         if pl.mapping:
@@ -424,7 +422,7 @@ def _remote_service_fn(
 
 def _interaction_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     flatten: bool = False,
     **event_data,
@@ -451,13 +449,13 @@ def _interaction_fn(
 
 def _infrastructure_fn(
     fn: Callable, infr: Infrastructure, placement_view: PlacementView, **event_data
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     return fn(infr, placement_view, **event_data)
 
 
 def _node_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     placement_view: PlacementView,
     flatten: bool = False,
@@ -481,7 +479,7 @@ def _node_fn(
 
 def _link_fn(
     fn: Callable,
-    placements: Dict[str, Placement],
+    placements: dict[str, Placement],
     infr: Infrastructure,
     placement_view: PlacementView,
     flatten: bool = False,
@@ -505,7 +503,7 @@ def _link_fn(
     )
 
 
-def _flatten_value(value: Any) -> Generator[Tuple[Any, ...], None, None]:
+def _flatten_value(value: Any) -> Generator[tuple[Any, ...], None, None]:
     """Flatten a value into tuple parts."""
     if isinstance(value, dict):
         for key, item in value.items():
@@ -523,7 +521,7 @@ def _flatten_value(value: Any) -> Generator[Tuple[Any, ...], None, None]:
 
 def _flatten_pair(
     key: Any, value: Any
-) -> Generator[Tuple[Tuple[Any, ...], Tuple[Any, ...]], None, None]:
+) -> Generator[tuple[tuple[Any, ...], tuple[Any, ...]], None, None]:
     """Flatten a key/value pair into tuple parts."""
     key_parts = key if isinstance(key, tuple) else (key,)
     for value_parts in _flatten_value(value):

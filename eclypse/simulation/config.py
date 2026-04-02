@@ -14,13 +14,7 @@ from time import strftime
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
-    Type,
-    Union,
     cast,
 )
 
@@ -46,6 +40,10 @@ from eclypse.workflow.trigger import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.report import FrameBackend
     from eclypse.report.reporter import Reporter
     from eclypse.utils.types import (
@@ -59,22 +57,22 @@ if TYPE_CHECKING:
 class SimulationConfig:
     """Configuration object for a simulation runtime."""
 
-    step_every_ms: Optional[Union[Literal["manual", "auto"], float]] = "manual"
-    timeout: Optional[float] = None
-    max_steps: Optional[int] = None
-    reporters: Optional[Dict[str, Type[Reporter]]] = None
-    events: Optional[List[EclypseEvent]] = None
+    step_every_ms: Literal["manual", "auto"] | float | None = "manual"
+    timeout: float | None = None
+    max_steps: int | None = None
+    reporters: dict[str, type[Reporter]] | None = None
+    events: list[EclypseEvent] | None = None
     include_default_metrics: bool = False
-    seed: Optional[int] = None
-    path: Optional[Union[str, Path]] = None
+    seed: int | None = None
+    path: str | Path | None = None
     log_to_file: bool = False
     log_level: LogLevel = "ECLYPSE"
     report_chunk_size: int = 100
-    report_format: Optional[ReportFormat] = None
-    report_backend: Optional[
-        Union[Literal["pandas", "polars", "polars_lazy"], FrameBackend]
-    ] = None
-    remote: Union[bool, RemoteBootstrap] = False
+    report_format: ReportFormat | None = None
+    report_backend: Literal["pandas", "polars", "polars_lazy"] | FrameBackend | None = (
+        None
+    )
+    remote: bool | RemoteBootstrap = False
     _runtime_prepared: bool = field(init=False, default=False, repr=False)
 
     def __post_init__(self):
@@ -91,7 +89,7 @@ class SimulationConfig:
             ),
         )
         self.report_backend = cast(
-            "Union[Literal['pandas', 'polars', 'polars_lazy'], FrameBackend]",
+            "Literal['pandas', 'polars', 'polars_lazy'] | FrameBackend",
             (
                 self.report_backend
                 if self.report_backend is not None
@@ -107,25 +105,25 @@ class SimulationConfig:
 
     def _build_events(
         self,
-        events: Optional[List[EclypseEvent]],
+        events: list[EclypseEvent] | None,
         include_default_metrics: bool,
-    ) -> List[EclypseEvent]:
+    ) -> list[EclypseEvent]:
         built_events = list(events) if events is not None else []
         built_events.extend(get_default_events(built_events))
         if include_default_metrics:
             built_events.extend(get_default_metrics())
         return built_events
 
-    def _apply_default_report_format(self, events: List[EclypseEvent]):
+    def _apply_default_report_format(self, events: list[EclypseEvent]):
         for event in events:
             if event.is_callback and event.report_types == [DEFAULT_REPORT_TYPE]:
                 event.set_report_types([cast("str", self.report_format)])
 
     def _resolve_reporters(
         self,
-        reporters: Optional[Dict[str, Type[Reporter]]],
-        events: List[EclypseEvent],
-    ) -> Dict[str, Type[Reporter]]:
+        reporters: dict[str, type[Reporter]] | None,
+        events: list[EclypseEvent],
+    ) -> dict[str, type[Reporter]]:
         report_types = sorted(
             {
                 rtype
@@ -135,7 +133,7 @@ class SimulationConfig:
             }
         )
         resolved_reporters = cast(
-            "Dict[str, Type[Reporter]]",
+            "dict[str, type[Reporter]]",
             get_default_reporters(report_types),
         )
         resolved_reporters.update(reporters if reporters is not None else {})
@@ -158,8 +156,8 @@ class SimulationConfig:
 
     @staticmethod
     def _resolve_step_every_ms(
-        step_every_ms: Optional[Union[Literal["manual", "auto"], float]],
-    ) -> Optional[float]:
+        step_every_ms: Literal["manual", "auto"] | float | None,
+    ) -> float | None:
         if isinstance(step_every_ms, str) and step_every_ms == "manual":
             return None
         if isinstance(step_every_ms, str) and step_every_ms == "auto":
@@ -169,7 +167,7 @@ class SimulationConfig:
         raise ValueError("step_every_ms must be a float, 'manual', 'auto' or None.")
 
     @staticmethod
-    def _resolve_path(path: Optional[Union[str, Path]]) -> Path:
+    def _resolve_path(path: str | Path | None) -> Path:
         base_path = get_default_sim_path() if path is None else Path(path)
         if base_path.exists():
             return Path(f"{base_path}-{strftime('%Y%m%d_%H%M%S')}")
@@ -177,8 +175,8 @@ class SimulationConfig:
 
     @staticmethod
     def _resolve_remote(
-        remote: Union[bool, RemoteBootstrap],
-    ) -> Optional[RemoteBootstrap]:
+        remote: bool | RemoteBootstrap,
+    ) -> RemoteBootstrap | None:
         if isinstance(remote, RemoteBootstrap):
             return remote
         return RemoteBootstrap() if remote else None
@@ -226,7 +224,7 @@ class SimulationConfig:
             )
 
     @property
-    def callbacks(self) -> List[EclypseEvent]:
+    def callbacks(self) -> list[EclypseEvent]:
         """Configured callback events."""
         if self.events is None:
             return []
@@ -237,7 +235,7 @@ class SimulationConfig:
         """Logger bound to the config component."""
         return logger.bind(id="SimulationConfig")
 
-    def runtime_env(self) -> Dict[str, str]:
+    def runtime_env(self) -> dict[str, str]:
         """Return the runtime environment variables for this configuration."""
         return build_runtime_env(
             seed=cast("int", self.seed),
@@ -253,7 +251,7 @@ class SimulationConfig:
         apply_runtime_env(self.runtime_env())
         self._runtime_prepared = True
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Serialize the configuration into a JSON-friendly mapping."""
         if self.events is None or self.reporters is None:
             raise RuntimeError(
@@ -278,7 +276,7 @@ class SimulationConfig:
         }
 
 
-def _require_module(module_name: str, extras_name: Optional[str] = None):
+def _require_module(module_name: str, extras_name: str | None = None):
     """Require a module and raise an ImportError if it is not found."""
     try:
         __import__(module_name)
@@ -293,8 +291,8 @@ def _require_module(module_name: str, extras_name: Optional[str] = None):
         ) from e
 
 
-def _catch_duplicates(items: List[Any], access_fn: Callable[[Any], Any], label: str):
-    counts: Dict[Any, int] = defaultdict(lambda: 0)
+def _catch_duplicates(items: list[Any], access_fn: Callable[[Any], Any], label: str):
+    counts: dict[Any, int] = defaultdict(lambda: 0)
     for item in items:
         key = access_fn(item)
         counts[key] += 1

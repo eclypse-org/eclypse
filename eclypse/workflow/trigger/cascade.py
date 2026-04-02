@@ -15,8 +15,6 @@ import os
 import random
 from typing import (
     TYPE_CHECKING,
-    List,
-    Optional,
 )
 
 from eclypse.utils.constants import RND_SEED
@@ -40,7 +38,7 @@ class CascadeTrigger(Trigger):
         """
         self.trigger_event = trigger_event
 
-    def trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its condition."""
         return trigger_event is not None and trigger_event.name == self.trigger_event
 
@@ -67,7 +65,7 @@ class PeriodicCascadeTrigger(CascadeTrigger):
         super().__init__(trigger_event)
         self.every_n_triggers = every_n_triggers
 
-    def trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its condition."""
         return (
             super().trigger(trigger_event)
@@ -88,13 +86,13 @@ class ScheduledCascadeTrigger(CascadeTrigger):
     def __init__(
         self,
         trigger_event: str,
-        scheduled_times: List[int],
+        scheduled_times: list[int],
     ):
         """Initialize the cascade trigger.
 
         Args:
             trigger_event (str): The name of the event that can trigger this cascade.
-            scheduled_times (List[int]): A list of scheduled times \
+            scheduled_times (list[int]): A list of scheduled times \
                 (in number of triggers) when the trigger should fire.
 
         Raises:
@@ -106,7 +104,7 @@ class ScheduledCascadeTrigger(CascadeTrigger):
 
         self.scheduled_times = sorted(scheduled_times)
 
-    def trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its condition."""
         if (
             super().trigger(trigger_event)
@@ -132,7 +130,7 @@ class RandomCascadeTrigger(CascadeTrigger):
         self,
         trigger_event: str,
         probability: float = 0.5,
-        seed: Optional[int] = None,
+        seed: int | None = None,
     ):
         """Initialize the random cascade trigger.
 
@@ -140,7 +138,7 @@ class RandomCascadeTrigger(CascadeTrigger):
             trigger_event (str): The name of the event that can trigger this cascade.
             probability (float): The probability of the trigger firing when the
                 triggering event occurs. Defaults to 0.5.
-            seed (Optional[int]): An optional seed for the random number generator.
+            seed (int | None): An optional seed for the random number generator.
                 Defaults to None.
         """
         super().__init__(trigger_event)
@@ -153,7 +151,7 @@ class RandomCascadeTrigger(CascadeTrigger):
         self.seed = int(os.getenv(RND_SEED)) if self.seed is None else self.seed
         self.rnd = random.Random(self.seed)
 
-    def trigger(self, trigger_event: Optional[EclypseEvent] = None) -> bool:
+    def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its condition."""
         if self.rnd is None:
             raise RuntimeError("Trigger not initialised. Call init() before trigger().")

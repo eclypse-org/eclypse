@@ -9,8 +9,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    List,
-    Tuple,
     cast,
 )
 
@@ -44,7 +42,7 @@ class RemoteSimOpsHandler:
             ValueError: If any of the responses from the remote nodes is an error.
         """
         deployments = cast(
-            "List[RemoteOpResult]",
+            "list[RemoteOpResult]",
             ray_backend.get(
                 cast(
                     "Any",
@@ -74,7 +72,7 @@ class RemoteSimOpsHandler:
             ValueError: If any of the responses from the remote nodes is an error.
         """
         starts = cast(
-            "List[RemoteOpResult]",
+            "list[RemoteOpResult]",
             ray_backend.get(
                 cast(
                     "Any",
@@ -101,7 +99,7 @@ class RemoteSimOpsHandler:
             ValueError: If any of the responses from the remote nodes is an error.
         """
         stops = cast(
-            "List[RemoteOpResult]",
+            "list[RemoteOpResult]",
             ray_backend.get(
                 cast(
                     "Any",
@@ -129,7 +127,7 @@ class RemoteSimOpsHandler:
             ValueError: If any of the responses from the remote nodes is an error.
         """
         undeploy_result = cast(
-            "List[RemoteOpResult]",
+            "list[RemoteOpResult]",
             ray_backend.get(
                 cast(
                     "Any",
@@ -152,14 +150,14 @@ class RemoteSimOpsHandler:
         placement.mark_undeployed()
 
     @staticmethod
-    def _get_remotes(placement: Placement) -> List[Tuple[RemoteNode, Service]]:
+    def _get_remotes(placement: Placement) -> list[tuple[RemoteNode, Service]]:
         """Get the remote nodes (ray actors) and Services to perform the operation.
 
         Args:
             placement (Placement): The placement mapping of the services to the nodes.
 
         Returns:
-            List[Tuple[RemoteEngine, Service]]: A list of tuples containing \
+            list[tuple[RemoteEngine, Service]]: A list of tuples containing \
                 the remote nodes and the services to perform the operation.
         """
         node_serv = []
@@ -175,11 +173,11 @@ class RemoteSimOpsHandler:
         return node_serv  # type: ignore[return-value]
 
 
-def _handle_error(results: List[RemoteOpResult]):
+def _handle_error(results: list[RemoteOpResult]):
     """Handle remote operation results and surface actionable error details.
 
     Args:
-        results (List[RemoteOpResult]): The results returned by the remote nodes.
+        results (list[RemoteOpResult]): The results returned by the remote nodes.
 
     Raises:
         ValueError: If any of the remote operations failed.

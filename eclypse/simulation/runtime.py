@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from typing import (
     TYPE_CHECKING,
-    Dict,
 )
 
 from eclypse.utils._logging import config_logger
@@ -18,7 +17,7 @@ from eclypse.utils.constants import (
 if TYPE_CHECKING:
     from pathlib import Path
 
-RUNTIME_ENV_DEFAULTS: Dict[str, str] = {
+RUNTIME_ENV_DEFAULTS: dict[str, str] = {
     "RAY_DEDUP_LOGS": "0",
     "RAY_COLOR_PREFIX": "1",
 }
@@ -29,7 +28,7 @@ def build_runtime_env(
     log_level: str,
     path: Path,
     log_to_file: bool,
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Build the environment variables required by a simulation runtime."""
     env_vars = {
         **RUNTIME_ENV_DEFAULTS,
@@ -41,7 +40,7 @@ def build_runtime_env(
     return env_vars
 
 
-def apply_runtime_env(env_vars: Dict[str, str]):
+def apply_runtime_env(env_vars: dict[str, str]):
     """Apply runtime environment variables and refresh logging configuration."""
     os.environ.update(env_vars)
     config_logger()

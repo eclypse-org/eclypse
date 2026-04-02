@@ -8,7 +8,6 @@ from sys import stdout
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
 )
 
 from loguru import logger
@@ -64,11 +63,11 @@ def config_logger():
     logger.configure(handlers=handlers)
 
 
-def _is_eclypse(record: Dict[str, Any]):
+def _is_eclypse(record: dict[str, Any]):
     return record["level"].name == "ECLYPSE"
 
 
-def _is_not_eclypse(record: Dict[str, Any]):
+def _is_not_eclypse(record: dict[str, Any]):
     return record["level"].name != "ECLYPSE"
 
 
@@ -88,12 +87,12 @@ def print_exception(e: Exception, raised_by: str):
     print(f"{e.__class__.__name__} in {raised_by}: {e}")
 
 
-def log_placement_violations(vlogger: Logger, violations: Dict[str, Dict[str, Any]]):
+def log_placement_violations(vlogger: Logger, violations: dict[str, dict[str, Any]]):
     """Logs each placement violation with aligned formatting using the provided logger.
 
     Args:
         vlogger (loguru.Logger): A logger instance used to emit warning messages.
-        violations (Dict[str, Dict[str, Any]]): A dictionary of violations, where each key
+        violations (dict[str, dict[str, Any]]): A dictionary of violations, where each key
             maps to a dict with 'asset' and 'constraint' values.
     """
     total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]
@@ -109,14 +108,14 @@ def log_placement_violations(vlogger: Logger, violations: Dict[str, Dict[str, An
 def log_assets_violations(
     vlogger: Logger,
     bucket: AssetBucket,
-    violations: Dict[str, Dict[str, Any]],
+    violations: dict[str, dict[str, Any]],
 ):
     """Logs each asset violation with aligned formatting using the provided logger.
 
     Args:
         vlogger (loguru.Logger): A logger instance used to emit warning messages.
         bucket (AssetBucket): The AssetBucket instance containing the assets.
-        violations (Dict[str, Dict[str, Any]]): A dictionary of violations, where each key
+        violations (dict[str, dict[str, Any]]): A dictionary of violations, where each key
             maps to a dict with 'asset' and 'constraint' values.
     """
     total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]

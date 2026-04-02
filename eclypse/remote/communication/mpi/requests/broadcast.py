@@ -8,9 +8,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
-    Optional,
 )
 
 from eclypse.remote import ray_backend
@@ -18,6 +15,9 @@ from eclypse.remote import ray_backend
 from .multicast import MulticastRequest
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
     from datetime import datetime
 
     from eclypse.remote.communication.mpi import EclypseMPI
@@ -28,16 +28,16 @@ class BroadcastRequest(MulticastRequest):
 
     def __init__(
         self,
-        body: Dict[str, Any],
+        body: dict[str, Any],
         _mpi: EclypseMPI,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ):
         """Initializes a BroadcastRequest object.
 
         Args:
-            body (Dict[str, Any]): The body of the request.
+            body (dict[str, Any]): The body of the request.
             _mpi (EclypseMPI): The MPI interface.
-            timestamp (Optional[datetime], optional): The timestamp of the request.
+            timestamp (datetime | None, optional): The timestamp of the request.
                 Defaults to None.
         """
         super().__init__(

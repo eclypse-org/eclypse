@@ -12,12 +12,14 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Generator,
 )
 
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
     from pathlib import Path
 
     from tensorboardX import SummaryWriter
@@ -80,7 +82,7 @@ class TensorBoardReporter(Reporter):
 
         Args:
             callback_type (str): The type of the callback (used for organizing plots).
-            data (list[tuple[str, dict[str, float], int]]): List of tuples
+            data (list[tuple[str, dict[str, float], int]]): Tuples
                 containing (callback_name, metric_dict, event_idx).
         """
         for cb_name, metric_dict, step in data:

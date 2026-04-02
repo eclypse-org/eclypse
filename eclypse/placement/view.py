@@ -14,10 +14,6 @@ from functools import cached_property
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    Set,
-    Tuple,
 )
 
 import networkx as nx
@@ -29,6 +25,10 @@ from eclypse.graph.assets import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.graph import Infrastructure
     from eclypse.graph.assets import AssetBucket
     from eclypse.placement import Placement
@@ -40,11 +40,11 @@ class PlacementView(nx.DiGraph):
     def __init__(self, infrastructure: Infrastructure):
         """Initializes the PlacementView."""
         super().__init__(graph_id="PlacementView")
-        self.nodes_used_by: Dict[str, Set[str]] = defaultdict(set)
+        self.nodes_used_by: dict[str, set[str]] = defaultdict(set)
         self.infrastructure = infrastructure
         self.residual = self._get_snapshot()
 
-    def get_node_view(self, node_name: str) -> Dict[str, Any]:
+    def get_node_view(self, node_name: str) -> dict[str, Any]:
         """Gets the resources required on a node.
 
         Args:
@@ -57,7 +57,7 @@ class PlacementView(nx.DiGraph):
             return self.nodes[node_name]
         return self.infrastructure.node_assets.lower_bound
 
-    def get_edge_view(self, source: str, target: str) -> Dict[Tuple[str, str], Any]:
+    def get_edge_view(self, source: str, target: str) -> dict[tuple[str, str], Any]:
         """Gets the resources required on a link.
 
         Args:
@@ -72,20 +72,20 @@ class PlacementView(nx.DiGraph):
         )
 
     @cached_property
-    def node_aggregate(self) -> Callable[..., Dict[str, Any]]:
+    def node_aggregate(self) -> Callable[..., dict[str, Any]]:
         """Returns a function that aggregates the resources required on a node.
 
         Returns:
-            Callable[..., Dict[str, Any]]: The function that aggregates the resources.
+            Callable[..., dict[str, Any]]: The function that aggregates the resources.
         """
         return self.infrastructure.node_assets.flip().aggregate
 
     @cached_property
-    def edge_aggregate(self) -> Callable[..., Dict[str, Any]]:
+    def edge_aggregate(self) -> Callable[..., dict[str, Any]]:
         """Returns a function that aggregates the resources required on a link.
 
         Returns:
-            Callable[..., Dict[str, Any]]: The function that aggregates the resources.
+            Callable[..., dict[str, Any]]: The function that aggregates the resources.
         """
         return self.infrastructure.edge_assets.flip().aggregate
 
@@ -112,7 +112,7 @@ class PlacementView(nx.DiGraph):
         """Returns the concave and convex assets of the infrastructure.
 
         Returns:
-            List[str]: The concave and convex assets of the infrastructure.
+            list[str]: The concave and convex assets of the infrastructure.
         """
         return [
             k
@@ -166,7 +166,7 @@ class PlacementView(nx.DiGraph):
         """
         if placement.mapping:
             for n, node_reqs in placement.node_requirements_mapping().items():
-                new_node_reqs: Dict[str, Any] = self.node_aggregate(
+                new_node_reqs: dict[str, Any] = self.node_aggregate(
                     self.get_node_view(n), node_reqs
                 )
                 self.add_node(n, **new_node_reqs)

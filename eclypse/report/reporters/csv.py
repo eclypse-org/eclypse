@@ -11,8 +11,6 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
 )
 
 import aiofiles  # type: ignore[import-untyped]
@@ -21,6 +19,10 @@ from eclypse.report._schema import DEFAULT_REPORT_HEADERS
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.workflow.event import EclypseEvent
 
 CSV_DELIMITER = ","
@@ -37,7 +39,7 @@ class CSVReporter(Reporter):
         """Initialize the CSV reporter."""
         super().__init__(report_path)
         self.report_path = self.report_path / "csv"
-        self._files: Dict[str, Any] = {}
+        self._files: dict[str, Any] = {}
 
     def report(
         self,

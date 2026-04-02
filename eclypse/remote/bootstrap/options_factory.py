@@ -8,8 +8,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Optional,
 )
 
 if TYPE_CHECKING:
@@ -30,7 +28,7 @@ class RayOptionsFactory:
         """  # noqa E501
         self.detached = detached
         self.ray_options = ray_options
-        self._infrastructure: Optional[Infrastructure] = None
+        self._infrastructure: Infrastructure | None = None
 
     def _attach_infrastructure(self, infrastructure: Infrastructure):
         """Attach an infrastructure to the factory.
@@ -40,16 +38,16 @@ class RayOptionsFactory:
         """
         self._infrastructure = infrastructure
 
-    def __call__(self, name: str) -> Dict[str, Any]:
+    def __call__(self, name: str) -> dict[str, Any]:
         """Create the options for the actor.
 
         Args:
             name (str): The name of the actor.
 
         Returns:
-            Dict[str, Any]: The options for the actor.
+            dict[str, Any]: The options for the actor.
         """
-        to_return: Dict[str, Any] = {"name": name}
+        to_return: dict[str, Any] = {"name": name}
         if self.detached:
             to_return["detached"] = True
         to_return.update(self.ray_options)

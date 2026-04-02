@@ -73,7 +73,7 @@ def prune_assets(
         **requirements: The requirements dictionary.
 
     Returns:
-        Dict: The pruned requirements dictionary.
+        dict: The pruned requirements dictionary.
     """
     return {k: v for k, v in requirements.items() if assets.get(k)}
 

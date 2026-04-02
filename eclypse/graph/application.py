@@ -9,12 +9,7 @@ from __future__ import annotations
 from functools import cached_property
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
-    Union,
 )
 
 import networkx as nx
@@ -27,6 +22,10 @@ from eclypse.graph.assets.defaults import (
 from eclypse.remote.service import Service
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
@@ -41,34 +40,34 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         application_id: str,
-        node_update_policy: Optional[
-            Union[Callable[[NodeView], None], List[Callable[[NodeView], None]]]
-        ] = None,
-        edge_update_policy: Optional[
-            Union[Callable[[EdgeView], None], List[Callable[[EdgeView], None]]]
-        ] = None,
-        node_assets: Optional[Dict[str, Asset]] = None,
-        edge_assets: Optional[Dict[str, Asset]] = None,
+        node_update_policy: Callable[[NodeView], None]
+        | list[Callable[[NodeView], None]]
+        | None = None,
+        edge_update_policy: Callable[[EdgeView], None]
+        | list[Callable[[EdgeView], None]]
+        | None = None,
+        node_assets: dict[str, Asset] | None = None,
+        edge_assets: dict[str, Asset] | None = None,
         include_default_assets: bool = False,
         requirement_init: Literal["min", "max"] = "min",
-        flows: Optional[List[List[str]]] = None,
-        seed: Optional[int] = None,
+        flows: list[list[str]] | None = None,
+        seed: int | None = None,
     ):
         """Create a new Application.
 
         Args:
             application_id (str): The ID of the application.
-            node_update_policy (Optional[Union[Callable, List[Callable]]]):\
+            node_update_policy (Callable | list[Callable] | None):\
                 A function to update the nodes. Defaults to None.
-            edge_update_policy (Optional[Union[Callable, List[Callable]]]):\
+            edge_update_policy (Callable | list[Callable] | None):\
                 A function to update the edges. Defaults to None.
-            node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
-            edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
+            node_assets (dict[str, Asset] | None): The assets of the nodes.
+            edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
                 Defaults to False.
             requirement_init (Literal["min", "max"]): The initialization of the requirements.
-            flows (Optional[List[List[str]]]): The flows of the application.
-            seed (Optional[int]): The seed for the random number generator.
+            flows (list[list[str]] | None): The flows of the application.
+            seed (int | None): The seed for the random number generator.
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}
         _edge_assets = get_default_edge_assets() if include_default_assets else {}
@@ -86,7 +85,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             flip_assets=True,
         )
 
-        self.services: Dict[str, Service] = {}
+        self.services: dict[str, Service] = {}
         self.flows = flows if flows is not None else []
 
     def add_service(self, service: Service, **assets):

@@ -16,13 +16,7 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
-    Tuple,
-    Union,
 )
 
 import networkx as nx
@@ -42,6 +36,10 @@ from .assets.defaults import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from networkx.classes.reportviews import (
         EdgeView,
         NodeView,
@@ -57,41 +55,41 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         infrastructure_id: str = "Infrastructure",
-        placement_strategy: Optional[PlacementStrategy] = None,
-        node_update_policy: Optional[
-            Union[Callable[[NodeView], None], List[Callable[[NodeView], None]]]
-        ] = None,
-        edge_update_policy: Optional[
-            Union[Callable[[EdgeView], None], List[Callable[[EdgeView], None]]]
-        ] = None,
-        node_assets: Optional[Dict[str, Asset]] = None,
-        edge_assets: Optional[Dict[str, Asset]] = None,
+        placement_strategy: PlacementStrategy | None = None,
+        node_update_policy: Callable[[NodeView], None]
+        | list[Callable[[NodeView], None]]
+        | None = None,
+        edge_update_policy: Callable[[EdgeView], None]
+        | list[Callable[[EdgeView], None]]
+        | None = None,
+        node_assets: dict[str, Asset] | None = None,
+        edge_assets: dict[str, Asset] | None = None,
         include_default_assets: bool = False,
-        path_assets_aggregators: Optional[Dict[str, Callable[[List[Any]], Any]]] = None,
-        path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
+        path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None,
+        path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
         resource_init: Literal["min", "max"] = "min",
-        seed: Optional[int] = None,
+        seed: int | None = None,
     ):
         """Create a new Infrastructure.
 
         Args:
             infrastructure_id (str): The ID of the infrastructure.
-            placement_strategy (Optional[PlacementStrategy]): The placement \
+            placement_strategy (PlacementStrategy | None): The placement \
                 strategy to use.
-            node_update_policy (Optional[Union[Callable, List[Callable]]]):\
+            node_update_policy (Callable | list[Callable] | None):\
                 A function to update the nodes. Defaults to None.
-            edge_update_policy (Optional[Union[Callable, List[Callable]]]):\
+            edge_update_policy (Callable | list[Callable] | None):\
                 A function to update the edges. Defaults to None.
-            node_assets (Optional[Dict[str, Asset]]): The assets of the nodes.
-            edge_assets (Optional[Dict[str, Asset]]): The assets of the edges.
+            node_assets (dict[str, Asset] | None): The assets of the nodes.
+            edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
                 Defaults to False.
-            path_assets_aggregators (Optional[Dict[str, Callable[[List[Any]], Any]]]): \
+            path_assets_aggregators (dict[str, Callable[[list[Any]], Any]] | None): \
                 The aggregators to use for the path assets.
-            path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): \
+            path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
                 The algorithm to use to compute the paths.
             resource_init (Literal["min", "max"]): The initialization method for the resources.
-            seed (Optional[int]): The seed for the random number generator.
+            seed (int | None): The seed for the random number generator.
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}
         _edge_assets = get_default_edge_assets() if include_default_assets else {}
@@ -132,7 +130,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         self.path_assets_aggregators = _path_assets_aggregators
 
-        self._path_algorithm: Callable[[nx.Graph, str, str], List[str]] = (
+        self._path_algorithm: Callable[[nx.Graph, str, str], list[str]] = (
             path_algorithm
             if path_algorithm is not None
             else _get_default_path_algorithm
@@ -140,11 +138,11 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         self.strategy = placement_strategy
 
-        self._available: Optional[nx.DiGraph] = None
-        self._paths: Dict[str, Dict[str, List[str]]] = {}
-        self._costs: Dict[str, Dict[str, List[Tuple[str, str, Any]]]] = {}
-        self._path_resources: Dict[str, Dict[str, Dict[str, Any]]] = {}
-        self._processing_times: Dict[str, Dict[str, float]] = {}
+        self._available: nx.DiGraph | None = None
+        self._paths: dict[str, dict[str, list[str]]] = {}
+        self._costs: dict[str, dict[str, list[tuple[str, str, Any]]]] = {}
+        self._path_resources: dict[str, dict[str, dict[str, Any]]] = {}
+        self._processing_times: dict[str, dict[str, float]] = {}
 
     def add_node(self, node_for_adding: str, strict: bool = False, **assets: Any):
         """Add a node and invalidate the path cache.
@@ -198,7 +196,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         super().remove_edge(u, v)
         self._invalidate_cache()
 
-    def contains(self, other: nx.DiGraph) -> List[str]:
+    def contains(self, other: nx.DiGraph) -> list[str]:
         """Comparison between requirements and infrastructure resources.
 
         Compares the requirements of the nodes and edges in the PlacementView with
@@ -208,7 +206,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             other (Infrastructure): The Infrastructure to compare with.
 
         Returns:
-            List[str]: A list of nodes whose requirements are not respected or \
+            list[str]: A list of nodes whose requirements are not respected or \
                 whose connected links are not respected.
         """
         not_respected = set()
@@ -233,7 +231,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
     def path(
         self, source: str, target: str
-    ) -> Optional[List[Tuple[str, str, Dict[str, Any]]]]:
+    ) -> list[tuple[str, str, dict[str, Any]]] | None:
         """Retrieve the hop-level path between two nodes, if it exists.
 
         If the path has not been computed yet, or if any hop cost has changed
@@ -244,7 +242,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             target (str): The name of the target node.
 
         Returns:
-            Optional[List[Tuple[str, str, Dict[str, Any]]]]: The per-hop costs as \
+            list[tuple[str, str, dict[str, Any]]] | None: The per-hop costs as \
                 (source, target, edge_attributes), or None if no path exists.
         """
         try:
@@ -291,7 +289,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             return 0.0
         return self._processing_times[source][target]
 
-    def path_resources(self, source: str, target: str) -> Dict[str, Any]:
+    def path_resources(self, source: str, target: str) -> dict[str, Any]:
         """Retrieve the resources of the path between two nodes, if it exists.
 
         If the path does not exist, it is computed and cached.
@@ -346,14 +344,14 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             self.nodes[n].get("processing_time", MIN_FLOAT) for n in path_nodes
         )
 
-    def _path_costs(self, path: List[str]) -> List[Tuple[str, str, Dict[str, Any]]]:
+    def _path_costs(self, path: list[str]) -> list[tuple[str, str, dict[str, Any]]]:
         """Compute the per-hop costs of a path.
 
         Args:
-            path (List[str]): The path as a list of node IDs.
+            path (list[str]): The path as a list of node IDs.
 
         Returns:
-            List[Tuple[str, str, Dict[str, Any]]]: The per-hop costs as \
+            list[tuple[str, str, dict[str, Any]]]: The per-hop costs as \
                 (source, target, edge_attributes) for each consecutive pair.
         """
         return [(s, t, self.edges[s, t]) for s, t in nx.utils.pairwise(path)]
@@ -398,7 +396,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         return self.strategy is not None
 
 
-def _default_weight_function(_: str, __: str, eattr: Dict[str, Any]) -> float:
+def _default_weight_function(_: str, __: str, eattr: dict[str, Any]) -> float:
     """Function to compute the weight of an edge in the shortest path algorithm.
 
     The weight is given by the 'latency' attribute if it exists, 1 otherwise (i.e., it
@@ -407,7 +405,7 @@ def _default_weight_function(_: str, __: str, eattr: Dict[str, Any]) -> float:
     Args:
         u (str): The name of the source node.
         v (str): The name of the target node.
-        eattr (Dict[str, Any]): The attributes of the edge.
+        eattr (dict[str, Any]): The attributes of the edge.
 
     Returns:
         float: The weight of the edge.
@@ -415,7 +413,7 @@ def _default_weight_function(_: str, __: str, eattr: Dict[str, Any]) -> float:
     return eattr.get("latency", 1)
 
 
-def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> List[str]:
+def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> list[str]:
     """Compute the path between two nodes using Dijkstra's algorithm.
 
     It tries to use the 'latency' attribute of the edges as the weight,
@@ -427,7 +425,7 @@ def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> List[s
         target (str): The name of the target node.
 
     Returns:
-        List[str]: The list of node IDs in the shortest path.
+        list[str]: The list of node IDs in the shortest path.
     """
     return nx.dijkstra_path(g, source, target, weight=_default_weight_function)
 

@@ -11,9 +11,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Callable,
-    Optional,
-    Union,
 )
 
 from eclypse.graph.assets.space import (
@@ -39,6 +36,10 @@ from . import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     from eclypse.graph.assets.space import AssetSpace
     from eclypse.utils.types import PrimitiveType
 
@@ -46,16 +47,14 @@ if TYPE_CHECKING:
 def cpu(
     lower_bound: float = MIN_FLOAT,
     upper_bound: float = MAX_FLOAT,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Additive:
     """Create a new additive asset for CPU.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the cpu value.
 
     Returns:
@@ -72,16 +71,14 @@ def cpu(
 def ram(
     lower_bound: float = MIN_FLOAT,
     upper_bound: float = MAX_FLOAT,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Additive:
     """Create a new additive asset for RAM.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Union[PrimitiveType, AssetSpace, Callable[[], Any]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any]):
             The function/scalar to initialize the ram value.
 
     Returns:
@@ -98,16 +95,14 @@ def ram(
 def storage(
     lower_bound: float = MIN_FLOAT,
     upper_bound: float = MAX_FLOAT,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Additive:
     """Create a new additive asset for storage.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Union[PrimitiveType, AssetSpace, Callable[[], Any]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any]):
             The function/scalar to initialize the storage value.
 
     Returns:
@@ -124,16 +119,14 @@ def storage(
 def gpu(
     lower_bound: float = MIN_FLOAT,
     upper_bound: float = MAX_FLOAT,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Additive:
     """Create a new additive asset for GPU.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the gpu value.
 
     Returns:
@@ -150,16 +143,14 @@ def gpu(
 def availability(
     lower_bound: float = MIN_AVAILABILITY,
     upper_bound: float = MAX_AVAILABILITY,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Multiplicative:
     """Create a new multiplicative asset for availability.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the availability value.
 
     Returns:
@@ -172,16 +163,14 @@ def availability(
 def processing_time(
     lower_bound: float = MAX_FLOAT,
     upper_bound: float = MIN_FLOAT,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Concave:
     """Create a new concave asset for processing time.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the processing time value.
 
     Returns:
@@ -194,16 +183,14 @@ def processing_time(
 def latency(
     lower_bound: float = MAX_LATENCY,
     upper_bound: float = MIN_LATENCY,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Concave:
     """Create a new concave asset for latency.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the processing time value.
 
     Returns:
@@ -216,16 +203,14 @@ def latency(
 def bandwidth(
     lower_bound: float = MIN_BANDWIDTH,
     upper_bound: float = MAX_BANDWIDTH,
-    init_fn_or_value: Optional[
-        Union[PrimitiveType, AssetSpace, Callable[[], Any]]
-    ] = None,
+    init_fn_or_value: PrimitiveType | AssetSpace | Callable[[], Any] | None = None,
 ) -> Additive:
     """Create a new additive asset for bandwidth.
 
     Args:
         lower_bound (float): The lower bound of the asset.
         upper_bound (float): The upper bound of the asset.
-        init_fn_or_value (Optional[Union[PrimitiveType, AssetSpace, Callable[[], Any]]]):
+        init_fn_or_value (PrimitiveType | AssetSpace | Callable[[], Any] | None):
             The function/scalar to initialize the bandwidth value.
 
     Returns:
@@ -239,7 +224,7 @@ def get_default_node_assets():
     """Get the set of default node assets.
 
     Returns:
-        Dict[str, Any]: The default node assets:
+        dict[str, Any]: The default node assets:
             cpu, ram, storage, gpu, availability, processing_time.
     """
     return {
@@ -256,7 +241,7 @@ def get_default_edge_assets():
     """Get the set of default edge assets.
 
     Returns:
-        Dict[str, Any]: The default edge assets: latency, bandwidth.
+        dict[str, Any]: The default edge assets: latency, bandwidth.
     """
     return {
         "latency": latency(),
@@ -268,7 +253,7 @@ def get_default_path_aggregators():
     """Get the set of default path aggregators.
 
     Returns:
-        Dict[str, Callable]: The default path aggregators: latency (sum), bandwidth (min).
+        dict[str, Callable]: The default path aggregators: latency (sum), bandwidth (min).
     """
     return {
         "latency": lambda x: sum(list(x)) if x else MAX_LATENCY,

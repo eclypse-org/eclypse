@@ -12,7 +12,6 @@ from threading import Thread
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
 )
 
 from eclypse.remote.utils import (
@@ -44,12 +43,12 @@ class RemoteOpsThread(Thread):
         self._engine_loop = loop
         self.ops_queue: Queue = Queue()
 
-    def submit(self, engine_op: RemoteOps, op_args: Dict):
+    def submit(self, engine_op: RemoteOps, op_args: dict):
         """Submits an operation to the OpsThread.
 
         Args:
             engine_op (RemoteOps): The operation to perform.
-            op_args (Dict): The arguments for the operation.
+            op_args (dict): The arguments for the operation.
         """
         future = self._engine_loop.create_future()
         self._engine_loop.call_soon_threadsafe(

@@ -11,11 +11,6 @@ from datetime import datetime
 from typing import (
     TYPE_CHECKING,
     Any,
-    Coroutine,
-    Dict,
-    List,
-    Optional,
-    Union,
 )
 
 from eclypse.remote.communication.interface import (
@@ -31,6 +26,8 @@ from .requests import (
 from .response import Response
 
 if TYPE_CHECKING:
+    from collections.abc import Coroutine
+
     from eclypse.remote.communication import Route
     from eclypse.remote.service import Service
 
@@ -57,10 +54,10 @@ class EclypseMPI(EclypseCommunicationInterface):
 
     def send(
         self,
-        recipient_ids: Union[str, List[str]],
-        body: Dict[str, Any],
-        timestamp: Optional[datetime] = None,
-    ) -> Union[UnicastRequest, MulticastRequest]:
+        recipient_ids: str | list[str],
+        body: dict[str, Any],
+        timestamp: datetime | None = None,
+    ) -> UnicastRequest | MulticastRequest:
         """Sends a message to a single recipient or multiple recipients.
 
         When awaited, the total wait time is the communication cost between the sender and the
@@ -69,15 +66,15 @@ class EclypseMPI(EclypseCommunicationInterface):
         method **must be awaited**.
 
         Args:
-            recipient_ids (Union[str, List[str], None]): The ids of the recipients. If a \
+            recipient_ids (str | list[str] | None): The ids of the recipients. If a \
                 single id is specified, the message is sent to a single recipient. If a \
                 list of ids is specified, the message is sent to multiple recipients.
-            body (Dict[str, Any]): The data to be sent. It must be a pickleable object.
-            timestamp (Optional[datetime.datetime], optional): The timestamp of the \
+            body (dict[str, Any]): The data to be sent. It must be a pickleable object.
+            timestamp (datetime.datetime | None, optional): The timestamp of the \
                 message. Defaults to datetime.datetime.now().
 
         Returns:
-            Union[UnicastRequest, MulticastRequest]: The MPI request.
+            UnicastRequest | MulticastRequest: The MPI request.
         """
         if not timestamp:
             timestamp = datetime.now()
@@ -95,7 +92,7 @@ class EclypseMPI(EclypseCommunicationInterface):
     def bcast(
         self,
         body: Any,
-        timestamp: Optional[datetime] = None,
+        timestamp: datetime | None = None,
     ) -> BroadcastRequest:
         """Broadcasts a message to all neighbor services.
 
@@ -104,7 +101,7 @@ class EclypseMPI(EclypseCommunicationInterface):
 
         Args:
             body (Any): The data to be sent. It must be a pickleable object.
-            timestamp (Optional[datetime.datetime], optional): The timestamp of the \
+            timestamp (datetime.datetime | None, optional): The timestamp of the \
                 message. Defaults to datetime.datetime.now().
 
         Returns:
@@ -115,7 +112,7 @@ class EclypseMPI(EclypseCommunicationInterface):
 
         return BroadcastRequest(body=body, _mpi=self, timestamp=timestamp)
 
-    def recv(self) -> Coroutine[Any, Any, Dict[str, Any]]:
+    def recv(self) -> Coroutine[Any, Any, dict[str, Any]]:
         """Receive a message in the input queue.
 
         The result of this method **must be awaited**.

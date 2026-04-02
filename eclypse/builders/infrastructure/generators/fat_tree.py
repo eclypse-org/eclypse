@@ -17,16 +17,16 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Callable,
-    Dict,
-    List,
     Literal,
-    Optional,
 )
 
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Callable,
+    )
+
     import networkx as nx
     from networkx.classes.reportviews import (
         EdgeView,
@@ -40,16 +40,16 @@ if TYPE_CHECKING:
 def fat_tree(
     k: int,
     infrastructure_id: str = "fat_tree",
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    link_update_policy: Optional[Callable[[EdgeView], None]] = None,
-    node_assets: Optional[Dict[str, Asset]] = None,
-    link_assets: Optional[Dict[str, Asset]] = None,
+    node_update_policy: Callable[[NodeView], None] | None = None,
+    link_update_policy: Callable[[EdgeView], None] | None = None,
+    node_assets: dict[str, Asset] | None = None,
+    link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: Literal["min", "max"] = "max",
-    path_algorithm: Optional[Callable[[nx.Graph, str, str], List[str]]] = None,
-    placement_strategy: Optional[PlacementStrategy] = None,
-    seed: Optional[int] = None,
+    path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
+    placement_strategy: PlacementStrategy | None = None,
+    seed: int | None = None,
 ) -> Infrastructure:
     """Factory for generating a Fat-Tree network topology.
 
@@ -62,13 +62,13 @@ def fat_tree(
             structure of the Fat-Tree topology.
         infrastructure_id (str): Unique ID for the infrastructure instance.\
             Defaults to "fat_tree".
-        node_update_policy (Optional[Callable[[NodeView], None]]): Policy to update nodes.\
+        node_update_policy (Callable[[NodeView], None] | None): Policy to update nodes.\
             Defaults to None.
-        link_update_policy (Optional[Callable[[EdgeView], None]]): Policy to update links.\
+        link_update_policy (Callable[[EdgeView], None] | None): Policy to update links.\
             Defaults to None.
-        node_assets (Optional[Dict[str, Asset]]): Optional default attributes for all nodes.\
+        node_assets (dict[str, Asset] | None): Default attributes for all nodes.\
             Defaults to None.
-        link_assets (Optional[Dict[str, Asset]]): Optional default attributes for all links.\
+        link_assets (dict[str, Asset] | None): Default attributes for all links.\
             Defaults to None.
         include_default_assets (bool): Whether to include default assets. \
             Defaults to False.
@@ -76,11 +76,11 @@ def fat_tree(
             consistent with their spaces. Defaults to False.
         resource_init (Literal["min", "max"]): Initialization policy for resources. \
             Defaults to "max".
-        path_algorithm (Optional[Callable[[nx.Graph, str, str], List[str]]]): \
+        path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
             Algorithm to compute paths. Defaults to None.
-        placement_strategy (Optional[PlacementStrategy]): Strategy for resource placement.\
+        placement_strategy (PlacementStrategy | None): Strategy for resource placement.\
             Defaults to None.
-        seed (Optional[int]): Seed for random number generation. Defaults to None.
+        seed (int | None): Seed for random number generation. Defaults to None.
 
     Returns:
         Infrastructure: A Fat-Tree topology with switches and hosts.
@@ -111,7 +111,7 @@ def fat_tree(
         core_id = f"core_{i}"
         infra.add_node(core_id, strict=strict)
 
-    # Pods
+        # Pods
     for pod in range(num_pods):
         # Aggregation switches
         agg_switches = []
@@ -120,7 +120,7 @@ def fat_tree(
             agg_switches.append(agg_id)
             infra.add_node(agg_id, strict=strict)
 
-        # Edge switches + hosts
+            # Edge switches + hosts
         for e in range(num_edge_switches_per_pod):
             edge_id = f"edge_{pod}_{e}"
             infra.add_node(edge_id, strict=strict)
@@ -128,13 +128,13 @@ def fat_tree(
             for agg_id in agg_switches:
                 infra.add_edge(edge_id, agg_id, symmetric=True, strict=strict)
 
-            # Hosts under edge
+                # Hosts under edge
             for h in range(num_hosts_per_edge):
                 host_id = f"host_{pod}_{e}_{h}"
                 infra.add_node(host_id, strict=strict)
                 infra.add_edge(host_id, edge_id, symmetric=True, strict=strict)
 
-        # Aggregation <-> Core
+                # Aggregation <-> Core
         for i, agg_id in enumerate(agg_switches):
             for j in range(num_pods // 2):
                 core_index = i * (num_pods // 2) + j

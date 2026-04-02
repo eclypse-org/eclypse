@@ -8,8 +8,6 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
 )
 
 import aiofiles  # type: ignore[import-untyped]
@@ -17,6 +15,10 @@ import aiofiles  # type: ignore[import-untyped]
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.workflow.event import EclypseEvent
 
 
@@ -27,7 +29,7 @@ class JSONReporter(Reporter):
         """Initialize the JSON reporter."""
         super().__init__(report_path)
         self.report_path = self.report_path / "json"
-        self._files: Dict[str, Any] = {}
+        self._files: dict[str, Any] = {}
 
     def report(
         self,
@@ -69,7 +71,7 @@ class JSONReporter(Reporter):
 
         Args:
             callback_type (str): The type of the callback (used for file naming).
-            data (List[dict]): The list of dictionaries to write as JSON lines.
+            data (list[dict]): The list of dictionaries to write as JSON lines.
         """
         if not data:
             return

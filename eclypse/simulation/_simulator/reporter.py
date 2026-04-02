@@ -10,10 +10,6 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    List,
-    Type,
-    Union,
     cast,
 )
 
@@ -30,29 +26,29 @@ class SimulationReporter:
 
     def __init__(
         self,
-        report_path: Union[str, Path],
-        reporters: Dict[str, Type[Reporter]],
+        report_path: str | Path,
+        reporters: dict[str, type[Reporter]],
         chunk_size: int = 200,
     ):
         self.chunk_size = chunk_size
         self.report_path = Path(report_path)
 
-        self.reporters: Dict[str, Reporter] = {
+        self.reporters: dict[str, Reporter] = {
             rtype: rep(report_path) for rtype, rep in reporters.items()
         }
-        self.queues: Dict[str, Dict[str, asyncio.Queue]] = {
+        self.queues: dict[str, dict[str, asyncio.Queue]] = {
             rtype: {} for rtype in self.reporters
         }
-        self.buffers: Dict[str, Dict[str, List[Any]]] = {
+        self.buffers: dict[str, dict[str, list[Any]]] = {
             rtype: {} for rtype in self.reporters
         }
-        self.writer_tasks: Dict[str, Dict[str, asyncio.Task]] = {
+        self.writer_tasks: dict[str, dict[str, asyncio.Task]] = {
             rtype: {} for rtype in self.reporters
         }
         self._loop: asyncio.AbstractEventLoop | None = None
         self._running = False
 
-    def add_reporter(self, rtype: str, reporter: Type[Reporter]):
+    def add_reporter(self, rtype: str, reporter: type[Reporter]):
         """Add a new reporter type dynamically."""
         if rtype in self.reporters:
             self.logger.warning(f"[{rtype}] Reporter already exists, skipping.")

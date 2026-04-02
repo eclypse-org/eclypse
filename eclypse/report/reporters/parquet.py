@@ -8,14 +8,16 @@ from pathlib import Path
 from typing import (
     TYPE_CHECKING,
     Any,
-    Dict,
-    Generator,
 )
 
 from eclypse.report._schema import DEFAULT_REPORT_HEADERS
 from eclypse.report.reporter import Reporter
 
 if TYPE_CHECKING:
+    from collections.abc import (
+        Generator,
+    )
+
     from eclypse.workflow.event import EclypseEvent
 
 
@@ -26,7 +28,7 @@ class ParquetReporter(Reporter):
         """Initialize the Parquet reporter."""
         super().__init__(report_path)
         self.report_path = self.report_path / "parquet"
-        self._partitions: Dict[str, int] = {}
+        self._partitions: dict[str, int] = {}
         self._pl = None
 
     async def init(self):
