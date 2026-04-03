@@ -5,8 +5,7 @@ Reference
 
 .. autosummary::
     :recursive:
-    :toctree: reference/public
-    :caption: Public
+    :toctree: reference
 
     builders
     graph
