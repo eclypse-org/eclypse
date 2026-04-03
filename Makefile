@@ -7,7 +7,7 @@ changelog:
 	cz bump --changelog
 
 patch:
-	cz bump --increment patch
+	cz bump --changelog --increment patch
 
 setup:
 	python -m pip install --upgrade pip
