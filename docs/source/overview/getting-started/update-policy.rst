@@ -1,7 +1,9 @@
-Update Policy
-=============
+Update policies
+===============
 
-In ECLYPSE, an ``UpdatePolicy`` is a function that defines how the state of the infrastructure evolves over time. It enables dynamic simulations by modifying node or edge assets at each simulation step.
+In ECLYPSE, an update policy is a function that defines how the state of the
+infrastructure or application evolves over time. It enables dynamic
+simulations by modifying node or edge assets at each simulation step.
 
 Unlike assets, update policies are not classes. Instead, they are simple functions with a fixed signature, depending on whether they operate on nodes or edges.
 

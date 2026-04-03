@@ -1,5 +1,5 @@
-Advanced Features
-=================
+Advanced topics
+===============
 
 .. toctree::
     :maxdepth: 2
@@ -26,7 +26,8 @@ Advanced Features
             :link-type: doc
             :link: emulation/index
 
-            Learn how to move from a simulation to a real-world application by defining the **logics** of your **application services** and running them on a *physical* machine or a *cluster* of machines.
+            Move from abstract simulations to remote service execution with
+            real service logic and explicit communication interfaces.
 
     .. grid-item::
 
@@ -34,6 +35,5 @@ Advanced Features
             :link-type: doc
             :link: reporting
 
-            Discover how to generate and manage **reports** in your simulation, including **custom reports** and **report templates**.
-            Learn how to use and customise the **reporting engine** to create and manage simulation
-            metrics.
+            Define metrics, choose storage formats, and access results through
+            the report API and dataframe backends.

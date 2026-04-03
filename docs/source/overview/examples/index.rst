@@ -9,9 +9,13 @@ Examples
    echo
    sock_shop
 
-We have implemented several examples to demonstrate the capabilities of ECLYPSE.
+The examples section complements the getting-started guides with runnable
+scenarios you can inspect and adapt.
 
-The code of the examples is available at the :icon:`fa-brands fa-github` `eclypse/examples <https://github.com/eclypse-org/eclypse/tree/main/examples/>`_ subdirectory of the GitHub repository.
+The code for the documented examples is available in the
+:icon:`fa-brands fa-github`
+`examples <https://github.com/eclypse-org/eclypse/tree/main/examples/>`_
+subdirectory of the repository.
 
 .. grid:: 1
 
@@ -21,7 +25,8 @@ The code of the examples is available at the :icon:`fa-brands fa-github` `eclyps
          :link-type: doc
          :link: echo
 
-         An application made of 5 services that simply echo the messages they receive, unicasting and broadcasting them, to compare the waiting times of the different communication patterns.
+         A small service-based application that compares unicast and broadcast
+         communication patterns.
 
 
    .. grid-item::
@@ -30,5 +35,5 @@ The code of the examples is available at the :icon:`fa-brands fa-github` `eclyps
          :link-type: doc
          :link: sock_shop
 
-         A microservices application that simulates an online shop, with 7 services that interact with each other to simulate the purchase of socks.
-         This example is provided in two versions that differ for the communication interface used by the services: MPI and REST.
+         A microservices application that simulates an online shop and is
+         provided in both MPI and REST variants.

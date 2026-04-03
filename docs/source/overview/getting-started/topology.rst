@@ -152,12 +152,16 @@ These methods allow you to associate assets and automatically validate their val
    All assets passed to :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_node` or :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_edge` are checked against the declared asset definitions.
    If validation fails and `strict` is `True`, an exception is raised. Otherwise, a warning is logged.
 
-Default Builders
+Default builders
 ----------------
 
-ECLYPSE provides several built-in builder functions that allow you to quickly instantiate commonly used topologies and reference applications.
+ECLYPSE provides several built-in builder functions that allow you to quickly
+instantiate commonly used topologies and reference applications.
 
-These builders return fully initialised :class:`~eclypse.graph.application.Application` or :class:`~eclypse.graph.infrastructure.Infrastructure` objects with pre-defined assets and flows.
+These builders return fully initialised
+:class:`~eclypse.graph.application.Application` or
+:class:`~eclypse.graph.infrastructure.Infrastructure` objects with predefined
+assets and flows.
 
 .. tab-set::
 
@@ -198,8 +202,9 @@ These builders return fully initialised :class:`~eclypse.graph.application.Appli
       :sync: app
 
       ECLYPSE currently includes a builder for the **SockShop** application
-      from the `Microservices Demo <https://github.com/ocp-power-demos/sock-shop-demo>`_ project,
-      using :class:`~eclypse.builders.application.sock_shop.application.get_sock_shop` method.
+      from the `Microservices Demo <https://github.com/ocp-power-demos/sock-shop-demo>`_
+      project, using
+      :func:`~eclypse.builders.application.sock_shop.application.get_sock_shop`.
 
       .. code-block:: python
 
@@ -207,7 +212,8 @@ These builders return fully initialised :class:`~eclypse.graph.application.Appli
 
          app = get_sock_shop()
 
-      This application contains multiple interconnected services and representative communication flows.
+      This application contains multiple interconnected services and
+      representative communication flows.
 
 .. tip::
 

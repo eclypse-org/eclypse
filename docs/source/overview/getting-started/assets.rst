@@ -112,7 +112,7 @@ This can be done in three ways:
     .. code-block:: python
 
         from eclypse.graph.assets import Additive
-        from eclypse.asset.assets.space import Uniform
+        from eclypse.graph.assets.space import Uniform
 
         cpu = Additive(
             lower_bound=0.0,

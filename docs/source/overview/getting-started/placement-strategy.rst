@@ -1,7 +1,10 @@
 Placement Strategy
 ==================
 
-In ECLYPSE, a :class:`~eclypse.placement.strategy.PlacementStrategy` defines how application services are assigned to infrastructure nodes. Placement can be performed globally across the infrastructure, or separately for each application.
+In ECLYPSE, a :class:`~eclypse.placement.strategies.strategy.PlacementStrategy`
+defines how application services are assigned to infrastructure nodes.
+Placement can be performed globally across the infrastructure, or separately
+for each application.
 
 Placement strategies are responsible for implementing the logic that maps application *requirements* to infrastructure *capabilities*. These strategies are executed during the simulation setup or runtime to compute service-to-node allocations.
 
@@ -15,7 +18,9 @@ There are two ways to choose which strategy to use:
          :link: extend-strategy
          :link-type: ref
 
-         Subclass the abstract :class:`~eclypse.placement.strategy.PlacementStrategy` base class or one of the built-in specialisations.
+         Subclass the abstract
+         :class:`~eclypse.placement.strategies.strategy.PlacementStrategy` base
+         class or one of the built-in specialisations.
 
    .. grid-item::
 
@@ -30,7 +35,11 @@ There are two ways to choose which strategy to use:
 Extend the PlacementStrategy class
 ----------------------------------
 
-To define a custom placement strategy, subclass the base class :class:`~eclypse.placement.strategy.PlacementStrategy` and override the :py:meth:`~eclypse.placement.strategy.PlacementStrategy.place` method.
+To define a custom placement strategy, subclass the base class
+:class:`~eclypse.placement.strategies.strategy.PlacementStrategy` and override
+the
+:py:meth:`~eclypse.placement.strategies.strategy.PlacementStrategy.place`
+method.
 
 This method must return a mapping from **service IDs** to **node IDs**, representing where each service in the application should be deployed.
 
@@ -46,15 +55,21 @@ This method must return a mapping from **service IDs** to **node IDs**, represen
                for service in application.services
            }
 
-   # Optionally override feasibility check
-   def is_feasible(self, infrastructure, application):
-       return len(list(infrastructure.available.nodes)) > 0
+       # Optionally override feasibility check
+       def is_feasible(self, infrastructure, application):
+           return len(list(infrastructure.available.nodes)) > 0
 
 .. important::
 
-   The `infrastructure` parameter passed to the :py:meth:`~eclypse.placement.strategy.PlacementStrategy.place` method is **already filtered** to include only the available portion of the infrastructure.
+   The `infrastructure` parameter passed to the
+   :py:meth:`~eclypse.placement.strategies.strategy.PlacementStrategy.place`
+   method is **already filtered** to include only the available portion of the
+   infrastructure.
 
-   This corresponds to calling the :py:meth:`~eclypse.graph.infrastructure.Infrastructure.available` property on the :class:`~eclypse.graph.infrastructure.Infrastructure` instance. Therefore, you do not need to manually filter out unavailable resources.
+   This corresponds to calling the
+   :py:meth:`~eclypse.graph.infrastructure.Infrastructure.available` property
+   on the :class:`~eclypse.graph.infrastructure.Infrastructure` instance.
+   Therefore, you do not need to manually filter out unavailable resources.
 
 .. _default-strategies:
 
