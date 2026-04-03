@@ -29,7 +29,6 @@ copyright = f"{(datetime.now().year)}, {author}"
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
-    # "enum_tools.autoenum",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
     "sphinx.ext.napoleon",
