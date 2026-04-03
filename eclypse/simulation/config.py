@@ -33,6 +33,7 @@ from eclypse.utils.defaults import (
     get_default_sim_path,
 )
 from eclypse.workflow.event.defaults import get_default_events
+from eclypse.workflow.event.role import EventRole
 from eclypse.workflow.trigger import (
     PeriodicCascadeTrigger,
     PeriodicTrigger,
@@ -48,6 +49,7 @@ if TYPE_CHECKING:
     from eclypse.report.reporter import Reporter
     from eclypse.utils.types import (
         LogLevel,
+        ReportBackend,
         ReportFormat,
     )
     from eclypse.workflow.event import EclypseEvent
@@ -58,21 +60,47 @@ class SimulationConfig:
     """Configuration object for a simulation runtime."""
 
     step_every_ms: Literal["manual", "auto"] | float | None = "manual"
+    """Cadence of the driving event in milliseconds, or ``"manual"``/``"auto"``."""
+
     timeout: float | None = None
+    """Maximum wall-clock duration of the simulation, in seconds."""
+
     max_steps: int | None = None
+    """Maximum number of driving-event executions before the simulation stops."""
+
     reporters: dict[str, type[Reporter]] | None = None
+    """Additional reporter classes keyed by their output format name."""
+
     events: list[EclypseEvent] | None = None
+    """User-defined events registered before default events and metrics are added."""
+
     include_default_metrics: bool = False
+    """Whether to append the built-in metrics to the configured event list."""
+
     seed: int | None = None
+    """Random seed used by the simulation, generated automatically when omitted."""
+
     path: str | Path | None = None
+    """Base output directory for logs and reports."""
+
     log_to_file: bool = False
+    """Whether runtime logs should also be written to files under the output path."""
+
     log_level: LogLevel = "ECLYPSE"
+    """Minimum logging level applied to the simulation runtime."""
+
     report_chunk_size: int = 100
+    """Maximum number of buffered report rows written per reporter flush."""
+
     report_format: ReportFormat | None = None
-    report_backend: Literal["pandas", "polars", "polars_lazy"] | FrameBackend | None = (
-        None
-    )
+    """Default output format used by metrics that do not override their report type."""
+
+    report_backend: ReportBackend | FrameBackend | None = None
+    """Backend used later to load generated reports through :class:`~eclypse.report.Report`."""
+
     remote: bool | RemoteBootstrap = False
+    """Whether to run in remote emulation mode, or the bootstrap to use for it."""
+
     _runtime_prepared: bool = field(init=False, default=False, repr=False)
 
     def __post_init__(self):
@@ -89,7 +117,7 @@ class SimulationConfig:
             ),
         )
         self.report_backend = cast(
-            "Literal['pandas', 'polars', 'polars_lazy'] | FrameBackend",
+            "ReportBackend | FrameBackend",
             (
                 self.report_backend
                 if self.report_backend is not None
@@ -116,7 +144,7 @@ class SimulationConfig:
 
     def _apply_default_report_format(self, events: list[EclypseEvent]):
         for event in events:
-            if event.is_callback and event.report_types == [DEFAULT_REPORT_TYPE]:
+            if event.is_metric and event.report_types == [DEFAULT_REPORT_TYPE]:
                 event.set_report_types([cast("str", self.report_format)])
 
     def _resolve_reporters(
@@ -129,7 +157,7 @@ class SimulationConfig:
                 rtype
                 for event in events
                 for rtype in event.report_types
-                if event.is_callback
+                if event.role is not EventRole.EVENT
             }
         )
         resolved_reporters = cast(
@@ -225,10 +253,12 @@ class SimulationConfig:
 
     @property
     def callbacks(self) -> list[EclypseEvent]:
-        """Configured callback events."""
+        """Configured post-event callbacks and metrics."""
         if self.events is None:
             return []
-        return [callback for callback in self.events if callback.is_callback]
+        return [
+            callback for callback in self.events if callback.role is not EventRole.EVENT
+        ]
 
     @property
     def logger(self) -> Any:

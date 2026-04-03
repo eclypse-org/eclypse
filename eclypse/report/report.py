@@ -20,6 +20,7 @@ from typing import (
 )
 
 from eclypse.report.backends import get_backend
+from eclypse.report.query import ReportQuery
 from eclypse.utils.constants import MAX_FLOAT
 from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
@@ -32,42 +33,6 @@ if TYPE_CHECKING:
     from eclypse.utils.types import ReportFormat
 
 REPORT_TYPES = list(get_args(EventType))
-
-
-class ReportQuery:
-    """Composable query builder for report frames."""
-
-    def __init__(self, report: Report, report_type: EventType):
-        """Create a query builder bound to a report type."""
-        self._report = report
-        self._report_type = report_type
-        self._report_range: tuple[int, int] = (0, int(MAX_FLOAT))
-        self._report_step = 1
-        self._filters: dict[str, Any] = {}
-
-    def range(self, start: int, stop: int) -> ReportQuery:
-        """Set the inclusive event range."""
-        self._report_range = (start, stop)
-        return self
-
-    def step(self, step: int) -> ReportQuery:
-        """Set the report step."""
-        self._report_step = step
-        return self
-
-    def where(self, **filters: Any) -> ReportQuery:
-        """Add equality or membership filters."""
-        self._filters.update(filters)
-        return self
-
-    def to_frame(self) -> Any:
-        """Materialize the current query into a backend frame."""
-        return self._report.frame(
-            self._report_type,
-            report_range=self._report_range,
-            report_step=self._report_step,
-            **self._filters,
-        )
 
 
 class Report:

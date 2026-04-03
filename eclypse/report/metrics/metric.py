@@ -11,7 +11,10 @@ from eclypse.utils.constants import (
     MAX_FLOAT,
 )
 from eclypse.utils.defaults import DEFAULT_REPORT_TYPE
-from eclypse.workflow.event import event
+from eclypse.workflow.event import (
+    EventRole,
+    event,
+)
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -72,7 +75,7 @@ def simulation(
         fn_or_class,
         name=name,
         event_type="simulation",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -119,8 +122,6 @@ def application(
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        is_callback (bool, optional):
-            Whether the event is a callback. Defaults to False.
         report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
@@ -134,7 +135,7 @@ def application(
         fn_or_class,
         name=name,
         event_type="application",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -194,7 +195,7 @@ def service(
         fn_or_class,
         name=name,
         event_type="service",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -254,7 +255,7 @@ def interaction(
         fn_or_class,
         name=name,
         event_type="interaction",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -314,7 +315,7 @@ def infrastructure(
         fn_or_class,
         name=name,
         event_type="infrastructure",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -372,7 +373,7 @@ def node(
         fn_or_class,
         name=name,
         event_type="node",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,
@@ -431,7 +432,7 @@ def link(
         fn_or_class,
         name=name,
         event_type="link",
-        is_callback=True,
+        role=EventRole.METRIC,
         activates_on=activates_on,
         trigger_every_ms=trigger_every_ms,
         max_triggers=max_triggers,

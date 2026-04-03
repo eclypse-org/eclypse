@@ -19,6 +19,8 @@ Attributes:
     EventType (Literal): Literal type for the event types.\
         Possible values are ``"application"``, ``"infrastructure"``, ``"service"``,\
         ``"interaction"``, ``"node"``, ``"link"``, ``"simulation"``.
+    ReportBackend (Literal): Literal type for report backends.\
+        Possible values are ``"pandas"``, ``"polars"``, ``"polars_lazy"``.
     LogLevel (Literal): Literal type for the log levels.\
         Possible values are ``"TRACE"``, ``"DEBUG"``, ``"ECLYPSE"``, ``"INFO"``,\
         ``"SUCCESS"``, ``"WARNING"``, ``"ERROR"``, ``"CRITICAL"``.
@@ -69,6 +71,12 @@ ReportFormat = Literal[
     "csv",
     "parquet",
     "json",
+]
+
+ReportBackend = Literal[
+    "pandas",
+    "polars",
+    "polars_lazy",
 ]
 
 LogLevel = Literal[
