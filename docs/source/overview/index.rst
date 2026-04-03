@@ -44,3 +44,10 @@ Overview
          :link: examples/index
 
          Explore example simulations to use ECLYPSE effectively.
+
+   .. grid-item::
+
+      .. card:: :octicon:`history;1em;info` **Changelog**
+         :link: https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md
+
+         Track released versions and the latest published framework changes.

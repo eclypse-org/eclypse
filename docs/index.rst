@@ -4,6 +4,7 @@
 
    Overview <source/overview/index.rst>
    Reference <source/api/index.rst>
+   Changelog <https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md>
 
 
 
