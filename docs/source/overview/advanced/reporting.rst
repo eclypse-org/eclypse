@@ -11,8 +11,24 @@ Defining Metrics
 ----------------
 
 Metrics are reportable events that collect and return structured data during the simulation.
-Technically, they are events decorated using the ``@metric.<type>`` decorators
-provided in :mod:`eclypse.report.metrics`.
+Technically, they are events with the
+:class:`~eclypse.workflow.event.role.EventRole.METRIC` role, exposed through the
+``@metric.<type>`` decorators provided in :mod:`eclypse.report.metrics`.
+
+Metrics, callbacks, and regular events all share the same event engine, but they serve
+different purposes:
+
+- regular events drive the workflow,
+- callbacks attach post-event logic without making reporting the primary goal,
+- metrics attach post-event logic whose output is intended to be written by reporters.
+
+This distinction matters because a metric is both:
+
+- a post-event hook, so it can access the triggering event payload,
+- a reporting primitive, so its return value is prepared for the reporting pipeline.
+
+By contrast, a plain callback can inspect the same context, but it is mainly meant for
+workflow composition or transient post-processing.
 
 There are 7 decorators corresponding to different metric types:
 
@@ -44,6 +60,30 @@ Example:
 
 .. note::
    Metrics are executed like events, and use the same underlying logic, including support for cascade triggers and trigger conditions.
+
+Metric and callback types
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The metric decorators mirror the same event types used by regular events. The event type
+still determines what your logic receives:
+
+- ``simulation`` metrics receive ``triggering_event``,
+- ``application`` metrics receive ``application``, ``placement``, and ``infrastructure``,
+- ``service`` metrics receive ``service_id``, ``requirements``, ``placement``, and
+  ``infrastructure``,
+- ``service`` metrics with ``remote=True`` receive a remote
+  :class:`~eclypse.remote.service.service.Service` instance,
+- ``interaction`` metrics receive ``source_id``, ``target_id``, ``requirements``,
+  ``placement``, and ``infrastructure``,
+- ``infrastructure`` metrics receive ``infrastructure`` and ``placement_view``,
+- ``node`` metrics receive ``node_id``, ``resources``, ``placements``,
+  ``infrastructure``, and ``placement_view``,
+- ``link`` metrics receive ``source_id``, ``target_id``, ``resources``,
+  ``placements``, ``infrastructure``, and ``placement_view``.
+
+Callbacks follow the same type-based signatures. The difference is therefore not the
+arguments they receive, but the role they play in the workflow and whether their output
+is meant to be reported.
 
 
 Report formats and reporters

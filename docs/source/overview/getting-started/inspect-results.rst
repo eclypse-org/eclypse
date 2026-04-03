@@ -90,5 +90,5 @@ If needed, you can explicitly set the format when loading:
 
 .. seealso::
 
-   - :doc:`simulation`
+   - :doc:`../concepts/simulation-configuration`
    - :doc:`../advanced/reporting`

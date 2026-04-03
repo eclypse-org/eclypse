@@ -87,8 +87,8 @@ ECLYPSE uses the backend configured in
 .. seealso::
 
    - :doc:`inspect-results`
-   - :doc:`topology`
-   - :doc:`simulation`
+   - :doc:`../concepts/topology`
+   - :doc:`../concepts/simulation-configuration`
 
 .. note::
 

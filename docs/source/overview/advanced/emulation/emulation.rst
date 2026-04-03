@@ -30,7 +30,8 @@ ECLYPSE uses Ray actors to represent application services when running in emulat
 Enabling Emulation
 ------------------
 
-To activate emulation from a :doc:`simulation run <../../getting-started/simulation>`,
+To activate emulation from a
+:doc:`simulation run <../../concepts/simulation-configuration>`,
 you must either:
 
 - set the flag ``remote=True`` when creating the simulation, or
