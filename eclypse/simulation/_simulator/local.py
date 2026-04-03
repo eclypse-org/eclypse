@@ -31,6 +31,7 @@ from eclypse.utils.constants import (
     FLOAT_EPSILON,
     RND_SEED,
 )
+from eclypse.workflow.event import EventRole
 
 from .reporter import SimulationReporter
 
@@ -96,7 +97,7 @@ class Simulator:
         self._ordered_events = tuple(
             sorted(
                 self._events.values(),
-                key=lambda event: not event.is_callback,
+                key=lambda event: event.role is EventRole.EVENT,
             )
         )
 
@@ -170,7 +171,7 @@ class Simulator:
         if event_name == "stop":
             self._status = SimulationState.STOPPING
 
-        if not self._events[event_name].is_callback:
+        if not self._events[event_name].is_post_event:
             for curr_evt in self._ordered_events:
                 if curr_evt.name != event_name and curr_evt._trigger(
                     self._events[event_name]
@@ -223,7 +224,7 @@ class Simulator:
         event = self._events[event_name]
         trigger_event = self._events[triggered_by] if triggered_by else None
         event._fire(trigger_event)
-        if trigger_event is not None and event.is_callback:
+        if trigger_event is not None and event.is_metric:
             await self._reporter.report(
                 event_name=trigger_event.name,
                 event_idx=trigger_event.n_calls,

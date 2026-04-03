@@ -22,7 +22,10 @@ from eclypse.workflow.trigger.cascade import (
     ScheduledCascadeTrigger,
 )
 
-from .event import EclypseEvent
+from .event import (
+    EclypseEvent,
+)
+from .role import EventRole
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -53,7 +56,7 @@ class EventWrapper(EclypseEvent):
         trigger_every_ms: float | None = None,
         max_triggers: int = int(MAX_FLOAT),
         trigger_condition: Literal["any", "all"] = "any",
-        is_callback: bool = False,
+        role: EventRole = EventRole.EVENT,
         report: str | list[str] | None = None,
         remote: bool = False,
         verbose: bool = False,
@@ -74,8 +77,8 @@ class EventWrapper(EclypseEvent):
                 event can be triggered. Defaults to None.
             trigger_condition (str | None, optional): The condition for the triggers\
                 to fire the event. Defaults to "any".
-            is_callback (bool, optional): Whether the event is a callback. \
-                Defaults to False.
+            role (EventRole, optional): The workflow role assigned to the event.
+                Defaults to EventRole.EVENT.
             report (str | list[str] | None, optional): The type of report \
                 to generate for the event. Defaults to None.
             remote (bool, optional): Whether the event is remote. Defaults to False.
@@ -119,7 +122,7 @@ class EventWrapper(EclypseEvent):
             triggers=triggers,
             trigger_condition=trigger_condition,
             max_triggers=max_triggers,
-            is_callback=is_callback,
+            role=role,
             event_type=event_type,
             report=report,
             remote=remote,

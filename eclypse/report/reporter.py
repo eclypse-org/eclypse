@@ -97,7 +97,7 @@ class Reporter(ABC):
 
     def callback_rows(self, callback: EclypseEvent) -> Generator[list[Any], None, None]:
         """Return callback tuple rows directly, otherwise DFS-flatten the payload."""
-        if callback.is_callback and isinstance(callback.data, tuple):
+        if callback.is_metric and isinstance(callback.data, tuple):
             for row in callback.data:
                 yield list(row)
             return

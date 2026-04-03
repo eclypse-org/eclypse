@@ -13,7 +13,10 @@ from typing import (
 from eclypse.utils.constants import MAX_FLOAT
 from eclypse.utils.tools import camel_to_snake
 
-from .event import EclypseEvent
+from .event import (
+    EclypseEvent,
+)
+from .role import EventRole
 from .wrapper import EventWrapper
 
 if TYPE_CHECKING:
@@ -38,7 +41,7 @@ def event(
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
     trigger_condition: str | None = "any",
-    is_callback: bool = False,
+    role: EventRole = EventRole.EVENT,
     report: str | list[str] | None = None,
     remote: bool = False,
     verbose: bool = False,
@@ -65,8 +68,8 @@ def event(
         trigger_condition (str | None): The condition for the triggers to fire the
             event. If "any", the event fires if any trigger is active. If "all",
             the event fires only if all triggers are active. Defaults to "any".
-        is_callback (bool, optional):
-            Whether the event is a callback. Defaults to False.
+        role (EventRole, optional): The workflow role assigned to the event.
+            Defaults to EventRole.EVENT.
         report (str | list[str] | None, optional): The type of report to generate
             for the event. If not provided, the default report type will be used.
             Defaults to DEFAULT_REPORT_TYPE.
@@ -97,7 +100,7 @@ def event(
             "max_triggers": max_triggers,
             "triggers": _triggers,
             "trigger_condition": trigger_condition,
-            "is_callback": is_callback,
+            "role": role,
             "report": report,
             "remote": remote,
             "verbose": verbose,
