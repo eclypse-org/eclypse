@@ -6,7 +6,6 @@ import os
 import sys
 from datetime import datetime
 from importlib import import_module
-from importlib.metadata import distribution
 
 from jinja2.filters import FILTERS
 
@@ -22,7 +21,7 @@ sys.path.insert(0, os.path.abspath(".."))
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 project = "ECLYPSE"
-author = "Valerio De Caro & Jacopo Massa"
+author = "Jacopo Massa & Valerio De Caro"
 copyright = f"{(datetime.now().year)}, {author}"
 
 # -- General configuration ---------------------------------------------------
@@ -69,8 +68,7 @@ html_logo = "_static/images/light.png"
 
 html_static_path = ["_static"]
 html_extra_path = ["_static/landing"]
-html_css_files = ["css/home.css"]  # ["css/custom.css", "css/landing.css"]
-html_js_files = ["js/custom.js"]
+html_css_files = ["css/custom.css", "css/home.css"]
 
 html_context = {
     "github_url": "https://github.com",
@@ -81,13 +79,6 @@ html_context = {
 }
 
 html_additional_pages = {"index": "index.html"}
-
-# external_links = [
-#     {
-#         "name": "Changelog",
-#         "url": "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md",
-#     }
-# ]
 
 favicons = [
     {
@@ -132,7 +123,7 @@ icon_links = [
         "url": "https://github.com/eclypse-org/eclypse",
         "icon": "fa-brands fa-github",
         "type": "fontawesome",
-    }
+    },
 ]
 
 html_theme_options = {
@@ -148,7 +139,6 @@ html_theme_options = {
     "show_nav_level": 1,
     "navigation_depth": 4,
     "icon_links": icon_links,
-    # "external_links": external_links,
     "header_links_before_dropdown": 4,
     "logo": {
         "text": "ECLYPSE",
