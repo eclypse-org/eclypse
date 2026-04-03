@@ -16,11 +16,13 @@ Defining an Event
 An event can be defined by:
 
 - decorating a function or a class with a `__call__` method
-- subclassing :class:`~eclypse.workflow.events.event.EclypseEvent` and overriding the `__call__` method
+- subclassing :class:`~eclypse.workflow.event.event.EclypseEvent` and overriding the `__call__` method
 
 .. seealso::
 
-   Events are activated by **Triggers**, which define *when* and *under what conditions* an event should fire, thus at least one trigger must be defined for an event to be activated.
+   Events are activated by **Triggers**, which define *when* and *under what
+   conditions* an event should fire, thus at least one trigger must be defined
+   for an event to be activated.
 
    You can use built-in triggers (e.g., cascade or periodic) or define your own.
 
@@ -33,7 +35,8 @@ Here are the most relevant parameters to control event behaviour:
 
 - ``name`` *(str)*: The event name.
 - ``event_type``: The context where the event executes, (e.g., *"node"*, *"service"*, ...). It can be also None.
-- ``triggers``: A list of :class:`~eclypse.workflow.triggers.trigger.Trigger` objects, modelling the conditions that can activate the event.
+- ``triggers``: A list of :class:`~eclypse.workflow.trigger.trigger.Trigger`
+  objects, modelling the conditions that can activate the event.
 - ``activates_on``: A more compact way to specify triggers, using a list of strings and tuples
 - ``trigger_condition``: Whether all triggers must activate or just one (*"all"* or *"any"*).
 - ``is_callback``: Whether the event is a post-trigger *callback*.
@@ -52,7 +55,7 @@ The event **type** also determines the arguments passed to its logic function. S
      - Parameters
    * - simulation (or None)
      -
-       - ``triggering_event`` (:class:`~eclypse.workflow.events.event.EclypseEvent`)
+       - ``triggering_event`` (:class:`~eclypse.workflow.event.event.EclypseEvent`)
    * - application
      -
        - ``application`` (:class:`~eclypse.graph.application.Application`)
@@ -115,7 +118,8 @@ This behavior applies to all events and is especially relevant when defining :do
 @event() decorator
 ~~~~~~~~~~~~~~~~~~
 
-The simplest way to define an event and its parameters is the :py:func:`@event() <eclypse.workflow.event.event>` decorator.
+The simplest way to define an event and its parameters is the
+:py:func:`@event() <eclypse.workflow.event.decorator.event>` decorator.
 
 This flexible decorator allows you to register both functions and classes as **simulation events**, giving full control over when and how they are triggered. You can apply the decorator to:
 
@@ -125,7 +129,7 @@ This flexible decorator allows you to register both functions and classes as **s
 .. code-block:: python
    :caption: Example: Decorating a *function*
 
-   from eclypse.workflow import _event
+   from eclypse.workflow.event import event
 
    @event(name="step_logger", event_type="simulation", activates_on=["step"])
    def log_step():
@@ -134,7 +138,7 @@ This flexible decorator allows you to register both functions and classes as **s
 .. code-block:: python
    :caption: Example: Decorating a *class*
 
-   from eclypse.workflow import _event
+   from eclypse.workflow.event import event
 
    @event(name="step_counter", event_type="simulation", activates_on=["step"])
    class StepCounter:
@@ -150,7 +154,10 @@ This flexible decorator allows you to register both functions and classes as **s
 Metrics
 -------
 
-Metrics are a specialized type of event used to collect simulation data at different levels of abstraction (e.g., per iteration, per application, per node). They are implemented using the same decorator as standard events, with predefined options like ``is_callback=True`` and a specific ``report`` type.
+Metrics are a specialized type of event used to collect simulation data at
+different levels of abstraction (e.g., per iteration, per application, per
+node). They are implemented using the same decorator as standard events, with
+predefined options like ``is_callback=True`` and a specific ``report`` type.
 
 To define a metric, you can use one of the convenience decorators under the :py:mod:`~eclypse.report.metrics.metric` module.
 For full documentation on how to define, register, and export metrics, refer to the :doc:`../advanced/reporting` page.

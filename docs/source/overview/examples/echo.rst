@@ -1,10 +1,18 @@
-Echo 
+Echo
 ====
 
-The Echo Application showcases a simple microservices architecture where messages are echoed back and forth among a set of identical services.
-This example provides insights into the basic structure and interaction patterns of microservices within a distributed system.
+The Echo example showcases a small service-based application in which messages
+are exchanged repeatedly among neighbouring services.
 
-The whole code for this example can be found in the `examples/echo <https://github.com/eclypse-org/eclypse/tree/main/examples/echo>`_ directory of the ECLYPSE Github repository.
+Use it when you want to understand:
+
+- how to build an application and an infrastructure from Python code,
+- how to run a local simulation end to end,
+- how MPI-style communication behaves in a simple topology.
+
+The full code lives in the
+`examples/echo <https://github.com/eclypse-org/eclypse/tree/main/examples/echo>`_
+directory.
 
 Application
 -----------
@@ -23,7 +31,9 @@ Broadcasting is expected to be faster than unicasting, as it involves sending me
 Echo Service
 ------------
 
-The `EchoService` class is the core component responsible for echoing messages within the Echo Example application. Below is the code for the EchoService along with an explanation:
+The ``EchoService`` class is the runtime component responsible for sending
+messages to neighbour services and measuring the difference between unicast and
+broadcast communication.
 
 .. dropdown:: Service code
 
@@ -31,21 +41,25 @@ The `EchoService` class is the core component responsible for echoing messages w
         :language: python
         :linenos:
 
-We defined the `EchoService` class, which inherits from the :class:`~eclypse.remote.service.service.Service` class provided in ECLYPSE. The `dispatch` implements the logic of the `EchoService`, thus it is responsible for sending messages to neighbors and logging the communication statistics.
+The service inherits from
+:class:`~eclypse.remote.service.service.Service` and implements
+:py:meth:`~eclypse.remote.service.service.Service.step`, which is the unit of
+behaviour executed during emulation.
 
 
 Infrastructure
 --------------
 
-The EchoApplication is deployed on a network of 4 heterogeneous nodes interconnected via 4 links, named *EchoInfrastructure*.
+The Echo application is deployed on a small infrastructure made of heterogeneous
+nodes connected through links with different latency and bandwidth values.
 
 .. dropdown:: Infrastructure code
 
     .. literalinclude:: ../../../../examples/echo/infrastructure.py
         :language: python
 
-The *EchoInfrastructure* is also updated at each iteration to simulate the ever chaning nature of real-world networks.
-To do so, we used a **random** node/edge udpate policy.
+The infrastructure is also updated at each iteration through random node and
+edge update policies, which simulate changing runtime conditions.
 
 .. dropdown:: Update policy code
 
@@ -55,9 +69,8 @@ To do so, we used a **random** node/edge udpate policy.
 Simulation
 ----------
 
-The simulation is run *remotely* for 20 iterations, each lasting 0.5 seconds.
-Logs are enabled, as is the reporting, in a folder named as the application.
-A random seed is set to ensure reproducibility.
+The example configures a reproducible run with metrics enabled and stores the
+results under the default simulation path.
 
 .. dropdown:: Simulation code
 

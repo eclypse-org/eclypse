@@ -8,7 +8,8 @@ Two communication models are currently supported:
 - an **MPI-like interface** (:class:`~eclypse.remote.communication.mpi.interface.EclypseMPI`), designed for low-latency message passing
 - a **REST-style interface** (:class:`~eclypse.remote.communication.rest.interface.EclypseREST`), designed for loosely coupled HTTP interactions
 
-These APIs can be used from within emulated services to exchange information, coordinate behaviour, or simulate service-level protocols.
+These APIs can be used from within emulated services to exchange information,
+coordinate behaviour, or simulate service-level protocols.
 
 
 MPI-style messaging
@@ -23,6 +24,7 @@ Each :class:`~eclypse.remote.service.service.Service` has access to an :py:attr:
 - receive incoming messages (:py:meth:`~eclypse.remote.communication.mpi.interface.EclypseMPI.recv`)
 
 All methods are **asynchronous** and simulate network cost using the placement and topology of the infrastructure.
+The send and broadcast requests must be awaited explicitly.
 
 .. code-block:: python
    :caption: **Example:** Use MPI interface
@@ -41,7 +43,11 @@ All methods are **asynchronous** and simulate network cost using the placement a
 @exchange() decorator
 ~~~~~~~~~~~~~~~~~~~~~
 
-In addition to direct calls, the :class:`~eclypse.remote.communication.mpi.interface.EclypseMPI` interface provides a decorator (:py:func:`@echange() <eclypse_core.remote.communication.mpi.interface.exchange>`) to define communication behaviour declaratively inside service methods.
+In addition to direct calls, the
+:class:`~eclypse.remote.communication.mpi.interface.EclypseMPI` interface
+provides a decorator
+(:py:func:`@exchange() <eclypse.remote.communication.mpi.interface.exchange>`)
+to define communication behaviour declaratively inside service methods.
 
 You can decorate a method to:
 
@@ -67,14 +73,18 @@ You can decorate a method to:
 REST-style Messaging
 --------------------
 
-ECLYPSE also provides a REST-style communication interface for services. This mode models service interaction using HTTP-like semantics and is better suited for stateless, loosely coupled communication patterns.
+ECLYPSE also provides a REST-style communication interface for services. This
+mode models service interaction using HTTP-like semantics and is better suited
+for stateless, loosely coupled communication patterns.
 
-To use this, your service must subclass :class:`~eclypse.remote.communication.rest.interface.EclypseREST`. Each instance exposes a REST interface, backed by a Ray actor, which handles remote requests.
+To use this style, your service must subclass
+:class:`~eclypse.remote.service.rest.RESTService`.
 
-@endpoint() decorator
-~~~~~~~~~~~~~~~~~~~~~
+@register_endpoint() decorator
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You define REST endpoints inside your service by decorating methods with the :py:func:`@endpoint() <eclypse_core.remote.communication.rest.interface.register_endpoint>` decorator (renamed *@endpoint* out of the core for readability).
+You define REST endpoints inside your service by decorating methods with
+:py:func:`@register_endpoint() <eclypse.remote.communication.rest.interface.register_endpoint>`.
 
 Each endpoint:
 
@@ -86,14 +96,14 @@ Example:
 
 .. code-block:: python
 
+   from eclypse.remote.communication.rest.codes import HTTPStatusCode
+   from eclypse.remote.communication.rest.interface import register_endpoint
    from eclypse.remote.service import RESTService
-   from eclypse.remote.communication import register_endpoint
-   from eclypse.remote.communication import HTTPStatusCode
 
    class StoreService(RESTService):
 
-       def __init__(self, id: str):
-           super().__init__(id)
+       def __init__(self, service_id: str):
+           super().__init__(service_id)
            self.store = {}
 
        @register_endpoint("/data", method="POST")
@@ -121,16 +131,33 @@ From within a service, you can send requests using:
 
    """ ... inside the step() method of service-A """
 
-   await self.rest.post("store/data", key="item1", value=42)
+   await self.rest.post("StoreService/data", key="item1", value=42)
 
-Each method returns a coroutine that, when awaited, simulates communication delay and returns a `(status_code, response_dict)` tuple.
+Each method returns an HTTP request object. When awaited, the request is
+executed and the object exposes:
+
+- ``status_code``
+- ``body``
+- ``response``
+- ``route``
+
+For example:
+
+   .. code-block:: python
+
+      request = await self.rest.post("StoreService/data", key="item1", value=42)
+      print(request.status_code)
+      print(request.body)
 
 ---
 
 Endpoint Resolution
 ~~~~~~~~~~~~~~~~~~~
 
-When a REST service starts, it scans all decorated methods using :py:func:`@endpoint() <eclypse_core.remote.communication.rest.interface.register_endpoint>` and registers them dynamically. Endpoint URLs are scoped per service ID: the final URL is prefixed by the service name.
+When a REST service starts, it scans all decorated methods using
+:py:func:`@register_endpoint() <eclypse.remote.communication.rest.interface.register_endpoint>`
+and registers them dynamically. Endpoint URLs are scoped per service ID: the
+final URL is prefixed by the service name.
 
 For example, if a service ``s1`` exposes ``/data``, the full URL is: ``s1/data``.
 

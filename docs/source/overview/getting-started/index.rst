@@ -6,6 +6,9 @@ Getting started
    :maxdepth: 2
    :hidden:
 
+   minimal-local-run
+   inspect-results
+   remote-emulation
    assets
    update-policy
    placement-strategy
@@ -13,16 +16,56 @@ Getting started
    topology
    simulation
 
-Let's get started with ECLYPSE! This guide will walk you through the steps to set up a simulation using the framework.
-ECLYPSE is designed to be flexible and extensible, allowing you to model complex scenarios in Cloud-Edge computing environments.
+Let's get started with ECLYPSE.
 
-The following steps outline the full workflow for setting up a simulation:
+If you want to get to a first successful run quickly, begin with one of the
+guided paths below. Once you are comfortable with the workflow, you can use the
+concept pages to customise assets, placement strategies, events, and
+infrastructure models.
+
+Happy paths
+-----------
+
+.. grid:: 1
+
+   .. grid-item::
+
+      .. card:: 1. Run a minimal local simulation
+         :link: minimal-local-run
+         :link-type: doc
+
+         Build a small scenario with the built-in builders, run it locally,
+         and retrieve the resulting report.
+
+   .. grid-item::
+
+      .. card:: 2. Inspect and query the report
+         :link: inspect-results
+         :link-type: doc
+
+         Learn how to load report frames, choose a backend, and work with the
+         collected metrics.
+
+   .. grid-item::
+
+      .. card:: 3. Move to remote emulation
+         :link: remote-emulation
+         :link-type: doc
+
+         Run remote services with the MPI or REST communication interfaces and
+         understand how the setup differs from a local simulation.
+
+Concepts
+--------
+
+The following pages explain the main building blocks of ECLYPSE in more
+detail:
 
 .. grid:: 2
 
    .. grid-item::
 
-      .. card:: 1. Define assets
+      .. card:: Assets
          :link: assets
          :link-type: doc
 
@@ -31,7 +74,7 @@ The following steps outline the full workflow for setting up a simulation:
 
    .. grid-item::
 
-      .. card:: 2. Define update policies
+      .. card:: Update policies
          :link: update-policy
          :link-type: doc
 
@@ -39,7 +82,7 @@ The following steps outline the full workflow for setting up a simulation:
 
    .. grid-item::
 
-      .. card:: 3. Define a placement strategy
+      .. card:: Placement strategies
          :link: placement-strategy
          :link-type: doc
 
@@ -47,7 +90,7 @@ The following steps outline the full workflow for setting up a simulation:
 
    .. grid-item::
 
-      .. card:: 4. Define simulation workflow through events
+      .. card:: Events and metrics
          :link: events
          :link-type: doc
 
@@ -56,7 +99,7 @@ The following steps outline the full workflow for setting up a simulation:
 
    .. grid-item::
 
-      .. card:: 5. Define Infrastructure and Application(s)
+      .. card:: Infrastructure and applications
          :link: topology
          :link-type: doc
 
@@ -64,7 +107,7 @@ The following steps outline the full workflow for setting up a simulation:
 
    .. grid-item::
 
-      .. card:: 6. Create, configure and run the simulation
+      .. card:: Simulation configuration
          :link: simulation
          :link-type: doc
 

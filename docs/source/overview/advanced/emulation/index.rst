@@ -16,8 +16,8 @@ Emulation
          :link-type: doc
          :link: emulation
 
-         Define the **logics** of your **application services** and run them on a *physical* machine
-         or a *cluster* of machines.
+         Define the logic of your application services and run them as remote
+         services on a machine or a cluster.
 
    .. grid-item::
 
@@ -25,4 +25,5 @@ Emulation
          :link-type: doc
          :link: messaging
 
-         Exchange **messages between services** in emulation mode using *MPI*-like or *REST*-style interfaces.
+         Exchange messages between services in emulation mode using the MPI-like
+         and REST-style interfaces.
