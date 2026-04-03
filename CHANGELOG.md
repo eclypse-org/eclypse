@@ -65,3 +65,61 @@ separate linear release section in the main changelog history.
 
 - Merge core files into public code
 - Remove placement view residual usage
+
+## 0.8.0 (2025-11-03)
+
+This release is preserved for completeness. No grouped changelog entries were
+recovered for this tagged version.
+
+## 0.7.4 (2025-06-27)
+
+This release is preserved for completeness. No grouped changelog entries were
+recovered for this tagged version.
+
+## 0.7.3 (2025-06-26)
+
+This release is preserved for completeness. No grouped changelog entries were
+recovered for this tagged version.
+
+## 0.7.2 (2025-06-25)
+
+### Fix
+
+- Add activates_on to event decorator
+
+## 0.7.1 (2025-06-10)
+
+This release is preserved for completeness. No grouped changelog entries were
+recovered for this tagged version.
+
+## 0.7.0 (2025-06-10)
+
+### Feat
+
+- Add "strict" flag to infrastructure builders
+- Add fat_tree generator
+- Add Orion CEV infrastructure builder
+- Remove group as default asset
+
+### Fix
+
+- Apply dfs_data generalisation to csv reporter
+- JSON reporter now keeps callback.data structures untouched
+- Remove remote node metric
+- Correct default value for bandwidth asset
+- Prune edge assets in sock_shop builder
+- Add default values to off-the-shelf assets
+- Correct merge of user-defined and default path assets aggregators
+- Rename "dispatch" into "step" method, in examples
+
+### Refactor
+
+- Change examples according to new interface
+- Use new DRIVING_EVENT constant
+- Copy core utils module structure
+- Remove EclypseCallback and change EclypseEvent management
+- Redefine imports in examples after package structure changes
+- Copy same core import structure for communication package
+- Rewrite examples removing node group
+- Rename report and step parameters to avoid pylint warning
+- Merge echo example notebooks into a single one
