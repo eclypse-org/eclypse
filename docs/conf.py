@@ -153,6 +153,37 @@ html_sidebars = {"**": ["sidebar-nav-bs", "sidebar-ethical-ads"]}
 html_scaled_image_link = False
 
 
+def patch_autosummary_name_collisions():
+    """Resolve package-level name collisions for autosummary generation.
+
+    The ``eclypse.workflow.event`` package re-exports the ``event`` decorator,
+    which shadows the ``event`` submodule when autosummary resolves dotted
+    names. During the docs build we point the package attribute to the submodule
+    so the generated module page documents ``eclypse.workflow.event.event``
+    rather than the decorator function. The decorator remains documented through
+    ``eclypse.workflow.event.decorator``.
+
+    Recent autosummary releases also expect package-level attributes for
+    relative submodule entries such as ``simulation`` under ``eclypse`` and
+    ``defaults`` under ``eclypse.report.metrics``. We expose those submodules
+    explicitly during the docs build so the generated package pages keep using
+    the concise autosummary syntax already present in the source tree.
+    """
+
+    root_pkg = import_module("eclypse")
+    root_pkg.simulation = import_module("eclypse.simulation")
+
+    metrics_pkg = import_module("eclypse.report.metrics")
+    metrics_pkg.defaults = import_module("eclypse.report.metrics.defaults")
+
+    event_pkg = import_module("eclypse.workflow.event")
+    event_pkg.decorator_event = event_pkg.event
+    event_pkg.event = import_module("eclypse.workflow.event.event")
+
+
+patch_autosummary_name_collisions()
+
+
 def filter_out_undoc_class_members(member_name, class_name, module_name):
     module = import_module(module_name)
     cls = getattr(module, class_name)

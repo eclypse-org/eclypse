@@ -58,7 +58,7 @@
    :toctree: {{ name }}
    :recursive:
 {% for item in modules %}
-   {{ item.split('.')[-1] }}
+   {{ item }}
 {%- endfor %}
 {% endif %}
 {% endblock %}
