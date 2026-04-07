@@ -16,7 +16,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 from eclypse.graph import Infrastructure
@@ -35,6 +34,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
+    from eclypse.utils.types import InitPolicy
 
 
 def get_orion_cev(
@@ -44,7 +44,7 @@ def get_orion_cev(
     node_assets: dict[str, Asset] | None = None,
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
-    resource_init: Literal["min", "max"] = "max",
+    resource_init: InitPolicy = "max",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
@@ -64,7 +64,7 @@ def get_orion_cev(
             The assets for the links. Defaults to None.
         include_default_assets (bool):
             Whether to include the default assets. Defaults to False.
-        resource_init (Literal["min", "max"]):
+        resource_init (InitPolicy):
             The initialization policy for the resources. Defaults to "max".
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             The algorithm to compute the paths between nodes. Defaults to

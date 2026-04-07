@@ -16,7 +16,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Literal,
 )
 
 import networkx as nx
@@ -28,6 +27,7 @@ from eclypse.utils.constants import (
     COST_RECOMPUTATION_THRESHOLD,
     MIN_FLOAT,
 )
+from eclypse.utils.defaults import DEFAULT_EDGE_LATENCY
 
 from .assets.defaults import (
     get_default_edge_assets,
@@ -47,6 +47,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets.asset import Asset
     from eclypse.placement.strategies import PlacementStrategy
+    from eclypse.utils.types import InitPolicy
 
 
 class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
@@ -67,7 +68,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         include_default_assets: bool = False,
         path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None,
         path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-        resource_init: Literal["min", "max"] = "min",
+        resource_init: InitPolicy = "min",
         seed: int | None = None,
     ):
         """Create a new Infrastructure.
@@ -88,7 +89,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                 The aggregators to use for the path assets.
             path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
                 The algorithm to use to compute the paths.
-            resource_init (Literal["min", "max"]):
+            resource_init (InitPolicy):
                 The initialization method for the resources.
             seed (int | None): The seed for the random number generator.
         """
@@ -253,11 +254,12 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                 self._compute_path(source, target)
             else:
                 costs = [
-                    c.get("latency", 1)
+                    c.get("latency", DEFAULT_EDGE_LATENCY)
                     for _, _, c in self._path_costs(self._paths[source][target])
                 ]
                 cached_costs = [
-                    cc.get("latency", 1) for _, _, cc in self._costs[source][target]
+                    cc.get("latency", DEFAULT_EDGE_LATENCY)
+                    for _, _, cc in self._costs[source][target]
                 ]
 
                 if len(costs) != len(cached_costs) or any(
@@ -411,7 +413,7 @@ def _default_weight_function(_: str, __: str, eattr: dict[str, Any]) -> float:
     Returns:
         float: The weight of the edge.
     """
-    return eattr.get("latency", 1)
+    return eattr.get("latency", DEFAULT_EDGE_LATENCY)
 
 
 def _get_default_path_algorithm(g: nx.Graph, source: str, target: str) -> list[str]:

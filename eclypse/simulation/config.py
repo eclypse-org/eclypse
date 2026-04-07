@@ -26,10 +26,16 @@ from eclypse.simulation.runtime import (
     build_runtime_env,
 )
 from eclypse.utils._logging import logger
-from eclypse.utils.constants import DRIVING_EVENT
+from eclypse.utils.constants import (
+    DRIVING_EVENT,
+    STOP_EVENT,
+)
 from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
+    DEFAULT_REPORT_CHUNK_SIZE,
     DEFAULT_REPORT_TYPE,
+    PARQUET_REPORT_DIR,
+    TENSORBOARD_REPORT_DIR,
     get_default_sim_path,
 )
 from eclypse.workflow.event.defaults import get_default_events
@@ -89,14 +95,15 @@ class SimulationConfig:
     log_level: LogLevel = "ECLYPSE"
     """Minimum logging level applied to the simulation runtime."""
 
-    report_chunk_size: int = 100
+    report_chunk_size: int = DEFAULT_REPORT_CHUNK_SIZE
     """Maximum number of buffered report rows written per reporter flush."""
 
     report_format: ReportFormat | None = None
     """Default output format used by metrics that do not override their report type."""
 
     report_backend: ReportBackend | FrameBackend | None = None
-    """Backend used later to load generated reports through :class:`~eclypse.report.Report`."""
+    """Backend used later to load generated reports through
+    :class:`~eclypse.report.report.Report`."""
 
     remote: bool | RemoteBootstrap = False
     """Whether to run in remote emulation mode, or the bootstrap to use for it."""
@@ -171,9 +178,9 @@ class SimulationConfig:
         if self.reporters is None:
             raise RuntimeError("Reporters must be resolved before dependency checks.")
 
-        if "tensorboard" in self.reporters:
+        if TENSORBOARD_REPORT_DIR in self.reporters:
             _require_module("tensorboard", extras_name="tboard")
-        if "parquet" in self.reporters:
+        if PARQUET_REPORT_DIR in self.reporters:
             _require_module("polars")
         if self.remote is not None:
             _require_module("ray", extras_name="remote")
@@ -219,7 +226,8 @@ class SimulationConfig:
             self.events = [event for event in self.events if not event.remote]
 
         stop_event = next(
-            (event for event in self.events if event.name == "stop"), None
+            (event for event in self.events if event.name == STOP_EVENT),
+            None,
         )
         if stop_event is None:
             raise ValueError("A 'stop' event must be defined in the simulation.")

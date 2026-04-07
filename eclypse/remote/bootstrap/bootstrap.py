@@ -30,8 +30,8 @@ if TYPE_CHECKING:
 class RemoteBootstrap:
     """Configuration for the remote infrastructure."""
 
-    _sim_class: Any = field(repr=False)
-    _node_class: Any = field(repr=False)
+    _sim_class: type[Any] = field(repr=False)
+    _node_class: type[Any] = field(repr=False)
     ray_options_factory: RayOptionsFactory
     env_vars: dict[str, str]
     node_args: dict[str, Any]
@@ -51,8 +51,8 @@ class RemoteBootstrap:
             ray_options_factory (RayOptionsFactory | None): The Ray options factory.
             **node_args: The arguments for the remote node.
         """
-        self._sim_class = sim_class if sim_class else "sim-core"
-        self._node_class = node_class if node_class else "node-core"
+        self._sim_class = sim_class or _get_default_remote_simulator_class()
+        self._node_class = node_class or _get_default_remote_node_class()
         self.ray_options_factory = (
             ray_options_factory if ray_options_factory else RayOptionsFactory()
         )
@@ -89,7 +89,11 @@ class RemoteBootstrap:
 
 
 def _create_remote(
-    name: str, remote_cls: Any, options_factory: RayOptionsFactory, *args, **kwargs
+    name: str,
+    remote_cls: type[Any],
+    options_factory: RayOptionsFactory,
+    *args,
+    **kwargs,
 ) -> Any:
     """Create a remote object.
 
@@ -103,13 +107,22 @@ def _create_remote(
     Returns:
         Any: The remote object.
     """
-    if remote_cls == "sim-core":
-        from eclypse.simulation._simulator import RemoteSimulator as remote_cls
-    elif remote_cls == "node-core":
-        from eclypse.remote._node import RemoteNode as remote_cls
-
     return (
         ray_backend.remote(remote_cls)
         .options(**options_factory(name))
         .remote(*args, **kwargs)
     )
+
+
+def _get_default_remote_simulator_class() -> type[Any]:
+    """Return the default remote simulator class."""
+    from eclypse.simulation._simulator import RemoteSimulator
+
+    return RemoteSimulator
+
+
+def _get_default_remote_node_class() -> type[Any]:
+    """Return the default remote node class."""
+    from eclypse.remote._node import RemoteNode
+
+    return RemoteNode

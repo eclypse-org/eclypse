@@ -8,7 +8,6 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
-    Literal,
 )
 
 from eclypse.utils.constants import MAX_FLOAT
@@ -35,6 +34,7 @@ if TYPE_CHECKING:
     from eclypse.utils.types import (
         ActivatesOnType,
         EventType,
+        TriggerCondition,
     )
     from eclypse.workflow.trigger.trigger import Trigger
 
@@ -55,7 +55,7 @@ class EventWrapper(EclypseEvent):
         event_type: EventType | None = None,
         trigger_every_ms: float | None = None,
         max_triggers: int = int(MAX_FLOAT),
-        trigger_condition: Literal["any", "all"] = "any",
+        trigger_condition: TriggerCondition = "any",
         role: EventRole = EventRole.EVENT,
         report: str | list[str] | None = None,
         remote: bool = False,

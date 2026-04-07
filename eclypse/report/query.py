@@ -7,7 +7,10 @@ from typing import (
     Any,
 )
 
-from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils.defaults import (
+    DEFAULT_REPORT_RANGE,
+    DEFAULT_REPORT_STEP,
+)
 
 if TYPE_CHECKING:
     from eclypse.utils.types import EventType
@@ -22,8 +25,8 @@ class ReportQuery:
         """Create a query builder bound to a report type."""
         self._report = report
         self._report_type = report_type
-        self._report_range: tuple[int, int] = (0, int(MAX_FLOAT))
-        self._report_step = 1
+        self._report_range: tuple[int, int] = DEFAULT_REPORT_RANGE
+        self._report_step = DEFAULT_REPORT_STEP
         self._filters: dict[str, Any] = {}
 
     def range(self, start: int, stop: int) -> ReportQuery:

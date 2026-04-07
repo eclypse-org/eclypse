@@ -9,7 +9,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 from eclypse.utils.constants import MAX_FLOAT
@@ -17,6 +16,7 @@ from eclypse.workflow.trigger.cascade import CascadeTrigger
 
 if TYPE_CHECKING:
     from eclypse.utils._logging import Logger
+    from eclypse.utils.types import TriggerCondition
     from eclypse.workflow.event.event import EclypseEvent
     from eclypse.workflow.trigger import Trigger
 
@@ -27,7 +27,7 @@ class TriggerBucket:
     def __init__(
         self,
         triggers: Trigger | list[Trigger] | None = None,
-        condition: Literal["any", "all"] = "any",
+        condition: TriggerCondition = "any",
         max_triggers: int = int(MAX_FLOAT),
     ):
         """Initialize the trigger.

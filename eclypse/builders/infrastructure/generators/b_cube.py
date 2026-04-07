@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 from eclypse.graph import Infrastructure
@@ -42,6 +41,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
+    from eclypse.utils.types import InitPolicy
 
 
 def b_cube(
@@ -54,7 +54,7 @@ def b_cube(
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
-    resource_init: Literal["min", "max"] = "max",
+    resource_init: InitPolicy = "max",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
@@ -81,7 +81,7 @@ def b_cube(
             Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]): Initialization policy for resources. \
+        resource_init (InitPolicy): Initialization policy for resources. \
             Defaults to "max".
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
             Algorithm to compute paths. Defaults to None.

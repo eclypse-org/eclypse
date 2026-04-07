@@ -25,14 +25,16 @@ from collections import deque
 from typing import (
     TYPE_CHECKING,
     Any,
-    Literal,
     cast,
+    get_args,
 )
 
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.request import RouteNotFoundError
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import print_exception
+from eclypse.utils.defaults import DEFAULT_STEP_QUEUE_SIZE
+from eclypse.utils.types import CommunicationInterface
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -44,29 +46,33 @@ if TYPE_CHECKING:
     from eclypse.utils._logging import Logger
 
 
+SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface.__value__)
+"""Supported runtime communication interfaces for remote services."""
+
+
 class Service:
     """Base class for services in ECLYPSE remote applications."""
 
     def __init__(
         self,
         service_id: str,
-        communication_interface: Literal["mpi", "rest"] = "mpi",
+        communication_interface: CommunicationInterface = "mpi",
         store_step: bool = False,
     ):
         """Initializes a Service object.
 
         Args:
             service_id (str): The name of the service.
-            communication_interface (Literal["mpi", "rest"], optional): The
+            communication_interface (CommunicationInterface, optional): The
                 communication interface of the service. Defaults to "mpi".
             store_step (bool, optional): Whether to store the results of
                 each step. Defaults to False.
         """
-        if communication_interface not in ["mpi", "rest"]:
+        if communication_interface not in SUPPORTED_COMMUNICATION_INTERFACES:
             raise ValueError("Invalid communication interface.")
 
         self._service_id: str = service_id
-        self._communication_interface: Literal["mpi", "rest"] = communication_interface
+        self._communication_interface: CommunicationInterface = communication_interface
         self._store_step: bool = store_step
 
         self._application_id: str | None = None
@@ -78,7 +84,7 @@ class Service:
         self._run_task_fn: Callable[[], asyncio.Task] | None = None
         self._running: bool = False
         self._step_count: int = 0
-        self._step_queue: deque[Any] = deque(maxlen=1024)
+        self._step_queue: deque[Any] = deque(maxlen=DEFAULT_STEP_QUEUE_SIZE)
 
     async def run(self):
         """Runs the service.

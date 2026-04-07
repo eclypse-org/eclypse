@@ -15,7 +15,6 @@ import math
 import random as rnd
 from typing import (
     TYPE_CHECKING,
-    Literal,
     no_type_check,
 )
 
@@ -37,7 +36,10 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
-    from eclypse.utils.types import ConnectivityFn
+    from eclypse.utils.types import (
+        ConnectivityFn,
+        InitPolicy,
+    )
 
 DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 
@@ -55,7 +57,7 @@ def hierarchical(
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
-    resource_init: Literal["min", "max"] = "max",
+    resource_init: InitPolicy = "max",
     placement_strategy: PlacementStrategy | None = None,
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     seed: int | None = None,
@@ -92,7 +94,7 @@ def hierarchical(
             Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]):
+        resource_init (InitPolicy):
             The initialization policy for the resources. Defaults to "min".
         placement_strategy (PlacementStrategy | None):
             The placement strategy for the infrastructure. Defaults to

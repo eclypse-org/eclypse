@@ -17,6 +17,12 @@ from typing import (
 from eclypse.utils.constants import MIN_LATENCY
 from eclypse.utils.tools import get_bytes_size
 
+MILLISECONDS_PER_SECOND = 1000
+"""Number of milliseconds in one second."""
+
+BYTES_TO_MEGABITS = 8e-6
+"""Conversion factor from bytes to megabits."""
+
 
 @dataclass(slots=True)
 class Route:
@@ -65,9 +71,9 @@ class Route:
             float: The function that computes the cost of the route.
         """
         msg_size = get_bytes_size(msg)
-        return self.processing_time / 1000 + sum(
-            (msg_size * 8 * 1e-6 / link.get("bandwidth", float("inf")))
-            + (link.get("latency", MIN_LATENCY) / 1000)
+        return self.processing_time / MILLISECONDS_PER_SECOND + sum(
+            (msg_size * BYTES_TO_MEGABITS / link.get("bandwidth", float("inf")))
+            + (link.get("latency", MIN_LATENCY) / MILLISECONDS_PER_SECOND)
             for _, _, link in self.hops
         )
 

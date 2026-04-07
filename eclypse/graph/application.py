@@ -9,7 +9,6 @@ from __future__ import annotations
 from functools import cached_property
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 import networkx as nx
@@ -31,6 +30,8 @@ if TYPE_CHECKING:
         NodeView,
     )
 
+    from eclypse.utils.types import InitPolicy
+
     from .assets import Asset
 
 
@@ -49,7 +50,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
         include_default_assets: bool = False,
-        requirement_init: Literal["min", "max"] = "min",
+        requirement_init: InitPolicy = "min",
         flows: list[list[str]] | None = None,
         seed: int | None = None,
     ):
@@ -65,7 +66,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
                 Defaults to False.
-            requirement_init (Literal["min", "max"]):
+            requirement_init (InitPolicy):
                 The initialization of the requirements.
             flows (list[list[str]] | None): The flows of the application.
             seed (int | None): The seed for the random number generator.

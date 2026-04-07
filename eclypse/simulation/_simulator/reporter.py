@@ -14,6 +14,7 @@ from typing import (
 )
 
 from eclypse.utils._logging import logger
+from eclypse.utils.defaults import DEFAULT_REPORT_CHUNK_SIZE
 
 if TYPE_CHECKING:
     from eclypse.report.reporter import Reporter
@@ -28,7 +29,7 @@ class SimulationReporter:
         self,
         report_path: str | Path,
         reporters: dict[str, type[Reporter]],
-        chunk_size: int = 200,
+        chunk_size: int = DEFAULT_REPORT_CHUNK_SIZE,
     ):
         self.chunk_size = chunk_size
         self.report_path = Path(report_path)

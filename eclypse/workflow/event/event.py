@@ -14,7 +14,6 @@ from itertools import product
 from typing import (
     TYPE_CHECKING,
     Any,
-    Literal,
 )
 
 from eclypse.remote import ray_backend
@@ -38,7 +37,10 @@ if TYPE_CHECKING:
         PlacementView,
     )
     from eclypse.simulation._simulator.local import Simulator
-    from eclypse.utils.types import EventType
+    from eclypse.utils.types import (
+        EventType,
+        TriggerCondition,
+    )
     from eclypse.workflow.trigger import Trigger
 
 
@@ -50,7 +52,7 @@ class EclypseEvent:
         name: str,
         event_type: EventType | None = None,
         triggers: list[Trigger] | None = None,
-        trigger_condition: Literal["any", "all"] = "any",
+        trigger_condition: TriggerCondition = "any",
         max_triggers: int = int(MAX_FLOAT),
         role: EventRole = EventRole.EVENT,
         report: str | list[str] | None = None,

@@ -19,7 +19,9 @@ from eclypse.utils.constants import (
     MIN_FLOAT,
     MIN_LATENCY,
     RND_SEED,
+    STOP_EVENT,
 )
+from eclypse.utils.defaults import GML_REPORT_DIR
 
 from . import metric
 
@@ -389,7 +391,7 @@ def featured_bandwidth(
     return resources.get("bandwidth", MIN_BANDWIDTH)
 
 
-@metric.simulation(activates_on="stop")
+@metric.simulation(activates_on=STOP_EVENT)
 def seed(*_) -> str:
     """Return the seed used in the simulation.
 
@@ -402,7 +404,7 @@ def seed(*_) -> str:
     return os.environ[RND_SEED]
 
 
-@metric.simulation(name="step_number", activates_on=[DRIVING_EVENT, "stop"])
+@metric.simulation(name="step_number", activates_on=[DRIVING_EVENT, STOP_EVENT])
 class StepNumber:
     """Return the current step number."""
 
@@ -422,7 +424,7 @@ class StepNumber:
         """
         if event.name == DRIVING_EVENT:
             self.step += 1
-        if event.name == "stop":
+        if event.name == STOP_EVENT:
             return self.step
         return None
 
@@ -448,7 +450,7 @@ class SimulationTime:
         return time() - self.start
 
 
-@metric.application(report="gml", activates_on="stop")
+@metric.application(report=GML_REPORT_DIR, activates_on=STOP_EVENT)
 def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     """Return the application graph to be saved in a GML file.
 
@@ -463,7 +465,7 @@ def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
     return app
 
 
-@metric.infrastructure(report="gml", activates_on="stop")
+@metric.infrastructure(report=GML_REPORT_DIR, activates_on=STOP_EVENT)
 def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
     """Return the infrastructure graph to be saved in a GML file.
 
