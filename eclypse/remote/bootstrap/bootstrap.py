@@ -6,6 +6,10 @@ It contains the configuration for the remote infrastructure.
 
 from __future__ import annotations
 
+from dataclasses import (
+    dataclass,
+    field,
+)
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -22,8 +26,15 @@ if TYPE_CHECKING:
     from eclypse.simulation.config import SimulationConfig
 
 
+@dataclass(slots=True, init=False)
 class RemoteBootstrap:
     """Configuration for the remote infrastructure."""
+
+    _sim_class: Any = field(repr=False)
+    _node_class: Any = field(repr=False)
+    ray_options_factory: RayOptionsFactory
+    env_vars: dict[str, str]
+    node_args: dict[str, Any]
 
     def __init__(
         self,
@@ -45,8 +56,7 @@ class RemoteBootstrap:
         self.ray_options_factory = (
             ray_options_factory if ray_options_factory else RayOptionsFactory()
         )
-
-        self.env_vars: dict[str, str] = {}
+        self.env_vars = {}
         self.node_args = node_args
 
     def build(
@@ -94,9 +104,7 @@ def _create_remote(
         Any: The remote object.
     """
     if remote_cls == "sim-core":
-        from eclypse.simulation._simulator import (  # isort:skip
-            RemoteSimulator as remote_cls,
-        )
+        from eclypse.simulation._simulator import RemoteSimulator as remote_cls
     elif remote_cls == "node-core":
         from eclypse.remote._node import RemoteNode as remote_cls
 
