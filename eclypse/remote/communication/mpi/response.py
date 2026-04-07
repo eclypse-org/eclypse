@@ -3,11 +3,16 @@
 It is used to acknowledge the processing of a message exchange within an MPIRequest.
 """
 
+from dataclasses import (
+    dataclass,
+    field,
+)
 from datetime import datetime
 
 from eclypse.remote.utils import ResponseCode
 
 
+@dataclass(slots=True)
 class Response:
     """Response class.
 
@@ -15,19 +20,11 @@ class Response:
     exchange within an `MPIRequest`.
     """
 
-    def __init__(
-        self,
-        code: ResponseCode = ResponseCode.OK,
-        timestamp: datetime | None = None,
-    ):
-        """Initializes a Response object.
+    code: ResponseCode = ResponseCode.OK
+    """The response code describing the message-processing outcome."""
 
-        Args:
-            code (ResponseCode): The response code.
-            timestamp (datetime.datetime): The timestamp of the response.
-        """
-        self.code = code
-        self.timestamp = timestamp if timestamp is not None else datetime.now()
+    timestamp: datetime = field(default_factory=datetime.now)
+    """The timestamp when the response object was created."""
 
     def __str__(self) -> str:
         """Returns a string representation of the response.

@@ -6,6 +6,10 @@ nodes, and is modelled as a list of hops (node IDs).
 
 from __future__ import annotations
 
+from dataclasses import (
+    dataclass,
+    field,
+)
 from typing import (
     Any,
 )
@@ -14,6 +18,7 @@ from eclypse.utils.constants import MIN_LATENCY
 from eclypse.utils.tools import get_bytes_size
 
 
+@dataclass(slots=True)
 class Route:
     """A route which connects two neighbor services in an application.
 
@@ -22,36 +27,23 @@ class Route:
     hop, and cost of the link).
     """
 
-    def __init__(
-        self,
-        sender_id: str,
-        sender_node_id: str,
-        recipient_id: str,
-        recipient_node_id: str,
-        processing_time: float,
-        hops: list[tuple[str, str, dict[str, Any]]] | None = None,
-    ):
-        """Initializes a Route object.
+    sender_id: str
+    """The ID of the sender service."""
 
-        Args:
-            sender_id (str): The ID of the sender service.
-            sender_node_id (str):
-                The ID of the node where the sender service is deployed.
-            recipient_id (str): The ID of the recipient service.
-            recipient_node_id (str): The ID of the node where the recipient service is \
-                deployed.
-            processing_time (float): The processing time of the nodes traversed by the \
-                route.
-            hops (list[tuple[str, str, dict[str, Any]]] | None): The list \
-                of hops in the route. Each hop is a triplet containing the source node \
-                ID, the target node ID, and the cost of the link. Defaults to None.
-        """
-        self.sender_id = sender_id
-        self.sender_node_id = sender_node_id
-        self.recipient_id = recipient_id
-        self.recipient_node_id = recipient_node_id
-        self.processing_time = processing_time
-        self.hops = hops if hops is not None else []
+    sender_node_id: str
+    """The ID of the infrastructure node hosting the sender service."""
+
+    recipient_id: str
+    """The ID of the recipient service."""
+
+    recipient_node_id: str
+    """The ID of the infrastructure node hosting the recipient service."""
+
+    processing_time: float
+    """The processing time contributed by the nodes traversed by the route."""
+
+    hops: list[tuple[str, str, dict[str, Any]]] = field(default_factory=list)
+    """The ordered infrastructure hops of the route."""
 
     def __len__(self) -> int:
         """Returns the number of hops in the route.
