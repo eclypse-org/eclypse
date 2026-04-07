@@ -13,14 +13,13 @@ from eclypse.utils.constants import (
     LOG_LEVEL,
     RND_SEED,
 )
+from eclypse.utils.defaults import (
+    DEFAULT_RAY_RUNTIME_ENV_VARS,
+    SIMULATION_LOG_FILENAME,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-RUNTIME_ENV_DEFAULTS: dict[str, str] = {
-    "RAY_DEDUP_LOGS": "0",
-    "RAY_COLOR_PREFIX": "1",
-}
 
 
 def build_runtime_env(
@@ -31,12 +30,12 @@ def build_runtime_env(
 ) -> dict[str, str]:
     """Build the environment variables required by a simulation runtime."""
     env_vars = {
-        **RUNTIME_ENV_DEFAULTS,
+        **DEFAULT_RAY_RUNTIME_ENV_VARS,
         RND_SEED: str(seed),
         LOG_LEVEL: log_level,
     }
     if log_to_file:
-        env_vars[LOG_FILE] = str(path / "simulation.log")
+        env_vars[LOG_FILE] = str(path / SIMULATION_LOG_FILENAME)
     return env_vars
 
 

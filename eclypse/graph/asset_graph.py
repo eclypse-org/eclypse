@@ -14,7 +14,6 @@ import random as rnd
 from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 import networkx as nx
@@ -37,6 +36,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.utils._logging import Logger
+    from eclypse.utils.types import InitPolicy
 
 
 class AssetGraph(nx.DiGraph):
@@ -53,7 +53,7 @@ class AssetGraph(nx.DiGraph):
         edge_update_policy: Callable[[EdgeView], None]
         | list[Callable[[EdgeView], None]]
         | None = None,
-        attr_init: Literal["min", "max"] = "min",
+        attr_init: InitPolicy = "min",
         flip_assets: bool = False,
         seed: int | None = None,
     ):
@@ -69,7 +69,7 @@ class AssetGraph(nx.DiGraph):
                 The policy to update the nodes. Defaults to None.
             edge_update_policy (Callable | list[Callable] | None):
                 The policy to update the edges. Defaults to None.
-            attr_init (Literal["min", "max"], optional):
+            attr_init (InitPolicy, optional):
                 The initialization policy for the assets. Defaults to
                 "min".
             flip_assets (bool, optional): Whether to flip the assets. Defaults to False.

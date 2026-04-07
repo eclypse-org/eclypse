@@ -13,6 +13,7 @@ from typing import (
 import aiofiles  # type: ignore[import-untyped]
 
 from eclypse.report.reporter import Reporter
+from eclypse.utils.defaults import JSON_REPORT_DIR
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -28,7 +29,7 @@ class JSONReporter(Reporter):
     def __init__(self, report_path: str | Path):
         """Initialize the JSON reporter."""
         super().__init__(report_path)
-        self.report_path = self.report_path / "json"
+        self.report_path = self.report_path / JSON_REPORT_DIR
         self._files: dict[str, Any] = {}
 
     def report(

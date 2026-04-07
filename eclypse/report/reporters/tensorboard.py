@@ -15,6 +15,7 @@ from typing import (
 )
 
 from eclypse.report.reporter import Reporter
+from eclypse.utils.defaults import TENSORBOARD_REPORT_DIR
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -33,7 +34,7 @@ class TensorBoardReporter(Reporter):
     def __init__(self, report_path: str | Path):
         """Initialize the TensorBoard reporter."""
         super().__init__(report_path)
-        self.report_path = self.report_path / "tensorboard"
+        self.report_path = self.report_path / TENSORBOARD_REPORT_DIR
         self._writer = None
 
     async def init(self):

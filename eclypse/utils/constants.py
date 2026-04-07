@@ -1,59 +1,70 @@
-"""Module containing domain and low-level constants used throughout ECLYPSE.
+"""Domain and low-level constants shared across ECLYPSE."""
 
-Attributes:
-    MIN_FLOAT (float): Minimum float value. Default is ``0.0``
-    MAX_FLOAT (float): Maximum float value. Default is ``1e9``
-    FLOAT_EPSILON (float): Smallest positive float (machine epsilon).
-        Default is ``sys.float_info.min``
-
-    MIN_BANDWIDTH (float): Minimum bandwidth value. Default is ``0.0``
-    MAX_BANDWIDTH (float): Maximum bandwidth value. Default is ``1e9``
-
-    MIN_LATENCY (float): Minimum latency value. Default is ``0.0``
-    MAX_LATENCY (float): Maximum latency value. Default is ``1e9``
-
-    MIN_AVAILABILITY (float): Minimum availability value. Default is ``0.0``
-    MAX_AVAILABILITY (float): Maximum availability value. Default is ``1.0``
-
-    RND_SEED (str): Environment variable key to configure the random seed.
-        Value is ``ECLYPSE_RND_SEED``
-    LOG_LEVEL (str): Environment variable key to configure the logging level.
-        Value is ``ECLYPSE_LOG_LEVEL``
-    LOG_FILE (str): Environment variable key to configure the log file path.
-        Value is ``ECLYPSE_LOG_FILE``
-"""
+from __future__ import annotations
 
 import sys
 
-from eclypse.utils.defaults import (
-    DEFAULT_REPORT_BACKEND,
-    DEFAULT_REPORT_TYPE,
-    get_default_sim_path,
-)
+MIN_FLOAT = 0.0
+"""Smallest domain value accepted by numeric assets."""
 
-MIN_FLOAT, MAX_FLOAT = 0.0, 1e9
+MAX_FLOAT = 1e9
+"""Largest domain value used for bounded numeric defaults."""
+
 FLOAT_EPSILON = sys.float_info.min
+"""Smallest positive representable float."""
 
 RND_SEED = "ECLYPSE_RND_SEED"
+"""Environment variable used to seed deterministic randomness."""
+
 LOG_LEVEL = "ECLYPSE_LOG_LEVEL"
+"""Environment variable used to configure the logger level."""
+
 LOG_FILE = "ECLYPSE_LOG_FILE"
+"""Environment variable used to configure the log file path."""
 
-### Application requirements / Infrastructure resources constants
+MIN_BANDWIDTH = MIN_FLOAT
+"""Lower bound used by bandwidth assets."""
 
-MIN_BANDWIDTH, MAX_BANDWIDTH = MIN_FLOAT, MAX_FLOAT
-MIN_LATENCY, MAX_LATENCY = MIN_FLOAT, MAX_FLOAT
-MIN_AVAILABILITY, MAX_AVAILABILITY = 0.0, 1.0
-COST_RECOMPUTATION_THRESHOLD = 0.05  # 5% threshold to consider recomputation cost
+MAX_BANDWIDTH = MAX_FLOAT
+"""Upper bound used by bandwidth assets."""
 
-### Simulation metrics
+MIN_LATENCY = MIN_FLOAT
+"""Lower bound used by latency assets."""
 
-DRIVING_EVENT = "enact"
+MAX_LATENCY = MAX_FLOAT
+"""Upper bound used by latency assets."""
+
+MIN_AVAILABILITY = 0.0
+"""Lower bound used by availability assets."""
+
+MAX_AVAILABILITY = 1.0
+"""Upper bound used by availability assets."""
+
+COST_RECOMPUTATION_THRESHOLD = 0.05
+"""Relative threshold above which cached path costs are recomputed."""
+
+START_EVENT = "start"
+"""Name of the default simulation start event."""
+
+ENACT_EVENT = "enact"
+"""Name of the default simulation enactment event."""
+
+STEP_EVENT = "step"
+"""Name of the default simulation step event."""
+
+STOP_EVENT = "stop"
+"""Name of the default simulation stop event."""
+
+DRIVING_EVENT = ENACT_EVENT
+"""Name of the default driving event used to advance the simulation."""
 
 __all__ = [
-    "DEFAULT_REPORT_BACKEND",
-    "DEFAULT_REPORT_TYPE",
+    "COST_RECOMPUTATION_THRESHOLD",
     "DRIVING_EVENT",
+    "ENACT_EVENT",
     "FLOAT_EPSILON",
+    "LOG_FILE",
+    "LOG_LEVEL",
     "MAX_AVAILABILITY",
     "MAX_BANDWIDTH",
     "MAX_FLOAT",
@@ -62,5 +73,8 @@ __all__ = [
     "MIN_BANDWIDTH",
     "MIN_FLOAT",
     "MIN_LATENCY",
-    "get_default_sim_path",
+    "RND_SEED",
+    "START_EVENT",
+    "STEP_EVENT",
+    "STOP_EVENT",
 ]

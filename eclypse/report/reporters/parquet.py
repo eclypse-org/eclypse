@@ -12,6 +12,7 @@ from typing import (
 
 from eclypse.report.reporter import Reporter
 from eclypse.report.schema import DEFAULT_REPORT_HEADERS
+from eclypse.utils.defaults import PARQUET_REPORT_DIR
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -27,7 +28,7 @@ class ParquetReporter(Reporter):
     def __init__(self, report_path: str | Path):
         """Initialize the Parquet reporter."""
         super().__init__(report_path)
-        self.report_path = self.report_path / "parquet"
+        self.report_path = self.report_path / PARQUET_REPORT_DIR
         self._partitions: dict[str, int] = {}
         self._pl = None
 

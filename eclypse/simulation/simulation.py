@@ -14,7 +14,12 @@ from eclypse.report import Report
 from eclypse.simulation._simulator.local import Simulator
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils._logging import logger
-from eclypse.utils.constants import DRIVING_EVENT
+from eclypse.utils.constants import (
+    DRIVING_EVENT,
+    START_EVENT,
+    STOP_EVENT,
+)
+from eclypse.utils.defaults import SIMULATION_CONFIG_FILENAME
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -73,11 +78,13 @@ class Simulation:
         if self._sim_config.path is not None:
             self._sim_config.path.mkdir(parents=True, exist_ok=True)
             with open(
-                self._sim_config.path / "config.json", "w", encoding="utf-8"
+                self._sim_config.path / SIMULATION_CONFIG_FILENAME,
+                "w",
+                encoding="utf-8",
             ) as handle:
                 json.dump(self._sim_config.to_dict(), handle, indent=4)
 
-        _local_remote_event_call(self.simulator, self.remote, "start")
+        _local_remote_event_call(self.simulator, self.remote, START_EVENT)
 
     def trigger(self, event_name: str):
         """Fire an event in the simulation."""
@@ -94,7 +101,7 @@ class Simulation:
 
     def stop(self, blocking: bool = True):
         """Stop the simulation."""
-        _local_remote_event_call(self.simulator, self.remote, "stop")
+        _local_remote_event_call(self.simulator, self.remote, STOP_EVENT)
         if blocking:
             self.wait()
 

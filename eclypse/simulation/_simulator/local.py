@@ -30,6 +30,8 @@ from eclypse.utils._logging import (
 from eclypse.utils.constants import (
     FLOAT_EPSILON,
     RND_SEED,
+    START_EVENT,
+    STOP_EVENT,
 )
 from eclypse.workflow.event import EventRole
 
@@ -148,7 +150,10 @@ class Simulator:
             return
 
         self._stop_requested = True
-        asyncio.run_coroutine_threadsafe(self.enqueue_event("stop"), self._event_loop)
+        asyncio.run_coroutine_threadsafe(
+            self.enqueue_event(STOP_EVENT),
+            self._event_loop,
+        )
 
     async def enqueue_event(self, event_name: str, triggered_by: str | None = None):
         """Enqueue an event to be processed by the simulation.
@@ -168,7 +173,7 @@ class Simulator:
             + (f", triggered by '{triggered_by}'" if triggered_by else "")
         )
 
-        if event_name == "stop":
+        if event_name == STOP_EVENT:
             self._status = SimulationState.STOPPING
 
         if not self._events[event_name].is_post_event:
@@ -182,7 +187,7 @@ class Simulator:
         """Run the simulation."""
         try:
             await self._reporter.start(self._event_loop)
-            await self.enqueue_event("start")
+            await self.enqueue_event(START_EVENT)
 
             # Run the simulation
             while self.status == SimulationState.RUNNING or (
@@ -209,7 +214,7 @@ class Simulator:
                 except Exception as e:
                     print_exception(e, self.__class__.__name__)
                     if self.status != SimulationState.STOPPING:
-                        await self.enqueue_event("stop")
+                        await self.enqueue_event(STOP_EVENT)
                 finally:
                     await asyncio.sleep(FLOAT_EPSILON)
         finally:

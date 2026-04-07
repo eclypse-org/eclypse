@@ -1,6 +1,13 @@
 """Package for managing simulation reporters, including the off-the-shelf ones."""
 
 from eclypse.report.reporter import Reporter
+from eclypse.utils.defaults import (
+    CSV_REPORT_DIR,
+    GML_REPORT_DIR,
+    JSON_REPORT_DIR,
+    PARQUET_REPORT_DIR,
+    TENSORBOARD_REPORT_DIR,
+)
 from .csv import CSVReporter
 from .gml import GMLReporter
 from .json import JSONReporter
@@ -20,11 +27,11 @@ def get_default_reporters(
         dict[str, type[Reporter]]: The default reporters.
     """
     default_reporters: dict[str, type[Reporter]] = {
-        "csv": CSVReporter,
-        "gml": GMLReporter,
-        "json": JSONReporter,
-        "parquet": ParquetReporter,
-        "tensorboard": TensorBoardReporter,
+        CSV_REPORT_DIR: CSVReporter,
+        GML_REPORT_DIR: GMLReporter,
+        JSON_REPORT_DIR: JSONReporter,
+        PARQUET_REPORT_DIR: ParquetReporter,
+        TENSORBOARD_REPORT_DIR: TensorBoardReporter,
     }
 
     return (

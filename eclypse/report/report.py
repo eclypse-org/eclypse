@@ -21,10 +21,12 @@ from typing import (
 
 from eclypse.report.backends import get_backend
 from eclypse.report.query import ReportQuery
-from eclypse.utils.constants import MAX_FLOAT
 from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
+    DEFAULT_REPORT_RANGE,
+    DEFAULT_REPORT_STEP,
     DEFAULT_REPORT_TYPE,
+    SIMULATION_CONFIG_FILENAME,
 )
 from eclypse.utils.types import EventType
 
@@ -90,8 +92,8 @@ class Report:
 
     def application(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
         application_ids: str | list[str] | None = None,
     ) -> Any:
@@ -116,8 +118,8 @@ class Report:
 
     def service(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
         application_ids: str | list[str] | None = None,
         service_ids: str | list[str] | None = None,
@@ -145,8 +147,8 @@ class Report:
 
     def interaction(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
         sources: str | list[str] | None = None,
         targets: str | list[str] | None = None,
@@ -177,8 +179,8 @@ class Report:
 
     def infrastructure(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing infrastructure metrics.
@@ -200,8 +202,8 @@ class Report:
 
     def node(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
         node_ids: str | list[str] | None = None,
     ) -> Any:
@@ -226,8 +228,8 @@ class Report:
 
     def link(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
         sources: str | list[str] | None = None,
         targets: str | list[str] | None = None,
@@ -255,8 +257,8 @@ class Report:
 
     def simulation(
         self,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
     ) -> Any:
         """Return a filtered DataFrame containing simulation metrics.
@@ -283,8 +285,8 @@ class Report:
     def get_dataframes(
         self,
         report_types: list[EventType] | None = None,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         event_ids: str | list[str] | None = None,
     ) -> dict[str, Any]:
         """Return multiple report DataFrames for the specified report types.
@@ -321,8 +323,8 @@ class Report:
     def frame(
         self,
         report_type: EventType,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         **kwargs: Any,
     ) -> Any:
         """Return a frame for the given report type with range and extra filters.
@@ -360,8 +362,8 @@ class Report:
     def filter(
         self,
         df: Any,
-        report_range: tuple[int, int] = (0, int(MAX_FLOAT)),
-        report_step: int = 1,
+        report_range: tuple[int, int] = DEFAULT_REPORT_RANGE,
+        report_step: int = DEFAULT_REPORT_STEP,
         **kwargs: Any,
     ) -> Any:
         """Filter a DataFrame by n_event range or step and optional equality filters.
@@ -414,7 +416,7 @@ class Report:
             json.JSONDecodeError: If the JSON file is invalid.
         """
         if self._config is None:
-            file_path = self._sim_path / "config.json"
+            file_path = self._sim_path / SIMULATION_CONFIG_FILENAME
             with open(file_path, encoding="utf-8") as config_file:
                 self._config = json.load(config_file)
         return self._config
@@ -431,7 +433,7 @@ class Report:
         if report_format is not None:
             return report_format
 
-        config_path = self._sim_path / "config.json"
+        config_path = self._sim_path / SIMULATION_CONFIG_FILENAME
         if config_path.exists():
             with open(config_path, encoding="utf-8") as config_file:
                 self._config = json.load(config_file)

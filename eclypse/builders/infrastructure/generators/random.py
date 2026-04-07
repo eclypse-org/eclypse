@@ -15,7 +15,6 @@ from __future__ import annotations
 
 from typing import (
     TYPE_CHECKING,
-    Literal,
 )
 
 import networkx as nx
@@ -34,6 +33,7 @@ if TYPE_CHECKING:
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
+    from eclypse.utils.types import InitPolicy
 
 
 def random(
@@ -47,7 +47,7 @@ def random(
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
     strict: bool = False,
-    resource_init: Literal["min", "max"] = "min",
+    resource_init: InitPolicy = "min",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
@@ -74,7 +74,7 @@ def random(
             Whether to include the default assets. Defaults to False.
         strict (bool): If True, raises an error if the asset values are not \
             consistent with their spaces. Defaults to False.
-        resource_init (Literal["min", "max"]):
+        resource_init (InitPolicy):
             The initialization policy for the resources. Defaults to "min".
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             The algorithm to compute the paths between nodes. Defaults to

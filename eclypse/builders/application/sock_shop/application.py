@@ -16,10 +16,12 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Literal,
+    get_args,
 )
 
 from eclypse.graph import Application
 from eclypse.utils.tools import prune_assets
+from eclypse.utils.types import CommunicationInterface
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -32,17 +34,22 @@ if TYPE_CHECKING:
     )
 
     from eclypse.graph.assets import Asset
+    from eclypse.utils.types import InitPolicy
+
+
+SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface.__value__)
+"""Supported remote communication interfaces for the Sock Shop builders."""
 
 
 def get_sock_shop(
     application_id: str = "SockShop",
-    communication_interface: Literal["mpi", "rest"] | None = None,
+    communication_interface: CommunicationInterface | None = None,
     node_update_policy: Callable[[NodeView], None] | None = None,
     edge_update_policy: Callable[[EdgeView], None] | None = None,
     node_assets: dict[str, Asset] | None = None,
     edge_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
-    requirement_init: Literal["min", "max"] = "min",
+    requirement_init: InitPolicy = "min",
     flows: Literal["default"] | list[list[str]] = "default",
     seed: int | None = None,
 ) -> Application:
@@ -50,7 +57,7 @@ def get_sock_shop(
 
     Args:
         application_id (str): The ID of the application.
-        communication_interface (Literal["mpi", "rest"] | None):
+        communication_interface (CommunicationInterface | None):
             The communication interface.
         node_update_policy (Callable[[NodeView], None] | None):
             A function to update the nodes.
@@ -60,8 +67,7 @@ def get_sock_shop(
         edge_assets (dict[str, Asset] | None): The assets of the edges.
         include_default_assets (bool):
             Whether to include the default assets. Default is False.
-        requirement_init (Literal["min", "max"]):
-            The initialization of the requirements.
+        requirement_init (InitPolicy): The initialization of the requirements.
         flows (Literal["default"] | list[list[str]]): The flows of the application.
         seed (int | None): The seed for the random number generator.
 
@@ -113,7 +119,7 @@ def get_sock_shop(
         def id_fn(service):
             return service
 
-    elif communication_interface in ["mpi", "rest"]:
+    elif communication_interface in SUPPORTED_COMMUNICATION_INTERFACES:
         add_fn = app.add_service  # type: ignore[assignment]
         if communication_interface == "mpi":
             from . import mpi_services as services

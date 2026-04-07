@@ -1,30 +1,4 @@
-"""Module containing type aliases used throughout the ECLYPSE package.
-
-Attributes:
-    PrimitiveType (type alias): Type alias for primitive types.\
-        Possible values are ``int``, ``float``, ``str``, ``bool``, ``list``,\
-        ``tuple``, ``dict``, ``set``.
-    CascadeTriggerType (type alias): Type alias for cascade trigger types.\
-        Possible values are:
-        - ``str``: CascadeTrigger
-        - ``tuple[str, int]``: PeriodicCascadeTrigger
-        - ``tuple[str, list[int]]``: ScheduledCascadeTrigger
-        - ``tuple[str, float]``: RandomCascadeTrigger
-    ActivatesOnType (type alias): Type alias for the activates on types.\
-        It can be a single `CascadeTriggerType` or a list of them.
-    HTTPMethodLiteral (Literal): Literal type for HTTP methods.\
-        Possible values are ``"GET"``, ``"POST"``, ``"PUT"``, ``"DELETE"``.
-    ConnectivityFn (Callable): Type alias for the connectivity function.\
-        It takes two lists of strings and returns a generator of tuples of strings.
-    EventType (Literal): Literal type for the event types.\
-        Possible values are ``"application"``, ``"infrastructure"``, ``"service"``,\
-        ``"interaction"``, ``"node"``, ``"link"``, ``"simulation"``.
-    ReportBackend (Literal): Literal type for report backends.\
-        Possible values are ``"pandas"``, ``"polars"``, ``"polars_lazy"``.
-    LogLevel (Literal): Literal type for the log levels.\
-        Possible values are ``"TRACE"``, ``"DEBUG"``, ``"ECLYPSE"``, ``"INFO"``,\
-        ``"SUCCESS"``, ``"WARNING"``, ``"ERROR"``, ``"CRITICAL"``.
-"""
+"""Shared type aliases used throughout ECLYPSE."""
 
 from __future__ import annotations
 
@@ -32,32 +6,34 @@ from collections.abc import (
     Callable,
     Generator,
 )
-from typing import (
-    Literal,
-)
+from typing import Literal
 
 type PrimitiveType = int | float | str | bool | list | tuple | dict | set
+"""Type alias for primitive serialisable values used in payloads and assets."""
 
 type CascadeTriggerType = (
-    str  # CascadeTrigger
-    | tuple[str, int]  # PeriodicCascadeTrigger
-    | tuple[str, list[int]]  # ScheduledCascadeTrigger
-    | tuple[str, float]  # RandomCascadeTrigger
+    str | tuple[str, int] | tuple[str, list[int]] | tuple[str, float]
 )
+"""Type alias describing the supported cascade-trigger declarations."""
+
 type ActivatesOnType = CascadeTriggerType | list[CascadeTriggerType]
+"""Type alias for one or more activation declarations."""
 
-HTTPMethodLiteral = Literal[
-    "GET",
-    "POST",
-    "PUT",
-    "DELETE",
-]
+type TriggerCondition = Literal["any", "all"]
+"""Type alias for the condition used to combine trigger states."""
 
-ConnectivityFn = Callable[
+type HTTPMethodLiteral = Literal["GET", "POST", "PUT", "DELETE"]
+"""Type alias for supported HTTP methods."""
+
+type CommunicationInterface = Literal["mpi", "rest"]
+"""Type alias for the supported remote communication interfaces."""
+
+type ConnectivityFn = Callable[
     [list[str], list[str]], Generator[tuple[str, str], None, None]
 ]
+"""Type alias for functions generating graph connectivity pairs."""
 
-EventType = Literal[
+type EventType = Literal[
     "application",
     "infrastructure",
     "service",
@@ -66,20 +42,18 @@ EventType = Literal[
     "link",
     "simulation",
 ]
+"""Type alias for the supported event target scopes."""
 
-ReportFormat = Literal[
-    "csv",
-    "parquet",
-    "json",
-]
+type InitPolicy = Literal["min", "max"]
+"""Type alias for resource and requirement initialisation policies."""
 
-ReportBackend = Literal[
-    "pandas",
-    "polars",
-    "polars_lazy",
-]
+type ReportFormat = Literal["csv", "parquet", "json"]
+"""Type alias for the supported report storage formats."""
 
-LogLevel = Literal[
+type ReportBackend = Literal["pandas", "polars", "polars_lazy"]
+"""Type alias for the supported frame backends used by reports."""
+
+type LogLevel = Literal[
     "TRACE",
     "DEBUG",
     "ECLYPSE",
@@ -89,3 +63,4 @@ LogLevel = Literal[
     "ERROR",
     "CRITICAL",
 ]
+"""Type alias for the supported logger levels."""

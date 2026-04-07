@@ -21,7 +21,10 @@ if TYPE_CHECKING:
         Callable,
     )
 
-    from eclypse.utils.types import ActivatesOnType
+    from eclypse.utils.types import (
+        ActivatesOnType,
+        TriggerCondition,
+    )
     from eclypse.workflow.trigger import Trigger
 
 
@@ -33,7 +36,7 @@ def simulation(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
@@ -95,7 +98,7 @@ def application(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
@@ -155,7 +158,7 @@ def service(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
@@ -215,7 +218,7 @@ def interaction(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
@@ -275,7 +278,7 @@ def infrastructure(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,
@@ -335,7 +338,7 @@ def node(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     verbose: bool = False,
 ) -> Callable:
@@ -392,7 +395,7 @@ def link(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     report: str | list[str] | None = DEFAULT_REPORT_TYPE,
     remote: bool = False,
     verbose: bool = False,

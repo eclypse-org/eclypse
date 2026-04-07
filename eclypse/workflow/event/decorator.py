@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     from eclypse.utils.types import (
         ActivatesOnType,
         EventType,
+        TriggerCondition,
     )
     from eclypse.workflow.trigger.trigger import Trigger
 
@@ -40,7 +41,7 @@ def event(
     trigger_every_ms: float | None = None,
     max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
-    trigger_condition: str | None = "any",
+    trigger_condition: TriggerCondition | None = "any",
     role: EventRole = EventRole.EVENT,
     report: str | list[str] | None = None,
     remote: bool = False,

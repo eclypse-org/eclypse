@@ -2,6 +2,13 @@
 
 from __future__ import annotations
 
+from eclypse.utils.constants import (
+    DRIVING_EVENT,
+    ENACT_EVENT,
+    START_EVENT,
+    STEP_EVENT,
+    STOP_EVENT,
+)
 from eclypse.workflow.event import EclypseEvent
 from eclypse.workflow.trigger import CascadeTrigger
 
@@ -12,7 +19,7 @@ class StartEvent(EclypseEvent):
     def __init__(self):
         """Initialize the start event."""
         super().__init__(
-            name="start",
+            name=START_EVENT,
             verbose=True,
         )
 
@@ -30,7 +37,7 @@ class EnactEvent(EclypseEvent):
     def __init__(self):
         """Initialize the enact event."""
         super().__init__(
-            name="enact",
+            name=ENACT_EVENT,
             verbose=True,
         )
 
@@ -53,8 +60,8 @@ class StepEvent(EclypseEvent):
     def __init__(self):
         """Initialize the step event."""
         super().__init__(
-            name="step",
-            triggers=[CascadeTrigger("enact")],
+            name=STEP_EVENT,
+            triggers=[CascadeTrigger(DRIVING_EVENT)],
             verbose=True,
         )
 
@@ -78,7 +85,7 @@ class StopEvent(EclypseEvent):
     def __init__(self):
         """Initialize the stop event."""
         super().__init__(
-            name="stop",
+            name=STOP_EVENT,
             verbose=True,
         )
 
