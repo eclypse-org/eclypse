@@ -1,3 +1,24 @@
+## 0.8.4 (2026-04-07)
+
+### Fix
+
+- Keep services running on missing routes
+- Add context to remote operation failures
+
+### Refactor
+
+- Centralise shared defaults and type aliases
+- Convert remote value objects to dataclasses
+- Introduce explicit event roles and report queries
+- Rename report schema module
+- Modernise typing annotations across the codebase
+- Simplify builder exports and restore link naming
+- Align remote communication naming and request handling
+- Use explicit placement reset and deployment state
+- Simplify report frame loading and reporter initialization
+- Separate runtime preparation from simulation configuration
+- Clarify event payload helpers and simulator attachment
+
 ## 0.8.3 (2026-03-27)
 
 ### BREAKING CHANGE
