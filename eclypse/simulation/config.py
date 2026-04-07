@@ -179,7 +179,7 @@ class SimulationConfig:
             raise RuntimeError("Reporters must be resolved before dependency checks.")
 
         if TENSORBOARD_REPORT_DIR in self.reporters:
-            _require_module("tensorboard", extras_name="tboard")
+            _require_module("tensorboardX", extras_name="tboard")
         if PARQUET_REPORT_DIR in self.reporters:
             _require_module("polars")
         if self.remote is not None:
@@ -309,7 +309,12 @@ class SimulationConfig:
             "log_level": self.log_level,
             "report_chunk_size": self.report_chunk_size,
             "report_format": self.report_format,
-            "report_backend": self.report_backend,
+            "report_backend": (
+                self.report_backend.name
+                if self.report_backend is not None
+                and not isinstance(self.report_backend, str)
+                else self.report_backend
+            ),
             "remote": bool(self.remote),
         }
 
