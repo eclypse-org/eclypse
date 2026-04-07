@@ -8,6 +8,7 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 - [Conventional Commits](#conventional-commits)
 - [Code Formatting](#code-formatting)
 - [Linting](#linting)
+- [Testing](#testing)
 - [Docstring Checks](#docstring-checks)
 - [Pre-commit Hooks](#pre-commit-hooks)
 
@@ -86,6 +87,16 @@ ruff check --fix
 
 Ruff will detect and correct most common style, import, and docstring issues automatically.
 Please make sure that all warnings and errors are resolved before committing your changes.
+
+## Testing
+
+We use `pytest` for the test suite.
+
+Useful command:
+
+```bash
+make test
+```
 
 ## Pre-commit Hooks
 
