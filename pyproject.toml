@@ -29,7 +29,7 @@ Repository = "https://github.com/eclypse-org/eclypse"
 
 [project.optional-dependencies]
 remote = ["ray[default] (>=2.54.0,<3.0.0)"]
-tboard = ["tensorboardx (>=2.6.4,<3.0.0)"]
+tboard = ["tensorboardx (>=2.6.5,<3.0.0)"]
 
 
 # Dependency Groups
@@ -51,8 +51,11 @@ deploy = [
 
 test = [
     "pytest (>=9.0.2,<10.0.0)",
+    "pytest-asyncio (>=1.2.0,<2.0.0)",
     "pytest-cov (>=7.0.0,<8.0.0)",
     "pytest-xdist (>=3.8.0,<4.0.0)",
+    "pandas (>=3.0.2,<4.0.0)",
+    "tensorboardx (>=2.6.5,<3.0.0)",
 ]
 
 docs = [
@@ -80,9 +83,6 @@ optional = true
 
 [tool.poetry.group.docs]
 optional = true
-
-# [tool.poetry.group.docs.dependencies]
-# sphinx = { version = ">=9.1.0,<10.0.0", python = ">=3.12,<3.14" }
 
 
 # Build backend
@@ -117,5 +117,24 @@ skip = ["__init__.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov-report=xml --cov-report=term-missing --cov"
-filterwarnings = ["ignore::DeprecationWarning"]
+addopts = "--cov=eclypse --cov-report=xml --cov-report=term-missing"
+asyncio_mode = "auto"
+filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
+markers = [
+    "integration: end-to-end integration tests",
+    "emulation: ray-backed remote integration tests",
+    "extras: tests that exercise optional dependencies",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["eclypse"]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+exclude_also = [
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+    "raise NotImplementedError",
+]

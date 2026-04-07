@@ -1,6 +1,6 @@
 target-version = "py312"
 
-include = ["eclypse/**/*.py"]
+include = ["eclypse/**/*.py", "tests/**/*.py"]
 line-length = 88
 indent-width = 4
 
@@ -13,7 +13,6 @@ exclude = [
     ".venv",
     "build",
     "dist",
-    "tests",
     "examples",
     "docs",
 ]
@@ -41,15 +40,7 @@ select = [
     "D",
 ]
 
-ignore = [
-    "D203",
-    "D213",
-    "D100",
-    "D104",
-    "E501",
-    "PLC0415",
-    "UP008",
-]
+ignore = ["D203", "D213", "D100", "D104", "E501", "PLC0415", "UP008"]
 
 fixable = ["ALL"]
 
@@ -84,4 +75,17 @@ banned-module-level-imports = ["ray", "tensorboardX"]
 
 [lint.per-file-ignores]
 "**/__init__.py" = ["I001"] # allow re-exported symbols
-"tests/**" = ["D"]
+"tests/**" = [
+    "D",
+    "ARG005",
+    "B018",
+    "C901",
+    "PLR0915",
+    "PLR1711",
+    "PLR2004",
+    "PLW0108",
+    "RUF012",
+    "RUF100",
+    "TC003",
+    "UP037",
+]
