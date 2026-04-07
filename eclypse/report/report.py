@@ -16,11 +16,11 @@ from typing import (
     TYPE_CHECKING,
     Any,
     cast,
-    get_args,
 )
 
 from eclypse.report.backends import get_backend
 from eclypse.report.query import ReportQuery
+from eclypse.report.schema import DEFAULT_REPORT_HEADERS
 from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
     DEFAULT_REPORT_RANGE,
@@ -28,13 +28,15 @@ from eclypse.utils.defaults import (
     DEFAULT_REPORT_TYPE,
     SIMULATION_CONFIG_FILENAME,
 )
-from eclypse.utils.types import EventType
 
 if TYPE_CHECKING:
     from eclypse.report.backend import FrameBackend
-    from eclypse.utils.types import ReportFormat
+    from eclypse.utils.types import (
+        EventType,
+        ReportFormat,
+    )
 
-REPORT_TYPES = list(get_args(EventType))
+REPORT_TYPES: list[EventType] = cast("list[EventType]", list(DEFAULT_REPORT_HEADERS))
 
 
 class Report:
@@ -275,7 +277,7 @@ class Report:
             "simulation",
             report_range=report_range,
             report_step=report_step,
-            event_ids=event_ids,
+            event_id=event_ids,
         )
 
     def query(self, report_type: EventType) -> ReportQuery:
@@ -315,7 +317,7 @@ class Report:
                 report_type,
                 report_range=report_range,
                 report_step=report_step,
-                event_ids=event_ids,
+                event_id=event_ids,
             )
             for report_type in report_types
         }

@@ -32,8 +32,8 @@ class FrontendService(Service):
         user_r = await self.rest.get("UserService/user", user_id=self.user_id)
         cart_r = await self.rest.get("CartService/cart")
 
-        products = catalog_r.data.get("products", [])
-        items = cart_r.data.get("items", [])
+        products = catalog_r.body.get("products", [])
+        items = cart_r.body.get("items", [])
         user_data = user_r.body
         self.logger.info(f"{self.id} - {user_data}")
 

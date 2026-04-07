@@ -56,7 +56,8 @@ class GMLReporter(Reporter):
             graph = d[-1]
             if not isinstance(graph, nx.DiGraph):
                 continue
-            name = f"{callback.name}{'-' + graph.id if hasattr(graph, 'id') else ''}"
+            graph_id = getattr(graph, "id", None) or graph.graph.get("id")
+            name = f"{callback.name}{'-' + graph_id if graph_id else ''}"
             yield (name, graph)
 
     async def write(self, _: str, data: list[tuple[str, nx.DiGraph]]):

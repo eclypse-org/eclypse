@@ -246,7 +246,7 @@ class Placement:
         return {
             (source, target): self.application.edge_assets.aggregate(
                 *(
-                    self.application.edges[s][t]
+                    self.application.edges[s, t]
                     for s, t in services
                     if self.application.has_edge(s, t)  # check if interaction exists
                 )
