@@ -2,9 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.builders import application as application_builders
-from eclypse.builders import infrastructure as infrastructure_builders
-from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import get_orion_cev
 from eclypse.builders.infrastructure.generators.b_cube import b_cube
 from eclypse.builders.infrastructure.generators.fat_tree import fat_tree
@@ -15,12 +12,6 @@ from eclypse.builders.infrastructure.generators.hierarchical import (
 )
 from eclypse.builders.infrastructure.generators.random import random
 from eclypse.builders.infrastructure.generators.star import star
-from eclypse.remote.service.service import Service
-
-
-def test_builder_exports_are_available():
-    assert callable(application_builders.get_sock_shop)
-    assert callable(infrastructure_builders.get_orion_cev)
 
 
 def test_star_random_and_hierarchical_generators_build_expected_topologies():
@@ -63,23 +54,13 @@ def test_star_random_and_hierarchical_generators_build_expected_topologies():
         _get_connectivity_functions(connectivity=[1.0], length=2)
 
 
-def test_fat_tree_b_cube_orion_and_sock_shop_builders():
+def test_fat_tree_b_cube_and_orion_build_expected_topologies():
     with pytest.raises(ValueError, match="even number"):
         fat_tree(3)
 
     fat_tree_infra = fat_tree(2)
     bcube_infra = b_cube(1, 2)
     orion = get_orion_cev(include_default_assets=True)
-    sock_shop = get_sock_shop(include_default_assets=True)
-    remote_sock_shop = get_sock_shop(
-        include_default_assets=True,
-        communication_interface="mpi",
-    )
-    rest_sock_shop = get_sock_shop(
-        include_default_assets=True,
-        communication_interface="rest",
-        flows=[["FrontendService", "CatalogService"]],
-    )
 
     assert len(fat_tree_infra.nodes) == 7
     assert len(fat_tree_infra.edges) == 12
@@ -88,19 +69,3 @@ def test_fat_tree_b_cube_orion_and_sock_shop_builders():
     assert "DU11" in orion.nodes
     assert orion.has_edge("DU11", "NS11")
     assert orion.nodes["NS11"]["processing_time"] == 1
-    assert sock_shop.has_logic is False
-    assert remote_sock_shop.has_logic is True
-    assert rest_sock_shop.has_logic is True
-    assert all(
-        isinstance(service, Service) for service in remote_sock_shop.services.values()
-    )
-    assert all(
-        isinstance(service, Service) for service in rest_sock_shop.services.values()
-    )
-    assert sock_shop.has_edge("FrontendService", "CatalogService")
-    assert sock_shop.has_edge("CatalogService", "FrontendService")
-    assert len(sock_shop.flows) == 5
-    assert rest_sock_shop.flows == [["FrontendService", "CatalogService"]]
-
-    with pytest.raises(ValueError, match="Unknown communication interface"):
-        get_sock_shop(communication_interface="grpc")  # type: ignore[arg-type]

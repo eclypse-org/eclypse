@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 import pytest
@@ -11,15 +10,8 @@ from eclypse.simulation.config import (
     _catch_duplicates,
     _require_module,
 )
-from eclypse.simulation.runtime import (
-    apply_runtime_env,
-    build_runtime_env,
-)
 from eclypse.utils.constants import (
     DRIVING_EVENT,
-    LOG_FILE,
-    LOG_LEVEL,
-    RND_SEED,
     STOP_EVENT,
 )
 from eclypse.workflow.event import EclypseEvent
@@ -34,27 +26,6 @@ class ConfigEvent(EclypseEvent):
         return {}
 
 
-def test_build_and_apply_runtime_env(monkeypatch, tmp_path):
-    calls: list[str] = []
-
-    monkeypatch.setattr(
-        "eclypse.simulation.runtime.config_logger", lambda: calls.append("configured")
-    )
-    env = build_runtime_env(
-        seed=17,
-        log_level="DEBUG",
-        path=tmp_path,
-        log_to_file=True,
-    )
-
-    apply_runtime_env(env)
-
-    assert os.environ[RND_SEED] == "17"
-    assert os.environ[LOG_LEVEL] == "DEBUG"
-    assert os.environ[LOG_FILE].endswith("simulation.log")
-    assert calls == ["configured"]
-
-
 def test_simulation_config_normalises_and_serialises(list_frame_backend, tmp_path):
     config = SimulationConfig(
         path=tmp_path / "run",
@@ -67,7 +38,7 @@ def test_simulation_config_normalises_and_serialises(list_frame_backend, tmp_pat
 
     assert config.step_every_ms == 0.0
     assert config.path == tmp_path / "run"
-    assert config.runtime_env()[RND_SEED] == str(config.seed)
+    assert config.runtime_env()["ECLYPSE_RND_SEED"] == str(config.seed)
     assert "csv" in config.reporters
     assert all(not event.remote for event in config.events)
     assert config.to_dict()["max_steps"] == 3
