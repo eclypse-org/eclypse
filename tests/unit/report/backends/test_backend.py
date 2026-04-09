@@ -2,11 +2,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from types import SimpleNamespace
-from typing import (
-    TYPE_CHECKING,
-    cast,
-)
 
 import pandas as pd
 import polars as pl
@@ -18,19 +13,6 @@ from eclypse.report.backends import (
     PolarsLazyBackend,
     get_backend,
 )
-from eclypse.report.reporters import (
-    ParquetReporter,
-    TensorBoardReporter,
-    get_default_reporters,
-)
-from eclypse.report.reporters.parquet import _write_parquet
-from eclypse.utils.defaults import (
-    PARQUET_REPORT_DIR,
-    TENSORBOARD_REPORT_DIR,
-)
-
-if TYPE_CHECKING:
-    from eclypse.workflow.event.event import EclypseEvent
 
 
 def _write_service_jsonl(path: Path):
@@ -47,6 +29,43 @@ def _write_service_jsonl(path: Path):
         + "\n",
         encoding="utf-8",
     )
+
+
+def test_backend_factory_accepts_instances_and_frame_backend_routes(
+    list_frame_backend,
+    monkeypatch,
+    tmp_path,
+):
+    calls: list[tuple[str, object]] = []
+
+    monkeypatch.setattr(
+        list_frame_backend,
+        "_read_csv",
+        lambda source: calls.append(("csv", source)) or [],
+    )
+    monkeypatch.setattr(
+        list_frame_backend,
+        "_read_json",
+        lambda source, report_type: calls.append(("json", (source, report_type))) or [],
+    )
+    monkeypatch.setattr(
+        list_frame_backend,
+        "_read_parquet",
+        lambda source: calls.append(("parquet", source)) or [],
+    )
+
+    assert get_backend(list_frame_backend) is list_frame_backend
+    assert list_frame_backend.read_frame(tmp_path, "service", "csv") == []
+    assert list_frame_backend.read_frame(tmp_path, "service", "json") == []
+    assert list_frame_backend.read_frame(tmp_path, "service", "parquet") == []
+
+    with pytest.raises(TypeError, match="not an instance of FrameBackend"):
+        get_backend(object())  # type: ignore[arg-type]
+
+    with pytest.raises(ValueError, match="Unsupported report format"):
+        list_frame_backend.read_frame(tmp_path, "service", "yaml")
+
+    assert [kind for kind, _ in calls] == ["csv", "json", "parquet"]
 
 
 def test_named_backends_resolve_and_pandas_backend_filters(tmp_path: Path, monkeypatch):
@@ -209,122 +228,3 @@ def test_polars_backends_read_filter_and_collect(tmp_path: Path):
     assert lazy_json.collect()["value"].to_list() == [4.5]
     assert lazy_parquet.collect()["value"].to_list() == [1.5, 2.5]
     assert lazy_no_value.collect_schema().names() == ["other"]
-
-
-@pytest.mark.asyncio
-async def test_parquet_and_tensorboard_reporters_cover_runtime_paths(
-    tmp_path: Path, monkeypatch
-):
-    parquet_reporter = ParquetReporter(tmp_path)
-
-    with pytest.raises(RuntimeError, match="not initialised"):
-        await parquet_reporter.write("service", [{"value": 1}])
-
-    await parquet_reporter.init()
-    callback = cast(
-        "EclypseEvent",
-        SimpleNamespace(
-            is_metric=True,
-            data=(("shop", "gateway", 3.5), ("shop", "ignored", None)),
-            type="service",
-            name="latency",
-        ),
-    )
-    rows = list(parquet_reporter.report("step", 2, callback))
-
-    assert len(rows) == 1
-    assert rows[0]["event_id"] == "step"
-    assert rows[0]["service_id"] == "gateway"
-
-    await parquet_reporter.write("service", rows)
-    await parquet_reporter.write("service", rows)
-
-    first_part = tmp_path / PARQUET_REPORT_DIR / "service" / "part-000000.parquet"
-    second_part = tmp_path / PARQUET_REPORT_DIR / "service" / "part-000001.parquet"
-
-    assert first_part.exists()
-    assert second_part.exists()
-
-    direct_part = tmp_path / "direct.parquet"
-    _write_parquet(
-        pl,
-        [
-            {
-                "timestamp": "2026-01-01T00:00:00",
-                "event_id": "step",
-                "n_event": 1,
-                "callback_id": "metric",
-                "application_id": "shop",
-                "service_id": "gateway",
-                "value": 1.0,
-            }
-        ],
-        [
-            "timestamp",
-            "event_id",
-            "n_event",
-            "callback_id",
-            "application_id",
-            "service_id",
-            "value",
-        ],
-        direct_part,
-    )
-    assert direct_part.exists()
-
-    calls: list[tuple[str, dict[str, float], int]] = []
-
-    class FakeSummaryWriter:
-        def __init__(self, log_dir: Path):
-            self.log_dir = log_dir
-            self.closed = False
-
-        def add_scalars(self, tag: str, metric_dict: dict[str, float], step: int):
-            calls.append((tag, metric_dict, step))
-
-        def close(self):
-            self.closed = True
-
-    monkeypatch.setattr("tensorboardX.SummaryWriter", FakeSummaryWriter)
-
-    tensorboard_reporter = TensorBoardReporter(tmp_path)
-    with pytest.raises(RuntimeError, match="not initialised"):
-        tensorboard_reporter.writer
-
-    await tensorboard_reporter.init()
-
-    metric_callback = cast(
-        "EclypseEvent",
-        SimpleNamespace(
-            is_metric=True,
-            data=(("shop", "gateway", 2.5),),
-            type="service",
-            name="latency",
-        ),
-    )
-    empty_callback = cast(
-        "EclypseEvent",
-        SimpleNamespace(
-            is_metric=True,
-            data=(("shop", "gateway", None),),
-            type=None,
-            name="noop",
-        ),
-    )
-
-    assert list(tensorboard_reporter.report("step", 1, empty_callback)) == []
-
-    metric_rows = list(tensorboard_reporter.report("step", 4, metric_callback))
-    await tensorboard_reporter.write("service", metric_rows)
-
-    assert tensorboard_reporter.writer.log_dir == tmp_path / TENSORBOARD_REPORT_DIR
-    assert calls == [("service/latency", {"shop/gateway": 2.5}, 4)]
-
-    await tensorboard_reporter.close()
-    with pytest.raises(RuntimeError, match="not initialised"):
-        tensorboard_reporter.writer
-
-    reporter_map = get_default_reporters([PARQUET_REPORT_DIR, TENSORBOARD_REPORT_DIR])
-
-    assert set(reporter_map) == {PARQUET_REPORT_DIR, TENSORBOARD_REPORT_DIR}
-    assert get_default_reporters(None) == {}

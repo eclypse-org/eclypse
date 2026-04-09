@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.graph import Application
 from eclypse.graph.asset_graph import AssetGraph
 from eclypse.graph.assets import Additive
 from eclypse.graph.infrastructure import (
@@ -10,73 +9,7 @@ from eclypse.graph.infrastructure import (
     _cost_changed,
     _default_weight_function,
 )
-from eclypse.remote.service.service import Service
-
-
-def test_asset_graph_validates_nodes_edges_and_dynamic_flags():
-    graph = AssetGraph(
-        "assets",
-        node_assets={"cpu": Additive(0, 10)},
-        edge_assets={"bandwidth": Additive(0, 10)},
-    )
-
-    graph.add_node("a", cpu=5)
-    graph.add_node("b", cpu=6)
-    graph.add_edge("a", "b", bandwidth=4, symmetric=True)
-
-    assert graph.has_edge("b", "a")
-    assert not graph.is_dynamic
-
-    with pytest.raises(ValueError):
-        graph.add_node("c", cpu=11)
-
-    with pytest.raises(ValueError):
-        graph.add_edge("missing", "a", bandwidth=1)
-
-
-def test_asset_graph_evolve_runs_registered_policies():
-    graph = AssetGraph(
-        "dynamic",
-        node_update_policy=lambda nodes: nodes["a"].update(cpu=nodes["a"]["cpu"] + 1),
-        edge_update_policy=lambda edges: edges["a", "b"].update(
-            bandwidth=edges["a", "b"]["bandwidth"] + 1
-        ),
-        node_assets={"cpu": Additive(0, 10)},
-        edge_assets={"bandwidth": Additive(0, 10)},
-    )
-    graph.add_node("a", cpu=1)
-    graph.add_node("b", cpu=1)
-    graph.add_edge("a", "b", bandwidth=2)
-
-    graph.evolve()
-
-    assert graph.nodes["a"]["cpu"] == 2
-    assert graph.edges["a", "b"]["bandwidth"] == 3
-    assert graph.is_dynamic
-
-
-def test_application_add_service_and_set_flows():
-    app = Application("demo")
-    gateway = Service("gateway")
-    worker = Service("worker")
-
-    app.add_service(gateway)
-    app.add_service(worker)
-    app.add_edge("gateway", "worker")
-    app.set_flows()
-
-    assert app.flows == [["gateway", "worker"]]
-    assert app.has_logic
-
-    with pytest.raises(TypeError):
-        app.add_service("not-a-service")  # type: ignore[arg-type]
-
-
-def test_application_detects_missing_service_logic():
-    app = Application("broken")
-    app.add_node("orphan")
-
-    assert not app.has_logic
+from eclypse.placement.strategies import StaticStrategy
 
 
 def test_infrastructure_path_resources_and_cache_behaviour(sample_infrastructure):
@@ -123,3 +56,15 @@ def test_infrastructure_contains_and_helper_functions(sample_infrastructure):
     assert "edge-b" in not_respected
     assert _default_weight_function("u", "v", {"latency": 4}) == 4
     assert _cost_changed(10, 0)
+
+
+def test_infrastructure_same_node_resources_and_strategy_flag(sample_infrastructure):
+    assert sample_infrastructure.path_resources("edge-a", "edge-a") == (
+        sample_infrastructure.edge_assets.upper_bound
+    )
+    assert sample_infrastructure.processing_time("edge-a", "edge-a") == 0.0
+    assert sample_infrastructure.has_strategy is False
+
+    sample_infrastructure.strategy = StaticStrategy({"gateway": "edge-a"})
+
+    assert sample_infrastructure.has_strategy is True

@@ -110,3 +110,27 @@ def test_manager_handles_empty_mappings_and_respected_audits(
 
     assert standalone.mapping == {}
     assert placement.reset_requested is False
+
+
+def test_placement_manager_register_get_generate_and_mapping_phase(
+    sample_infrastructure,
+    sample_application,
+    static_strategy,
+):
+    manager = PlacementManager(sample_infrastructure)
+    manager.register(sample_application, static_strategy)
+
+    placement = manager.get("shop")
+    manager.generate_mapping(placement)
+    results = list(manager.mapping_phase())
+
+    assert placement.mapping == {"gateway": "edge-a", "worker": "edge-b"}
+    assert results[0][0] is placement
+    assert results[0][1] == []
+
+
+def test_placement_manager_get_raises_for_unknown_application(sample_infrastructure):
+    manager = PlacementManager(sample_infrastructure)
+
+    with pytest.raises(KeyError, match="not found"):
+        manager.get("missing")
