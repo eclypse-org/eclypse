@@ -1,0 +1,5 @@
+FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
+
+RUN pip3 install "poetry==2.3.3"
+
+USER vscode

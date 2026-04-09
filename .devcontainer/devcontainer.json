@@ -1,0 +1,57 @@
+{
+  "name": "Eclypse",
+  "build": {
+    "context": "..",
+    "dockerfile": "Containerfile"
+  },
+  "runArgs": ["--network=host", "--name=eclypse-dev"],
+  "containerEnv": {
+    "POETRY_VIRTUALENVS_CREATE": "true",
+    "POETRY_VIRTUALENVS_PATH": "/home/vscode/.cache/pypoetry/virtualenvs",
+    "POETRY_NO_INTERACTION": "1"
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-python.debugpy",
+        "tamasfe.even-better-toml",
+        "ms-azuretools.vscode-docker"
+      ],
+      "settings": {
+        "python.poetryPath": "/usr/local/bin/poetry",
+        "[python]": { "editor.formatOnSave": true },
+        "python.testing.pytestEnabled": true,
+        "python.testing.pytestArgs": [
+          "--cov=eclypse",
+          "--cov-report=xml",
+          "--cov-report=term-missing"
+        ],
+        "python.terminal.activateEnvironment": true,
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        }
+      }
+    }
+  },
+  "forwardPorts": [8000, 8265],
+  "portsAttributes": {
+    "8000": {
+      "label": "Docs / App Preview",
+      "onAutoForward": "notify"
+    },
+    "8265": {
+      "label": "Ray Dashboard",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "remoteUser": "vscode"
+}
