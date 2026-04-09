@@ -1,4 +1,10 @@
 ---
+ci:
+  autofix_commit_msg: "fix: Apply pre-commit.ci auto fixes"
+  autoupdate_commit_msg: "chore: Update pre-commit hooks"
+  autoupdate_schedule: monthly
+  submodules: false
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -12,7 +18,6 @@ repos:
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
-      - id: forbid-submodules
       - id: requirements-txt-fixer
       - id: trailing-whitespace
 
