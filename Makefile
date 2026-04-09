@@ -13,12 +13,14 @@ setup:
 	python -m pip install --upgrade pip
 	pip install poetry
 	poetry config virtualenvs.create false
+
+setup-build: setup
 	poetry install --with=dev,deploy --no-root
 
+setup-test: setup
+	poetry install --with=test --extras remote --extras tboard --no-root
+
 format:
-# 	docformatter --config pyproject.toml --in-place eclypse
-# 	black --config=pyproject.toml eclypse
-# 	pycln --config=pyproject.toml eclypse
 	isort eclypse
 	ruff check
 	ruff format
