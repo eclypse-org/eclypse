@@ -4,13 +4,22 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 
 ## Table of Contents
 
+- [Dev Containers](#dev-containers)
 - [Pull Requests](#pull-requests)
 - [Conventional Commits](#conventional-commits)
 - [Code Formatting](#code-formatting)
 - [Linting](#linting)
 - [Testing](#testing)
-- [Docstring Checks](#docstring-checks)
 - [Pre-commit Hooks](#pre-commit-hooks)
+
+## Dev Containers
+
+This repository supports Dev Containers through the checked-in
+[`/.devcontainer`](.devcontainer)
+configuration.
+
+If you use VS Code Dev Containers or GitHub Codespaces, you can rely on that
+setup for a reproducible contributor environment.
 
 ## Pull Requests
 
