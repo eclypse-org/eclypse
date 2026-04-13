@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from eclypse.policies.trace_driven import _normalise_records
+from eclypse.policies.trace_driven._helpers import normalise_records
 from eclypse.policies.trace_driven.from_records import from_records
 
 if TYPE_CHECKING:
@@ -54,7 +54,7 @@ def from_dataframe(
         UpdatePolicy: A graph update policy replaying the selected records.
     """
     return from_records(
-        _normalise_records(dataframe),
+        normalise_records(dataframe),
         target=target,
         node_id_column=node_id_column,
         source_column=source_column,
