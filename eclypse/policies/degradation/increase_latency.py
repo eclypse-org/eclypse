@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from dataclasses import (
+    dataclass,
+    field,
+)
 from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import (
@@ -14,6 +18,54 @@ from eclypse.policies._filters import (
 if TYPE_CHECKING:
     from eclypse.policies._filters import EdgeFilter
     from eclypse.utils.types import UpdatePolicy
+
+
+@dataclass(slots=True)
+class IncreaseLatencyPolicy:
+    """Increase a latency-like edge resource over time."""
+
+    rate: float | None = None
+    target: float | None = None
+    epochs: int | None = None
+    latency_key: str = "latency"
+    edge_ids: list[tuple[str, str]] | None = None
+    edge_filter: EdgeFilter | None = None
+    step: int = 0
+    initial_latencies: dict[tuple[str, str], float] = field(default_factory=dict)
+
+    def __post_init__(self):
+        """Validate the latency growth configuration."""
+        _validate_latency_parameters(self.rate, self.target, self.epochs)
+
+    def __call__(self, graph):
+        """Apply the latency increase to the selected edges."""
+        if self.epochs is not None and self.step >= self.epochs:
+            return
+
+        for source, target_node, data in iter_selected_edges(
+            graph,
+            edge_ids=self.edge_ids,
+            edge_filter=self.edge_filter,
+        ):
+            current = ensure_numeric_value(self.latency_key, data[self.latency_key])
+            if self.rate is not None:
+                new_value = current * (1 + self.rate)
+            else:
+                key = (source, target_node)
+                initial_value = self.initial_latencies.setdefault(key, current)
+                progress = min(self.step + 1, self.epochs) / self.epochs
+                new_value = _interpolate_latency(
+                    initial_value,
+                    self.target,
+                    progress,
+                )
+
+            data[self.latency_key] = coerce_numeric_like(
+                data[self.latency_key],
+                clamp(new_value, lower=0.0),
+            )
+
+        self.step += 1
 
 
 def increase_latency(
@@ -43,42 +95,14 @@ def increase_latency(
     Returns:
         UpdatePolicy: A graph update policy increasing the selected latency asset.
     """
-    _validate_latency_parameters(rate, target, epochs)
-
-    step = 0
-    initial_latencies: dict[tuple[str, str], float] = {}
-
-    def policy(graph):
-        nonlocal step
-        if epochs is not None and step >= epochs:
-            return
-
-        for source, target_node, data in iter_selected_edges(
-            graph,
-            edge_ids=edge_ids,
-            edge_filter=edge_filter,
-        ):
-            current = ensure_numeric_value(latency_key, data[latency_key])
-            if rate is not None:
-                new_value = current * (1 + rate)
-            else:
-                key = (source, target_node)
-                initial_value = initial_latencies.setdefault(key, current)
-                progress = min(step + 1, epochs) / epochs  # type: ignore[arg-type]
-                new_value = _interpolate_latency(
-                    initial_value,
-                    target,  # type: ignore[arg-type]
-                    progress,
-                )
-
-            data[latency_key] = coerce_numeric_like(
-                data[latency_key],
-                clamp(new_value, lower=0.0),
-            )
-
-        step += 1
-
-    return policy
+    return IncreaseLatencyPolicy(
+        rate=rate,
+        target=target,
+        epochs=epochs,
+        latency_key=latency_key,
+        edge_ids=edge_ids,
+        edge_filter=edge_filter,
+    )
 
 
 def _validate_latency_parameters(
