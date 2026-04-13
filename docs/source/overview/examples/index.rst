@@ -7,6 +7,7 @@ Examples
    :hidden:
 
    echo
+   off_the_shelf
    sock_shop
 
 The examples section complements the getting-started guides with runnable
@@ -27,6 +28,16 @@ subdirectory of the repository.
 
          A small service-based application that compares unicast and broadcast
          communication patterns.
+
+
+   .. grid-item::
+
+      .. card:: :octicon:`tools;1em;info` **Off-the-shelf**
+         :link-type: doc
+         :link: off_the_shelf
+
+         A local simulation composed only from built-in builders, policies,
+         and placement logic.
 
 
    .. grid-item::
