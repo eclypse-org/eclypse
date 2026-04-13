@@ -1,7 +1,8 @@
 from collections import defaultdict
 
 import numpy as np
-from networkx.classes.reportviews import EdgeView
+
+from eclypse.graph import AssetGraph
 
 
 def exponential_decay(init, target, N, decay_rate=None):
@@ -27,9 +28,9 @@ class DegradePolicy:
         self.i = 0
         self.target_latency = 1000
 
-    def __call__(self, edges: EdgeView):
+    def __call__(self, graph: AssetGraph):
         if self.i > self.starting_decay_epoch:
-            for s, d, resources in edges.data():
+            for s, d, resources in graph.edges.data():
                 if self.init_latency[(s, d)] is None:
                     self.init_latency[(s, d)] = resources["latency"]
                     self.values[(s, d)] = exponential_decay(

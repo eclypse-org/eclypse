@@ -21,16 +21,10 @@ from eclypse.graph.assets.defaults import (
 from eclypse.remote.service import Service
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
     )
-
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
-
-    from eclypse.utils.types import InitPolicy
 
     from .assets import Asset
 
@@ -41,12 +35,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         application_id: str,
-        node_update_policy: Callable[[NodeView], None]
-        | list[Callable[[NodeView], None]]
-        | None = None,
-        edge_update_policy: Callable[[EdgeView], None]
-        | list[Callable[[EdgeView], None]]
-        | None = None,
+        update_policies: UpdatePolicies = None,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
         include_default_assets: bool = False,
@@ -58,10 +47,8 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         Args:
             application_id (str): The ID of the application.
-            node_update_policy (Callable | list[Callable] | None):\
-                A function to update the nodes. Defaults to None.
-            edge_update_policy (Callable | list[Callable] | None):\
-                A function to update the edges. Defaults to None.
+            update_policies (Callable | list[Callable] | None):\
+                Graph update policies executed during ``evolve()``.
             node_assets (dict[str, Asset] | None): The assets of the nodes.
             edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
@@ -78,8 +65,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         super().__init__(
             graph_id=application_id,
-            node_update_policy=node_update_policy,
-            edge_update_policy=edge_update_policy,
+            update_policies=update_policies,
             node_assets=_node_assets,
             edge_assets=_edge_assets,
             attr_init=requirement_init,

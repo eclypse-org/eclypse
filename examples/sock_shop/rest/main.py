@@ -1,7 +1,4 @@
-from update_policy import (
-    edge_random_update,
-    node_random_update,
-)
+from update_policy import random_update
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
@@ -16,8 +13,7 @@ if __name__ == "__main__":
     infrastructure = hierarchical(
         n=30,
         node_partitioning=[0.6, 0.2, 0.1, 0.1],
-        node_update_policy=node_random_update,
-        link_update_policy=edge_random_update,
+        update_policies=random_update,
         include_default_assets=True,
         symmetric=True,
         seed=seed,

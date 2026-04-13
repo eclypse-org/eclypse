@@ -39,7 +39,7 @@ if __name__ == "__main__":
             infrastructure_id="IPInfr",
             n_clients=5,
             seed=seed,
-            link_update_policy=DegradePolicy(epochs=STEPS),
+            update_policies=DegradePolicy(epochs=STEPS),
             include_default_assets=True,
             resource_init="max",
             symmetric=True,

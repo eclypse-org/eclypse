@@ -1,7 +1,4 @@
-from update_policy import (
-    edge_random_update,
-    node_random_update,
-)
+from update_policy import random_update
 
 from eclypse.graph import Infrastructure
 
@@ -10,8 +7,7 @@ from eclypse.graph import Infrastructure
 def get_infrastructure(seed: int = 2) -> Infrastructure:
     echo_infra = Infrastructure(
         "EchoInfrastructure",
-        node_update_policy=node_random_update,
-        edge_update_policy=edge_random_update,
+        update_policies=random_update,
         include_default_assets=True,
         seed=seed,
     )

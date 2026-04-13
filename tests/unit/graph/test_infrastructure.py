@@ -32,6 +32,18 @@ def test_infrastructure_path_resources_and_cache_behaviour(sample_infrastructure
     assert sample_infrastructure.path("edge-a", "edge-b") is None
 
 
+def test_infrastructure_evolve_invalidates_cached_path_resources(sample_infrastructure):
+    assert sample_infrastructure.path_resources("edge-a", "edge-b")["bandwidth"] == 10
+
+    sample_infrastructure.update_policies = [
+        lambda graph: graph.edges["edge-a", "edge-b"].update(bandwidth=5)
+    ]
+
+    sample_infrastructure.evolve()
+
+    assert sample_infrastructure.path_resources("edge-a", "edge-b")["bandwidth"] == 5
+
+
 def test_infrastructure_requires_path_aggregators_for_custom_edge_assets():
     with pytest.raises(ValueError, match='path asset aggregator for "bandwidth"'):
         Infrastructure(

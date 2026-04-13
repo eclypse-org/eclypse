@@ -19,8 +19,7 @@ The two classes share many structural similarities, but differ in purpose and in
 
          infrastructure = Infrastructure(
              infrastructure_id="infra",
-             node_update_policy=[...],
-             edge_update_policy=[...],
+             update_policies=[...],
              node_assets=[...],
              edge_assets=[...],
              resource_init="min",
@@ -33,7 +32,7 @@ The two classes share many structural similarities, but differ in purpose and in
       **Key parameters:**
 
       - ``infrastructure_id``: identifier of the infrastructure
-      - ``node_update_policy`` / ``edge_update_policy``: list of :doc:`update policies <update-policy>` for infrastructure resources
+      - ``update_policies``: list of :doc:`update policies <update-policy>` for infrastructure resources
       - ``node_assets`` / ``edge_assets``: available capabilities (:doc:`asset <assets>` values) of nodes and links
       - ``resource_init``: initialisation of resources (*min* or *max*)
       - ``seed``: random seed for reproducibility
@@ -50,8 +49,7 @@ The two classes share many structural similarities, but differ in purpose and in
 
          application = Application(
              application_id="app",
-             node_update_policy=[...],
-             edge_update_policy=[...],
+             update_policies=[...],
              node_assets=[...],
              edge_assets=[...],
              requirement_init="min",
@@ -62,7 +60,7 @@ The two classes share many structural similarities, but differ in purpose and in
       **Key parameters:**
 
       - ``application_id``: identifier of the application
-      - ``node_update_policy`` / ``edge_update_policy``: list of :doc:`update policies <update-policy>` for application requirements
+      - ``update_policies``: list of :doc:`update policies <update-policy>` for application requirements
       - ``node_assets`` / ``edge_assets``: resource requirements (:doc:`asset <assets>` values) of services and links
       - ``requirement_init``: initialisation of resources (*min* or *max*)
       - ``seed``: random seed for reproducibility

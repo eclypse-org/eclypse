@@ -58,8 +58,9 @@ nodes connected through links with different latency and bandwidth values.
     .. literalinclude:: ../../../../examples/echo/infrastructure.py
         :language: python
 
-The infrastructure is also updated at each iteration through random node and
-edge update policies, which simulate changing runtime conditions.
+The infrastructure is also updated at each iteration through a graph update
+policy that mutates both nodes and links to simulate changing runtime
+conditions.
 
 .. dropdown:: Update policy code
 

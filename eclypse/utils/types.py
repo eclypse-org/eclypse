@@ -6,7 +6,13 @@ from collections.abc import (
     Callable,
     Generator,
 )
-from typing import Literal
+from typing import (
+    TYPE_CHECKING,
+    Literal,
+)
+
+if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
 
 type PrimitiveType = int | float | str | bool | list | tuple | dict | set
 """Type alias for primitive serialisable values used in payloads and assets."""
@@ -46,6 +52,12 @@ type EventType = Literal[
 
 type InitPolicy = Literal["min", "max"]
 """Type alias for resource and requirement initialisation policies."""
+
+type UpdatePolicy = Callable[["AssetGraph"], None]
+"""Type alias for graph update policies."""
+
+type UpdatePolicies = UpdatePolicy | list[UpdatePolicy] | None
+"""Type alias for one or more graph update policies."""
 
 type ReportFormat = Literal["csv", "parquet", "json"]
 """Type alias for the supported report storage formats."""

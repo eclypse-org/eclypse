@@ -22,26 +22,22 @@ from typing import (
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
+    from collections.abc import Callable
 
     import networkx as nx
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
-    from eclypse.utils.types import InitPolicy
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
+    )
 
 
 def fat_tree(
     k: int,
     infrastructure_id: str = "fat_tree",
-    node_update_policy: Callable[[NodeView], None] | None = None,
-    link_update_policy: Callable[[EdgeView], None] | None = None,
+    update_policies: UpdatePolicies = None,
     node_assets: dict[str, Asset] | None = None,
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
@@ -62,9 +58,7 @@ def fat_tree(
             Determines the size and structure of the Fat-Tree topology.
         infrastructure_id (str): Unique ID for the infrastructure instance.\
             Defaults to "fat_tree".
-        node_update_policy (Callable[[NodeView], None] | None): Policy to update nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): Policy to update links.\
+        update_policies (Callable | list[Callable] | None): Graph update policies.\
             Defaults to None.
         node_assets (dict[str, Asset] | None): Default attributes for all nodes.\
             Defaults to None.
@@ -90,8 +84,7 @@ def fat_tree(
 
     infra = Infrastructure(
         infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
+        update_policies=update_policies,
         node_assets=node_assets,
         edge_assets=link_assets,
         include_default_assets=include_default_assets,

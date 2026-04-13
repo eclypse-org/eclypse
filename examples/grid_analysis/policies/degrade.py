@@ -1,7 +1,4 @@
-from networkx.classes.reportviews import (
-    EdgeView,
-    NodeView,
-)
+from eclypse.graph import AssetGraph
 
 
 def degrade_value(value, degradation_rate):
@@ -11,14 +8,13 @@ def degrade_value(value, degradation_rate):
 def degrade_policy(target_degradation: float, epochs: int):
     degradation_rate = 1 - (target_degradation ** (1 / epochs))
 
-    def node_update_wrapper(nodes: NodeView):
-        for _, resources in nodes.data():
+    def update_wrapper(graph: AssetGraph):
+        for _, resources in graph.nodes.data():
             for key in resources:
                 if key in ["cpu", "gpu", "ram", "storage", "availability"]:
                     resources[key] = degrade_value(resources[key], degradation_rate)
 
-    def edge_update_wrapper(edges: EdgeView):
-        for _, _, resources in edges.data():
+        for _, _, resources in graph.edges.data():
             for key in resources:
                 resources[key] = degrade_value(resources[key], degradation_rate)
 
@@ -28,4 +24,4 @@ def degrade_policy(target_degradation: float, epochs: int):
                 resources["bandwidth"], degradation_rate
             )
 
-    return node_update_wrapper, edge_update_wrapper
+    return update_wrapper
