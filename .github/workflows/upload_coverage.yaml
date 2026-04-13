@@ -20,8 +20,12 @@ on:
 
 jobs:
   test:
-    name: Run tests and collect coverage
+    name: Run tests on Python ${{ matrix.python-version }}
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
     steps:
       - name: Checkout Source Code
         uses: actions/checkout@v6
@@ -29,7 +33,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: 3.12
+          python-version: ${{ matrix.python-version }}
 
       - name: Install Dependencies
         run: make setup-test
@@ -38,6 +42,7 @@ jobs:
         run: pytest
 
       - name: Upload results to Codecov
+        if: matrix.python-version == '3.11'
         uses: codecov/codecov-action@v6
         with:
           files: ./coverage.xml
