@@ -20,27 +20,23 @@ from typing import (
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
+    from collections.abc import Callable
 
     import networkx as nx
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
-    from eclypse.utils.types import InitPolicy
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
+    )
 
 
 def star(
     n_clients: int,
     infrastructure_id: str = "star",
     symmetric: bool = False,
-    node_update_policy: Callable[[NodeView], None] | None = None,
-    link_update_policy: Callable[[EdgeView], None] | None = None,
+    update_policies: UpdatePolicies = None,
     node_assets: dict[str, Asset] | None = None,
     link_assets: dict[str, Asset] | None = None,
     center_assets_values: dict[str, Any] | None = None,
@@ -60,10 +56,8 @@ def star(
         n_clients (int): The number of clients in the infrastructure.
         infrastructure_id (str): The ID of the infrastructure.
         symmetric (bool): Whether the links are symmetric. Defaults to False.
-        node_update_policy (Callable[[NodeView], None] | None):
-            The policy to update the nodes. Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None):
-            The policy to update the links. Defaults to None.
+        update_policies (Callable | list[Callable] | None):
+            Graph update policies. Defaults to None.
         node_assets (dict[str, Asset] | None):
             The assets for the nodes. Defaults to None.
         link_assets (dict[str, Asset] | None):
@@ -91,8 +85,7 @@ def star(
     """
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
+        update_policies=update_policies,
         node_assets=node_assets,
         edge_assets=link_assets,
         include_default_assets=include_default_assets,

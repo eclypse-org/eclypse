@@ -3,7 +3,7 @@
 Extensions are:
 
 - Initialization of nodes and edges with a given set of assets (asset bucket).
-- Definition of an update policy for nodes and edges.
+- Definition of graph update policies.
 - Definition of a seed for the randomicity of the assets.
 - Binding of the graph id in the logs.
 """
@@ -12,9 +12,7 @@ from __future__ import annotations
 
 import random as rnd
 from copy import deepcopy
-from typing import (
-    TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
 
 import networkx as nx
 
@@ -25,18 +23,14 @@ from eclypse.utils._logging import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
-
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
-
     from eclypse.graph.assets import Asset
     from eclypse.utils._logging import Logger
-    from eclypse.utils.types import InitPolicy
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
+    )
+
+from eclypse.policies import normalize_update_policies
 
 
 class AssetGraph(nx.DiGraph):
@@ -47,12 +41,7 @@ class AssetGraph(nx.DiGraph):
         graph_id: str,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
-        node_update_policy: Callable[[NodeView], None]
-        | list[Callable[[NodeView], None]]
-        | None = None,
-        edge_update_policy: Callable[[EdgeView], None]
-        | list[Callable[[EdgeView], None]]
-        | None = None,
+        update_policies: UpdatePolicies = None,
         attr_init: InitPolicy = "min",
         flip_assets: bool = False,
         seed: int | None = None,
@@ -65,10 +54,9 @@ class AssetGraph(nx.DiGraph):
                 The assets of the nodes. Defaults to None.
             edge_assets (dict[str, Asset] | None, optional):
                 The assets of the edges. Defaults to None.
-            node_update_policy (Callable | list[Callable] | None):
-                The policy to update the nodes. Defaults to None.
-            edge_update_policy (Callable | list[Callable] | None):
-                The policy to update the edges. Defaults to None.
+            update_policies (Callable | list[Callable] | None):
+                The graph update policies to execute during ``evolve()``.
+                Defaults to None.
             attr_init (InitPolicy, optional):
                 The initialization policy for the assets. Defaults to
                 "min".
@@ -79,22 +67,7 @@ class AssetGraph(nx.DiGraph):
         self.rnd = rnd.Random(seed)
 
         self.id = graph_id
-        if node_update_policy is None:
-            _node_update_policy = []
-        elif not isinstance(node_update_policy, list):
-            _node_update_policy = [node_update_policy]
-        else:
-            _node_update_policy = node_update_policy
-
-        if edge_update_policy is None:
-            _edge_update_policy = []
-        elif not isinstance(edge_update_policy, list):
-            _edge_update_policy = [edge_update_policy]
-        else:
-            _edge_update_policy = edge_update_policy
-
-        self.node_update_policy = _node_update_policy
-        self.edge_update_policy = _edge_update_policy
+        self.update_policies = normalize_update_policies(update_policies)
 
         _node_assets = node_assets if node_assets is not None else {}
         _edge_assets = edge_assets if edge_assets is not None else {}
@@ -205,11 +178,8 @@ class AssetGraph(nx.DiGraph):
 
     def evolve(self):
         """Updates the graph according to its update policies."""
-        for node_update in self.node_update_policy:
-            node_update(self.nodes)
-
-        for edge_update in self.edge_update_policy:
-            edge_update(self.edges)
+        for update_policy in self.update_policies:
+            update_policy(self)
 
     def _get_node_lower_bound(self):
         """Returns the lower bound of the node assets."""
@@ -234,7 +204,7 @@ class AssetGraph(nx.DiGraph):
         Returns:
             bool: True if the graph is dynamic, False otherwise.
         """
-        return self.node_update_policy != [] or self.edge_update_policy != []
+        return self.update_policies != []
 
     @property
     def logger(self) -> Logger:

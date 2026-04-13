@@ -31,10 +31,9 @@ from eclypse.utils.types import PrimitiveType
 
 
 def get_infrastructure(config) -> Infrastructure:
-    node_update_policy, link_update_policy = get_policy(config)
+    update_policies = get_policy(config)
     common_config = {
-        "node_update_policy": node_update_policy,
-        "link_update_policy": link_update_policy,
+        "update_policies": update_policies,
         "resource_init": "max",
         "symmetric": True,
         "seed": config["seed"],

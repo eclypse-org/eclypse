@@ -1,22 +1,16 @@
 from typing import (
-    Callable,
     Dict,
     Optional,
 )
 
-from networkx.classes.reportviews import (
-    EdgeView,
-    NodeView,
-)
-
 from eclypse.graph import Application
 from eclypse.graph.assets import Asset
+from eclypse.utils.types import UpdatePolicies
 
 
 def get_health_guardian(
     application_id: str = "HealthGuardian",
-    node_update_policy: Optional[Callable[[NodeView], None]] = None,
-    edge_update_policy: Optional[Callable[[EdgeView], None]] = None,
+    update_policies: UpdatePolicies = None,
     node_assets: Optional[Dict[str, Asset]] = None,
     edge_assets: Optional[Dict[str, Asset]] = None,
     include_default_assets: bool = True,
@@ -47,8 +41,7 @@ def get_health_guardian(
 
     app = Application(
         application_id=application_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=edge_update_policy,
+        update_policies=update_policies,
         node_assets=node_assets,
         edge_assets=edge_assets,
         include_default_assets=include_default_assets,

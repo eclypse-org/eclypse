@@ -22,18 +22,14 @@ import networkx as nx
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
-
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
+    from collections.abc import Callable
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
-    from eclypse.utils.types import InitPolicy
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
+    )
 
 
 def random(
@@ -41,8 +37,7 @@ def random(
     infrastructure_id: str = "random",
     p: float = 0.5,
     symmetric: bool = False,
-    node_update_policy: Callable[[NodeView], None] | None = None,
-    link_update_policy: Callable[[EdgeView], None] | None = None,
+    update_policies: UpdatePolicies = None,
     node_assets: dict[str, Asset] | None = None,
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
@@ -62,10 +57,8 @@ def random(
         infrastructure_id (str): The ID of the infrastructure.
         p (float): The probability of connecting two nodes. Defaults to 0.5.
         symmetric (bool): Whether the links are symmetric. Defaults to False.
-        node_update_policy (Callable[[NodeView], None] | None):
-            The policy to update the nodes. Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None):
-            The policy to update the links. Defaults to None.
+        update_policies (Callable | list[Callable] | None):
+            Graph update policies. Defaults to None.
         node_assets (dict[str, Asset] | None):
             The assets for the nodes. Defaults to None.
         link_assets (dict[str, Asset] | None):
@@ -88,8 +81,7 @@ def random(
     """
     infrastructure = Infrastructure(
         infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
+        update_policies=update_policies,
         node_assets=node_assets,
         edge_assets=link_assets,
         include_default_assets=include_default_assets,

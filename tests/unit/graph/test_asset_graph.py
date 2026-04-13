@@ -30,10 +30,12 @@ def test_asset_graph_validates_nodes_edges_and_dynamic_flags():
 def test_asset_graph_evolve_runs_registered_policies():
     graph = AssetGraph(
         "dynamic",
-        node_update_policy=lambda nodes: nodes["a"].update(cpu=nodes["a"]["cpu"] + 1),
-        edge_update_policy=lambda edges: edges["a", "b"].update(
-            bandwidth=edges["a", "b"]["bandwidth"] + 1
-        ),
+        update_policies=[
+            lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
+            lambda graph: graph.edges["a", "b"].update(
+                bandwidth=graph.edges["a", "b"]["bandwidth"] + 1
+            ),
+        ],
         node_assets={"cpu": Additive(0, 10)},
         edge_assets={"bandwidth": Additive(0, 10)},
     )

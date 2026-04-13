@@ -29,27 +29,23 @@ from typing import (
 from eclypse.graph import Infrastructure
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
+    from collections.abc import Callable
 
     import networkx as nx
-    from networkx.classes.reportviews import (
-        EdgeView,
-        NodeView,
-    )
 
     from eclypse.graph.assets import Asset
     from eclypse.placement.strategies import PlacementStrategy
-    from eclypse.utils.types import InitPolicy
+    from eclypse.utils.types import (
+        InitPolicy,
+        UpdatePolicies,
+    )
 
 
 def b_cube(
     k: int,
     n: int,
     infrastructure_id: str = "b_cube",
-    node_update_policy: Callable[[NodeView], None] | None = None,
-    link_update_policy: Callable[[EdgeView], None] | None = None,
+    update_policies: UpdatePolicies = None,
     node_assets: dict[str, Asset] | None = None,
     link_assets: dict[str, Asset] | None = None,
     include_default_assets: bool = False,
@@ -69,9 +65,7 @@ def b_cube(
         n (int): Number of ports per switch, and number of switches per level.
         infrastructure_id (str): Unique ID for the infrastructure instance.\
             Defaults to "b_cube".
-        node_update_policy (Callable[[NodeView], None] | None): Policy to update nodes.\
-            Defaults to None.
-        link_update_policy (Callable[[EdgeView], None] | None): Policy to update links.\
+        update_policies (Callable | list[Callable] | None): Graph update policies.\
             Defaults to None.
         node_assets (dict[str, Asset] | None): Default attributes for all nodes.\
             Defaults to None.
@@ -94,8 +88,7 @@ def b_cube(
     """
     infra = Infrastructure(
         infrastructure_id=infrastructure_id,
-        node_update_policy=node_update_policy,
-        edge_update_policy=link_update_policy,
+        update_policies=update_policies,
         node_assets=node_assets,
         edge_assets=link_assets,
         include_default_assets=include_default_assets,
