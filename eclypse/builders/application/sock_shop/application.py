@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     )
 
 
-SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface.__value__)
+SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
 """Supported remote communication interfaces for the Sock Shop builders."""
 
 
