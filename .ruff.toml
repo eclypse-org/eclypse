@@ -1,4 +1,4 @@
-target-version = "py312"
+target-version = "py311"
 
 include = ["eclypse/**/*.py", "tests/**/*.py"]
 line-length = 88
@@ -40,7 +40,7 @@ select = [
     "D",
 ]
 
-ignore = ["D203", "D213", "D100", "D104", "E501", "PLC0415", "UP008"]
+ignore = ["D203", "D213", "D100", "D104", "E501", "PLC0415", "UP008", "UP040"]
 
 fixable = ["ALL"]
 
