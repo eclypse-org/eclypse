@@ -15,11 +15,18 @@ The two classes share many structural similarities, but differ in purpose and in
 
       .. code-block:: python
 
+         from eclypse import policies
          from eclypse.graph.infrastructure import Infrastructure
 
          infrastructure = Infrastructure(
              infrastructure_id="infra",
-             update_policies=[...],
+             update_policies=[
+                 policies.availability_flap(0.01, up_probability=0.2),
+                 policies.jitter_resources(
+                     node_assets=["cpu", "ram"],
+                     edge_assets=["latency", "bandwidth"],
+                 ),
+             ],
              node_assets=[...],
              edge_assets=[...],
              resource_init="min",
@@ -45,11 +52,22 @@ The two classes share many structural similarities, but differ in purpose and in
 
       .. code-block:: python
 
+         from eclypse import policies
          from eclypse.graph.application import Application
 
          application = Application(
              application_id="app",
-             update_policies=[...],
+             update_policies=[
+                 policies.after(
+                     50,
+                     policies.degrade(
+                         target_degradation=0.6,
+                         epochs=200,
+                         node_assets=["cpu", "ram"],
+                         edge_assets=["latency", "bandwidth"],
+                     ),
+                 ),
+             ],
              node_assets=[...],
              edge_assets=[...],
              requirement_init="min",

@@ -23,6 +23,120 @@ The graph exposes the standard `networkx` views through ``graph.nodes`` and
 ``graph.edges``. Each node or edge has an associated data dictionary containing
 its current asset values.
 
+Built-in Policies
+-----------------
+
+ECLYPSE also provides a catalogue of off-the-shelf policies in
+:mod:`eclypse.policies`. The module groups reusable policies into a few common
+families:
+
+- **failure**: availability flapping, node failures, and latency spikes
+- **noise**: bounded random walks and multiplicative jitter
+- **degradation**: progressive capacity loss and latency increase
+- **trace-driven**: replay of node or edge values from records, dataframes, or parquet files
+- **schedule**: wrappers such as ``every()``, ``after()``, ``between()``, and ``once_at()``
+
+For most simulations, the easiest workflow is to compose a few built-in
+policies and only fall back to a custom callable when the behaviour is
+scenario-specific.
+
+Using Built-in Policies
+-----------------------
+
+Built-in policies are regular graph callables, so you use them exactly like any
+custom update policy.
+
+.. code-block:: python
+    :caption: **Example:** Infrastructure policies composed from ``eclypse.policies``
+
+    from eclypse import policies
+    from eclypse.graph import Infrastructure
+
+    infrastructure = Infrastructure(
+        "edge-cloud",
+        update_policies=[
+            policies.availability_flap(
+                down_probability=0.02,
+                up_probability=0.5,
+                node_filter=lambda _, data: data["availability"] > 0,
+            ),
+            policies.jitter_resources(
+                node_assets=["cpu", "ram", "storage"],
+                edge_assets=["latency", "bandwidth"],
+                node_ranges={
+                    "cpu": (0.95, 1.05),
+                    "ram": (0.9, 1.1),
+                    "storage": (0.98, 1.02),
+                },
+                edge_ranges={
+                    "latency": (0.95, 1.05),
+                    "bandwidth": (0.98, 1.02),
+                },
+            ),
+        ],
+    )
+
+Selectors and Assets
+--------------------
+
+Most built-in policies separate **what** to change from **where** to change it.
+
+- ``node_assets`` / ``edge_assets`` select which graph assets are updated
+- ``node_ids`` / ``edge_ids`` target specific nodes or links
+- ``node_filter`` / ``edge_filter`` let you target assets dynamically
+
+.. code-block:: python
+    :caption: **Example:** Apply noise only to edge nodes and WAN links
+
+    from eclypse import policies
+
+    policy = policies.jitter_resources(
+        node_assets=["cpu", "ram"],
+        edge_assets=["latency"],
+        node_filter=lambda node_id, data: data.get("tier") == "edge",
+        edge_filter=lambda source, target, data: data.get("kind") == "wan",
+    )
+
+Scheduling Policies
+-------------------
+
+Scheduling wrappers let you activate a policy only during part of the run.
+
+.. code-block:: python
+    :caption: **Example:** Start a degradation phase after step 100
+
+    from eclypse import policies
+
+    update_policy = policies.after(
+        100,
+        policies.degrade(
+            target_degradation=0.5,
+            epochs=200,
+            node_assets=["cpu", "ram", "storage"],
+            edge_assets=["bandwidth", "latency"],
+        ),
+    )
+
+Trace-driven Policies
+---------------------
+
+Trace-driven helpers are useful when you want the simulation to follow observed
+or synthetic measurements over time.
+
+.. code-block:: python
+    :caption: **Example:** Replay node load from a parquet trace
+
+    from eclypse import policies
+
+    replay_users = policies.from_parquet(
+        "examples/user_distribution/dataset.parquet",
+        target="nodes",
+        node_id_column="node_id",
+        time_column="time",
+        value_columns=["user_count"],
+        start_step=0,
+    )
+
 Writing Custom Policies
 -----------------------
 
@@ -48,6 +162,15 @@ within the graph.
         for _, _, data in graph.edges.data():
             if "latency" in data:
                 data["latency"] += 1.0
+
+Custom vs built-in
+------------------
+
+Built-in policies are ideal for common patterns such as failures, jitter,
+degradation, and replay from traces. When an example or scenario couples
+multiple effects in a very specific way, keeping a custom callable is still the
+right choice. Several examples in the repository intentionally do that to
+preserve their original behaviour.
 
 .. important::
 
