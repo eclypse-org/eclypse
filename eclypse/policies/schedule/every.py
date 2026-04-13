@@ -2,10 +2,34 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.utils.types import UpdatePolicy
+
+
+@dataclass(slots=True)
+class EveryPolicy:
+    """Run a policy every ``interval`` steps starting from ``start``."""
+
+    interval: int
+    policy: UpdatePolicy
+    start: int = 0
+    step: int = 0
+
+    def __post_init__(self):
+        """Validate the schedule configuration."""
+        if self.interval <= 0:
+            raise ValueError("interval must be strictly positive.")
+        if self.start < 0:
+            raise ValueError("start must be non-negative.")
+
+    def __call__(self, graph):
+        """Apply the wrapped policy when the current step matches the interval."""
+        if self.step >= self.start and (self.step - self.start) % self.interval == 0:
+            self.policy(graph)
+        self.step += 1
 
 
 def every(
@@ -24,17 +48,4 @@ def every(
     Returns:
         UpdatePolicy: A scheduled wrapper around ``policy``.
     """
-    if interval <= 0:
-        raise ValueError("interval must be strictly positive.")
-    if start < 0:
-        raise ValueError("start must be non-negative.")
-
-    step = 0
-
-    def wrapped(graph):
-        nonlocal step
-        if step >= start and (step - start) % interval == 0:
-            policy(graph)
-        step += 1
-
-    return wrapped
+    return EveryPolicy(interval=interval, policy=policy, start=start)

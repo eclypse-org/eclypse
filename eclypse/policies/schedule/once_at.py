@@ -2,10 +2,31 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.utils.types import UpdatePolicy
+
+
+@dataclass(slots=True)
+class OnceAtPolicy:
+    """Run a policy only once at the specified step."""
+
+    step_at: int
+    policy: UpdatePolicy
+    step: int = 0
+
+    def __post_init__(self):
+        """Validate the schedule configuration."""
+        if self.step_at < 0:
+            raise ValueError("step_at must be non-negative.")
+
+    def __call__(self, graph):
+        """Apply the wrapped policy when the configured step is reached."""
+        if self.step == self.step_at:
+            self.policy(graph)
+        self.step += 1
 
 
 def once_at(
@@ -21,15 +42,4 @@ def once_at(
     Returns:
         UpdatePolicy: A scheduled wrapper around ``policy``.
     """
-    if step_at < 0:
-        raise ValueError("step_at must be non-negative.")
-
-    step = 0
-
-    def wrapped(graph):
-        nonlocal step
-        if step == step_at:
-            policy(graph)
-        step += 1
-
-    return wrapped
+    return OnceAtPolicy(step_at=step_at, policy=policy)

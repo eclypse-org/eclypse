@@ -2,12 +2,28 @@
 
 from __future__ import annotations
 
-from .after import after
-from .between import between
-from .every import every
-from .once_at import once_at
+from .after import (
+    AfterPolicy,
+    after,
+)
+from .between import (
+    BetweenPolicy,
+    between,
+)
+from .every import (
+    EveryPolicy,
+    every,
+)
+from .once_at import (
+    OnceAtPolicy,
+    once_at,
+)
 
 __all__ = [
+    "AfterPolicy",
+    "BetweenPolicy",
+    "EveryPolicy",
+    "OnceAtPolicy",
     "after",
     "between",
     "every",
