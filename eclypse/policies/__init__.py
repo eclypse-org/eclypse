@@ -7,6 +7,40 @@ Policies are graph-oriented callables that mutate an
 
 from __future__ import annotations
 
+from eclypse.policies._filters import (
+    EdgeFilter,
+    NodeFilter,
+)
+from eclypse.policies.degradation import (
+    degrade,
+    increase_latency,
+    reduce_capacity,
+)
+from eclypse.policies.failure import (
+    availability_flap,
+    kill_nodes,
+    latency_spike,
+    revive_nodes,
+)
+from eclypse.policies.noise import (
+    bounded_random_walk,
+    jitter_bandwidth,
+    jitter_latency,
+    jitter_resources,
+)
+from eclypse.policies.schedule import (
+    after,
+    between,
+    every,
+    once_at,
+)
+from eclypse.policies.trace_driven import (
+    from_dataframe,
+    from_parquet,
+    from_records,
+    replay_edges,
+    replay_nodes,
+)
 from eclypse.utils.types import (
     UpdatePolicies,
     UpdatePolicy,
@@ -23,7 +57,29 @@ def normalize_update_policies(update_policies: UpdatePolicies) -> list[UpdatePol
 
 
 __all__ = [
+    "EdgeFilter",
+    "NodeFilter",
     "UpdatePolicies",
     "UpdatePolicy",
+    "after",
+    "availability_flap",
+    "between",
+    "bounded_random_walk",
+    "degrade",
+    "every",
+    "from_dataframe",
+    "from_parquet",
+    "from_records",
+    "increase_latency",
+    "jitter_bandwidth",
+    "jitter_latency",
+    "jitter_resources",
+    "kill_nodes",
+    "latency_spike",
     "normalize_update_policies",
+    "once_at",
+    "reduce_capacity",
+    "replay_edges",
+    "replay_nodes",
+    "revive_nodes",
 ]
