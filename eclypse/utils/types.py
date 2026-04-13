@@ -9,37 +9,38 @@ from collections.abc import (
 from typing import (
     TYPE_CHECKING,
     Literal,
+    TypeAlias,
 )
 
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
 
-type PrimitiveType = int | float | str | bool | list | tuple | dict | set
+PrimitiveType: TypeAlias = int | float | str | bool | list | tuple | dict | set
 """Type alias for primitive serialisable values used in payloads and assets."""
 
-type CascadeTriggerType = (
+CascadeTriggerType: TypeAlias = (
     str | tuple[str, int] | tuple[str, list[int]] | tuple[str, float]
 )
 """Type alias describing the supported cascade-trigger declarations."""
 
-type ActivatesOnType = CascadeTriggerType | list[CascadeTriggerType]
+ActivatesOnType: TypeAlias = CascadeTriggerType | list[CascadeTriggerType]
 """Type alias for one or more activation declarations."""
 
-type TriggerCondition = Literal["any", "all"]
+TriggerCondition: TypeAlias = Literal["any", "all"]
 """Type alias for the condition used to combine trigger states."""
 
-type HTTPMethodLiteral = Literal["GET", "POST", "PUT", "DELETE"]
+HTTPMethodLiteral: TypeAlias = Literal["GET", "POST", "PUT", "DELETE"]
 """Type alias for supported HTTP methods."""
 
-type CommunicationInterface = Literal["mpi", "rest"]
+CommunicationInterface: TypeAlias = Literal["mpi", "rest"]
 """Type alias for the supported remote communication interfaces."""
 
-type ConnectivityFn = Callable[
+ConnectivityFn: TypeAlias = Callable[
     [list[str], list[str]], Generator[tuple[str, str], None, None]
 ]
 """Type alias for functions generating graph connectivity pairs."""
 
-type EventType = Literal[
+EventType: TypeAlias = Literal[
     "application",
     "infrastructure",
     "service",
@@ -50,22 +51,22 @@ type EventType = Literal[
 ]
 """Type alias for the supported event target scopes."""
 
-type InitPolicy = Literal["min", "max"]
+InitPolicy: TypeAlias = Literal["min", "max"]
 """Type alias for resource and requirement initialisation policies."""
 
-type UpdatePolicy = Callable[["AssetGraph"], None]
+UpdatePolicy: TypeAlias = Callable[["AssetGraph"], None]
 """Type alias for graph update policies."""
 
-type UpdatePolicies = UpdatePolicy | list[UpdatePolicy] | None
+UpdatePolicies: TypeAlias = UpdatePolicy | list[UpdatePolicy] | None
 """Type alias for one or more graph update policies."""
 
-type ReportFormat = Literal["csv", "parquet", "json"]
+ReportFormat: TypeAlias = Literal["csv", "parquet", "json"]
 """Type alias for the supported report storage formats."""
 
-type ReportBackend = Literal["pandas", "polars", "polars_lazy"]
+ReportBackend: TypeAlias = Literal["pandas", "polars", "polars_lazy"]
 """Type alias for the supported frame backends used by reports."""
 
-type LogLevel = Literal[
+LogLevel: TypeAlias = Literal[
     "TRACE",
     "DEBUG",
     "ECLYPSE",

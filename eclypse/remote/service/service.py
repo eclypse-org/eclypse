@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from eclypse.utils._logging import Logger
 
 
-SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface.__value__)
+SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
 """Supported runtime communication interfaces for remote services."""
 
 
