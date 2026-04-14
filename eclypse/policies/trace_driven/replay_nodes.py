@@ -18,7 +18,10 @@ from eclypse.policies.trace_driven._helpers import (
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import NodeFilter
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        MissingPolicyBehaviour,
+        UpdatePolicy,
+    )
 
 
 @dataclass(slots=True)
@@ -30,7 +33,7 @@ class ReplayNodesPolicy:
     node_id_column: str = "node_id"
     selected_node_ids: set[str] | None = None
     node_filter: NodeFilter | None = None
-    missing: str = "ignore"
+    missing: MissingPolicyBehaviour = "ignore"
     current_step: int = 0
 
     def __call__(self, graph):
@@ -57,7 +60,7 @@ def replay_nodes(
     value_columns: list[str] | tuple[str, ...] | None = None,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
-    missing: str = "ignore",
+    missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
     """Replay node attributes from time-indexed records.
@@ -107,7 +110,7 @@ def _update_node_from_record(
     node_id_column: str,
     selected_node_ids: set[str] | None,
     node_filter,
-    missing: str,
+    missing: MissingPolicyBehaviour,
 ):
     node_id = record[node_id_column]
     if selected_node_ids is not None and node_id not in selected_node_ids:

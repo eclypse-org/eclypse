@@ -9,6 +9,7 @@ from eclypse.policies._filters import (
     iter_selected_edges,
     iter_selected_keys,
     iter_selected_nodes,
+    normalize_selected_keys,
 )
 
 if TYPE_CHECKING:
@@ -23,8 +24,8 @@ def reduce_capacity(
     target_degradation: float,
     epochs: int,
     *,
-    node_assets: list[str] | tuple[str, ...] | None = None,
-    edge_assets: list[str] | tuple[str, ...] | None = None,
+    node_assets: str | list[str] | None = None,
+    edge_assets: str | list[str] | None = None,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
@@ -35,8 +36,8 @@ def reduce_capacity(
     Args:
         target_degradation (float): The target multiplicative degradation factor.
         epochs (int): The number of evolution steps over which to apply it.
-        node_assets (list[str] | tuple[str, ...] | None): Node assets to degrade.
-        edge_assets (list[str] | tuple[str, ...] | None): Edge assets to degrade.
+        node_assets (str | list[str] | None): Node assets to degrade.
+        edge_assets (str | list[str] | None): Edge assets to degrade.
         node_ids (list[str] | None): Optional explicit list of node ids to target.
         node_filter (NodeFilter | None): Optional predicate to filter target nodes.
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of edges to
@@ -50,6 +51,8 @@ def reduce_capacity(
     if not 0 <= target_degradation <= 1:
         raise ValueError("target_degradation must be between 0 and 1.")
 
+    selected_node_assets = normalize_selected_keys(node_assets)
+    selected_edge_assets = normalize_selected_keys(edge_assets)
     step = 0
     factor = target_degradation ** (1 / epochs)
 
@@ -63,7 +66,7 @@ def reduce_capacity(
             node_ids=node_ids,
             node_filter=node_filter,
         ):
-            for key in iter_selected_keys(data, node_assets):
+            for key in iter_selected_keys(data, selected_node_assets):
                 current = ensure_numeric_value(key, data[key])
                 data[key] = current * factor
 
@@ -72,7 +75,7 @@ def reduce_capacity(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
-            for key in iter_selected_keys(data, edge_assets):
+            for key in iter_selected_keys(data, selected_edge_assets):
                 current = ensure_numeric_value(key, data[key])
                 data[key] = current * factor
 

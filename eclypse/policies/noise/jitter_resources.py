@@ -11,7 +11,9 @@ from eclypse.policies._filters import (
     iter_selected_edges,
     iter_selected_keys,
     iter_selected_nodes,
+    normalize_selected_keys,
 )
+from eclypse.utils.constants import MIN_FLOAT
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import (
@@ -23,13 +25,13 @@ if TYPE_CHECKING:
 
 def jitter_resources(
     *,
-    node_assets: list[str] | None = None,
-    edge_assets: list[str] | None = None,
+    node_assets: str | list[str] | None = None,
+    edge_assets: str | list[str] | None = None,
     node_range: tuple[float, float] = (0.95, 1.05),
     edge_range: tuple[float, float] | None = None,
     node_ranges: dict[str, tuple[float, float]] | None = None,
     edge_ranges: dict[str, tuple[float, float]] | None = None,
-    minimum: float = 0.0,
+    minimum: float = MIN_FLOAT,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
@@ -38,8 +40,8 @@ def jitter_resources(
     """Apply multiplicative jitter to selected node and edge resources.
 
     Args:
-        node_assets (list[str] | None): Node assets to jitter.
-        edge_assets (list[str] | None): Edge assets to jitter.
+        node_assets (str | list[str] | None): Node assets to jitter.
+        edge_assets (str | list[str] | None): Edge assets to jitter.
         node_range (tuple[float, float]): Default multiplicative range for node
             assets.
         edge_range (tuple[float, float] | None): Default multiplicative range for
@@ -67,12 +69,12 @@ def jitter_resources(
         raise ValueError("edge_range must be ordered as (low, high).")
 
     effective_node_assets = (
-        node_assets
+        normalize_selected_keys(node_assets)
         if node_assets is not None
         else (list(node_ranges.keys()) if node_ranges else None)
     )
     effective_edge_assets = (
-        edge_assets
+        normalize_selected_keys(edge_assets)
         if edge_assets is not None
         else (list(edge_ranges.keys()) if edge_ranges else None)
     )

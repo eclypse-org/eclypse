@@ -58,18 +58,30 @@ def iter_selected_edges(
 
 def iter_selected_keys(
     data: dict[str, Any],
-    keys: list[str] | tuple[str, ...] | None = None,
+    keys: str | list[str] | None = None,
 ) -> list[str]:
     """Yield existing keys selected for a policy operation."""
-    if keys is None:
+    selected = normalize_selected_keys(keys)
+    if selected is None:
         return list(data.keys())
 
     selected_keys: list[str] = []
-    for key in keys:
+    for key in selected:
         if key in data:
             selected_keys.append(key)
 
     return selected_keys
+
+
+def normalize_selected_keys(
+    keys: str | list[str] | None,
+) -> list[str] | None:
+    """Normalise a string-or-list selector to a list of keys."""
+    if keys is None:
+        return None
+    if isinstance(keys, str):
+        return [keys]
+    return list(keys)
 
 
 def ensure_numeric_value(key: str, value: Any) -> float:
@@ -112,4 +124,5 @@ __all__ = [
     "iter_selected_edges",
     "iter_selected_keys",
     "iter_selected_nodes",
+    "normalize_selected_keys",
 ]

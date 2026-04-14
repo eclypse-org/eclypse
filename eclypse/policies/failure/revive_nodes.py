@@ -8,7 +8,8 @@ from eclypse.policies._filters import (
     ensure_numeric_value,
     iter_selected_nodes,
 )
-from eclypse.policies.failure import _validate_probability
+from eclypse.policies.failure._helpers import validate_probability
+from eclypse.utils.constants import MIN_AVAILABILITY
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import NodeFilter
@@ -20,7 +21,7 @@ def revive_nodes(
     *,
     availability: float = 0.99,
     availability_key: str = "availability",
-    unavailable_at_or_below: float = 0.0,
+    unavailable_at_or_below: float = MIN_AVAILABILITY,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
 ) -> UpdatePolicy:
@@ -38,7 +39,7 @@ def revive_nodes(
     Returns:
         UpdatePolicy: A graph update policy implementing node revival.
     """
-    _validate_probability("probability", probability)
+    validate_probability("probability", probability)
 
     def policy(graph):
         for _, data in iter_selected_nodes(

@@ -14,6 +14,7 @@ from eclypse.policies._filters import (
     ensure_numeric_value,
     iter_selected_edges,
 )
+from eclypse.utils.constants import MIN_LATENCY
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import EdgeFilter
@@ -62,7 +63,7 @@ class IncreaseLatencyPolicy:
 
             data[self.latency_key] = coerce_numeric_like(
                 data[self.latency_key],
-                clamp(new_value, lower=0.0),
+                clamp(new_value, lower=MIN_LATENCY),
             )
 
         self.step += 1
