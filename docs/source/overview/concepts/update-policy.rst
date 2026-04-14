@@ -34,8 +34,8 @@ families:
 - **noise**: bounded random walks, momentum walks, and impulse shocks
 - **distribution**: uniform, normal, lognormal, triangular, beta, gamma,
   truncated-normal, and categorical multiplicative perturbations
-- **degradation**: progressive capacity loss and latency increase
-- **trace-driven**: replay of node or edge values from records, dataframes, or parquet files
+- **degrade**: progressive reduction or increase of selected assets
+- **replay**: replay of node or edge values from records, dataframes, or parquet files
 - **schedule**: wrappers such as ``every()``, ``after()``, ``between()``, and ``once_at()``
 
 For most simulations, the easiest workflow is to compose a few built-in
@@ -111,18 +111,21 @@ Scheduling wrappers let you activate a policy only during part of the run.
 
     update_policy = policies.after(
         100,
-        policies.degradation.degrade(
-            target_degradation=0.5,
-            epochs=200,
-            node_assets=["cpu", "ram", "storage"],
-            edge_assets=["bandwidth", "latency"],
+        policies.degrade.degrade(
+            reduce_factor=0.5,
+            reduce_epochs=200,
+            increase_factor=2.0,
+            increase_epochs=200,
+            reduce_node_assets=["cpu", "ram", "storage"],
+            reduce_edge_assets=["bandwidth"],
+            increase_edge_assets=["latency"],
         ),
     )
 
-Trace-driven Policies
----------------------
+Replay Policies
+---------------
 
-Trace-driven helpers are useful when you want the simulation to follow observed
+Replay helpers are useful when you want the simulation to follow observed
 or synthetic measurements over time.
 
 .. code-block:: python
@@ -130,7 +133,7 @@ or synthetic measurements over time.
 
     from eclypse import policies
 
-    replay_users = policies.trace_driven.from_parquet(
+    replay_users = policies.replay.from_parquet(
         "examples/user_distribution/dataset.parquet",
         target="nodes",
         node_id_column="node_id",
