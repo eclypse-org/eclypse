@@ -15,8 +15,12 @@ from typing import (
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
 
+# General
+
 PrimitiveType: TypeAlias = int | float | str | bool | list | tuple | dict | set
 """Type alias for primitive serialisable values used in payloads and assets."""
+
+# Workflow
 
 CascadeTriggerType: TypeAlias = (
     str | tuple[str, int] | tuple[str, list[int]] | tuple[str, float]
@@ -29,16 +33,22 @@ ActivatesOnType: TypeAlias = CascadeTriggerType | list[CascadeTriggerType]
 TriggerCondition: TypeAlias = Literal["any", "all"]
 """Type alias for the condition used to combine trigger states."""
 
+# Remote
+
 HTTPMethodLiteral: TypeAlias = Literal["GET", "POST", "PUT", "DELETE"]
 """Type alias for supported HTTP methods."""
 
 CommunicationInterface: TypeAlias = Literal["mpi", "rest"]
 """Type alias for the supported remote communication interfaces."""
 
+# Builders
+
 ConnectivityFn: TypeAlias = Callable[
     [list[str], list[str]], Generator[tuple[str, str], None, None]
 ]
 """Type alias for functions generating graph connectivity pairs."""
+
+# Reporting
 
 EventType: TypeAlias = Literal[
     "application",
@@ -65,6 +75,16 @@ ReportFormat: TypeAlias = Literal["csv", "parquet", "json"]
 
 ReportBackend: TypeAlias = Literal["pandas", "polars", "polars_lazy"]
 """Type alias for the supported frame backends used by reports."""
+
+# Policies
+
+TraceReplayTarget: TypeAlias = Literal["nodes", "edges"]
+"""Type alias for the supported trace-driven replay targets."""
+
+MissingPolicyBehaviour: TypeAlias = Literal["ignore", "error"]
+"""Type alias for how policies should react to missing graph items."""
+
+# Logging
 
 LogLevel: TypeAlias = Literal[
     "TRACE",

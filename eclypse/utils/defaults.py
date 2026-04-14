@@ -6,6 +6,8 @@ from pathlib import Path
 
 from eclypse.utils.constants import MAX_FLOAT
 
+# Reporting
+
 DEFAULT_REPORT_TYPE = "csv"
 """Default on-disk format used to write simulation reports."""
 
@@ -27,11 +29,15 @@ DEFAULT_REPORT_RANGE = (0, int(MAX_FLOAT))
 DEFAULT_REPORT_STEP = 1
 """Default sampling step used by report queries."""
 
+# Simulation
+
 SIMULATION_CONFIG_FILENAME = "config.json"
 """Filename used to persist the simulation configuration."""
 
 SIMULATION_LOG_FILENAME = "simulation.log"
 """Filename used for simulation runtime logs."""
+
+# Reporters
 
 CSV_REPORT_DIR = "csv"
 """Directory name used by the CSV reporter."""
@@ -53,6 +59,8 @@ DEFAULT_RAY_RUNTIME_ENV_VARS: dict[str, str] = {
     "RAY_COLOR_PREFIX": "1",
 }
 """Default Ray environment variables applied to simulation runtimes."""
+
+# Paths
 
 
 def get_default_sim_path() -> Path:
