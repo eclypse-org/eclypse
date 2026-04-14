@@ -25,10 +25,18 @@ from eclypse.remote.communication.rest.interface import (
     register_endpoint,
 )
 from eclypse.remote.communication.rest.methods import HTTPMethod
-from eclypse.remote.communication.route import Route
+from eclypse.remote.communication.route import (
+    Route,
+    _get_bytes_size,
+)
 from eclypse.remote.service.rest import RESTService
 from eclypse.remote.service.service import Service
 from eclypse.remote.utils import ResponseCode
+
+
+class ExampleObject:
+    def __init__(self):
+        self.payload = {"items": [1, 2, 3], "name": "demo"}
 
 
 class DummyInterface(EclypseCommunicationInterface):
@@ -146,6 +154,13 @@ def test_route_response_and_http_request_helpers(monkeypatch):
         pending_request.status_code
     with pytest.raises(RuntimeError, match="Request not completed yet"):
         pending_request.body
+
+
+def test_route_size_helper_handles_objects_and_nested_structures():
+    obj = ExampleObject()
+
+    assert _get_bytes_size({"nested": [1, 2, {"x": 3}]}) > 0
+    assert _get_bytes_size(obj) == _get_bytes_size(obj.__dict__)
 
 
 @pytest.mark.asyncio

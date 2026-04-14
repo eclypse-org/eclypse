@@ -19,8 +19,8 @@ from typing import (
     get_args,
 )
 
+from eclypse.builders._helpers import prune_assets
 from eclypse.graph import Application
-from eclypse.utils.tools import prune_assets
 from eclypse.utils.types import CommunicationInterface
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ if TYPE_CHECKING:
     )
 
 
-SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
+_SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
 """Supported remote communication interfaces for the Sock Shop builders."""
 
 
@@ -109,7 +109,7 @@ def get_sock_shop(
         def id_fn(service):
             return service
 
-    elif communication_interface in SUPPORTED_COMMUNICATION_INTERFACES:
+    elif communication_interface in _SUPPORTED_COMMUNICATION_INTERFACES:
         add_fn = app.add_service  # type: ignore[assignment]
         if communication_interface == "mpi":
             from . import mpi_services as services

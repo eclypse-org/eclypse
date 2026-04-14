@@ -8,6 +8,7 @@ from eclypse.workflow.event import (
     EclypseEvent,
     EventRole,
 )
+from eclypse.workflow.event.decorator import _camel_to_snake
 
 
 class ConstantEvent(EclypseEvent):
@@ -47,3 +48,7 @@ def test_event_properties_and_report_types():
         _ = event_obj.simulator
 
     assert event_obj.report_types == ["json"]
+
+
+def test_event_name_helper_converts_camel_case():
+    assert _camel_to_snake("MyHTTPService") == "my_h_t_t_p_service"
