@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import sys
 
+# Numeric domains
+
 MIN_FLOAT = 0.0
 """Smallest domain value accepted by numeric assets."""
 
@@ -13,6 +15,8 @@ MAX_FLOAT = 1e9
 FLOAT_EPSILON = sys.float_info.min
 """Smallest positive representable float."""
 
+# Environment
+
 RND_SEED = "ECLYPSE_RND_SEED"
 """Environment variable used to seed deterministic randomness."""
 
@@ -21,6 +25,8 @@ LOG_LEVEL = "ECLYPSE_LOG_LEVEL"
 
 LOG_FILE = "ECLYPSE_LOG_FILE"
 """Environment variable used to configure the log file path."""
+
+# Assets
 
 MIN_BANDWIDTH = MIN_FLOAT
 """Lower bound used by bandwidth assets."""
@@ -40,8 +46,12 @@ MIN_AVAILABILITY = 0.0
 MAX_AVAILABILITY = 1.0
 """Upper bound used by availability assets."""
 
+# Infrastructure
+
 COST_RECOMPUTATION_THRESHOLD = 0.05
 """Relative threshold above which cached path costs are recomputed."""
+
+# Workflow
 
 START_EVENT = "start"
 """Name of the default simulation start event."""
