@@ -34,6 +34,8 @@ from eclypse.policies.failure import (
 )
 from eclypse.policies.noise import (
     bounded_random_walk,
+    impulse,
+    momentum_walk,
 )
 from eclypse.policies.schedule import (
     after,
@@ -80,10 +82,12 @@ __all__ = [
     "from_parquet",
     "from_records",
     "gamma",
+    "impulse",
     "increase_latency",
     "kill_nodes",
     "latency_spike",
     "lognormal",
+    "momentum_walk",
     "normal",
     "normalize_update_policies",
     "once_at",
