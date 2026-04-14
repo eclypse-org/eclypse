@@ -1,4 +1,4 @@
-"""Replay node attributes from trace records."""
+"""Replay node attributes from records."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import (
     Any,
 )
 
-from eclypse.policies.trace_driven._helpers import (
+from eclypse.policies.replay._helpers import (
     group_records_by_step,
     infer_value_columns,
     initial_step,
@@ -37,7 +37,7 @@ class ReplayNodesPolicy:
     current_step: int = 0
 
     def __call__(self, graph):
-        """Apply the trace records for the current step to matching nodes."""
+        """Apply the replay records for the current step to matching nodes."""
         for record in self.records_by_step.get(self.current_step, []):
             _update_node_from_record(
                 graph,
@@ -63,23 +63,7 @@ def replay_nodes(
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
-    """Replay node attributes from time-indexed records.
-
-    Args:
-        record_source: Iterable of records or a dataframe-like source.
-        node_id_column (str): Column containing node ids.
-        time_column (str): Column containing the simulation step.
-        value_columns (list[str] | tuple[str, ...] | None): Explicit columns to copy
-            into the graph. Defaults to every non-reserved column.
-        node_ids (list[str] | None): Optional explicit list of node ids to target.
-        node_filter (NodeFilter | None): Optional predicate to filter target nodes.
-        missing (str): Behaviour when a record refers to a missing node. Accepted
-            values are ``"ignore"`` and ``"error"``.
-        start_step (int | None): Optional initial step override.
-
-    Returns:
-        UpdatePolicy: A graph update policy replaying node values over time.
-    """
+    """Replay node attributes from time-indexed records."""
     validate_missing_behaviour(missing)
     records = normalise_records(record_source)
     columns = infer_value_columns(

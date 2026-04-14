@@ -1,4 +1,4 @@
-"""Replay edge attributes from trace records."""
+"""Replay edge attributes from records."""
 
 from __future__ import annotations
 
@@ -8,7 +8,7 @@ from typing import (
     Any,
 )
 
-from eclypse.policies.trace_driven._helpers import (
+from eclypse.policies.replay._helpers import (
     group_records_by_step,
     infer_value_columns,
     initial_step,
@@ -38,7 +38,7 @@ class ReplayEdgesPolicy:
     current_step: int = 0
 
     def __call__(self, graph):
-        """Apply the trace records for the current step to matching edges."""
+        """Apply the replay records for the current step to matching edges."""
         for record in self.records_by_step.get(self.current_step, []):
             _update_edge_from_record(
                 graph,
@@ -66,25 +66,7 @@ def replay_edges(
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
-    """Replay edge attributes from time-indexed records.
-
-    Args:
-        record_source: Iterable of records or a dataframe-like source.
-        source_column (str): Column containing the source node id.
-        target_column (str): Column containing the target node id.
-        time_column (str): Column containing the simulation step.
-        value_columns (list[str] | tuple[str, ...] | None): Explicit columns to copy
-            into the graph. Defaults to every non-reserved column.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit list of edges to
-            target.
-        edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
-        missing (str): Behaviour when a record refers to a missing edge. Accepted
-            values are ``"ignore"`` and ``"error"``.
-        start_step (int | None): Optional initial step override.
-
-    Returns:
-        UpdatePolicy: A graph update policy replaying edge values over time.
-    """
+    """Replay edge attributes from time-indexed records."""
     validate_missing_behaviour(missing)
     records = normalise_records(record_source)
     columns = infer_value_columns(

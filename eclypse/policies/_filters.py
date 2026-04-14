@@ -84,6 +84,20 @@ def normalize_selected_keys(
     return list(keys)
 
 
+def effective_assets(
+    assets: str | list[str] | None,
+    per_asset_values: dict[str, Any] | None = None,
+) -> list[str]:
+    """Resolve selected asset keys from explicit selectors and per-asset maps."""
+    selected_assets = list(normalize_selected_keys(assets) or [])
+
+    for key in per_asset_values or {}:
+        if key not in selected_assets:
+            selected_assets.append(key)
+
+    return selected_assets
+
+
 def ensure_numeric_value(key: str, value: Any) -> float:
     """Return a numeric value or raise a clear error for unsupported assets."""
     if isinstance(value, bool) or not isinstance(value, int | float):
@@ -120,6 +134,7 @@ __all__ = [
     "NodeFilter",
     "clamp",
     "coerce_numeric_like",
+    "effective_assets",
     "ensure_numeric_value",
     "iter_selected_edges",
     "iter_selected_keys",

@@ -10,11 +10,11 @@ from typing import (
 from eclypse.policies._filters import (
     clamp,
     coerce_numeric_like,
+    effective_assets,
     ensure_numeric_value,
     iter_selected_edges,
     iter_selected_keys,
     iter_selected_nodes,
-    normalize_selected_keys,
 )
 
 if TYPE_CHECKING:
@@ -62,20 +62,6 @@ _BUILTIN_DISTRIBUTION_CHECKS = {
         ),
     ],
 }
-
-
-def effective_assets(
-    assets: str | list[str] | None,
-    asset_distributions: dict[str, Any] | None,
-) -> list[str]:
-    """Resolve the effective asset selection for a distribution policy."""
-    selected_assets = list(normalize_selected_keys(assets) or [])
-
-    for key in asset_distributions or {}:
-        if key not in selected_assets:
-            selected_assets.append(key)
-
-    return selected_assets
 
 
 def build_distribution_policy(
@@ -256,7 +242,6 @@ def sample_distribution(
 __all__ = [
     "build_distribution_policy",
     "build_sampled_distribution_policy",
-    "effective_assets",
     "normalize_distributions",
     "validate_distributions",
 ]
