@@ -78,6 +78,15 @@ ReportBackend: TypeAlias = Literal["pandas", "polars", "polars_lazy"]
 
 # Policies
 
+Distribution: TypeAlias = Literal[
+    "beta",
+    "gamma",
+    "lognormal",
+    "normal",
+    "uniform",
+]
+"""Type alias for the supported built-in distribution policies."""
+
 TraceReplayTarget: TypeAlias = Literal["nodes", "edges"]
 """Type alias for the supported trace-driven replay targets."""
 

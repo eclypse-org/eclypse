@@ -16,6 +16,16 @@ from eclypse.policies.degradation import (
     increase_latency,
     reduce_capacity,
 )
+from eclypse.policies.distribution import (
+    beta,
+    categorical,
+    gamma,
+    lognormal,
+    normal,
+    triangular,
+    truncated_normal,
+    uniform,
+)
 from eclypse.policies.failure import (
     availability_flap,
     kill_nodes,
@@ -24,9 +34,6 @@ from eclypse.policies.failure import (
 )
 from eclypse.policies.noise import (
     bounded_random_walk,
-    jitter_bandwidth,
-    jitter_latency,
-    jitter_resources,
 )
 from eclypse.policies.schedule import (
     after,
@@ -63,23 +70,28 @@ __all__ = [
     "UpdatePolicy",
     "after",
     "availability_flap",
+    "beta",
     "between",
     "bounded_random_walk",
+    "categorical",
     "degrade",
     "every",
     "from_dataframe",
     "from_parquet",
     "from_records",
+    "gamma",
     "increase_latency",
-    "jitter_bandwidth",
-    "jitter_latency",
-    "jitter_resources",
     "kill_nodes",
     "latency_spike",
+    "lognormal",
+    "normal",
     "normalize_update_policies",
     "once_at",
     "reduce_capacity",
     "replay_edges",
     "replay_nodes",
     "revive_nodes",
+    "triangular",
+    "truncated_normal",
+    "uniform",
 ]
