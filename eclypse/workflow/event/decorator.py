@@ -6,12 +6,12 @@ An event is a function that is triggered by other events or by the simulation it
 from __future__ import annotations
 
 import inspect
+import re
 from typing import (
     TYPE_CHECKING,
 )
 
 from eclypse.utils.constants import MAX_FLOAT
-from eclypse.utils.tools import camel_to_snake
 
 from .event import (
     EclypseEvent,
@@ -87,7 +87,7 @@ def event(
                 "The decorator must be applied to a function or a class"
                 + "that implements the __call__ method.",
             )
-        _name = camel_to_snake(name if name else decoratee.__name__)
+        _name = _camel_to_snake(name if name else decoratee.__name__)
 
         _triggers = (
             triggers if isinstance(triggers, list) else [triggers] if triggers else []
@@ -126,3 +126,20 @@ def event(
     if fn_or_class:
         return decorator(fn_or_class)
     return decorator
+
+
+def _camel_to_snake(name: str) -> str:
+    """Convert a CamelCase string to a snake_case string.
+
+    .. code-block:: python
+
+            name = "MyCamelCaseSentence"
+            print(_camel_to_snake(name))  # my_camel_case_sentence
+
+    Args:
+        name (str): The CamelCase string to convert.
+
+    Returns:
+        str: The snake_case string.
+    """
+    return re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()

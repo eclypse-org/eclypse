@@ -10,12 +10,12 @@ from dataclasses import (
     dataclass,
     field,
 )
+from sys import getsizeof
 from typing import (
     Any,
 )
 
 from eclypse.utils.constants import MIN_LATENCY
-from eclypse.utils.tools import get_bytes_size
 
 MILLISECONDS_PER_SECOND = 1000
 """Number of milliseconds in one second."""
@@ -70,7 +70,7 @@ class Route:
         Returns:
             float: The function that computes the cost of the route.
         """
-        msg_size = get_bytes_size(msg)
+        msg_size = _get_bytes_size(msg)
         return self.processing_time / MILLISECONDS_PER_SECOND + sum(
             (msg_size * BYTES_TO_MEGABITS / link.get("bandwidth", float("inf")))
             + (link.get("latency", MIN_LATENCY) / MILLISECONDS_PER_SECOND)
@@ -108,3 +108,36 @@ class Route:
         result += f"to {self.recipient_id} ({self.recipient_node_id}):\n"
         result += " -> ".join(f"{s} -- {t} ({link})" for s, t, link in self.hops)
         return result
+
+
+def _get_bytes_size(data: Any) -> int:
+    """Return the size of an object in bytes.
+
+    The size is computed according to the following rules:
+
+    - int, float, str, bool: the size is the size of the object itself.
+    - list, tuple, set: the size is the sum of the sizes of the
+      elements in the collection.
+    - dict: the size is the sum of the sizes of the keys and values in the dictionary.
+    - objects with a ``__dict__`` attribute: the size is the size of the
+      ``__dict__`` attribute.
+    - other objects: the size is the size of the object itself, computed using
+      ``sys.getsizeof``.
+
+    Args:
+        data (Any): The object to be measured.
+
+    Returns:
+        int: The size of the object in bytes.
+    """
+    if isinstance(data, (int, float, str, bool)):
+        return getsizeof(data)
+    if isinstance(data, (list, tuple, set)):
+        return sum(_get_bytes_size(element) for element in data)
+    if isinstance(data, dict):
+        return sum(
+            _get_bytes_size(key) + _get_bytes_size(value) for key, value in data.items()
+        )
+    if hasattr(data, "__dict__"):
+        return _get_bytes_size(data.__dict__)
+    return getsizeof(data)

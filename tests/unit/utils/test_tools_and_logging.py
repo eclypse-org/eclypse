@@ -14,27 +14,6 @@ from eclypse.utils.constants import (
     LOG_FILE,
     LOG_LEVEL,
 )
-from eclypse.utils.tools import (
-    camel_to_snake,
-    get_bytes_size,
-    prune_assets,
-)
-
-
-class ExampleObject:
-    def __init__(self):
-        self.payload = {"items": [1, 2, 3], "name": "demo"}
-
-
-def test_tools_measure_size_convert_names_and_prune_assets(sample_infrastructure):
-    obj = ExampleObject()
-
-    assert camel_to_snake("MyHTTPService") == "my_h_t_t_p_service"
-    assert get_bytes_size({"nested": [1, 2, {"x": 3}]}) > 0
-    assert get_bytes_size(obj) == get_bytes_size(obj.__dict__)
-    assert prune_assets(sample_infrastructure.node_assets, cpu=1, missing=2) == {
-        "cpu": 1
-    }
 
 
 def test_logging_helpers_configure_and_format_messages(

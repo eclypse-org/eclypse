@@ -18,8 +18,8 @@ from typing import (
     TYPE_CHECKING,
 )
 
+from eclypse.builders._helpers import prune_assets
 from eclypse.graph import Infrastructure
-from eclypse.utils.tools import prune_assets
 
 if TYPE_CHECKING:
     from collections.abc import Callable

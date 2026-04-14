@@ -46,7 +46,7 @@ if TYPE_CHECKING:
     from eclypse.utils._logging import Logger
 
 
-SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
+_SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
 """Supported runtime communication interfaces for remote services."""
 
 
@@ -68,7 +68,7 @@ class Service:
             store_step (bool, optional): Whether to store the results of
                 each step. Defaults to False.
         """
-        if communication_interface not in SUPPORTED_COMMUNICATION_INTERFACES:
+        if communication_interface not in _SUPPORTED_COMMUNICATION_INTERFACES:
             raise ValueError("Invalid communication interface.")
 
         self._service_id: str = service_id

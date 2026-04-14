@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from eclypse.builders._helpers import prune_assets
 from eclypse.builders.application import get_sock_shop
 from eclypse.remote.service.service import Service
 
@@ -34,3 +35,9 @@ def test_sock_shop_builder_configures_supported_interfaces_and_flows():
 
     with pytest.raises(ValueError, match="Unknown communication interface"):
         get_sock_shop(communication_interface="grpc")  # type: ignore[arg-type]
+
+
+def test_prune_assets_discards_unknown_builder_requirements(sample_infrastructure):
+    assert prune_assets(sample_infrastructure.node_assets, cpu=1, missing=2) == {
+        "cpu": 1
+    }
