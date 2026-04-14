@@ -21,8 +21,8 @@ The two classes share many structural similarities, but differ in purpose and in
          infrastructure = Infrastructure(
              infrastructure_id="infra",
              update_policies=[
-                 policies.availability_flap(0.01, up_probability=0.2),
-                 policies.uniform(
+                 policies.failure.availability_flap(0.01, up_probability=0.2),
+                 policies.distribution.uniform(
                      node_assets=["cpu", "ram"],
                      edge_assets=["latency", "bandwidth"],
                      node_distribution=(0.95, 1.05),
@@ -62,7 +62,7 @@ The two classes share many structural similarities, but differ in purpose and in
              update_policies=[
                  policies.after(
                      50,
-                     policies.degrade(
+                     policies.degradation.degrade(
                          target_degradation=0.6,
                          epochs=200,
                          node_assets=["cpu", "ram"],

@@ -57,12 +57,12 @@ custom update policy.
     infrastructure = Infrastructure(
         "edge-cloud",
         update_policies=[
-            policies.availability_flap(
+            policies.failure.availability_flap(
                 down_probability=0.02,
                 up_probability=0.5,
                 node_filter=lambda _, data: data["availability"] > 0,
             ),
-            policies.uniform(
+            policies.distribution.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
                 node_asset_distributions={
@@ -92,7 +92,7 @@ Most built-in policies separate **what** to change from **where** to change it.
 
     from eclypse import policies
 
-    policy = policies.uniform(
+    policy = policies.distribution.uniform(
         node_assets=["cpu", "ram"],
         edge_assets=["latency"],
         node_filter=lambda node_id, data: data.get("tier") == "edge",
@@ -111,7 +111,7 @@ Scheduling wrappers let you activate a policy only during part of the run.
 
     update_policy = policies.after(
         100,
-        policies.degrade(
+        policies.degradation.degrade(
             target_degradation=0.5,
             epochs=200,
             node_assets=["cpu", "ram", "storage"],
@@ -130,7 +130,7 @@ or synthetic measurements over time.
 
     from eclypse import policies
 
-    replay_users = policies.from_parquet(
+    replay_users = policies.trace_driven.from_parquet(
         "examples/user_distribution/dataset.parquet",
         target="nodes",
         node_id_column="node_id",

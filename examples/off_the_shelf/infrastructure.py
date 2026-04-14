@@ -13,11 +13,11 @@ def get_infrastructure(seed: int = 7):
         infrastructure_id="BuiltinsInfrastructure",
         symmetric=True,
         update_policies=[
-            policies.availability_flap(
+            policies.failure.availability_flap(
                 down_probability=0.04,
                 up_probability=0.15,
             ),
-            policies.uniform(
+            policies.distribution.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
                 node_asset_distributions={
@@ -32,7 +32,7 @@ def get_infrastructure(seed: int = 7):
             ),
             policies.every(
                 2,
-                policies.latency_spike(
+                policies.failure.latency_spike(
                     probability=0.35,
                     min_increase=2.0,
                     max_increase=6.0,
@@ -41,7 +41,7 @@ def get_infrastructure(seed: int = 7):
             ),
             policies.after(
                 5,
-                policies.degrade(
+                policies.degradation.degrade(
                     target_degradation=0.82,
                     epochs=12,
                     node_assets=["cpu", "ram", "storage"],

@@ -15,7 +15,7 @@ def get_application(seed: int = 7):
         update_policies=[
             policies.every(
                 2,
-                policies.uniform(
+                policies.distribution.uniform(
                     node_assets=["cpu", "ram"],
                     edge_assets=["latency", "bandwidth"],
                     node_distribution=(1.02, 1.18),
@@ -25,7 +25,7 @@ def get_application(seed: int = 7):
             ),
             policies.after(
                 6,
-                policies.degrade(
+                policies.degradation.degrade(
                     target_degradation=0.8,
                     epochs=14,
                     node_assets=["cpu", "ram"],
