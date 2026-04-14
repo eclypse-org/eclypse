@@ -22,9 +22,11 @@ The two classes share many structural similarities, but differ in purpose and in
              infrastructure_id="infra",
              update_policies=[
                  policies.availability_flap(0.01, up_probability=0.2),
-                 policies.jitter_resources(
+                 policies.uniform(
                      node_assets=["cpu", "ram"],
                      edge_assets=["latency", "bandwidth"],
+                     node_distribution=(0.95, 1.05),
+                     edge_distribution=(0.95, 1.05),
                  ),
              ],
              node_assets=[...],
