@@ -28,9 +28,8 @@ if TYPE_CHECKING:
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
+        UpdatePolicy,
     )
-
-from eclypse.policies import normalize_update_policies
 
 
 class AssetGraph(nx.DiGraph):
@@ -67,7 +66,7 @@ class AssetGraph(nx.DiGraph):
         self.rnd = rnd.Random(seed)
 
         self.id = graph_id
-        self.update_policies = normalize_update_policies(update_policies)
+        self.update_policies = _normalize_update_policies(update_policies)
 
         _node_assets = node_assets if node_assets is not None else {}
         _edge_assets = edge_assets if edge_assets is not None else {}
@@ -214,3 +213,12 @@ class AssetGraph(nx.DiGraph):
             Logger: The logger for the graph.
         """
         return logger.bind(id=self.id)
+
+
+def _normalize_update_policies(update_policies: UpdatePolicies) -> list[UpdatePolicy]:
+    """Normalise a policy declaration to a list of graph policies."""
+    if update_policies is None:
+        return []
+    if isinstance(update_policies, list):
+        return update_policies
+    return [update_policies]

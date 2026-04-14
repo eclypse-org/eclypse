@@ -6,13 +6,7 @@ from typing import Any
 
 import pytest
 
-from eclypse.policies import (
-    from_dataframe,
-    from_parquet,
-    from_records,
-    replay_edges,
-    replay_nodes,
-)
+from eclypse import policies
 from tests.unit.policies._helpers import (
     FakeDataFrame,
     IterRowsFrame,
@@ -23,7 +17,7 @@ from tests.unit.policies._helpers import (
 def test_trace_driven_policies_replay_node_and_edge_records():
     graph = build_graph()
 
-    node_policy = replay_nodes(
+    node_policy = policies.trace_driven.replay_nodes(
         [
             {"time": 0, "node": "a", "cpu": 70},
             {"time": 1, "node": "a", "cpu": 55},
@@ -32,7 +26,7 @@ def test_trace_driven_policies_replay_node_and_edge_records():
         node_id_column="node",
     )
 
-    edge_policy = replay_edges(
+    edge_policy = policies.trace_driven.replay_edges(
         [
             {"time": 0, "src": "a", "dst": "b", "latency": 12},
             {"time": 1, "src": "a", "dst": "b", "latency": 18},
@@ -56,7 +50,7 @@ def test_trace_driven_policies_replay_node_and_edge_records():
 def test_trace_driven_convenience_builders_accept_records_and_dataframe_like():
     graph = build_graph()
 
-    from_records(
+    policies.trace_driven.from_records(
         [
             {"step": 0, "node_id": "a", "ram": 64},
         ],
@@ -66,7 +60,7 @@ def test_trace_driven_convenience_builders_accept_records_and_dataframe_like():
 
     assert graph.nodes["a"]["ram"] == 64
 
-    from_dataframe(
+    policies.trace_driven.from_dataframe(
         FakeDataFrame(
             [
                 {"step": 0, "source": "a", "target": "b", "bandwidth": 250},
@@ -86,9 +80,9 @@ def test_trace_driven_builders_cover_invalid_targets_and_parquet_loading(
     invalid_target: Any = "services"
 
     with pytest.raises(ValueError):
-        from_records([], target=invalid_target)
+        policies.trace_driven.from_records([], target=invalid_target)
 
-    from_dataframe(
+    policies.trace_driven.from_dataframe(
         IterRowsFrame([{"step": 0, "node_id": "a", "cpu": 44}]),
         target="nodes",
         time_column="step",
@@ -103,7 +97,7 @@ def test_trace_driven_builders_cover_invalid_targets_and_parquet_loading(
     )
     monkeypatch.setitem(sys.modules, "pandas", fake_pandas)
 
-    from_parquet(
+    policies.trace_driven.from_parquet(
         "trace.parquet",
         target="nodes",
         time_column="step",
@@ -114,7 +108,7 @@ def test_trace_driven_builders_cover_invalid_targets_and_parquet_loading(
 
 def test_trace_driven_missing_error_is_explicit():
     graph = build_graph()
-    policy = replay_nodes(
+    policy = policies.trace_driven.replay_nodes(
         [{"time": 0, "node_id": "missing", "cpu": 1}],
         missing="error",
     )
@@ -126,7 +120,7 @@ def test_trace_driven_missing_error_is_explicit():
 def test_trace_driven_filters_start_step_and_edge_missing_behaviour():
     graph = build_graph()
 
-    node_policy = replay_nodes(
+    node_policy = policies.trace_driven.replay_nodes(
         [
             {"time": 4, "node_id": "a", "cpu": 33},
             {"time": 5, "node_id": "b", "cpu": 22},
@@ -136,7 +130,7 @@ def test_trace_driven_filters_start_step_and_edge_missing_behaviour():
         node_filter=lambda node_id, _: node_id == "a",
     )
 
-    edge_policy = replay_edges(
+    edge_policy = policies.trace_driven.replay_edges(
         [{"time": 0, "source": "a", "target": "missing", "latency": 1}],
         missing="ignore",
     )
@@ -149,7 +143,7 @@ def test_trace_driven_filters_start_step_and_edge_missing_behaviour():
     node_policy(graph)
     assert graph.nodes["b"]["cpu"] == 50
 
-    failing_edge_policy = replay_edges(
+    failing_edge_policy = policies.trace_driven.replay_edges(
         [{"time": 0, "source": "a", "target": "missing", "latency": 1}],
         missing="error",
     )

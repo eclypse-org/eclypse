@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.policies import normalize_update_policies
+from eclypse.graph.asset_graph import _normalize_update_policies
 from eclypse.policies._filters import (
     clamp,
     coerce_numeric_like,
@@ -18,9 +18,9 @@ def test_normalize_update_policies_and_filter_helpers_cover_edge_cases():
     def policy(_graph):
         return None
 
-    assert normalize_update_policies(None) == []
-    assert normalize_update_policies(policy) == [policy]
-    assert normalize_update_policies([policy]) == [policy]
+    assert _normalize_update_policies(None) == []
+    assert _normalize_update_policies(policy) == [policy]
+    assert _normalize_update_policies([policy]) == [policy]
 
     graph = build_graph()
 

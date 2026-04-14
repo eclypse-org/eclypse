@@ -2,14 +2,9 @@ from __future__ import annotations
 
 import pytest
 
+from eclypse import policies
 from eclypse.graph.asset_graph import AssetGraph
 from eclypse.graph.assets import Additive
-from eclypse.policies import (
-    after,
-    between,
-    every,
-    once_at,
-)
 
 
 def test_schedule_wrappers_control_policy_timing():
@@ -17,20 +12,20 @@ def test_schedule_wrappers_control_policy_timing():
         "scheduled",
         node_assets={"cpu": Additive(0, 100)},
         update_policies=[
-            every(
+            policies.every(
                 2,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
-            after(
+            policies.after(
                 1,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
-            between(
+            policies.between(
                 1,
                 2,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
-            once_at(
+            policies.once_at(
                 2,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
@@ -49,19 +44,19 @@ def test_schedule_wrapper_validation_errors():
         return None
 
     with pytest.raises(ValueError):
-        after(-1, noop)
+        policies.after(-1, noop)
 
     with pytest.raises(ValueError):
-        between(-1, 1, noop)
+        policies.between(-1, 1, noop)
 
     with pytest.raises(ValueError):
-        between(3, 2, noop)
+        policies.between(3, 2, noop)
 
     with pytest.raises(ValueError):
-        every(0, noop)
+        policies.every(0, noop)
 
     with pytest.raises(ValueError):
-        every(1, noop, start=-1)
+        policies.every(1, noop, start=-1)
 
     with pytest.raises(ValueError):
-        once_at(-1, noop)
+        policies.once_at(-1, noop)
