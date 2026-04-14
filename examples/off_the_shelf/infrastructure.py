@@ -41,11 +41,14 @@ def get_infrastructure(seed: int = 7):
             ),
             policies.after(
                 5,
-                policies.degradation.degrade(
-                    target_degradation=0.82,
-                    epochs=12,
-                    node_assets=["cpu", "ram", "storage"],
-                    edge_assets=["latency", "bandwidth"],
+                policies.degrade.degrade(
+                    reduce_factor=0.82,
+                    reduce_epochs=12,
+                    increase_factor=1.22,
+                    increase_epochs=12,
+                    reduce_node_assets=["cpu", "ram", "storage"],
+                    reduce_edge_assets=["bandwidth"],
+                    increase_edge_assets=["latency"],
                 ),
             ),
         ],

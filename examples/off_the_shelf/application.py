@@ -25,11 +25,14 @@ def get_application(seed: int = 7):
             ),
             policies.after(
                 6,
-                policies.degradation.degrade(
-                    target_degradation=0.8,
-                    epochs=14,
-                    node_assets=["cpu", "ram"],
-                    edge_assets=["latency", "bandwidth"],
+                policies.degrade.degrade(
+                    reduce_factor=0.8,
+                    reduce_epochs=14,
+                    increase_factor=1.25,
+                    increase_epochs=14,
+                    reduce_node_assets=["cpu", "ram"],
+                    reduce_edge_assets=["bandwidth"],
+                    increase_edge_assets=["latency"],
                 ),
             )
         ],
