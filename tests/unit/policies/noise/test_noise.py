@@ -2,18 +2,14 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.policies import (
-    bounded_random_walk,
-    impulse,
-    momentum_walk,
-)
+from eclypse import policies
 from tests.unit.policies._helpers import build_graph
 
 
 def test_bounded_random_walk_stays_within_bounds():
     graph = build_graph()
 
-    policy = bounded_random_walk(
+    policy = policies.noise.bounded_random_walk(
         node_steps={"cpu": 25},
         edge_steps={"latency": 5},
         node_bounds={"cpu": (0, 90)},
@@ -28,19 +24,19 @@ def test_bounded_random_walk_stays_within_bounds():
 
 def test_bounded_random_walk_validation():
     with pytest.raises(ValueError):
-        bounded_random_walk()
+        policies.noise.bounded_random_walk()
 
     with pytest.raises(ValueError):
-        bounded_random_walk(node_steps={"cpu": -1})
+        policies.noise.bounded_random_walk(node_steps={"cpu": -1})
 
     with pytest.raises(ValueError):
-        bounded_random_walk(edge_steps={"latency": -1})
+        policies.noise.bounded_random_walk(edge_steps={"latency": -1})
 
 
 def test_momentum_walk_stays_within_bounds():
     graph = build_graph()
 
-    policy = momentum_walk(
+    policy = policies.noise.momentum_walk(
         node_steps={"cpu": 25},
         edge_steps={"latency": 5},
         node_bounds={"cpu": (0, 90)},
@@ -58,12 +54,12 @@ def test_momentum_walk_uses_graph_rng_reproducibly():
     first_graph = build_graph()
     second_graph = build_graph()
 
-    first_policy = momentum_walk(
+    first_policy = policies.noise.momentum_walk(
         node_steps={"cpu": 10},
         edge_steps={"latency": 2},
         momentum=0.6,
     )
-    second_policy = momentum_walk(
+    second_policy = policies.noise.momentum_walk(
         node_steps={"cpu": 10},
         edge_steps={"latency": 2},
         momentum=0.6,
@@ -82,19 +78,19 @@ def test_momentum_walk_uses_graph_rng_reproducibly():
 
 def test_momentum_walk_validation():
     with pytest.raises(ValueError):
-        momentum_walk()
+        policies.noise.momentum_walk()
 
     with pytest.raises(ValueError):
-        momentum_walk(node_steps={"cpu": -1})
+        policies.noise.momentum_walk(node_steps={"cpu": -1})
 
     with pytest.raises(ValueError):
-        momentum_walk(momentum=1.5, node_steps={"cpu": 1})
+        policies.noise.momentum_walk(momentum=1.5, node_steps={"cpu": 1})
 
 
 def test_impulse_applies_selected_shocks():
     graph = build_graph()
 
-    impulse(
+    policies.noise.impulse(
         node_assets="cpu",
         edge_assets="bandwidth",
         probability=1.0,
@@ -111,7 +107,7 @@ def test_impulse_applies_selected_shocks():
 def test_impulse_can_skip_updates():
     graph = build_graph()
 
-    impulse(
+    policies.noise.impulse(
         node_assets="cpu",
         edge_assets="bandwidth",
         probability=0.0,
@@ -123,13 +119,13 @@ def test_impulse_can_skip_updates():
 
 def test_impulse_validation():
     with pytest.raises(ValueError):
-        impulse()
+        policies.noise.impulse()
 
     with pytest.raises(ValueError):
-        impulse(node_assets="cpu", probability=-0.1)
+        policies.noise.impulse(node_assets="cpu", probability=-0.1)
 
     with pytest.raises(ValueError):
-        impulse(node_assets="cpu", node_factor_range=(-1.0, 1.0))
+        policies.noise.impulse(node_assets="cpu", node_factor_range=(-1.0, 1.0))
 
     with pytest.raises(ValueError):
-        impulse(node_assets="cpu", node_factor_range=(2.0, 1.0))
+        policies.noise.impulse(node_assets="cpu", node_factor_range=(2.0, 1.0))

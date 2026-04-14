@@ -7,35 +7,17 @@ Policies are graph-oriented callables that mutate an
 
 from __future__ import annotations
 
+from eclypse.policies import (
+    degradation,
+    distribution,
+    failure,
+    noise,
+    schedule,
+    trace_driven,
+)
 from eclypse.policies._filters import (
     EdgeFilter,
     NodeFilter,
-)
-from eclypse.policies.degradation import (
-    degrade,
-    increase_latency,
-    reduce_capacity,
-)
-from eclypse.policies.distribution import (
-    beta,
-    categorical,
-    gamma,
-    lognormal,
-    normal,
-    triangular,
-    truncated_normal,
-    uniform,
-)
-from eclypse.policies.failure import (
-    availability_flap,
-    kill_nodes,
-    latency_spike,
-    revive_nodes,
-)
-from eclypse.policies.noise import (
-    bounded_random_walk,
-    impulse,
-    momentum_walk,
 )
 from eclypse.policies.schedule import (
     after,
@@ -43,26 +25,10 @@ from eclypse.policies.schedule import (
     every,
     once_at,
 )
-from eclypse.policies.trace_driven import (
-    from_dataframe,
-    from_parquet,
-    from_records,
-    replay_edges,
-    replay_nodes,
-)
 from eclypse.utils.types import (
     UpdatePolicies,
     UpdatePolicy,
 )
-
-
-def normalize_update_policies(update_policies: UpdatePolicies) -> list[UpdatePolicy]:
-    """Normalise a policy declaration to a list of graph policies."""
-    if update_policies is None:
-        return []
-    if isinstance(update_policies, list):
-        return update_policies
-    return [update_policies]
 
 
 __all__ = [
@@ -71,31 +37,13 @@ __all__ = [
     "UpdatePolicies",
     "UpdatePolicy",
     "after",
-    "availability_flap",
-    "beta",
     "between",
-    "bounded_random_walk",
-    "categorical",
-    "degrade",
+    "degradation",
+    "distribution",
     "every",
-    "from_dataframe",
-    "from_parquet",
-    "from_records",
-    "gamma",
-    "impulse",
-    "increase_latency",
-    "kill_nodes",
-    "latency_spike",
-    "lognormal",
-    "momentum_walk",
-    "normal",
-    "normalize_update_policies",
+    "failure",
+    "noise",
     "once_at",
-    "reduce_capacity",
-    "replay_edges",
-    "replay_nodes",
-    "revive_nodes",
-    "triangular",
-    "truncated_normal",
-    "uniform",
+    "schedule",
+    "trace_driven",
 ]

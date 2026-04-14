@@ -2,24 +2,20 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.policies import (
-    degrade,
-    increase_latency,
-    reduce_capacity,
-)
+from eclypse import policies
 from tests.unit.policies._helpers import build_graph
 
 
 def test_degradation_policies_stop_at_the_requested_epoch():
     graph = build_graph()
 
-    reduce = reduce_capacity(
+    reduce = policies.degradation.reduce_capacity(
         0.25,
         2,
         node_assets="cpu",
         edge_assets="bandwidth",
     )
-    latency = increase_latency(target=40, epochs=2)
+    latency = policies.degradation.increase_latency(target=40, epochs=2)
 
     reduce(graph)
     latency(graph)
@@ -36,28 +32,28 @@ def test_degradation_policies_stop_at_the_requested_epoch():
 
 def test_degradation_validation_and_rate_mode():
     with pytest.raises(ValueError):
-        reduce_capacity(0.5, 0)
+        policies.degradation.reduce_capacity(0.5, 0)
 
     with pytest.raises(ValueError):
-        degrade(0.0, 2)
+        policies.degradation.degrade(0.0, 2)
 
     with pytest.raises(ValueError):
-        increase_latency()
+        policies.degradation.increase_latency()
 
     with pytest.raises(ValueError):
-        increase_latency(rate=0.1, target=20, epochs=2)
+        policies.degradation.increase_latency(rate=0.1, target=20, epochs=2)
 
     with pytest.raises(ValueError):
-        increase_latency(rate=-2.0)
+        policies.degradation.increase_latency(rate=-2.0)
 
     with pytest.raises(ValueError):
-        increase_latency(target=-1, epochs=2)
+        policies.degradation.increase_latency(target=-1, epochs=2)
 
     with pytest.raises(ValueError):
-        increase_latency(target=20)
+        policies.degradation.increase_latency(target=20)
 
     graph = build_graph()
-    policy = increase_latency(rate=0.5, epochs=2)
+    policy = policies.degradation.increase_latency(rate=0.5, epochs=2)
     policy(graph)
     policy(graph)
 
@@ -67,7 +63,7 @@ def test_degradation_validation_and_rate_mode():
 def test_degrade_combines_capacity_and_latency_changes():
     graph = build_graph()
 
-    policy = degrade(
+    policy = policies.degradation.degrade(
         0.25,
         2,
         node_assets="cpu",
