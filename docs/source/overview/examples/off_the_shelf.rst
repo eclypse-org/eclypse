@@ -20,8 +20,8 @@ Application
 -----------
 
 The application is the standard Sock Shop graph created through the built-in
-builder, with built-in jitter and degradation policies that progressively make
-placement harder.
+builder, with built-in uniform-distribution and degradation policies that
+progressively make placement harder.
 
 .. dropdown:: Application code
 
@@ -33,8 +33,8 @@ Infrastructure
 --------------
 
 The infrastructure is a generated hierarchical topology using the default
-assets and a built-in policy mix for flapping availability, resource jitter,
-periodic latency spikes, and scheduled degradation. Together with
+assets and a built-in policy mix for flapping availability, uniform
+perturbations, periodic latency spikes, and scheduled degradation. Together with
 ``BestFitStrategy``, this makes the example exercise repeated placement under a
 changing environment.
 

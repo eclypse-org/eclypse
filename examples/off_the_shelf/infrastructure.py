@@ -17,15 +17,15 @@ def get_infrastructure(seed: int = 7):
                 down_probability=0.04,
                 up_probability=0.15,
             ),
-            policies.jitter_resources(
+            policies.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
-                node_ranges={
+                node_distributions={
                     "cpu": (0.85, 1.12),
                     "ram": (0.8, 1.15),
                     "storage": (0.92, 1.08),
                 },
-                edge_ranges={
+                edge_distributions={
                     "latency": (0.95, 1.2),
                     "bandwidth": (0.82, 1.08),
                 },

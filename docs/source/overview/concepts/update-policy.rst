@@ -31,7 +31,9 @@ ECLYPSE also provides a catalogue of off-the-shelf policies in
 families:
 
 - **failure**: availability flapping, node failures, and latency spikes
-- **noise**: bounded random walks and multiplicative jitter
+- **noise**: bounded random walks
+- **distribution**: uniform, normal, lognormal, triangular, beta, gamma,
+  truncated-normal, and categorical multiplicative perturbations
 - **degradation**: progressive capacity loss and latency increase
 - **trace-driven**: replay of node or edge values from records, dataframes, or parquet files
 - **schedule**: wrappers such as ``every()``, ``after()``, ``between()``, and ``once_at()``
@@ -60,15 +62,15 @@ custom update policy.
                 up_probability=0.5,
                 node_filter=lambda _, data: data["availability"] > 0,
             ),
-            policies.jitter_resources(
+            policies.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
-                node_ranges={
+                node_distributions={
                     "cpu": (0.95, 1.05),
                     "ram": (0.9, 1.1),
                     "storage": (0.98, 1.02),
                 },
-                edge_ranges={
+                edge_distributions={
                     "latency": (0.95, 1.05),
                     "bandwidth": (0.98, 1.02),
                 },
@@ -90,7 +92,7 @@ Most built-in policies separate **what** to change from **where** to change it.
 
     from eclypse import policies
 
-    policy = policies.jitter_resources(
+    policy = policies.uniform(
         node_assets=["cpu", "ram"],
         edge_assets=["latency"],
         node_filter=lambda node_id, data: data.get("tier") == "edge",
@@ -166,7 +168,7 @@ within the graph.
 Custom vs built-in
 ------------------
 
-Built-in policies are ideal for common patterns such as failures, jitter,
+Built-in policies are ideal for common patterns such as failures, distributions,
 degradation, and replay from traces. When an example or scenario couples
 multiple effects in a very specific way, keeping a custom callable is still the
 right choice. Several examples in the repository intentionally do that to
@@ -175,4 +177,5 @@ preserve their original behaviour.
 .. important::
 
    Update policies must always ensure that modified asset values remain consistent.
-   Use the asset's :py:meth:`~eclypse.graph.assets.asset.Asset.is_consistent()` method if needed. Otherwise, placement and simulation logic may occur on inconsistent data.
+   Use the asset's :py:meth:`~eclypse.graph.assets.asset.Asset.is_consistent()` method if needed.
+   Otherwise, placement and simulation logic may occur on inconsistent data.

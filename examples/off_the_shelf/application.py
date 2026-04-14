@@ -15,11 +15,11 @@ def get_application(seed: int = 7):
         update_policies=[
             policies.every(
                 2,
-                policies.jitter_resources(
+                policies.uniform(
                     node_assets=["cpu", "ram"],
                     edge_assets=["latency", "bandwidth"],
-                    node_range=(1.02, 1.18),
-                    edge_range=(0.98, 1.08),
+                    node_distribution=(1.02, 1.18),
+                    edge_distribution=(0.98, 1.08),
                 ),
                 start=2,
             ),
