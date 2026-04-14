@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 from types import SimpleNamespace
+from typing import Any
 
 import pytest
 
@@ -127,8 +128,8 @@ def test_noise_policies_change_only_selected_resources():
     graph = build_graph()
 
     jitter_resources(
-        node_assets=["cpu"],
-        edge_assets=["bandwidth"],
+        node_assets="cpu",
+        edge_assets="bandwidth",
         node_range=(1.5, 1.5),
         edge_range=(0.5, 0.5),
     )(graph)
@@ -195,8 +196,8 @@ def test_degradation_policies_stop_at_the_requested_epoch():
     reduce = reduce_capacity(
         0.25,
         2,
-        node_assets=["cpu"],
-        edge_assets=["bandwidth"],
+        node_assets="cpu",
+        edge_assets="bandwidth",
     )
     latency = increase_latency(target=40, epochs=2)
 
@@ -249,7 +250,7 @@ def test_degrade_combines_capacity_and_latency_changes():
     policy = degrade(
         0.25,
         2,
-        node_assets=["cpu"],
+        node_assets="cpu",
         edge_assets=["bandwidth", "latency"],
     )
 
@@ -324,9 +325,10 @@ def test_trace_driven_builders_cover_invalid_targets_and_parquet_loading(
     monkeypatch: pytest.MonkeyPatch,
 ):
     graph = build_graph()
+    invalid_target: Any = "services"
 
     with pytest.raises(ValueError):
-        from_records([], target="services")
+        from_records([], target=invalid_target)
 
     from_dataframe(
         IterRowsFrame([{"step": 0, "node_id": "a", "cpu": 44}]),
