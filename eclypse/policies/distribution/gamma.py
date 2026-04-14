@@ -21,8 +21,8 @@ def gamma(
     edge_assets: str | list[str] | None = None,
     node_distribution: tuple[float, float] = (2.0, 0.5),
     edge_distribution: tuple[float, float] | None = None,
-    node_distributions: dict[str, tuple[float, float]] | None = None,
-    edge_distributions: dict[str, tuple[float, float]] | None = None,
+    node_asset_distributions: dict[str, tuple[float, float]] | None = None,
+    edge_asset_distributions: dict[str, tuple[float, float]] | None = None,
     minimum: float = MIN_FLOAT,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
@@ -38,9 +38,9 @@ def gamma(
             used for node multipliers.
         edge_distribution (tuple[float, float] | None): Default ``(shape, scale)``
             pair used for edge multipliers. Defaults to ``node_distribution``.
-        node_distributions (dict[str, tuple[float, float]] | None): Optional
+        node_asset_distributions (dict[str, tuple[float, float]] | None): Optional
             per-node-asset overrides for ``node_distribution``.
-        edge_distributions (dict[str, tuple[float, float]] | None): Optional
+        edge_asset_distributions (dict[str, tuple[float, float]] | None): Optional
             per-edge-asset overrides for ``edge_distribution``.
         minimum (float): Lower clamp applied after perturbation.
         node_ids (list[str] | None): Optional explicit list of node ids to target.
@@ -58,8 +58,8 @@ def gamma(
         edge_assets=edge_assets,
         node_distribution=node_distribution,
         edge_distribution=edge_distribution,
-        node_distributions=node_distributions,
-        edge_distributions=edge_distributions,
+        node_asset_distributions=node_asset_distributions,
+        edge_asset_distributions=edge_asset_distributions,
         minimum=minimum,
         node_ids=node_ids,
         node_filter=node_filter,

@@ -7,7 +7,8 @@ from typing import TYPE_CHECKING
 from eclypse.policies._filters import clamp
 from eclypse.policies.distribution._helpers import (
     build_sampled_distribution_policy,
-    validate_distribution_map,
+    normalize_distributions,
+    validate_distributions,
 )
 from eclypse.utils.constants import MIN_FLOAT
 
@@ -25,8 +26,8 @@ def truncated_normal(
     edge_assets: str | list[str] | None = None,
     node_distribution: tuple[float, float] = (1.0, 0.05),
     edge_distribution: tuple[float, float] | None = None,
-    node_distributions: dict[str, tuple[float, float]] | None = None,
-    edge_distributions: dict[str, tuple[float, float]] | None = None,
+    node_asset_distributions: dict[str, tuple[float, float]] | None = None,
+    edge_asset_distributions: dict[str, tuple[float, float]] | None = None,
     lower: float = 0.0,
     upper: float | None = None,
     max_attempts: int = 100,
@@ -45,9 +46,9 @@ def truncated_normal(
             used for node multipliers.
         edge_distribution (tuple[float, float] | None): Default ``(mean, std)``
             pair used for edge multipliers. Defaults to ``node_distribution``.
-        node_distributions (dict[str, tuple[float, float]] | None): Optional
+        node_asset_distributions (dict[str, tuple[float, float]] | None): Optional
             per-node-asset overrides for ``node_distribution``.
-        edge_distributions (dict[str, tuple[float, float]] | None): Optional
+        edge_asset_distributions (dict[str, tuple[float, float]] | None): Optional
             per-edge-asset overrides for ``edge_distribution``.
         lower (float): Lower bound for sampled multipliers.
         upper (float | None): Optional upper bound for sampled multipliers.
@@ -66,17 +67,32 @@ def truncated_normal(
     effective_edge_distribution = (
         node_distribution if edge_distribution is None else edge_distribution
     )
-    _validate_distribution("node_distribution", node_distribution)
-    _validate_distribution("edge_distribution", effective_edge_distribution)
-    validate_distribution_map(
-        "node_distributions",
-        node_distributions,
-        validator=_validate_distribution,
-    )
-    validate_distribution_map(
-        "edge_distributions",
-        edge_distributions,
-        validator=_validate_distribution,
+    checks = [
+        (
+            lambda distribution: distribution[1] >= 0,
+            "must use a non-negative standard deviation.",
+        ),
+    ]
+    validate_distributions(
+        {
+            **normalize_distributions(
+                "node_distribution",
+                node_distribution,
+            ),
+            **normalize_distributions(
+                "edge_distribution",
+                effective_edge_distribution,
+            ),
+            **normalize_distributions(
+                "node_asset_distributions",
+                node_asset_distributions,
+            ),
+            **normalize_distributions(
+                "edge_asset_distributions",
+                edge_asset_distributions,
+            ),
+        },
+        checks=checks,
     )
 
     if upper is not None and lower > upper:
@@ -89,8 +105,8 @@ def truncated_normal(
         edge_assets=edge_assets,
         node_distribution=node_distribution,
         edge_distribution=effective_edge_distribution,
-        node_distributions=node_distributions,
-        edge_distributions=edge_distributions,
+        node_asset_distributions=node_asset_distributions,
+        edge_asset_distributions=edge_asset_distributions,
         minimum=minimum,
         node_ids=node_ids,
         node_filter=node_filter,
@@ -122,9 +138,3 @@ def _sample_truncated_normal(
             return value
 
     return clamp(value, lower=lower, upper=upper)
-
-
-def _validate_distribution(name: str, distribution: tuple[float, float]) -> None:
-    """Validate a truncated-normal ``(mean, std)`` pair."""
-    if distribution[1] < 0:
-        raise ValueError(f"{name} must use a non-negative standard deviation.")

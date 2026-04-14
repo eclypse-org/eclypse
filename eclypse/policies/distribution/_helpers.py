@@ -30,16 +30,52 @@ if TYPE_CHECKING:
     )
 
 
+_BUILTIN_DISTRIBUTION_CHECKS = {
+    "beta": [
+        (
+            lambda distribution: distribution[0] > 0 and distribution[1] > 0,
+            "must use strictly positive parameters.",
+        ),
+    ],
+    "gamma": [
+        (
+            lambda distribution: distribution[0] > 0 and distribution[1] > 0,
+            "must use strictly positive parameters.",
+        ),
+    ],
+    "lognormal": [
+        (
+            lambda distribution: distribution[1] >= 0,
+            "must use a non-negative sigma.",
+        ),
+    ],
+    "normal": [
+        (
+            lambda distribution: distribution[1] >= 0,
+            "must use a non-negative standard deviation.",
+        ),
+    ],
+    "uniform": [
+        (
+            lambda distribution: distribution[0] <= distribution[1],
+            "must be ordered as (low, high).",
+        ),
+    ],
+}
+
+
 def effective_assets(
     assets: str | list[str] | None,
-    distributions: dict[str, Any] | None,
-) -> list[str] | None:
+    asset_distributions: dict[str, Any] | None,
+) -> list[str]:
     """Resolve the effective asset selection for a distribution policy."""
-    if assets is not None:
-        return normalize_selected_keys(assets)
-    if distributions is None:
-        return None
-    return list(distributions.keys())
+    selected_assets = list(normalize_selected_keys(assets) or [])
+
+    for key in asset_distributions or {}:
+        if key not in selected_assets:
+            selected_assets.append(key)
+
+    return selected_assets
 
 
 def build_distribution_policy(
@@ -49,8 +85,8 @@ def build_distribution_policy(
     edge_assets: str | list[str] | None,
     node_distribution: tuple[float, float],
     edge_distribution: tuple[float, float] | None,
-    node_distributions: dict[str, tuple[float, float]] | None,
-    edge_distributions: dict[str, tuple[float, float]] | None,
+    node_asset_distributions: dict[str, tuple[float, float]] | None,
+    edge_asset_distributions: dict[str, tuple[float, float]] | None,
     minimum: float,
     node_ids: list[str] | None,
     node_filter: NodeFilter | None,
@@ -61,21 +97,27 @@ def build_distribution_policy(
     effective_edge_distribution = (
         node_distribution if edge_distribution is None else edge_distribution
     )
-    validate_distribution(kind, "node_distribution", node_distribution)
-    validate_distribution(kind, "edge_distribution", effective_edge_distribution)
-    validate_distribution_map(
-        "node_distributions",
-        node_distributions,
-        validator=lambda name, distribution: validate_distribution(
-            kind, name, distribution
-        ),
-    )
-    validate_distribution_map(
-        "edge_distributions",
-        edge_distributions,
-        validator=lambda name, distribution: validate_distribution(
-            kind, name, distribution
-        ),
+    checks = _BUILTIN_DISTRIBUTION_CHECKS[kind]
+    validate_distributions(
+        {
+            **normalize_distributions(
+                "node_distribution",
+                node_distribution,
+            ),
+            **normalize_distributions(
+                "edge_distribution",
+                effective_edge_distribution,
+            ),
+            **normalize_distributions(
+                "node_asset_distributions",
+                node_asset_distributions,
+            ),
+            **normalize_distributions(
+                "edge_asset_distributions",
+                edge_asset_distributions,
+            ),
+        },
+        checks=checks,
     )
 
     return build_sampled_distribution_policy(
@@ -83,8 +125,8 @@ def build_distribution_policy(
         edge_assets=edge_assets,
         node_distribution=node_distribution,
         edge_distribution=effective_edge_distribution,
-        node_distributions=node_distributions,
-        edge_distributions=edge_distributions,
+        node_asset_distributions=node_asset_distributions,
+        edge_asset_distributions=edge_asset_distributions,
         minimum=minimum,
         node_ids=node_ids,
         node_filter=node_filter,
@@ -100,8 +142,8 @@ def build_sampled_distribution_policy(
     edge_assets: str | list[str] | None,
     node_distribution: Any,
     edge_distribution: Any,
-    node_distributions: dict[str, Any] | None,
-    edge_distributions: dict[str, Any] | None,
+    node_asset_distributions: dict[str, Any] | None,
+    edge_asset_distributions: dict[str, Any] | None,
     minimum: float,
     node_ids: list[str] | None,
     node_filter: NodeFilter | None,
@@ -110,8 +152,14 @@ def build_sampled_distribution_policy(
     sampler: Any,
 ) -> UpdatePolicy:
     """Build a multiplicative update policy from a custom distribution sampler."""
-    effective_node_assets = effective_assets(node_assets, node_distributions)
-    effective_edge_assets = effective_assets(edge_assets, edge_distributions)
+    effective_node_assets = effective_assets(node_assets, node_asset_distributions)
+    effective_edge_assets = effective_assets(edge_assets, edge_asset_distributions)
+
+    if not effective_node_assets and not effective_edge_assets:
+        raise ValueError(
+            "At least one of node_assets, edge_assets, "
+            "node_asset_distributions, or edge_asset_distributions must be provided."
+        )
 
     def policy(graph):
         for _, data in iter_selected_nodes(
@@ -121,8 +169,8 @@ def build_sampled_distribution_policy(
         ):
             for key in iter_selected_keys(data, effective_node_assets):
                 distribution = (
-                    node_distributions.get(key, node_distribution)
-                    if node_distributions is not None
+                    node_asset_distributions.get(key, node_distribution)
+                    if node_asset_distributions is not None
                     else node_distribution
                 )
                 current = ensure_numeric_value(key, data[key])
@@ -139,8 +187,8 @@ def build_sampled_distribution_policy(
         ):
             for key in iter_selected_keys(data, effective_edge_assets):
                 distribution = (
-                    edge_distributions.get(key, edge_distribution)
-                    if edge_distributions is not None
+                    edge_asset_distributions.get(key, edge_distribution)
+                    if edge_asset_distributions is not None
                     else edge_distribution
                 )
                 current = ensure_numeric_value(key, data[key])
@@ -153,37 +201,33 @@ def build_sampled_distribution_policy(
     return policy
 
 
-def validate_distribution(
-    kind: Distribution,
+def normalize_distributions(
     name: str,
-    distribution: tuple[float, float],
-) -> None:
-    """Validate a distribution pair for the requested policy kind."""
-    if kind == "normal" and distribution[1] < 0:
-        raise ValueError(f"{name} must use a non-negative standard deviation.")
-
-    if kind == "uniform" and distribution[0] > distribution[1]:
-        raise ValueError(f"{name} must be ordered as (low, high).")
-
-    if kind in {"beta", "gamma"} and (distribution[0] <= 0 or distribution[1] <= 0):
-        raise ValueError(f"{name} must use strictly positive parameters.")
-
-    if kind == "lognormal" and distribution[1] < 0:
-        raise ValueError(f"{name} must use a non-negative sigma.")
-
-
-def validate_distribution_map(
-    name: str,
-    distributions: dict[str, Any] | None,
-    *,
-    validator: Any,
-) -> None:
-    """Validate per-asset distribution overrides."""
+    distributions: Any | dict[str, Any] | None,
+) -> dict[str, Any]:
+    """Normalise one or more named distributions into a flat mapping."""
     if distributions is None:
-        return
+        return {}
 
-    for key, distribution in distributions.items():
-        validator(f"{name}[{key!r}]", distribution)
+    if isinstance(distributions, dict):
+        return {
+            f"{name}[{distribution_name!r}]": distribution
+            for distribution_name, distribution in distributions.items()
+        }
+
+    return {name: distributions}
+
+
+def validate_distributions(
+    distributions: dict[str, Any],
+    *,
+    checks: list[tuple[Any, str]],
+) -> None:
+    """Validate one or more named distributions against predicate-based checks."""
+    for name, distribution in distributions.items():
+        for predicate, message in checks:
+            if not predicate(distribution):
+                raise ValueError(f"{name} {message}")
 
 
 def sample_distribution(
@@ -213,5 +257,6 @@ __all__ = [
     "build_distribution_policy",
     "build_sampled_distribution_policy",
     "effective_assets",
-    "validate_distribution_map",
+    "normalize_distributions",
+    "validate_distributions",
 ]
