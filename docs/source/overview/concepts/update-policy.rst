@@ -31,7 +31,7 @@ ECLYPSE also provides a catalogue of off-the-shelf policies in
 families:
 
 - **failure**: availability flapping, node failures, and latency spikes
-- **noise**: bounded random walks
+- **noise**: bounded random walks, momentum walks, and impulse shocks
 - **distribution**: uniform, normal, lognormal, triangular, beta, gamma,
   truncated-normal, and categorical multiplicative perturbations
 - **degradation**: progressive capacity loss and latency increase
@@ -65,12 +65,12 @@ custom update policy.
             policies.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
-                node_distributions={
+                node_asset_distributions={
                     "cpu": (0.95, 1.05),
                     "ram": (0.9, 1.1),
                     "storage": (0.98, 1.02),
                 },
-                edge_distributions={
+                edge_asset_distributions={
                     "latency": (0.95, 1.05),
                     "bandwidth": (0.98, 1.02),
                 },
