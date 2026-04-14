@@ -40,16 +40,34 @@ def test_uniform_distribution_validation_and_derived_asset_selection():
     with pytest.raises(ValueError):
         uniform(edge_distribution=(2.0, 1.0))
 
+    with pytest.raises(ValueError):
+        uniform()
+
     graph = build_graph()
     uniform(
-        node_distributions={"cpu": (0.5, 0.5)},
-        edge_distributions={"latency": (2.0, 2.0)},
+        node_asset_distributions={"cpu": (0.5, 0.5)},
+        edge_asset_distributions={"latency": (2.0, 2.0)},
     )(graph)
 
     assert graph.nodes["a"]["cpu"] == 40
     assert graph.nodes["a"]["ram"] == 32
     assert graph.edges["a", "b"]["latency"] == 20
     assert graph.edges["a", "b"]["bandwidth"] == 100
+
+
+def test_uniform_distribution_uses_union_of_assets_and_per_asset_overrides():
+    graph = build_graph()
+    graph.nodes["a"]["storage"] = 40
+
+    uniform(
+        node_assets=["cpu", "ram"],
+        node_distribution=(2.0, 2.0),
+        node_asset_distributions={"cpu": (0.5, 0.5), "storage": (3.0, 3.0)},
+    )(graph)
+
+    assert graph.nodes["a"]["cpu"] == 40
+    assert graph.nodes["a"]["ram"] == 64
+    assert graph.nodes["a"]["storage"] == 120
 
 
 def test_uniform_distribution_uses_graph_rng_reproducibly():
@@ -101,8 +119,8 @@ def test_normal_distribution_policy_validates_std_and_supports_per_asset_overrid
 
     graph = build_graph()
     normal(
-        node_distributions={"cpu": (0.5, 0.0)},
-        edge_distributions={"latency": (2.0, 0.0)},
+        node_asset_distributions={"cpu": (0.5, 0.0)},
+        edge_asset_distributions={"latency": (2.0, 0.0)},
     )(graph)
 
     assert graph.nodes["a"]["cpu"] == 40
@@ -288,10 +306,10 @@ def test_categorical_distribution_supports_weights_and_overrides():
     graph = build_graph()
 
     categorical(
-        node_distributions={"cpu": [0.5, 1.5]},
-        edge_distributions={"latency": [2.0]},
-        node_weight_map={"cpu": [1.0, 0.0]},
-        edge_weight_map={"latency": [1.0]},
+        node_asset_distributions={"cpu": [0.5, 1.5]},
+        edge_asset_distributions={"latency": [2.0]},
+        node_asset_weights={"cpu": [1.0, 0.0]},
+        edge_asset_weights={"latency": [1.0]},
     )(graph)
 
     assert graph.nodes["a"]["cpu"] == 40
@@ -313,4 +331,4 @@ def test_categorical_distribution_validates_inputs():
         categorical(node_distribution=[1.0], node_weights=[0.0])
 
     with pytest.raises(ValueError):
-        categorical(node_weight_map={"cpu": [1.0]})
+        categorical(node_asset_weights={"cpu": [1.0]})

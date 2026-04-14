@@ -20,12 +20,12 @@ def get_infrastructure(seed: int = 7):
             policies.uniform(
                 node_assets=["cpu", "ram", "storage"],
                 edge_assets=["latency", "bandwidth"],
-                node_distributions={
+                node_asset_distributions={
                     "cpu": (0.85, 1.12),
                     "ram": (0.8, 1.15),
                     "storage": (0.92, 1.08),
                 },
-                edge_distributions={
+                edge_asset_distributions={
                     "latency": (0.95, 1.2),
                     "bandwidth": (0.82, 1.08),
                 },
