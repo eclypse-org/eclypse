@@ -1,4 +1,4 @@
-"""Shared helpers for trace-driven update policies."""
+"""Shared helpers for replay update policies."""
 
 from __future__ import annotations
 

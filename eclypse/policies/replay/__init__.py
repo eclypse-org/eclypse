@@ -1,4 +1,4 @@
-"""Built-in trace-driven update policies."""
+"""Built-in replay update policies."""
 
 from __future__ import annotations
 

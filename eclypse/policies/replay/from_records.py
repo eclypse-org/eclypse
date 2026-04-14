@@ -1,11 +1,11 @@
-"""Trace-driven policy builders from plain records."""
+"""Replay policy builders from plain records."""
 
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from eclypse.policies.trace_driven.replay_edges import replay_edges
-from eclypse.policies.trace_driven.replay_nodes import replay_nodes
+from eclypse.policies.replay.replay_edges import replay_edges
+from eclypse.policies.replay.replay_nodes import replay_nodes
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import (
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     )
     from eclypse.utils.types import (
         MissingPolicyBehaviour,
-        TraceReplayTarget,
+        ReplayTarget,
         UpdatePolicy,
     )
 
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 def from_records(
     record_source,
     *,
-    target: TraceReplayTarget,
+    target: ReplayTarget,
     node_id_column: str = "node_id",
     source_column: str = "source",
     target_column: str = "target",
@@ -35,28 +35,7 @@ def from_records(
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
-    """Build a replay policy from plain Python records.
-
-    Args:
-        record_source: Iterable of mapping-like records.
-        target (str): Either ``"nodes"`` or ``"edges"``.
-        node_id_column (str): Node id column used for node replay.
-        source_column (str): Source column used for edge replay.
-        target_column (str): Target column used for edge replay.
-        time_column (str): Step column used for both node and edge replay.
-        value_columns (list[str] | tuple[str, ...] | None): Explicit columns to
-            copy into the graph. Defaults to every non-reserved column.
-        node_ids (list[str] | None): Optional explicit list of node ids to target.
-        node_filter (NodeFilter | None): Optional predicate to filter target nodes.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit list of edges to
-            target.
-        edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
-        missing (str): Behaviour when a record refers to a missing graph item.
-        start_step (int | None): Optional initial step override.
-
-    Returns:
-        UpdatePolicy: A graph update policy replaying the selected records.
-    """
+    """Build a replay policy from plain Python records."""
     if target == "nodes":
         return replay_nodes(
             record_source,

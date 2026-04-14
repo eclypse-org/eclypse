@@ -8,12 +8,12 @@ Policies are graph-oriented callables that mutate an
 from __future__ import annotations
 
 from eclypse.policies import (
-    degradation,
+    degrade,
     distribution,
     failure,
     noise,
+    replay,
     schedule,
-    trace_driven,
 )
 from eclypse.policies._filters import (
     EdgeFilter,
@@ -38,12 +38,12 @@ __all__ = [
     "UpdatePolicy",
     "after",
     "between",
-    "degradation",
+    "degrade",
     "distribution",
     "every",
     "failure",
     "noise",
     "once_at",
+    "replay",
     "schedule",
-    "trace_driven",
 ]
