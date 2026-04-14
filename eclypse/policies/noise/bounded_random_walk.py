@@ -11,6 +11,7 @@ from eclypse.policies._filters import (
     iter_selected_edges,
     iter_selected_nodes,
 )
+from eclypse.utils.constants import MIN_FLOAT
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import (
@@ -99,7 +100,7 @@ def _apply_random_walk_to_values(
         if key not in values:
             continue
         current = ensure_numeric_value(key, values[key])
-        lower, upper = (bounds or {}).get(key, (0.0, None))
+        lower, upper = (bounds or {}).get(key, (MIN_FLOAT, None))
         delta = random.uniform(-step, step)
         values[key] = coerce_numeric_like(
             values[key],

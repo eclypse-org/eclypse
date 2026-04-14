@@ -8,7 +8,11 @@ from eclypse.policies._filters import (
     ensure_numeric_value,
     iter_selected_nodes,
 )
-from eclypse.policies.failure import _validate_probability
+from eclypse.policies.failure._helpers import validate_probability
+from eclypse.utils.constants import (
+    MAX_AVAILABILITY,
+    MIN_AVAILABILITY,
+)
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import NodeFilter
@@ -19,10 +23,10 @@ def availability_flap(
     down_probability: float,
     *,
     up_probability: float | None = None,
-    down_availability: float = 0.0,
-    up_availability: float = 1.0,
+    down_availability: float = MIN_AVAILABILITY,
+    up_availability: float = MAX_AVAILABILITY,
     availability_key: str = "availability",
-    unavailable_at_or_below: float = 0.0,
+    unavailable_at_or_below: float = MIN_AVAILABILITY,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
 ) -> UpdatePolicy:
@@ -43,8 +47,8 @@ def availability_flap(
     Returns:
         UpdatePolicy: A graph update policy implementing flapping behaviour.
     """
-    _validate_probability("down_probability", down_probability)
-    _validate_probability("up_probability", up_probability)
+    validate_probability("down_probability", down_probability)
+    validate_probability("up_probability", up_probability)
     effective_up_probability = (
         down_probability if up_probability is None else up_probability
     )

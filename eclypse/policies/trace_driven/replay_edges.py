@@ -18,7 +18,10 @@ from eclypse.policies.trace_driven._helpers import (
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import EdgeFilter
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        MissingPolicyBehaviour,
+        UpdatePolicy,
+    )
 
 
 @dataclass(slots=True)
@@ -31,7 +34,7 @@ class ReplayEdgesPolicy:
     target_column: str = "target"
     selected_edge_ids: set[tuple[str, str]] | None = None
     edge_filter: EdgeFilter | None = None
-    missing: str = "ignore"
+    missing: MissingPolicyBehaviour = "ignore"
     current_step: int = 0
 
     def __call__(self, graph):
@@ -60,7 +63,7 @@ def replay_edges(
     value_columns: list[str] | tuple[str, ...] | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
-    missing: str = "ignore",
+    missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
     """Replay edge attributes from time-indexed records.
@@ -114,7 +117,7 @@ def _update_edge_from_record(
     target_column: str,
     selected_edge_ids: set[tuple[str, str]] | None,
     edge_filter,
-    missing: str,
+    missing: MissingPolicyBehaviour,
 ):
     edge_id = (record[source_column], record[target_column])
     if selected_edge_ids is not None and edge_id not in selected_edge_ids:

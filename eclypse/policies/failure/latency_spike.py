@@ -10,7 +10,8 @@ from eclypse.policies._filters import (
     ensure_numeric_value,
     iter_selected_edges,
 )
-from eclypse.policies.failure import _validate_probability
+from eclypse.policies.failure._helpers import validate_probability
+from eclypse.utils.constants import MIN_LATENCY
 
 if TYPE_CHECKING:
     from eclypse.policies._filters import EdgeFilter
@@ -44,7 +45,7 @@ def latency_spike(
     Returns:
         UpdatePolicy: A graph update policy implementing latency spikes.
     """
-    _validate_probability("probability", probability)
+    validate_probability("probability", probability)
     if factor is not None and factor < 0:
         raise ValueError("factor must be non-negative.")
     if min_increase < 0:
@@ -71,7 +72,7 @@ def latency_spike(
 
             data[latency_key] = coerce_numeric_like(
                 data[latency_key],
-                clamp(new_value, lower=0.0),
+                clamp(new_value, lower=MIN_LATENCY),
             )
 
     return policy

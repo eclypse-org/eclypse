@@ -3,7 +3,13 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from typing import Any
+from typing import (
+    TYPE_CHECKING,
+    Any,
+)
+
+if TYPE_CHECKING:
+    from eclypse.utils.types import MissingPolicyBehaviour
 
 
 def normalise_records(
@@ -43,7 +49,7 @@ def infer_value_columns(
     return [column for column in records[0] if column not in reserved]
 
 
-def validate_missing_behaviour(missing: str):
+def validate_missing_behaviour(missing: MissingPolicyBehaviour):
     """Validate the behaviour used for missing graph items."""
     if missing not in {"ignore", "error"}:
         raise ValueError('missing must be either "ignore" or "error".')

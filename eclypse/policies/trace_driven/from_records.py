@@ -12,13 +12,17 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        MissingPolicyBehaviour,
+        TraceReplayTarget,
+        UpdatePolicy,
+    )
 
 
 def from_records(
     record_source,
     *,
-    target: str,
+    target: TraceReplayTarget,
     node_id_column: str = "node_id",
     source_column: str = "source",
     target_column: str = "target",
@@ -28,7 +32,7 @@ def from_records(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
-    missing: str = "ignore",
+    missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
 ) -> UpdatePolicy:
     """Build a replay policy from plain Python records.
