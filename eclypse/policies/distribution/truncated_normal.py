@@ -101,6 +101,7 @@ def truncated_normal(
         raise ValueError("max_attempts must be strictly positive.")
 
     return build_sampled_distribution_policy(
+        kind="truncated_normal",
         node_assets=node_assets,
         edge_assets=edge_assets,
         node_distribution=node_distribution,

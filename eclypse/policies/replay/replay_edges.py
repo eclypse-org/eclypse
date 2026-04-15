@@ -52,6 +52,7 @@ class ReplayEdgesPolicy:
                 missing=self.missing,
             )
 
+        graph.logger.trace(f"Applied replay_edges policy for step {self.current_step}.")
         self.current_step += 1
 
 

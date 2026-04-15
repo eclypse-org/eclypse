@@ -101,10 +101,7 @@ class PeriodicTrigger(Trigger):
     def __repr__(self) -> str:
         """Return a string representation of the periodic trigger."""
         ms = self.trigger_every_ms.microseconds // 1000
-        return (
-            f"PeriodicTrigger(trigger_every_ms={ms}, "
-            f"last_exec_time={self.last_exec_time})"
-        )
+        return f"PeriodicTrigger(trigger_every_ms={ms})"
 
 
 class ScheduledTrigger(Trigger):
@@ -152,6 +149,10 @@ class ScheduledTrigger(Trigger):
             self._scheduled_times.pop(0)
             return True
         return False
+
+    def __repr__(self) -> str:
+        """Return a string representation of the scheduled trigger."""
+        return f"ScheduledTrigger(scheduled_times={self._scheduled_timedelta})"
 
 
 class RandomTrigger(Trigger):

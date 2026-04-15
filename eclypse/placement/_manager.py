@@ -14,7 +14,10 @@ from typing import (
 )
 
 from eclypse.placement import Placement
-from eclypse.utils._logging import logger
+from eclypse.utils._logging import (
+    format_log_kv,
+    logger,
+)
 
 from .view import PlacementView
 
@@ -53,28 +56,38 @@ class PlacementManager:
         If not, it resets the placement of the applications whose requirements
         are not respected.
         """
+        reset_requests = 0
         for _, not_respected in self.mapping_phase():
             if not_respected:
                 for n, apps in self.placement_view.nodes_used_by.items():
                     if n in not_respected:
                         for app in apps:
                             p = self.get(app)
+                            if not p.reset_requested:
+                                reset_requests += 1
                             p.mark_for_reset()
+        self.logger.debug(
+            "Placement audit completed | "
+            + format_log_kv(applications=len(self.placements), resets=reset_requests)
+        )
 
     def enact(self):
         """Manage and apply, or reset, application placements."""
         for p in self.placements.values():
             if p.reset_requested:
-                self.logger.warning(f"Resetting placement of {p.application.id}")
-                self.logger.trace(p)
+                label = "Resetting placement | "
+                self.logger.warning(f"{label}" + format_log_kv(app=p.application.id))
+                self.logger.trace(
+                    label + format_log_kv(app=p.application.id, mapping=p.mapping)
+                )
                 p._reset_mapping()
 
             if p.mapping:
                 self.logger.log(
                     "ECLYPSE",
-                    f"Placement of {p.application.id} on {self.infrastructure.id}",
+                    "Placement established | "
+                    + format_log_kv(app=p.application.id, mapping=p.mapping),
                 )
-                self.logger.log("ECLYPSE", p)
 
     def generate_mapping(self, placement: Placement):
         """Create application-to-infrastructure mapping from a placement strategy.
@@ -110,11 +123,29 @@ class PlacementManager:
             placement._generate_mapping(self.placements, self.placement_view)
 
         if not placement.mapping or all(v is None for v in placement.mapping.values()):
+            label = "No placement found | "
             self.logger.log(
-                "ECLYPSE", f"No placement found for {placement.application.id}"
+                "ECLYPSE",
+                label + format_log_kv(app=placement.application.id),
+            )
+            self.logger.trace(
+                label
+                + format_log_kv(app=placement.application.id, mapping=placement.mapping)
             )
             placement._reset_mapping()
         elif not_placed_services := placement.is_partial:
+            label = "Partial placement | "
+            self.logger.log(
+                "ECLYPSE",
+                label
+                + format_log_kv(
+                    app=placement.application.id, unplaced=not_placed_services
+                ),
+            )
+            self.logger.trace(
+                label
+                + format_log_kv(app=placement.application.id, mapping=placement.mapping)
+            )
             self.logger.warning(f"Partial placement for {placement.application.id}")
             self.logger.warning(f"Not placed services: {not_placed_services}")
             placement._reset_mapping()
@@ -145,8 +176,6 @@ class PlacementManager:
             self.placement_view._update_view(p)
 
             not_respected = self.infrastructure.contains(self.placement_view)
-            if not_respected:
-                p.mark_for_reset()
             yield (p, not_respected)
 
     def register(

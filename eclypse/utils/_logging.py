@@ -87,6 +87,18 @@ def print_exception(e: Exception, raised_by: str):
     print(f"{e.__class__.__name__} in {raised_by}: {e}")
 
 
+def format_log_kv(separator: str = " | ", **values: Any) -> str:
+    """Format keyword details as compact ``key=value`` pairs.
+
+    Args:
+        separator (str): The separator used between key-value pairs.
+        **values: The values to format.
+    """
+    return separator.join(
+        f"{key}={value}" for key, value in values.items() if value is not None
+    )
+
+
 def log_placement_violations(vlogger: Logger, violations: dict[str, dict[str, Any]]):
     """Logs each placement violation with aligned formatting using the provided logger.
 
@@ -96,13 +108,17 @@ def log_placement_violations(vlogger: Logger, violations: dict[str, dict[str, An
             A dictionary of violations, where each key maps to a dict
             with 'asset' and 'constraint' values.
     """
-    total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]
+    total_pad = max(len(key) for key in violations) + 3  # space +2 accounts for [ and ]
 
     for key, v in violations.items():
         label = f" [{key}]"
         padded_label = label.rjust(total_pad)
-        vlogger.warning(
-            f"{padded_label} featured {v['featured']} | required {v['required']}"
+        vlogger.trace(
+            f"{padded_label} "
+            + format_log_kv(
+                available=v["featured"],
+                required=v["required"],
+            )
         )
 
 
@@ -120,16 +136,24 @@ def log_assets_violations(
             A dictionary of violations, where each key maps to a dict
             with 'asset' and 'constraint' values.
     """
-    total_pad = max(len(key) for key in violations) + 3  # +2 accounts for [ and ]
+    total_pad = max(len(key) for key in violations) + 3  # space +2 accounts for [ and ]
 
     for key, v in violations.items():
         label = f" [{key}]"
         padded_label = label.rjust(total_pad)
-        vlogger.warning(
-            f"{padded_label} | "
-            f"{v} upper_bound {bucket[key].upper_bound} | "
-            f"lower_bound {bucket[key].lower_bound}"
+        vlogger.trace(
+            f"{padded_label} "
+            + format_log_kv(
+                value=v,
+                lower_bound=bucket[key].lower_bound,
+                upper_bound=bucket[key].upper_bound,
+            )
         )
 
 
-__all__ = ["Logger", "log_placement_violations", "print_exception"]
+__all__ = [
+    "Logger",
+    "format_log_kv",
+    "log_placement_violations",
+    "print_exception",
+]

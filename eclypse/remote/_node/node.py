@@ -23,6 +23,7 @@ from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import (
     config_logger,
+    format_log_kv,
     logger,
 )
 from eclypse.utils.constants import RND_SEED
@@ -109,7 +110,10 @@ class RemoteNode:
             engine_op (RemoteOps): The operation to be executed.
             **op_args: The arguments of the operation to be invoked.
         """
-        self.logger.trace(f"Executing operation: {engine_op}, {op_args}")
+        self.logger.trace(
+            "Executing operation | "
+            + format_log_kv(operation=engine_op, arg_keys=sorted(op_args))
+        )
         return await self._engine_ops_thread.submit(engine_op, op_args)
 
     async def entrypoint(

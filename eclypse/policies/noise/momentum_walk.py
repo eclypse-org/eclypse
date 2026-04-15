@@ -108,6 +108,8 @@ def momentum_walk(
                 ),
             )
 
+        graph.logger.trace("Applied momentum_walk policy.")
+
     return policy
 
 

@@ -27,6 +27,7 @@ class OnceAtPolicy:
         """Apply the wrapped policy when the configured step is reached."""
         if self.step == self.step_at:
             self.policy(graph)
+            graph.logger.trace(f"Triggered once_at policy at step {self.step}.")
         self.step += 1
 
 

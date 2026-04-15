@@ -97,4 +97,6 @@ def impulse(
                 random=graph.rnd,
             )
 
+        graph.logger.trace("Applied impulse policy.")
+
     return policy

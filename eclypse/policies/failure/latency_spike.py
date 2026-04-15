@@ -76,4 +76,6 @@ def latency_spike(
                 clamp(new_value, lower=MIN_LATENCY),
             )
 
+        graph.logger.trace("Applied latency_spike policy.")
+
     return policy

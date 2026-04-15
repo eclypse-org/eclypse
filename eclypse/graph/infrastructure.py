@@ -22,7 +22,10 @@ import networkx as nx
 from networkx.classes.filters import no_filter
 
 from eclypse.graph import AssetGraph
-from eclypse.utils._logging import log_placement_violations
+from eclypse.utils._logging import (
+    format_log_kv,
+    log_placement_violations,
+)
 from eclypse.utils.constants import (
     COST_RECOMPUTATION_THRESHOLD,
     MIN_FLOAT,
@@ -201,24 +204,30 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             other (Infrastructure): The Infrastructure to compare with.
 
         Returns:
-            list[str]: A list of nodes whose requirements are not respected or \
+            list[str]: A list of nodes whose requirements are not respected or
                 whose connected links are not respected.
         """
         not_respected = set()
         for n, req in other.nodes(data=True):
             res = self.nodes[n]
             node_violations = self.node_assets.satisfies(res, req, violations=True)
-            if node_violations:
-                self.logger.warning(f'Node "{n}" not respected:')
-                log_placement_violations(self.logger, node_violations)  # type: ignore[arg-type]
+            if isinstance(node_violations, dict) and node_violations:
+                self.logger.warning(
+                    f'Node "{n}" violated | '
+                    + format_log_kv(assets=",".join(sorted(node_violations)))
+                )
+                log_placement_violations(self.logger, node_violations)
                 not_respected.add(n)
 
         for u, v, req in other.edges(data=True):
             res = self.path_resources(u, v)
             edge_violations = self.edge_assets.satisfies(res, req, violations=True)
-            if edge_violations:
-                self.logger.warning(f'Link "{u} -> {v}" not respected:')
-                log_placement_violations(self.logger, edge_violations)  # type: ignore[arg-type]
+            if isinstance(edge_violations, dict) and edge_violations:
+                self.logger.warning(
+                    f'Link "{u} -> {v}" violated | '
+                    + format_log_kv(assets=",".join(sorted(edge_violations)))
+                )
+                log_placement_violations(self.logger, edge_violations)
                 not_respected.add(u)
                 not_respected.add(v)
 

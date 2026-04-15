@@ -64,4 +64,6 @@ def kill_nodes(
             ):
                 data[availability_key] = revived_availability
 
+        graph.logger.trace("Applied kill_nodes policy.")
+
     return policy
