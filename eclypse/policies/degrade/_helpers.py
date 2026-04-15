@@ -21,15 +21,16 @@ from eclypse.policies._filters import (
 )
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
     )
     from eclypse.utils.types import (
         UpdatePolicy,
-        ValueAdjustmentConfig,
-        ValueAdjustmentConfigs,
         ValueAdjustmentDirection,
+        ValueAdjustmentOverride,
+        ValueAdjustmentOverrides,
     )
 
 
@@ -59,7 +60,7 @@ class ValueAdjustmentPolicy:
             epochs=self.epochs,
         )
 
-    def __call__(self, graph):
+    def __call__(self, graph: AssetGraph):
         """Apply the value adjustment to the selected assets."""
         if self.step >= self.epochs:
             return
@@ -137,28 +138,28 @@ def build_configured_value_adjustment_policy(
     epochs: int | None = None,
     node_assets: str | list[str] | None = None,
     edge_assets: str | list[str] | None = None,
-    node_asset_adjustments: ValueAdjustmentConfigs | None = None,
-    edge_asset_adjustments: ValueAdjustmentConfigs | None = None,
+    node_asset_overrides: ValueAdjustmentOverrides | None = None,
+    edge_asset_overrides: ValueAdjustmentOverrides | None = None,
     node_ids: list[str] | None = None,
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
 ) -> UpdatePolicy:
     """Build a value-adjustment policy with defaults and per-asset overrides."""
-    effective_node_assets = effective_assets(node_assets, node_asset_adjustments)
-    effective_edge_assets = effective_assets(edge_assets, edge_asset_adjustments)
+    effective_node_assets = effective_assets(node_assets, node_asset_overrides)
+    effective_edge_assets = effective_assets(edge_assets, edge_asset_overrides)
 
     if not effective_node_assets and not effective_edge_assets:
         raise ValueError(
             "At least one of node_assets, edge_assets, "
-            "node_asset_adjustments, or edge_asset_adjustments must be provided."
+            "node_asset_overrides, or edge_asset_overrides must be provided."
         )
 
-    validate_adjustments(
+    validate_overrides(
         direction,
         {
-            **normalize_adjustments("node_asset_adjustments", node_asset_adjustments),
-            **normalize_adjustments("edge_asset_adjustments", edge_asset_adjustments),
+            **normalize_overrides("node_asset_overrides", node_asset_overrides),
+            **normalize_overrides("edge_asset_overrides", edge_asset_overrides),
         },
     )
 
@@ -171,7 +172,7 @@ def build_configured_value_adjustment_policy(
             factor=factor,
             target=target,
             epochs=epochs,
-            per_asset_adjustments=node_asset_adjustments,
+            per_asset_overrides=node_asset_overrides,
         )
         child_policies.append(
             build_value_adjustment_policy(
@@ -192,7 +193,7 @@ def build_configured_value_adjustment_policy(
             factor=factor,
             target=target,
             epochs=epochs,
-            per_asset_adjustments=edge_asset_adjustments,
+            per_asset_overrides=edge_asset_overrides,
         )
         child_policies.append(
             build_value_adjustment_policy(
@@ -206,7 +207,7 @@ def build_configured_value_adjustment_policy(
             )
         )
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for child_policy in child_policies:
             child_policy(graph)
 
@@ -240,26 +241,26 @@ def validate_adjustment_parameters(
         raise ValueError("target must be non-negative.")
 
 
-def normalize_adjustments(
+def normalize_overrides(
     name: str,
-    adjustments: ValueAdjustmentConfigs | None,
-) -> dict[str, ValueAdjustmentConfig]:
-    """Normalise one or more named adjustments into a flat mapping."""
-    if adjustments is None:
+    overrides: ValueAdjustmentOverrides | None,
+) -> dict[str, ValueAdjustmentOverride]:
+    """Normalise one or more named overrides into a flat mapping."""
+    if overrides is None:
         return {}
 
     return {
         f"{name}[{asset_name!r}]": adjustment
-        for asset_name, adjustment in adjustments.items()
+        for asset_name, adjustment in overrides.items()
     }
 
 
-def validate_adjustments(
+def validate_overrides(
     direction: ValueAdjustmentDirection,
-    adjustments: dict[str, ValueAdjustmentConfig],
+    overrides: dict[str, ValueAdjustmentOverride],
 ) -> None:
-    """Validate one or more named value-adjustment configurations."""
-    for name, adjustment in adjustments.items():
+    """Validate one or more named value-adjustment overrides."""
+    for name, adjustment in overrides.items():
         _ensure_only_supported_adjustment_fields(name, adjustment)
         validate_adjustment_parameters(
             direction,
@@ -276,10 +277,10 @@ def resolve_adjustment(
     factor: float | None,
     target: float | None,
     epochs: int | None,
-    per_asset_adjustments: ValueAdjustmentConfigs | None,
-) -> ValueAdjustmentConfig:
-    """Merge default and per-asset adjustment settings for a selected asset."""
-    adjustment: ValueAdjustmentConfig = {}
+    per_asset_overrides: ValueAdjustmentOverrides | None,
+) -> ValueAdjustmentOverride:
+    """Merge default and per-asset override settings for a selected asset."""
+    adjustment: ValueAdjustmentOverride = {}
 
     if factor is not None:
         adjustment["factor"] = factor
@@ -288,19 +289,19 @@ def resolve_adjustment(
     if epochs is not None:
         adjustment["epochs"] = epochs
 
-    override = (per_asset_adjustments or {}).get(asset_name, {})
+    override = (per_asset_overrides or {}).get(asset_name, {})
     if "factor" in override:
         adjustment.pop("target", None)
     if "target" in override:
         adjustment.pop("factor", None)
     adjustment.update(override)
-    validate_adjustments(direction, {asset_name: adjustment})
+    validate_overrides(direction, {asset_name: adjustment})
     return adjustment
 
 
 def _ensure_only_supported_adjustment_fields(
     name: str,
-    adjustment: ValueAdjustmentConfig,
+    adjustment: ValueAdjustmentOverride,
 ) -> None:
     invalid_fields = sorted(set(adjustment) - {"factor", "target", "epochs"})
     if invalid_fields:

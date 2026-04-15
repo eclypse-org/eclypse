@@ -34,7 +34,8 @@ families:
 - **noise**: bounded random walks, momentum walks, and impulse shocks
 - **distribution**: uniform, normal, lognormal, triangular, beta, gamma,
   truncated-normal, and categorical multiplicative perturbations
-- **degrade**: progressive reduction or increase of selected assets
+- **degrade**: progressive increase or reduction of selected assets through
+  explicit ``increase()`` and ``reduce()`` policies
 - **replay**: replay of node or edge values from records, dataframes, or parquet files
 - **schedule**: wrappers such as ``every()``, ``after()``, ``between()``, and ``once_at()``
 
@@ -105,22 +106,29 @@ Scheduling Policies
 Scheduling wrappers let you activate a policy only during part of the run.
 
 .. code-block:: python
-    :caption: **Example:** Start a degradation phase after step 100
+    :caption: **Example:** Start value adjustments after step 100
 
     from eclypse import policies
 
-    update_policy = policies.after(
-        100,
-        policies.degrade.degrade(
-            reduce_factor=0.5,
-            reduce_epochs=200,
-            increase_factor=2.0,
-            increase_epochs=200,
-            reduce_node_assets=["cpu", "ram", "storage"],
-            reduce_edge_assets=["bandwidth"],
-            increase_edge_assets=["latency"],
+    update_policies = [
+        policies.after(
+            100,
+            policies.degrade.reduce(
+                factor=0.5,
+                epochs=200,
+                node_assets=["cpu", "ram", "storage"],
+                edge_assets=["bandwidth"],
+            ),
         ),
-    )
+        policies.after(
+            100,
+            policies.degrade.increase(
+                factor=2.0,
+                epochs=200,
+                edge_assets=["latency"],
+            ),
+        ),
+    ]
 
 Replay Policies
 ---------------
@@ -172,7 +180,7 @@ Custom vs built-in
 ------------------
 
 Built-in policies are ideal for common patterns such as failures, distributions,
-degradation, and replay from traces. When an example or scenario couples
+explicit value adjustments, and replay from traces. When an example or scenario couples
 multiple effects in a very specific way, keeping a custom callable is still the
 right choice. Several examples in the repository intentionally do that to
 preserve their original behaviour.

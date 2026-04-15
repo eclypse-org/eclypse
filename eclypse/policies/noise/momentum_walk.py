@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import (
+    TYPE_CHECKING,
+    TypeVar,
+)
 
 from eclypse.policies._filters import (
     clamp,
@@ -15,11 +18,15 @@ from eclypse.policies.noise._helpers import (
 )
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
     )
     from eclypse.utils.types import UpdatePolicy
+
+
+StateKeyT = TypeVar("StateKeyT", tuple[str, str], tuple[str, str, str])
 
 
 def momentum_walk(
@@ -62,7 +69,7 @@ def momentum_walk(
     previous_node_deltas: dict[tuple[str, str], float] = {}
     previous_edge_deltas: dict[tuple[str, str, str], float] = {}
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for node_id, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
@@ -105,8 +112,8 @@ def momentum_walk(
 
 
 def _sample_momentum_delta(
-    previous_deltas: dict[tuple[str, ...], float],
-    state_key: tuple[str, ...],
+    previous_deltas: dict[StateKeyT, float],
+    state_key: StateKeyT,
     step: float,
     *,
     momentum: float,

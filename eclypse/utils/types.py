@@ -83,16 +83,16 @@ ValueAdjustmentDirection: TypeAlias = Literal["increase", "reduce"]
 """Type alias for the supported degradation adjustment directions."""
 
 
-class ValueAdjustmentConfig(TypedDict, total=False):
-    """Per-asset configuration for value-adjustment policies."""
+class ValueAdjustmentOverride(TypedDict, total=False):
+    """Per-asset override for value-adjustment policies."""
 
     factor: float
     target: float
     epochs: int
 
 
-ValueAdjustmentConfigs: TypeAlias = dict[str, ValueAdjustmentConfig]
-"""Type alias for per-asset value-adjustment configurations."""
+ValueAdjustmentOverrides: TypeAlias = dict[str, ValueAdjustmentOverride]
+"""Type alias for per-asset value-adjustment overrides."""
 
 Distribution: TypeAlias = Literal[
     "beta",

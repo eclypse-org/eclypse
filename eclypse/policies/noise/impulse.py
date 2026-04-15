@@ -16,6 +16,7 @@ from eclypse.policies.noise._helpers import (
 from eclypse.utils.constants import MIN_FLOAT
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
@@ -67,7 +68,7 @@ def impulse(
     )
     validate_factor_range("edge_factor_range", effective_edge_factor_range)
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,

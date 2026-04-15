@@ -62,14 +62,19 @@ The two classes share many structural similarities, but differ in purpose and in
              update_policies=[
                  policies.after(
                      50,
-                     policies.degrade.degrade(
-                         reduce_factor=0.6,
-                         reduce_epochs=200,
-                         increase_factor=1.6667,
-                         increase_epochs=200,
-                         reduce_node_assets=["cpu", "ram"],
-                         reduce_edge_assets=["bandwidth"],
-                         increase_edge_assets=["latency"],
+                     policies.degrade.reduce(
+                         factor=0.6,
+                         epochs=200,
+                         node_assets=["cpu", "ram"],
+                         edge_assets=["bandwidth"],
+                     ),
+                 ),
+                 policies.after(
+                     50,
+                     policies.degrade.increase(
+                         factor=1.6667,
+                         epochs=200,
+                         edge_assets=["latency"],
                      ),
                  ),
              ],

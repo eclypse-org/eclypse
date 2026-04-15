@@ -14,6 +14,7 @@ from eclypse.policies.failure._helpers import validate_probability
 from eclypse.utils.constants import MIN_LATENCY
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import EdgeFilter
     from eclypse.utils.types import UpdatePolicy
 
@@ -55,7 +56,7 @@ def latency_spike(
     if spike_ceiling < min_increase:
         raise ValueError("max_increase must be greater than or equal to min_increase.")
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, _, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,

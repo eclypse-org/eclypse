@@ -12,6 +12,7 @@ from eclypse.policies.failure._helpers import validate_probability
 from eclypse.utils.constants import MIN_AVAILABILITY
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import NodeFilter
     from eclypse.utils.types import UpdatePolicy
 
@@ -41,7 +42,7 @@ def revive_nodes(
     """
     validate_probability("probability", probability)
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,

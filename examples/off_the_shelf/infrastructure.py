@@ -18,8 +18,6 @@ def get_infrastructure(seed: int = 7):
                 up_probability=0.15,
             ),
             policies.distribution.uniform(
-                node_assets=["cpu", "ram", "storage"],
-                edge_assets=["latency", "bandwidth"],
                 node_asset_distributions={
                     "cpu": (0.85, 1.12),
                     "ram": (0.8, 1.15),
@@ -34,21 +32,26 @@ def get_infrastructure(seed: int = 7):
                 2,
                 policies.failure.latency_spike(
                     probability=0.35,
-                    min_increase=2.0,
-                    max_increase=6.0,
+                    min_increase=122.0,
+                    max_increase=126.0,
                 ),
                 start=2,
             ),
             policies.after(
                 5,
-                policies.degrade.degrade(
-                    reduce_factor=0.82,
-                    reduce_epochs=12,
-                    increase_factor=1.22,
-                    increase_epochs=12,
-                    reduce_node_assets=["cpu", "ram", "storage"],
-                    reduce_edge_assets=["bandwidth"],
-                    increase_edge_assets=["latency"],
+                policies.degrade.reduce(
+                    factor=0.82,
+                    epochs=12,
+                    node_assets=["cpu", "ram", "storage"],
+                    edge_assets=["bandwidth"],
+                ),
+            ),
+            policies.after(
+                5,
+                policies.degrade.increase(
+                    factor=1.22,
+                    epochs=12,
+                    edge_assets=["latency"],
                 ),
             ),
         ],

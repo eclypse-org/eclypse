@@ -20,6 +20,7 @@ from eclypse.policies._filters import (
 if TYPE_CHECKING:
     from random import Random
 
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
@@ -147,7 +148,7 @@ def build_sampled_distribution_policy(
             "node_asset_distributions, or edge_asset_distributions must be provided."
         )
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
