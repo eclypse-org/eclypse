@@ -62,5 +62,11 @@ def test_logging_helpers_configure_and_format_messages(
     warning_messages = [
         args[0] for level, args in dummy_logger.records if level == "warning"
     ]
-    assert any("featured 1 | required 2" in message for message in warning_messages)
-    assert any("upper_bound" in message for message in warning_messages)
+    trace_messages = [
+        args[0] for level, args in dummy_logger.records if level == "trace"
+    ]
+
+    assert not warning_messages
+    assert any("available=1 | required=2" in message for message in trace_messages)
+    assert any("lower_bound=" in message for message in trace_messages)
+    assert any("upper_bound=" in message for message in trace_messages)
