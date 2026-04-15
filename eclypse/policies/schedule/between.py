@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.utils.types import UpdatePolicy
 
 
@@ -25,7 +26,7 @@ class BetweenPolicy:
         if self.end < self.start:
             raise ValueError("end must be greater than or equal to start.")
 
-    def __call__(self, graph):
+    def __call__(self, graph: AssetGraph):
         """Apply the wrapped policy while the current step is within bounds."""
         if self.start <= self.step <= self.end:
             self.policy(graph)

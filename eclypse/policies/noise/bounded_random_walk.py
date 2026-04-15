@@ -14,6 +14,7 @@ from eclypse.policies.noise._helpers import (
 )
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
@@ -52,7 +53,7 @@ def bounded_random_walk(
     """
     validate_steps(node_steps=node_steps, edge_steps=edge_steps)
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,

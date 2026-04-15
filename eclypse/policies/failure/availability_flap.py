@@ -15,6 +15,7 @@ from eclypse.utils.constants import (
 )
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import NodeFilter
     from eclypse.utils.types import UpdatePolicy
 
@@ -53,7 +54,7 @@ def availability_flap(
         down_probability if up_probability is None else up_probability
     )
 
-    def policy(graph):
+    def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,

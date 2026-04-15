@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.utils.types import UpdatePolicy
 
 
@@ -25,7 +26,7 @@ class EveryPolicy:
         if self.start < 0:
             raise ValueError("start must be non-negative.")
 
-    def __call__(self, graph):
+    def __call__(self, graph: AssetGraph):
         """Apply the wrapped policy when the current step matches the interval."""
         if self.step >= self.start and (self.step - self.start) % self.interval == 0:
             self.policy(graph)

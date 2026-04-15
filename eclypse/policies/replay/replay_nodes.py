@@ -17,6 +17,7 @@ from eclypse.policies.replay._helpers import (
 )
 
 if TYPE_CHECKING:
+    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import NodeFilter
     from eclypse.utils.types import (
         MissingPolicyBehaviour,
@@ -36,7 +37,7 @@ class ReplayNodesPolicy:
     missing: MissingPolicyBehaviour = "ignore"
     current_step: int = 0
 
-    def __call__(self, graph):
+    def __call__(self, graph: AssetGraph):
         """Apply the replay records for the current step to matching nodes."""
         for record in self.records_by_step.get(self.current_step, []):
             _update_node_from_record(
@@ -87,7 +88,7 @@ def replay_nodes(
 
 
 def _update_node_from_record(
-    graph,
+    graph: AssetGraph,
     record,
     *,
     columns: list[str],
