@@ -99,7 +99,7 @@ class Service:
             try:
                 step_result = await self.step()
             except RouteNotFoundError as error:
-                self.logger.error(
+                self.logger.warning(
                     "Skipping service step "
                     f"{self.step_count} because route to {error.recipient_id} "
                     "was not found."

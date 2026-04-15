@@ -13,7 +13,10 @@ from eclypse.remote import ray_backend
 from eclypse.report import Report
 from eclypse.simulation._simulator.local import Simulator
 from eclypse.simulation.config import SimulationConfig
-from eclypse.utils._logging import logger
+from eclypse.utils._logging import (
+    format_log_kv,
+    logger,
+)
 from eclypse.utils.constants import (
     DRIVING_EVENT,
     START_EVENT,
@@ -67,6 +70,7 @@ class Simulation:
             )
         self.simulator: Simulator | RemoteSimulator = _simulator
         self._report: Report | None = None
+        self._finished_logged = False
 
     def prepare_runtime(self):
         """Prepare the process environment required by the simulation runtime."""
@@ -85,6 +89,17 @@ class Simulation:
                 json.dump(self._sim_config.to_dict(), handle, indent=4)
 
         _local_remote_event_call(self.simulator, self.remote, START_EVENT)
+        self._finished_logged = False
+        self.logger.log(
+            "ECLYPSE",
+            "Simulation started | "
+            + format_log_kv(
+                infrastructure=self.infrastructure.id,
+                # apps=[app.id for app in self.applications.values()],
+                # path=self._sim_config.path,
+                # remote=self.remote is not None,
+            ),
+        )
 
     def trigger(self, event_name: str):
         """Fire an event in the simulation."""
@@ -114,14 +129,19 @@ class Simulation:
                     ray_backend.get(self.simulator.wait.remote(timeout=timeout))  # type: ignore[union-attr]
                 else:
                     self.simulator.wait(timeout=timeout)
+                if not self._finished_logged:
+                    self.logger.log("ECLYPSE", "Simulation finished.")
+                    self._finished_logged = True
                 return
             except KeyboardInterrupt:
                 if interrupted:
                     raise
 
                 interrupted = True
-                self.logger.warning("SIMULATION INTERRUPTED. Requesting graceful stop.")
-                self.logger.warning("Press Ctrl+C again to stop the simulation.")
+                self.logger.log(
+                    "ECLYPSE",
+                    "Simulation stop requested. Press Ctrl+C again to stop the simulation.",
+                )
                 self.stop(blocking=False)
                 timeout = None
 
@@ -158,6 +178,10 @@ class Simulation:
                 )
         else:
             self.simulator.register(application, placement_strategy)
+        self.logger.debug(
+            "Registered application | "
+            + format_log_kv(app=application.id, remote=self.remote is not None)
+        )
 
     @property
     def applications(self) -> dict[str, Application]:

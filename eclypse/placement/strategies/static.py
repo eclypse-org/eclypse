@@ -68,7 +68,7 @@ class StaticStrategy(PlacementStrategy):
         """
         for node in self.mapping.values():
             if node not in infrastructure.nodes:
-                infrastructure.logger.error(
+                infrastructure.logger.warning(
                     f"Node {node} not found or not available in the infrastructure."
                 )
                 return False

@@ -18,6 +18,7 @@ import networkx as nx
 
 from eclypse.graph.assets import AssetBucket
 from eclypse.utils._logging import (
+    format_log_kv,
     log_assets_violations,
     logger,
 )
@@ -116,8 +117,10 @@ class AssetGraph(nx.DiGraph):
         _assets.update(assets)
 
         violations = self.node_assets.is_consistent(_assets, violations=True)
-        if violations:
-            msg = f"Node {node_for_adding} has inconsistent assets:"
+        if isinstance(violations, dict) and violations:
+            msg = f"Node {node_for_adding} has inconsistent assets | " + format_log_kv(
+                assets=",".join(sorted(violations))
+            )
             if strict:
                 raise ValueError(f"{msg}{violations}")
             self.logger.warning(msg)
@@ -163,8 +166,11 @@ class AssetGraph(nx.DiGraph):
         _assets.update(assets)
 
         violations = self.edge_assets.is_consistent(_assets, violations=True)
-        if violations:
-            msg = f"Edge {u_of_edge} -> {v_of_edge} has inconsistent assets:"
+        if isinstance(violations, dict) and violations:
+            msg = (
+                f"Edge {u_of_edge} -> {v_of_edge} has inconsistent assets | "
+                + format_log_kv(assets=",".join(sorted(violations)))
+            )
             if strict:
                 raise ValueError(f"{msg}{violations}")
             self.logger.warning(msg)
@@ -177,6 +183,8 @@ class AssetGraph(nx.DiGraph):
 
     def evolve(self):
         """Updates the graph according to its update policies."""
+        if self.update_policies:
+            self.logger.debug(f"Applying {len(self.update_policies)} update policies.")
         for update_policy in self.update_policies:
             update_policy(self)
 

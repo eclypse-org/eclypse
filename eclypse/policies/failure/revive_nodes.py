@@ -52,4 +52,6 @@ def revive_nodes(
             if current <= unavailable_at_or_below and graph.rnd.random() < probability:
                 data[availability_key] = availability
 
+        graph.logger.trace("Applied revive_nodes policy.")
+
     return policy

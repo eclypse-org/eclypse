@@ -119,6 +119,7 @@ def categorical(
     )
 
     return build_sampled_distribution_policy(
+        kind="categorical",
         node_assets=node_assets,
         edge_assets=edge_assets,
         node_distribution=(effective_node_distribution, node_weights),

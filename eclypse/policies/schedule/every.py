@@ -30,6 +30,7 @@ class EveryPolicy:
         """Apply the wrapped policy when the current step matches the interval."""
         if self.step >= self.start and (self.step - self.start) % self.interval == 0:
             self.policy(graph)
+            graph.logger.trace(f"Triggered every policy at step {self.step}.")
         self.step += 1
 
 

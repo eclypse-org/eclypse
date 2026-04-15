@@ -94,6 +94,7 @@ def triangular(
     )
 
     return build_sampled_distribution_policy(
+        kind="triangular",
         node_assets=node_assets,
         edge_assets=edge_assets,
         node_distribution=node_distribution,

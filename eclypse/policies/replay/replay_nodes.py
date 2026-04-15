@@ -50,6 +50,7 @@ class ReplayNodesPolicy:
                 missing=self.missing,
             )
 
+        graph.logger.trace(f"Applied replay_nodes policy for step {self.current_step}.")
         self.current_step += 1
 
 

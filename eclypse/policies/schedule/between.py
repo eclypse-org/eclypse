@@ -30,6 +30,7 @@ class BetweenPolicy:
         """Apply the wrapped policy while the current step is within bounds."""
         if self.start <= self.step <= self.end:
             self.policy(graph)
+            graph.logger.trace(f"Triggered between policy at step {self.step}.")
         self.step += 1
 
 

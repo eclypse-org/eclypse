@@ -67,4 +67,6 @@ def availability_flap(
             elif graph.rnd.random() < down_probability:
                 data[availability_key] = down_availability
 
+        graph.logger.trace("Applied availability_flap policy.")
+
     return policy

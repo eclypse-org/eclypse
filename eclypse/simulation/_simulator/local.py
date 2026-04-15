@@ -24,6 +24,7 @@ from typing import (
 
 from eclypse.placement import PlacementManager
 from eclypse.utils._logging import (
+    format_log_kv,
     logger,
     print_exception,
 )
@@ -169,8 +170,12 @@ class Simulator:
         c_type = self._events[event_name].type
         self.logger.trace(
             (f"[{c_type}]" if c_type else "[event]")
-            + f" Enqueued '{event_name}'"
-            + (f", triggered by '{triggered_by}'" if triggered_by else "")
+            + " Enqueued event | "
+            + format_log_kv(
+                name=event_name,
+                triggered_by=triggered_by,
+                queue=self._events_queue.qsize(),
+            )
         )
 
         if event_name == STOP_EVENT:

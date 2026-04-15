@@ -84,8 +84,6 @@ class TriggerBucket:
             for trigger in _triggers:
                 c = trigger.trigger(trigger_event)
                 t_conditions.append(c)
-                if c:
-                    self.logger.trace(f"{trigger}")
 
             triggerable = (
                 (any(t_conditions) if self.condition == "any" else all(t_conditions))
@@ -107,7 +105,6 @@ class TriggerBucket:
         """Return a string representation of the trigger."""
         return f"{self.__class__.__name__}"
 
-    @property
     def logger(self) -> Logger:
         """Get the logger for the event.
 

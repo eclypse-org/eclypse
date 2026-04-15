@@ -108,6 +108,7 @@ def build_distribution_policy(
     )
 
     return build_sampled_distribution_policy(
+        kind=kind,
         node_assets=node_assets,
         edge_assets=edge_assets,
         node_distribution=node_distribution,
@@ -125,6 +126,7 @@ def build_distribution_policy(
 
 def build_sampled_distribution_policy(
     *,
+    kind: str,
     node_assets: str | list[str] | None,
     edge_assets: str | list[str] | None,
     node_distribution: Any,
@@ -147,6 +149,14 @@ def build_sampled_distribution_policy(
             "At least one of node_assets, edge_assets, "
             "node_asset_distributions, or edge_asset_distributions must be provided."
         )
+
+    log_message = build_distribution_log_message(
+        kind,
+        node_distribution=node_distribution,
+        edge_distribution=edge_distribution,
+        node_asset_distributions=node_asset_distributions,
+        edge_asset_distributions=edge_asset_distributions,
+    )
 
     def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
@@ -185,7 +195,57 @@ def build_sampled_distribution_policy(
                     clamp(new_value, lower=minimum),
                 )
 
+        graph.logger.trace(log_message)
+
     return policy
+
+
+def build_distribution_log_message(
+    kind: str,
+    *,
+    node_distribution: Any,
+    edge_distribution: Any,
+    node_asset_distributions: dict[str, Any] | None,
+    edge_asset_distributions: dict[str, Any] | None,
+) -> str:
+    """Build a compact trace message describing a distribution policy."""
+    has_overrides = bool(node_asset_distributions or edge_asset_distributions)
+    return (
+        f"Applied {kind} distribution policy "
+        f"[node=({describe_distribution(kind, node_distribution)}), "
+        f"edge=({describe_distribution(kind, edge_distribution)}), "
+        f"overrides={'yes' if has_overrides else 'no'}]."
+    )
+
+
+def describe_distribution(kind: str, distribution: Any) -> str:
+    """Describe a distribution with kind-appropriate parameter names."""
+    description: str
+
+    if kind == "uniform":
+        low, high = distribution
+        description = f"low={low}, high={high}"
+    elif kind in {"normal", "truncated_normal"}:
+        mean, std = distribution
+        description = f"mean={mean}, std={std}"
+    elif kind == "lognormal":
+        mu, sigma = distribution
+        description = f"mu={mu}, sigma={sigma}"
+    elif kind == "beta":
+        alpha, beta_param = distribution
+        description = f"alpha={alpha}, beta={beta_param}"
+    elif kind == "gamma":
+        shape, scale = distribution
+        description = f"shape={shape}, scale={scale}"
+    elif kind == "triangular":
+        low, high, mode = distribution
+        description = f"low={low}, high={high}, mode={mode}"
+    elif kind == "categorical":
+        description = f"choices={len(distribution[0])}"
+    else:
+        description = str(distribution)
+
+    return description
 
 
 def normalize_distributions(
@@ -241,8 +301,10 @@ def sample_distribution(
 
 
 __all__ = [
+    "build_distribution_log_message",
     "build_distribution_policy",
     "build_sampled_distribution_policy",
+    "describe_distribution",
     "normalize_distributions",
     "validate_distributions",
 ]

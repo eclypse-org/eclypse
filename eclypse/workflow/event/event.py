@@ -17,8 +17,14 @@ from typing import (
 )
 
 from eclypse.remote import ray_backend
-from eclypse.utils._logging import logger
-from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils._logging import (
+    format_log_kv,
+    logger,
+)
+from eclypse.utils.constants import (
+    DRIVING_EVENT,
+    MAX_FLOAT,
+)
 from eclypse.workflow.trigger.bucket import TriggerBucket
 
 from .role import EventRole
@@ -216,7 +222,12 @@ class EclypseEvent:
         condition = self.trigger_bucket.trigger(trigger_event=trigger_event)
         if self._verbose and condition:
             self.simulator.logger.debug(
-                f"Event {self.name.title()}-{self.n_triggers} triggered."
+                "Event triggered | "
+                + format_log_kv(
+                    name=self.name,
+                    type=self.type,
+                    triggers=self.n_triggers,
+                )
             )
         return condition
 
@@ -235,13 +246,23 @@ class EclypseEvent:
             raise ValueError("The event must be associated to a simulator to be fired.")
 
         if self._verbose:
-            self.simulator.logger.log(
-                "ECLYPSE", f"Event {self.name.title()}-{self.n_calls} fired."
+            self.simulator.logger.debug(
+                "Event fired | "
+                + format_log_kv(
+                    name=self.name,
+                    type=self.type,
+                    calls=self.n_calls,
+                )
             )
 
         event_data = self._call_by_type(trigger_event)
         self._data = event_data if event_data is not None else {}
         self.trigger_bucket.reset()
+        if self.name == DRIVING_EVENT:
+            self.simulator.logger.log(
+                "ECLYPSE",
+                "Simulation step | " + format_log_kv(step=self.n_calls),
+            )
 
     @property
     def name(self) -> str:

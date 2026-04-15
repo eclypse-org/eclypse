@@ -27,6 +27,7 @@ class AfterPolicy:
         """Apply the wrapped policy from the configured step onward."""
         if self.step >= self.start:
             self.policy(graph)
+            graph.logger.trace(f"Triggered after policy at step {self.step}.")
         self.step += 1
 
 

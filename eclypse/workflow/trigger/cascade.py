@@ -156,3 +156,10 @@ class RandomCascadeTrigger(CascadeTrigger):
         if self.rnd is None:
             raise RuntimeError("Trigger not initialised. Call init() before trigger().")
         return super().trigger(trigger_event) and self.rnd.random() < self.probability
+
+    def __repr__(self) -> str:
+        """Return a string representation of the random cascade trigger."""
+        return (
+            f"RandomCascadeTrigger(trigger_event={self.trigger_event}, "
+            f"probability={self.probability})"
+        )

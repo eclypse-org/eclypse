@@ -211,6 +211,8 @@ def build_configured_value_adjustment_policy(
         for child_policy in child_policies:
             child_policy(graph)
 
+        graph.logger.trace(f"Applied {direction} value policy.")
+
     return policy
 
 

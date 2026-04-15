@@ -13,7 +13,10 @@ from typing import (
     cast,
 )
 
-from eclypse.utils._logging import logger
+from eclypse.utils._logging import (
+    format_log_kv,
+    logger,
+)
 from eclypse.utils.defaults import DEFAULT_REPORT_CHUNK_SIZE
 
 if TYPE_CHECKING:
@@ -52,7 +55,10 @@ class SimulationReporter:
     def add_reporter(self, rtype: str, reporter: type[Reporter]):
         """Add a new reporter type dynamically."""
         if rtype in self.reporters:
-            self.logger.warning(f"[{rtype}] Reporter already exists, skipping.")
+            self.logger.warning(
+                "Reporter already exists, skipping | "
+                + format_log_kv(type=rtype, path=self.report_path)
+            )
             return
 
         self.reporters[rtype] = reporter(self.report_path)
@@ -99,7 +105,14 @@ class SimulationReporter:
             return
         for rtype in callback.report_types:
             if rtype not in self.reporters:
-                self.logger.warning(f"[{rtype}] No reporter registered, skipping.")
+                self.logger.warning(
+                    "No reporter registered, skipping | "
+                    + format_log_kv(
+                        type=rtype,
+                        callback_type=callback.type,
+                        event=event_name,
+                    )
+                )
                 continue
 
             data = self.reporters[rtype].report(event_name, event_idx, callback)

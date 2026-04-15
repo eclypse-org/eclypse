@@ -78,4 +78,6 @@ def bounded_random_walk(
                 delta_sampler=lambda _, step: graph.rnd.uniform(-step, step),
             )
 
+        graph.logger.trace("Applied bounded_random_walk policy.")
+
     return policy
