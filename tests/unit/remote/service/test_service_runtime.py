@@ -196,7 +196,7 @@ async def test_service_run_handles_missing_routes_and_stored_steps(dummy_logger)
     assert any(
         "route to catalog was not found" in record[1][0]
         for record in dummy_logger.records
-        if record[0] == "error"
+        if record[0] == "warning"
     )
 
 

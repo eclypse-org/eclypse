@@ -171,7 +171,7 @@ within the graph.
 
     from eclypse.graph import AssetGraph
 
-    def increase_latency(graph: AssetGraph):
+    def add_latency(graph: AssetGraph):
         for _, _, data in graph.edges.data():
             if "latency" in data:
                 data["latency"] += 1.0

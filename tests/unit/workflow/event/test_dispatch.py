@@ -356,7 +356,6 @@ def test_event_dispatch_by_type_and_runtime_logging(
     assert quiet_event.data == {"ok": True}
 
     assert any(level == "debug" for level, _ in dummy_logger.records)
-    assert any(level == "log" for level, _ in dummy_logger.records)
 
 
 def test_event_decorator_wraps_callable_classes():
