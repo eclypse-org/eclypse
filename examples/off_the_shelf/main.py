@@ -25,6 +25,7 @@ if __name__ == "__main__":
             include_default_metrics=True,
             log_to_file=True,
             path=get_default_sim_path() / "OffTheShelf",
+            log_level="TRACE",
         ),
     )
 
