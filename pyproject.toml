@@ -1,6 +1,6 @@
 [project]
 name = "eclypse"
-version = "0.8.4"
+version = "0.8.5"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
@@ -98,7 +98,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.8.4"
+version = "0.8.5"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:^version",

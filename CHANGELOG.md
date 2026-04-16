@@ -1,3 +1,31 @@
+## 0.8.5 (2026-04-16)
+
+### Feat
+
+- Add additional noise policies
+- Add distribution-based update policies
+- Add an off-the-shelf example
+- Add built-in update policies
+
+### Fix
+
+- Restore Python 3.11 compatibility
+- Improve report and simulation compatibility
+
+### Refactor
+
+- Improve runtime logging across simulation components
+- Simplify degrade policy primitives
+- Rename policy families and simplify degradation helpers
+- Simplify the policies public API
+- Simplify distribution policy selection
+- Remove the shared tools module
+- Refine built-in policy APIs
+- Organise shared utility declarations
+- Expose stateful replay policies as callable classes
+- Expose scheduled policies as callable classes
+- Unify update policies
+
 ## 0.8.4 (2026-04-07)
 
 ### Fix
