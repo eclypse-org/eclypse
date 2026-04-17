@@ -1,4 +1,3 @@
-# mypy: disable-error-code="arg-type"
 """Default asset initializers for nodes, links and aggregator for links assets.
 
 Default node assets are: cpu, ram, storage, gpu, availability, processing_time.

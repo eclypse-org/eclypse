@@ -1,4 +1,3 @@
-# mypy: disable-error-code="override"
 """Module for the RemoteSimulator class.
 
 It operates like the local simulator, but performs the simulation using ray actors.

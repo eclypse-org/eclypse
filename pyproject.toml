@@ -115,6 +115,32 @@ force_grid_wrap = 2
 filter_files = true
 skip = ["__init__.py"]
 
+[tool.mypy]
+python_version = "3.11"
+
+[[tool.mypy.overrides]]
+module = [
+    "ray",
+    "ray.*",
+    "polars",
+    "polars.*",
+    "tensorboardX",
+    "networkx",
+    "networkx.*",
+    "pandas",
+    "pandas.*",
+    "numpy",
+    "numpy.*",
+    "loguru",
+    "loguru.*",
+]
+ignore_missing_imports = true
+
+# --------------------------
+# Pytest and Coverage settings
+# --------------------------
+
+#
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

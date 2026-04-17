@@ -47,6 +47,8 @@ repos:
     rev: v1.20.0
     hooks:
       - id: mypy
-        exclude: ^docs/
+        pass_filenames: false
+        args: [eclypse]
+        exclude: ^(docs/|tests/)
 
 exclude: "examples/.*"
