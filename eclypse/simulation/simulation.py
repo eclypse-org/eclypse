@@ -140,7 +140,10 @@ class Simulation:
                 interrupted = True
                 self.logger.log(
                     "ECLYPSE",
-                    "Simulation stop requested. Press Ctrl+C again to stop the simulation.",
+                    (
+                        "Simulation stop requested. Press Ctrl+C again to "
+                        "stop the simulation."
+                    ),
                 )
                 self.stop(blocking=False)
                 timeout = None
