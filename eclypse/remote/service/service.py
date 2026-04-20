@@ -26,15 +26,16 @@ from typing import (
     TYPE_CHECKING,
     Any,
     cast,
-    get_args,
 )
 
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.request import RouteNotFoundError
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import print_exception
-from eclypse.utils.defaults import DEFAULT_STEP_QUEUE_SIZE
-from eclypse.utils.types import CommunicationInterface
+from eclypse.utils.defaults import (
+    DEFAULT_STEP_QUEUE_SIZE,
+    SUPPORTED_COMMUNICATION_INTERFACES,
+)
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -44,10 +45,7 @@ if TYPE_CHECKING:
     from eclypse.remote._node import RemoteNode
     from eclypse.remote.communication import EclypseCommunicationInterface
     from eclypse.utils._logging import Logger
-
-
-_SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
-"""Supported runtime communication interfaces for remote services."""
+    from eclypse.utils.types import CommunicationInterface
 
 
 class Service:
@@ -68,7 +66,7 @@ class Service:
             store_step (bool, optional): Whether to store the results of
                 each step. Defaults to False.
         """
-        if communication_interface not in _SUPPORTED_COMMUNICATION_INTERFACES:
+        if communication_interface not in SUPPORTED_COMMUNICATION_INTERFACES:
             raise ValueError("Invalid communication interface.")
 
         self._service_id: str = service_id

@@ -1,9 +1,12 @@
-"""Module for the Sock Shop application builder.
+"""The Sock Shop application models an e-commerce microservice benchmark.
 
-It provides a getter function to create a Sock Shop application in 3
-different configurations, by choosing the `communication interface` in the getter:
+It represents a storefront workflow with user authentication, catalogue
+browsing, cart management, checkout orchestration, payment processing, and
+shipping coordination. The builder captures typical user-facing interactions
+such as browsing products, updating the cart, placing orders, and tracking
+their fulfilment across multiple services.
 
-- "None": The application graph without any remote Service configuration.
-- "rest": The application graph with REST Services.
-- "mpi": The application graph with MPI Services.
+Source:
+    `Sock Shop - A Microservices Demo Application
+    <https://github.com/ocp-power-demos/sock-shop-demo>`_
 """

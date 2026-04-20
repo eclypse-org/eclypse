@@ -17,13 +17,20 @@ class RESTService(Service):
     def __init__(
         self,
         service_id: str,
+        store_step: bool = False,
     ):
         """Initializes a Service object.
 
         Args:
             service_id (str): The name of the service.
+            store_step (bool, optional): Whether to store the results of
+                each step. Defaults to False.
         """
-        super().__init__(service_id=service_id, communication_interface="rest")
+        super().__init__(
+            service_id=service_id,
+            communication_interface="rest",
+            store_step=store_step,
+        )
 
     async def step(self):
         """The service's main loop.
