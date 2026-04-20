@@ -7,6 +7,7 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.utils import format_log_kv
 
 
 class CartService(Service):
@@ -31,7 +32,7 @@ class CartService(Service):
             str: The ID of the recipient.
             dict: The response body.
         """
-        self.logger.info(f"{self.id} - {body}")
+        self.logger.info("Received request | " + format_log_kv(request=body))
 
         # Send response to FrontendService
         if body.get("request_type") == "cart_data":

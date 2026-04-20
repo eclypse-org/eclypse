@@ -13,18 +13,21 @@ providing the user-facing components of the store.
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.utils import format_log_kv
 
 
 class FrontendService(Service):
     """MPI workflow of the Frontend service."""
 
-    def __init__(self, name):
+    def __init__(self, name, store_step: bool = False):
         """Initialize the FrontendService with a user ID.
 
         Args:
             name (str): The name of the service.
+            store_step (bool, optional): Whether to store the results of
+                each step. Defaults to False.
         """
-        super().__init__(name)
+        super().__init__(name, store_step=store_step)
         self.user_id = 12345
 
     async def step(self):
@@ -39,7 +42,9 @@ class FrontendService(Service):
         # Receive response from CatalogService
         catalog_response = await self.mpi.recv()
 
-        self.logger.info(f"{self.id} - {catalog_response}")
+        self.logger.info(
+            "Received response | " + format_log_kv(response=catalog_response)
+        )
 
         # Send request to UserService
         user_request = {"request_type": "user_data", "user_id": self.user_id}
@@ -47,7 +52,7 @@ class FrontendService(Service):
 
         # Receive response from UserService
         user_response = await self.mpi.recv()
-        self.logger.info(f"{self.id} - {user_response}")
+        self.logger.info("Received response | " + format_log_kv(response=user_response))
 
         # Send request to CartService
         cart_request = {"request_type": "cart_data", "user_id": self.user_id}
@@ -55,7 +60,7 @@ class FrontendService(Service):
 
         # Receive response from CartService
         cart_response = await self.mpi.recv()
-        self.logger.info(f"{self.id} - {cart_response}")
+        self.logger.info("Received response | " + format_log_kv(response=cart_response))
 
         cart_items = cart_response.get("items", [])
 
@@ -69,7 +74,9 @@ class FrontendService(Service):
 
         # Receive response from OrderService
         order_response = await self.mpi.recv()
-        self.logger.info(f"{self.id} - {order_response}")
+        self.logger.info(
+            "Received response | " + format_log_kv(response=order_response)
+        )
 
     @mpi.exchange(send=True)
     def catalog_request(self):

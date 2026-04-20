@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import get_args
 
 from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils.types import CommunicationInterface
 
 # Reporting
 
@@ -60,6 +62,9 @@ DEFAULT_RAY_RUNTIME_ENV_VARS: dict[str, str] = {
 }
 """Default Ray environment variables applied to simulation runtimes."""
 
+SUPPORTED_COMMUNICATION_INTERFACES = get_args(CommunicationInterface)
+"""Supported runtime communication interfaces for services and builders."""
+
 # Paths
 
 
@@ -83,6 +88,7 @@ __all__ = [
     "PARQUET_REPORT_DIR",
     "SIMULATION_CONFIG_FILENAME",
     "SIMULATION_LOG_FILENAME",
+    "SUPPORTED_COMMUNICATION_INTERFACES",
     "TENSORBOARD_REPORT_DIR",
     "get_default_sim_path",
 ]
