@@ -1,9 +1,8 @@
-from update_policy import random_update
+from update_policy import get_update_policies
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
 from eclypse.placement.strategies import RandomStrategy
-from eclypse.placement.strategies.random import RandomStrategy
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils.defaults import get_default_sim_path
@@ -13,7 +12,7 @@ if __name__ == "__main__":
     infrastructure = hierarchical(
         n=30,
         node_partitioning=[0.6, 0.2, 0.1, 0.1],
-        update_policies=random_update,
+        update_policies=get_update_policies(),
         include_default_assets=True,
         symmetric=True,
         seed=seed,
@@ -28,10 +27,7 @@ if __name__ == "__main__":
         remote=True,
     )
 
-    sim = Simulation(
-        infrastructure,
-        simulation_config=sim_config,
-    )
+    sim = Simulation(infrastructure, simulation_config=sim_config)
 
     app = get_sock_shop(communication_interface="rest", include_default_assets=True)
 

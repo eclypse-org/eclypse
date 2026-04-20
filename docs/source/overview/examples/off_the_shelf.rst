@@ -4,7 +4,7 @@ Off-the-shelf
 This example shows a complete local simulation built only from reusable ECLYPSE
 components:
 
-- the :func:`~eclypse.builders.application.get_sock_shop` application builder
+- the :func:`~eclypse.builders.application.get_hotel_reservation` application builder
 - the :func:`~eclypse.builders.infrastructure.hierarchical` infrastructure builder
 - built-in update policies from :mod:`eclypse.policies`
 - a built-in placement strategy
@@ -19,9 +19,12 @@ directory.
 Application
 -----------
 
-The application is the standard Sock Shop graph created through the built-in
-builder, with built-in uniform-distribution and degradation policies that
-progressively make placement harder.
+The application is the built-in hotel reservation graph, paired with built-in
+uniform-distribution and degradation policies that progressively make
+placement harder.
+
+ECLYPSE also provides several other ready-made application builders collected
+in :mod:`eclypse.builders.application`.
 
 .. dropdown:: Application code
 

@@ -1,4 +1,4 @@
-from update_policy import random_update
+from update_policy import get_update_policies
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.builders.infrastructure import hierarchical
@@ -12,7 +12,7 @@ if __name__ == "__main__":
     infrastructure = hierarchical(
         n=30,
         node_partitioning=[0.6, 0.1, 0.15, 0.15],
-        update_policies=random_update,
+        update_policies=get_update_policies(),
         include_default_assets=True,
         symmetric=True,
         seed=seed,
@@ -23,8 +23,8 @@ if __name__ == "__main__":
         step_every_ms=500,
         max_steps=100,
         path=get_default_sim_path() / "SockShopMPI",
-        remote=True,
         include_default_metrics=True,
+        remote=True,
     )
 
     sim = Simulation(infrastructure, simulation_config=sim_config)

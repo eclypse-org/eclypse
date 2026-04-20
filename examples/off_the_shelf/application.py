@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from eclypse import policies
-from eclypse.builders.application import get_sock_shop
+from eclypse.builders.application import get_hotel_reservation
 
 
 def get_application(seed: int = 7):
-    """Create a Sock Shop application using built-in policies only."""
-    return get_sock_shop(
-        application_id="SockShopBuiltins",
+    """Create a hotel reservation application using built-in policies only."""
+    return get_hotel_reservation(
+        application_id="HotelReservationBuiltins",
         include_default_assets=True,
         seed=seed,
         update_policies=[
