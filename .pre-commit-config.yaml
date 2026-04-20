@@ -25,6 +25,8 @@ repos:
     rev: 8.0.1
     hooks:
       - id: isort
+        pass_filenames: false
+        args: [eclypse]
 
   - repo: https://github.com/commitizen-tools/commitizen
     rev: v4.13.9
@@ -41,7 +43,11 @@ repos:
         args: [--fix, --select, "F401"]
         name: ruff pycln
       - id: ruff-check
+        pass_filenames: false
+        args: [eclypse]
       - id: ruff-format
+        pass_filenames: false
+        args: [eclypse]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.20.0
@@ -49,6 +55,5 @@ repos:
       - id: mypy
         pass_filenames: false
         args: [eclypse]
-        exclude: ^(docs/|tests/)
 
 exclude: "examples/.*"
