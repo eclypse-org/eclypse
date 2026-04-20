@@ -227,9 +227,9 @@ assets and flows.
    .. tab-item:: Application
       :sync: app
 
-      ECLYPSE currently includes a builder for the **SockShop** application
-      from the `Microservices Demo <https://github.com/ocp-power-demos/sock-shop-demo>`_
-      project, using
+      ECLYPSE includes several built-in application builders, all collected in
+      the :mod:`eclypse.builders.application` package. Sock Shop remains the
+      reference example used throughout this section, using
       :func:`~eclypse.builders.application.sock_shop.application.get_sock_shop`.
 
       .. code-block:: python
@@ -239,7 +239,8 @@ assets and flows.
          app = get_sock_shop()
 
       This application contains multiple interconnected services and
-      representative communication flows.
+      representative communication flows. For the full list of built-in
+      applications, see :mod:`eclypse.builders.application`.
 
 .. tip::
 
