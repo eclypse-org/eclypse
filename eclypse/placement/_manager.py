@@ -8,10 +8,7 @@ mapped to the infrastructure nodes.
 from __future__ import annotations
 
 from random import shuffle
-from typing import (
-    TYPE_CHECKING,
-    Any,
-)
+from typing import TYPE_CHECKING
 
 from eclypse.placement import Placement
 from eclypse.utils._logging import (
@@ -22,15 +19,14 @@ from eclypse.utils._logging import (
 from .view import PlacementView
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Generator,
-    )
+    from collections.abc import Generator
 
     from eclypse.graph import (
         Application,
         Infrastructure,
     )
     from eclypse.placement import PlacementStrategy
+    from eclypse.utils._logging import Logger
 
 
 class PlacementManager:
@@ -216,7 +212,7 @@ class PlacementManager:
         return self.placements[application_id]
 
     @property
-    def logger(self) -> Any:
+    def logger(self) -> Logger:
         """Get a logger for the PlacementManager.
 
         Returns:

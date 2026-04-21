@@ -5,7 +5,6 @@ from __future__ import annotations
 import json
 from typing import (
     TYPE_CHECKING,
-    Any,
     cast,
 )
 
@@ -34,6 +33,7 @@ if TYPE_CHECKING:
     from eclypse.report import FrameBackend
     from eclypse.simulation._simulator.local import SimulationState
     from eclypse.simulation._simulator.remote import RemoteSimulator
+    from eclypse.utils._logging import Logger
 
 
 class Simulation:
@@ -192,7 +192,7 @@ class Simulation:
         return self.simulator.applications
 
     @property
-    def logger(self) -> Any:
+    def logger(self) -> Logger:
         """Logger bound to the simulation component."""
         return self._logger.bind(id="Simulation")
 

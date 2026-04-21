@@ -23,6 +23,7 @@ from eclypse.graph.assets import (
     Concave,
     Convex,
 )
+from eclypse.utils._logging import format_log_kv
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -221,11 +222,19 @@ class PlacementView(nx.DiGraph):
 
                     self.add_edge(node_s, node_t, **_int_reqs)
                 else:
+                    # placement.infrastructure.logger.warning(
+                    #     f"Stopping placement search for {placement.application.id}"
+                    # )
+                    # placement.infrastructure.logger.warning(
+                    #     f" [Path not found] {s} ({node_s}) -> {t} ({node_t})"
+                    # )
                     placement.infrastructure.logger.warning(
-                        f"Stopping placement search for {placement.application.id}"
-                    )
-                    placement.infrastructure.logger.warning(
-                        f" [Path not found] {s} ({node_s}) -> {t} ({node_t})"
+                        "Path not found | "
+                        + format_log_kv(
+                            app=placement.application.id,
+                            source=f"{s} ({node_s})",
+                            target=f"{t} ({node_t})",
+                        )
                     )
                     placement.mark_for_reset()
                     break

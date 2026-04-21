@@ -43,6 +43,7 @@ if TYPE_CHECKING:
         PlacementView,
     )
     from eclypse.simulation._simulator.local import Simulator
+    from eclypse.utils._logging import Logger
     from eclypse.utils.types import (
         EventType,
         TriggerCondition,
@@ -349,7 +350,7 @@ class EclypseEvent:
         return self._remote
 
     @property
-    def logger(self) -> Any:
+    def logger(self) -> Logger:
         """Get a logger for the graph, binding the graph id in the logs.
 
         Returns:

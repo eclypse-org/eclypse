@@ -47,12 +47,11 @@ from eclypse.workflow.trigger import (
 )
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
+    from collections.abc import Callable
 
     from eclypse.report import FrameBackend
     from eclypse.report.reporter import Reporter
+    from eclypse.utils._logging import Logger
     from eclypse.utils.types import (
         LogLevel,
         ReportBackend,
@@ -269,7 +268,7 @@ class SimulationConfig:
         ]
 
     @property
-    def logger(self) -> Any:
+    def logger(self) -> Logger:
         """Logger bound to the config component."""
         return logger.bind(id="SimulationConfig")
 
