@@ -60,8 +60,8 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         """
         _node_assets = get_default_node_assets() if include_default_assets else {}
         _edge_assets = get_default_edge_assets() if include_default_assets else {}
-        _node_assets.update(node_assets if node_assets is not None else {})
-        _edge_assets.update(edge_assets if edge_assets is not None else {})
+        _node_assets.update(node_assets or {})
+        _edge_assets.update(edge_assets or {})
 
         super().__init__(
             graph_id=application_id,

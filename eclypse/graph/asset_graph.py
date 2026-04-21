@@ -69,8 +69,8 @@ class AssetGraph(nx.DiGraph):
         self.id = graph_id
         self.update_policies = _normalize_update_policies(update_policies)
 
-        _node_assets = node_assets if node_assets is not None else {}
-        _edge_assets = edge_assets if edge_assets is not None else {}
+        _node_assets = node_assets or {}
+        _edge_assets = edge_assets or {}
 
         self.node_assets = AssetBucket(**_node_assets)
         self.edge_assets = AssetBucket(**_edge_assets)

@@ -46,9 +46,7 @@ class Simulation:
     ):
         """Create a simulation bound to an infrastructure and configuration."""
         self.infrastructure = infrastructure
-        self._sim_config = (
-            simulation_config if simulation_config is not None else SimulationConfig()
-        )
+        self._sim_config = simulation_config or SimulationConfig()
         self._sim_config.prepare_runtime()
 
         self.remote: RemoteBootstrap | None = cast(

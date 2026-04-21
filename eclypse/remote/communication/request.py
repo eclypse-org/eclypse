@@ -57,7 +57,7 @@ class EclypseRequest:
                 Defaults to None.
         """
         self._data = data
-        self._timestamp = timestamp if timestamp is not None else datetime.now()
+        self._timestamp = timestamp or datetime.now()
 
         self._recipient_ids: list[str] = recipient_ids
         self._routes: list[Future[Route]] = [

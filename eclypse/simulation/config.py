@@ -170,7 +170,7 @@ class SimulationConfig:
             "dict[str, type[Reporter]]",
             get_default_reporters(report_types),
         )
-        resolved_reporters.update(reporters if reporters is not None else {})
+        resolved_reporters.update(reporters or {})
         return resolved_reporters
 
     def _ensure_optional_dependencies(self):

@@ -94,8 +94,8 @@ def star(
         placement_strategy=placement_strategy,
         seed=seed,
     )
-    _outer_assets_values = {} if outer_assets_values is None else outer_assets_values
-    _center_assets_values = {} if center_assets_values is None else center_assets_values
+    _outer_assets_values = outer_assets_values or {}
+    _center_assets_values = center_assets_values or {}
     for i in range(n_clients):
         infrastructure.add_node(f"outer_{i}", strict=strict, **_outer_assets_values)
     infrastructure.add_node("center", strict=strict, **_center_assets_values)
