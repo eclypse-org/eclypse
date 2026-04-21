@@ -1,22 +1,26 @@
-"""Factory for the Orion CEV infrastructure topology.
+"""Reference topology for the Orion Crew Exploration Vehicle network.
 
-Defines the Orion Crew Exploration Vehicle (CEV) network as an
-Infrastructure object, including switches and end systems such as
-sensors, controllers, and processing units. Links and node resources
-(CPU, RAM, availability, etc.) are assigned based on realistic values
-for mixed-criticality embedded platforms.
+The Orion Crew Exploration Vehicle (CEV) reference models a published mixed-criticality
+embedded network with end systems and switching nodes. The topology includes
+multiple layers of avionics switches, distributed units, controllers, and
+mission subsystems, all connected through a fixed embedded communication
+backbone.
 
-The topology and resource model are inspired by:
-Berisa et al., "AVB-aware Routing and Scheduling for Critical Traffic in
-Time-sensitive Networks with Preemption", RTNS 2022,
-https://dl.acm.org/doi/10.1145/3534879.3534926.
+Its featured capabilities are those of a structured mixed-criticality network:
+deterministic switch-centric connectivity, explicit separation between end
+systems and network switches, and link/node resources suitable for analysing QoS
+constraints such as latency, bandwidth, and availability in a safety-oriented
+setting.
+
+Source:
+    Berisa et al., "AVB-aware Routing and Scheduling for Critical Traffic in
+    Time-sensitive Networks with Preemption", RTNS 2022,
+    https://dl.acm.org/doi/10.1145/3534879.3534926
 """
 
 from __future__ import annotations
 
-from typing import (
-    TYPE_CHECKING,
-)
+from typing import TYPE_CHECKING
 
 from eclypse.builders._helpers import prune_assets
 from eclypse.graph import Infrastructure
@@ -45,27 +49,27 @@ def get_orion_cev(
     placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
-    """Create the Orion CEV infrastructure.
+    """Create the Orion CEV reference infrastructure.
 
     Args:
         infrastructure_id (str):
-            The ID of the infrastructure. Defaults to "OrionCEV".
-        update_policies (Callable | list[Callable] | None):
-            Graph update policies. Defaults to None.
+            Identifier assigned to the infrastructure.
+        update_policies (UpdatePolicies):
+            Graph update policies executed during ``evolve()``.
         node_assets (dict[str, Asset] | None):
-            The assets for the nodes. Defaults to None.
+            Node asset definitions available to the infrastructure.
         link_assets (dict[str, Asset] | None):
-            The assets for the links. Defaults to None.
+            Edge asset definitions available to the infrastructure.
         include_default_assets (bool):
-            Whether to include the default assets. Defaults to False.
+            Whether to include default ECLYPSE assets.
         resource_init (InitPolicy):
-            The initialization policy for the resources. Defaults to "max".
+            Initialisation policy used for graph assets.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
-            The algorithm to compute the paths between nodes. Defaults to
-            None.
+            Path computation function for infrastructure routing.
         placement_strategy (PlacementStrategy | None):
-            The strategy to place the resources. Defaults to None.
-        seed (int | None): The seed for the random number generator. Defaults to None.
+            Optional placement strategy attached to the infrastructure.
+        seed (int | None):
+            Seed forwarded to the infrastructure random generator.
 
     Returns:
         Infrastructure: The Orion CEV infrastructure.
@@ -115,7 +119,6 @@ def get_orion_cev(
         "SM2CA",
         "SM2CB",
     ]
-
     network_switches = [
         "NS11",
         "NS12",
@@ -147,7 +150,6 @@ def get_orion_cev(
                 processing_time=10,
             ),
         )
-
     for ns in network_switches:
         infra.add_node(
             ns,
@@ -219,7 +221,6 @@ def get_orion_cev(
         ("NS8", "NS51"),
         ("NS8", "NS52"),
     ]
-
     for source, target in edges:
         infra.add_edge(
             source,
@@ -227,5 +228,4 @@ def get_orion_cev(
             symmetric=True,
             **prune_assets(infra.edge_assets, latency=10, bandwidth=100),
         )
-
     return infra

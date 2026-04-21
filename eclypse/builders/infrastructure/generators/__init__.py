@@ -1,18 +1,17 @@
-"""Module for the infrastructure builders.
+"""Infrastructure generators (e.g. star, hierarchical, small_world).
 
-It has the following builders:
-
-- b_cube: A BCube infrastructure with switches and hosts.
-- fat_tree: A Fat-Tree infrastructure with switches and hosts.
-- hierarchical: A hierarchical infrastructure made of nodes partitioned into groups.
-- star: A star infrastructure with clients connected to a central node.
-- random: A random infrastructure with nodes connected with a given probability.
+The package collects topology-first infrastructure builders whose primary role
+is to generate reusable graph families. These generators expose structural
+models such as stars, random graphs, layered hierarchies, and data-centre or
+hub-oriented networks without tying them to a specific application domain.
 """
 
 from .b_cube import b_cube
 from .fat_tree import fat_tree
 from .hierarchical import hierarchical
 from .random import random
+from .scale_free import scale_free
+from .small_world import small_world
 from .star import star
 
 __all__ = [
@@ -20,5 +19,7 @@ __all__ = [
     "fat_tree",
     "hierarchical",
     "random",
+    "scale_free",
+    "small_world",
     "star",
 ]

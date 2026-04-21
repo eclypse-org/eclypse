@@ -200,21 +200,27 @@ assets and flows.
 
          from eclypse.builders.infrastructure import (
              b_cube,
+             continuum_tiered,
              fat_tree,
-             hierarchical,
-             random,
-             star,
+             get_backbone,
+             get_caida,
+             get_gabriel,
              get_orion_cev,
+             get_sndlib,
+             get_topohub,
+             get_topology_zoo,
+             hierarchical,
+             mec_5g,
+             multi_region_wan,
+             random,
+             scale_free,
+             small_world,
+             star,
          )
 
-      **Available infrastructure builders:**
-
-      - :py:func:`~eclypse.builders.infrastructure.generators.b_cube`
-      - :py:func:`~eclypse.builders.infrastructure.generators.fat_tree`
-      - :py:func:`~eclypse.builders.infrastructure.generators.hierarchical`
-      - :py:func:`~eclypse.builders.infrastructure.generators.random`
-      - :py:func:`~eclypse.builders.infrastructure.generators.star`
-      - :py:func:`~eclypse.builders.infrastructure.orion_cev.get_orion_cev`: returns the ORION-CEV reference infrastructure
+      ECLYPSE includes several off-the-shelf infrastructure builders across
+      generic generators, architecture patterns, and named references. For the
+      full list, see :mod:`eclypse.builders.infrastructure`.
 
       **Example:**
 

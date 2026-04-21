@@ -5,7 +5,7 @@ This example shows a complete local simulation built only from reusable ECLYPSE
 components:
 
 - the :func:`~eclypse.builders.application.get_hotel_reservation` application builder
-- the :func:`~eclypse.builders.infrastructure.hierarchical` infrastructure builder
+- an infrastructure builder from :mod:`eclypse.builders.infrastructure`
 - built-in update policies from :mod:`eclypse.policies`
 - a built-in placement strategy
 
@@ -37,9 +37,10 @@ Infrastructure
 
 The infrastructure is a generated hierarchical topology using the default
 assets and a built-in policy mix for flapping availability, uniform
-perturbations, periodic latency spikes, and scheduled degradation. Together with
-``BestFitStrategy``, this makes the example exercise repeated placement under a
-changing environment.
+perturbations, periodic latency spikes, and scheduled degradation. ECLYPSE also
+provides several other off-the-shelf infrastructure builders collected in
+:mod:`eclypse.builders.infrastructure`. Together with ``BestFitStrategy``, this
+example exercises repeated placement under a changing environment.
 
 .. dropdown:: Infrastructure code
 
