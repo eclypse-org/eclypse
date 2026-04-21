@@ -13,6 +13,8 @@ from eclypse.graph.assets import (
     Symbolic,
 )
 from eclypse.graph.assets.defaults import (
+    bandwidth,
+    cpu,
     get_default_edge_assets,
     get_default_node_assets,
     get_default_path_aggregators,
@@ -37,6 +39,11 @@ def test_asset_init_supports_primitive_callable_and_asset_space():
     assert choice_asset._init(rnd) in {3, 4}  # pylint: disable=protected-access
 
 
+def test_asset_init_rejects_unsupported_init_type():
+    with pytest.raises(TypeError, match="Unsupported type for `init_fn`"):
+        Additive(0, 10, object())
+
+
 @pytest.mark.parametrize(
     ("asset", "values", "expected"),
     [
@@ -48,6 +55,12 @@ def test_asset_init_supports_primitive_callable_and_asset_space():
 )
 def test_numeric_asset_aggregation(asset, values, expected):
     assert asset.aggregate(*values) == expected
+
+
+def test_multiplicative_asset_aggregation_without_values_returns_lower_bound():
+    asset = Multiplicative(0.5, 10)
+
+    assert asset.aggregate() == 0.5
 
 
 @pytest.mark.parametrize(
@@ -121,6 +134,13 @@ def test_asset_bucket_aggregates_validates_consumes_and_flips():
     assert isinstance(bucket.flip()["latency"], Convex)
 
 
+def test_asset_bucket_rejects_non_asset_values():
+    bucket = AssetBucket()
+
+    with pytest.raises(ValueError, match="Asset cpu is not an instance of Asset"):
+        bucket["cpu"] = 3
+
+
 def test_default_asset_factories_expose_expected_keys():
     node_assets = get_default_node_assets()
     edge_assets = get_default_edge_assets()
@@ -132,3 +152,32 @@ def test_default_asset_factories_expose_expected_keys():
     assert {"latency", "bandwidth"} == set(edge_assets)
     assert path_aggregators["latency"]([1, 2, 3]) == 6
     assert path_aggregators["bandwidth"]([8, 3, 5]) == 3
+
+
+def test_default_asset_getters_define_default_initialisers():
+    rnd = random.Random(1)
+    node_assets = get_default_node_assets()
+    edge_assets = get_default_edge_assets()
+
+    assert node_assets["cpu"]._init(rnd) in {2**i for i in range(1, 9)}  # pylint: disable=protected-access
+    assert 0.99 <= node_assets["availability"]._init(rnd) <= 1.0  # pylint: disable=protected-access
+    assert 1 <= edge_assets["latency"]._init(rnd) <= 40  # pylint: disable=protected-access
+    assert 50 <= edge_assets["bandwidth"]._init(rnd) <= 1500  # pylint: disable=protected-access
+
+
+def test_asset_factories_without_init_use_asset_defaults():
+    rnd = random.Random(1)
+
+    assert cpu().init_fn is None
+    assert bandwidth().init_fn is None
+    with pytest.raises(ValueError, match="init_fn"):
+        cpu()._init(rnd)  # pylint: disable=protected-access
+
+
+def test_asset_string_representation_includes_main_fields():
+    rendered = str(Additive(0, 10, 5))
+
+    assert "Type: Additive" in rendered
+    assert "Lower Bound: 0" in rendered
+    assert "Upper Bound: 10" in rendered
+    assert "Functional: True" in rendered
