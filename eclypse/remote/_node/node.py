@@ -31,13 +31,12 @@ from eclypse.utils.constants import RND_SEED
 from .ops_thread import RemoteOpsThread
 
 if TYPE_CHECKING:
-    from collections.abc import (
-        Callable,
-    )
+    from collections.abc import Callable
 
     from eclypse.remote.communication import Route
     from eclypse.remote.service import Service
     from eclypse.remote.utils import RemoteOps
+    from eclypse.utils._logging import Logger
 
 
 class RemoteNode:
@@ -195,6 +194,6 @@ class RemoteNode:
         return self._engine_loop
 
     @property
-    def logger(self) -> Any:
+    def logger(self) -> Logger:
         """Returns the logger of the node."""
         return self._logger.bind(id=self.id)
