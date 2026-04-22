@@ -14,9 +14,7 @@ from tests.unit.builders.application._service_test_helpers import (
 @pytest.mark.asyncio
 async def test_anomaly_detection_services(monkeypatch):
     feature = attach_service_logger(anomaly_rest.FeatureService("FeatureService"))
-    inference = attach_service_logger(
-        anomaly_rest.InferenceService("InferenceService")
-    )
+    inference = attach_service_logger(anomaly_rest.InferenceService("InferenceService"))
     alert = attach_service_logger(anomaly_rest.AlertService("AlertService"))
     sensor = attach_service_logger(anomaly_rest.SensorService("SensorService"))
 

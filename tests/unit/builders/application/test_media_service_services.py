@@ -222,7 +222,9 @@ async def test_media_service_services(monkeypatch):
             ): {"reviews": [{"review_id": 7001}]},
         }
     )
-    monkeypatch.setattr(type(movie_info), "rest", property(lambda self: movie_info_rest))
+    monkeypatch.setattr(
+        type(movie_info), "rest", property(lambda self: movie_info_rest)
+    )
     code, body = await movie_info.details(movie_id="m1", movie_title="The Matrix")
     assert code == 200
     assert len(body["cast"]) == 2
@@ -245,7 +247,9 @@ async def test_media_service_services(monkeypatch):
     mpi_movie_review = attach_service_logger(
         media_mpi.MovieReviewService("MovieReviewService"),
     )
-    mpi_movie_info = attach_service_logger(media_mpi.MovieInfoService("MovieInfoService"))
+    mpi_movie_info = attach_service_logger(
+        media_mpi.MovieInfoService("MovieInfoService")
+    )
     mpi_cast = attach_service_logger(media_mpi.CastInfoService("CastInfoService"))
     mpi_plot = attach_service_logger(media_mpi.PlotService("PlotService"))
 
@@ -363,7 +367,13 @@ async def test_media_service_services(monkeypatch):
 
     cast_comm = set_mpi(
         mpi_cast,
-        [{"sender_id": "MovieInfoService", "request_type": "get_cast", "movie_id": "m1"}],
+        [
+            {
+                "sender_id": "MovieInfoService",
+                "request_type": "get_cast",
+                "movie_id": "m1",
+            }
+        ],
     )
     await mpi_cast.step()
     assert cast_comm.sent[0][0] == "MovieInfoService"
@@ -371,7 +381,13 @@ async def test_media_service_services(monkeypatch):
 
     plot_comm = set_mpi(
         mpi_plot,
-        [{"sender_id": "MovieInfoService", "request_type": "get_plot", "movie_id": "m1"}],
+        [
+            {
+                "sender_id": "MovieInfoService",
+                "request_type": "get_plot",
+                "movie_id": "m1",
+            }
+        ],
     )
     await mpi_plot.step()
     assert plot_comm.sent[0][0] == "MovieInfoService"
