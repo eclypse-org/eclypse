@@ -1,6 +1,7 @@
-"""Package for the application and infrastructure builders."""
+"""Package for the application, infrastructure, and workflow builders."""
 
 from . import application
 from . import infrastructure
+from . import workflow
 
-__all__ = ["application", "infrastructure"]
+__all__ = ["application", "infrastructure", "workflow"]

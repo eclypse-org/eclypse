@@ -238,6 +238,12 @@ assets and flows.
       reference example used throughout this section, using
       :func:`~eclypse.builders.application.sock_shop.application.get_sock_shop`.
 
+      For simulation-only task DAGs, ECLYPSE also provides workflow builders in
+      :mod:`eclypse.builders.workflow`. These builders use WfCommons to
+      generate workflows and normalise file-size-derived ``storage`` and
+      dependency ``bandwidth`` values from bytes to MiB before assigning them
+      to the default ECLYPSE assets.
+
       .. code-block:: python
 
          from eclypse.builders.application import get_sock_shop
