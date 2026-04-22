@@ -11,7 +11,9 @@ from eclypse.builders.application import (
     get_crud_api,
     get_hotel_reservation,
     get_keyword_spotting,
+    get_media_service,
     get_sock_shop,
+    get_social_network,
     get_thumbnailer,
     get_video_analytics_serving,
 )
@@ -19,6 +21,8 @@ from eclypse.builders.application import (
 _FLOW_CONSISTENT_BUILDERS = [
     get_video_analytics_serving,
     get_hotel_reservation,
+    get_social_network,
+    get_media_service,
     get_crud_api,
     get_keyword_spotting,
     get_anomaly_detection,

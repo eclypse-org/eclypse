@@ -10,6 +10,7 @@ It manages the logistics and shipment of orders, ensuring items reach customers.
 
 from eclypse.remote.communication import rest
 from eclypse.remote.service import RESTService
+from eclypse.utils import format_log_kv
 
 
 class ShippingService(RESTService):
@@ -42,6 +43,7 @@ class ShippingService(RESTService):
                     },
                 )
         """
+        self.logger.info("Received request | " + format_log_kv(order_id=order_id))
         return 200, {
             "order_id": order_id,
             "status": "success",

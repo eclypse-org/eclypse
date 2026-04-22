@@ -39,8 +39,8 @@ class CartService(Service):
             frontend_response = {
                 "response_type": "cart_response",
                 "items": [
-                    {"product_id": "1", "quantity": 2},
-                    {"product_id": "2", "quantity": 1},
+                    {"id": "1", "quantity": 2},
+                    {"id": "2", "quantity": 1},
                 ],
             }
         else:

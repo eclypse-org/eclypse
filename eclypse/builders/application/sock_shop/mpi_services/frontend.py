@@ -43,7 +43,8 @@ class FrontendService(Service):
         catalog_response = await self.mpi.recv()
 
         self.logger.info(
-            "Received response | " + format_log_kv(response=catalog_response)
+            "Received response | "
+            + format_log_kv(source="CatalogService", body=catalog_response)
         )
 
         # Send request to UserService
@@ -52,7 +53,10 @@ class FrontendService(Service):
 
         # Receive response from UserService
         user_response = await self.mpi.recv()
-        self.logger.info("Received response | " + format_log_kv(response=user_response))
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="UserService", body=user_response)
+        )
 
         # Send request to CartService
         cart_request = {"request_type": "cart_data", "user_id": self.user_id}
@@ -60,22 +64,41 @@ class FrontendService(Service):
 
         # Receive response from CartService
         cart_response = await self.mpi.recv()
-        self.logger.info("Received response | " + format_log_kv(response=cart_response))
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="CartService", body=cart_response)
+        )
 
+        products = catalog_response.get("products", [])
         cart_items = cart_response.get("items", [])
+        order_items = [
+            {
+                "id": item["id"],
+                "amount": next(
+                    (
+                        product["price"] * item["quantity"]
+                        for product in products
+                        if product["id"] == item["id"]
+                    ),
+                    0.0,
+                ),
+            }
+            for item in cart_items
+        ]
 
         # Send request to OrderService
         order_request = {
             "request_type": "order_request",
             "user_id": self.user_id,
-            "items": cart_items,
+            "items": order_items,
         }
         self.mpi.send("OrderService", order_request)
 
         # Receive response from OrderService
         order_response = await self.mpi.recv()
         self.logger.info(
-            "Received response | " + format_log_kv(response=order_response)
+            "Received response | "
+            + format_log_kv(source="OrderService", body=order_response)
         )
 
     @mpi.exchange(send=True)

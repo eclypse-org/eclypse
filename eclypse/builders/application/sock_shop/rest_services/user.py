@@ -10,6 +10,7 @@ It manages all user-related functionality, including registration,\
 
 from eclypse.remote.communication import rest
 from eclypse.remote.service import RESTService
+from eclypse.utils import format_log_kv
 
 
 class UserService(RESTService):
@@ -40,6 +41,7 @@ class UserService(RESTService):
                     },
                 )
         """
+        self.logger.info("Received request | " + format_log_kv(user_id=user_id))
         return 200, {
             "user_id": user_id,
             "name": "John Doe",

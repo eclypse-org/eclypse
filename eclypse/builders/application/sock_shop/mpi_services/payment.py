@@ -44,6 +44,7 @@ class PaymentService(Service):
             payment_response = {
                 "response_type": "payment_response",
                 "order_id": body.get("order_id"),
+                "transaction_id": rnd.randint(1000, 9999),
                 "status": "success" if rnd.choice([True, False]) else "failure",
             }
         else:
