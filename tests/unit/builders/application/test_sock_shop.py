@@ -30,6 +30,7 @@ def test_sock_shop_builder_configures_supported_interfaces_and_flows():
     )
     assert sock_shop.has_edge("FrontendService", "CatalogService")
     assert sock_shop.has_edge("CatalogService", "FrontendService")
+    assert sock_shop.flows[2] == ["FrontendService", "CartService", "FrontendService"]
     assert len(sock_shop.flows) == 5
     assert rest_sock_shop.flows == [["FrontendService", "CatalogService"]]
 

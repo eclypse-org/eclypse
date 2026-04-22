@@ -13,6 +13,7 @@ import random as rnd
 
 from eclypse.remote.communication import rest
 from eclypse.remote.service import RESTService
+from eclypse.utils import format_log_kv
 from eclypse.utils.constants import RND_SEED
 
 
@@ -54,6 +55,9 @@ class PaymentService(RESTService):
                     },
                 )
         """
+        self.logger.info(
+            "Received request | " + format_log_kv(order_id=order_id, amount=amount)
+        )
         return 200, {
             "order_id": order_id,
             "amount": amount + self.rnd.randint(1, 10),

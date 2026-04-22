@@ -37,12 +37,21 @@ class FrontendService(Service):
         user_r = await self.rest.get("UserService/user", user_id=self.user_id)
         cart_r = await self.rest.get("CartService/cart")
 
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="CatalogService", body=catalog_r.body)
+        )
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="UserService", body=user_r.body)
+        )
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="CartService", body=cart_r.body)
+        )
+
         products = catalog_r.body.get("products", [])
         items = cart_r.body.get("items", [])
-        user_data = user_r.body
-        self.logger.info(
-            "Received response | " + format_log_kv(source="UserService", body=user_data)
-        )
 
         order_items = [
             {

@@ -132,11 +132,11 @@ def test_rest_service_exports_and_endpoint_payloads():
     assert rest_services.CatalogService is RESTCatalogService
     assert rest_services.UserService is RESTUserService
 
-    cart_service = RESTCartService("CartService")
-    catalog_service = RESTCatalogService("CatalogService")
-    payment_service = RESTPaymentService("PaymentService")
-    shipping_service = RESTShippingService("ShippingService")
-    user_service = RESTUserService("UserService")
+    cart_service = _attach_service_logger(RESTCartService("CartService"))
+    catalog_service = _attach_service_logger(RESTCatalogService("CatalogService"))
+    payment_service = _attach_service_logger(RESTPaymentService("PaymentService"))
+    shipping_service = _attach_service_logger(RESTShippingService("ShippingService"))
+    user_service = _attach_service_logger(RESTUserService("UserService"))
 
     cart_code, cart_body = cart_service.get_cart()
     catalog_code, catalog_body = catalog_service.get_catalog()
@@ -256,7 +256,7 @@ async def test_mpi_service_exports_and_workflows(monkeypatch):
     assert catalog_recipient == "FrontendService"
     assert catalog_body["response_type"] == "catalog_response"
     assert cart_recipient == "FrontendService"
-    assert cart_body["items"][0]["product_id"] == "1"
+    assert cart_body["items"][0]["id"] == "1"
     assert user_recipient == "FrontendService"
     assert user_body["name"] == "John Doe"
     assert shipping_recipient == "OrderService"
@@ -268,7 +268,7 @@ async def test_mpi_service_exports_and_workflows(monkeypatch):
         [
             {"products": [{"id": "1", "price": 19.99}]},
             {"name": "Jane"},
-            {"items": [{"product_id": "1", "quantity": 2}]},
+            {"items": [{"id": "1", "quantity": 2}]},
             {"status": "success"},
         ]
     )
@@ -287,23 +287,22 @@ async def test_mpi_service_exports_and_workflows(monkeypatch):
             {
                 "request_type": "order_request",
                 "user_id": 12345,
-                "items": [{"product_id": "1", "quantity": 2}],
+                "items": [{"id": "1", "amount": 39.98}],
             },
         ),
     ]
 
     order_mpi = FakeMPIInterface(
         [
-            {"sender_id": "FrontendService", "items": [{"id": "1"}, {"id": "2"}]},
+            {
+                "sender_id": "FrontendService",
+                "items": [{"id": "1", "amount": 25.0}, {"id": "2", "amount": 25.0}],
+            },
             {"sender_id": "PaymentService", "transaction_id": 7777},
             {"sender_id": "ShippingService", "details": {"carrier": "UPS"}},
         ]
     )
     monkeypatch.setattr(type(order_service), "mpi", property(lambda self: order_mpi))
-    monkeypatch.setattr(
-        "eclypse.builders.application.sock_shop.mpi_services.order.rnd.randint",
-        lambda low, high: 25,
-    )
 
     await order_service.step()
 
@@ -312,7 +311,7 @@ async def test_mpi_service_exports_and_workflows(monkeypatch):
     assert order_mpi.sent == [
         (
             "PaymentService",
-            {"request_type": "payment_request", "order_id": 54321, "amount": 50},
+            {"request_type": "payment_request", "order_id": 54321, "amount": 50.0},
         ),
         ("ShippingService", {"request_type": "shipping_request", "order_id": 54321}),
         (
@@ -355,6 +354,10 @@ async def test_mpi_services_handle_invalid_requests_and_step_entrypoints(monkeyp
     monkeypatch.setattr(
         "eclypse.builders.application.sock_shop.mpi_services.payment.rnd.choice",
         lambda options: options[0],
+    )
+    monkeypatch.setattr(
+        "eclypse.builders.application.sock_shop.mpi_services.payment.rnd.randint",
+        lambda low, high: low,
     )
 
     await catalog_service.step()

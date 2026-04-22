@@ -59,6 +59,8 @@ class OrderService(RESTService):
                     },
                 )
         """
+        self.logger.info("Received request | " + format_log_kv(items=items))
+
         amount = sum(item["amount"] for item in items)
         payment_r = self.rest.post(
             "PaymentService/pay",
@@ -76,6 +78,10 @@ class OrderService(RESTService):
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PaymentService", transaction_id=transaction_id)
+        )
+        self.logger.info(
+            "Received response | "
+            + format_log_kv(source="ShippingService", body=shipping_r.body)
         )
 
         return HTTPStatusCode.CREATED, {

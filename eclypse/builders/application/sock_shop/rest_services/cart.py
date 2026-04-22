@@ -7,6 +7,7 @@
 
 from eclypse.remote.communication import rest
 from eclypse.remote.service import RESTService
+from eclypse.utils import format_log_kv
 
 
 class CartService(RESTService):
@@ -33,6 +34,7 @@ class CartService(RESTService):
                     },
                 )
         """
+        self.logger.info("Received request | " + format_log_kv())
         return 200, {
             "items": [
                 {"id": "1", "quantity": 2},
