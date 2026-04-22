@@ -6,6 +6,7 @@ Pandas is imported lazily so that it remains an optional dependency.
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -49,9 +50,7 @@ class PandasBackend(FrameBackend):
         Imports pandas lazily to keep it as an optional dependency.
         """
         super().__init__(name="pandas")
-        import pandas as pd
-
-        self._pd = pd
+        self._pd = import_module("pandas")
 
     def _read_csv(self, source) -> DataFrame:
         """Read a CSV report into a pandas DataFrame."""

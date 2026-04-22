@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 from contextlib import redirect_stderr
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -98,9 +99,7 @@ class RayInterface:
                 the required dependencies are missing.
         """
         if self._backend is None:
-            import ray  # pylint: disable=import-outside-toplevel
-
-            self._backend = ray
+            self._backend = import_module("ray")
         return self._backend
 
 

@@ -10,6 +10,7 @@ from dataclasses import (
     dataclass,
     field,
 )
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -116,13 +117,9 @@ def _create_remote(
 
 def _get_default_remote_simulator_class() -> type[Any]:
     """Return the default remote simulator class."""
-    from eclypse.simulation._simulator import RemoteSimulator
-
-    return RemoteSimulator
+    return import_module("eclypse.simulation._simulator").RemoteSimulator
 
 
 def _get_default_remote_node_class() -> type[Any]:
     """Return the default remote node class."""
-    from eclypse.remote._node import RemoteNode
-
-    return RemoteNode
+    return import_module("eclypse.remote._node").RemoteNode

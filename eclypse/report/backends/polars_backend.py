@@ -6,6 +6,7 @@ DataFrames. Polars is imported lazily so that it remains an optional dependency.
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -34,9 +35,7 @@ class PolarsBackend(FrameBackend):
         Imports polars lazily to keep it as an optional dependency.
         """
         super().__init__(name="polars")
-        import polars as pl
-
-        self._pl = pl
+        self._pl = import_module("polars")
 
     def _read_csv(self, source) -> DataFrame:
         """Read a CSV report into a polars DataFrame."""
