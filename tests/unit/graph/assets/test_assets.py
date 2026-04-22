@@ -165,6 +165,14 @@ def test_default_asset_getters_define_default_initialisers():
     assert 50 <= edge_assets["bandwidth"]._init(rnd) <= 1500  # pylint: disable=protected-access
 
 
+def test_default_asset_getters_can_return_bare_assets_without_initialisers():
+    node_assets = get_default_node_assets(with_init=False)
+    edge_assets = get_default_edge_assets(with_init=False)
+
+    assert all(asset.init_fn is None for asset in node_assets.values())
+    assert all(asset.init_fn is None for asset in edge_assets.values())
+
+
 def test_asset_factories_without_init_use_asset_defaults():
     rnd = random.Random(1)
 

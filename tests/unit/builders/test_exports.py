@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from eclypse.builders import application as application_builders
 from eclypse.builders import infrastructure as infrastructure_builders
+from eclypse.builders import workflow as workflow_builders
 
 
 def test_builder_exports_are_available():
@@ -29,3 +30,4 @@ def test_builder_exports_are_available():
     assert callable(infrastructure_builders.scale_free)
     assert callable(infrastructure_builders.small_world)
     assert callable(infrastructure_builders.vehicular_edge)
+    assert callable(workflow_builders.get_workflow)
