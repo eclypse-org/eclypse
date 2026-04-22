@@ -12,8 +12,8 @@ from eclypse.builders.application import (
     get_hotel_reservation,
     get_keyword_spotting,
     get_media_service,
-    get_sock_shop,
     get_social_network,
+    get_sock_shop,
     get_thumbnailer,
     get_video_analytics_serving,
 )

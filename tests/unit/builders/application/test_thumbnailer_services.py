@@ -48,7 +48,9 @@ async def test_thumbnailer_services(monkeypatch):
     response = await upload.step()
     assert response.body["status"] == "stored"
 
-    mpi_transform = attach_service_logger(thumb_mpi.TransformService("TransformService"))
+    mpi_transform = attach_service_logger(
+        thumb_mpi.TransformService("TransformService")
+    )
     mpi_storage = attach_service_logger(thumb_mpi.StorageService("StorageService"))
     mpi_notification = attach_service_logger(
         thumb_mpi.NotificationService("NotificationService")

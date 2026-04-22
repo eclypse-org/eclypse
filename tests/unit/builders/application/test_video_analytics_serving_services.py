@@ -61,9 +61,13 @@ async def test_video_analytics_services(monkeypatch):
     assert response.body["object_count"] == 1
     assert gateway_rest.calls[-1][1] == "AnalyticsService/analyse"
 
-    mpi_detection = attach_service_logger(video_mpi.DetectionService("DetectionService"))
+    mpi_detection = attach_service_logger(
+        video_mpi.DetectionService("DetectionService")
+    )
     mpi_tracking = attach_service_logger(video_mpi.TrackingService("TrackingService"))
-    mpi_analytics = attach_service_logger(video_mpi.AnalyticsService("AnalyticsService"))
+    mpi_analytics = attach_service_logger(
+        video_mpi.AnalyticsService("AnalyticsService")
+    )
     mpi_gateway = attach_service_logger(
         video_mpi.CameraGatewayService("CameraGatewayService")
     )
