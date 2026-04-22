@@ -154,7 +154,7 @@ def log_assets_violations(
 __all__ = [
     "Logger",
     "format_log_kv",
-    "log_placement_violations",
+    "log_assets_violations",
     "print_exception",
 ]
 

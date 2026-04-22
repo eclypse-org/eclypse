@@ -7,10 +7,10 @@ import sys
 # Numeric domains
 
 MIN_FLOAT = 0.0
-"""Smallest domain value accepted by numeric assets."""
+"""Smallest reasonable value for bounded numeric defaults."""
 
 MAX_FLOAT = 1e9
-"""Largest domain value used for bounded numeric defaults."""
+"""Largest reasonable value for bounded numeric defaults."""
 
 FLOAT_EPSILON = sys.float_info.min
 """Smallest positive representable float."""
