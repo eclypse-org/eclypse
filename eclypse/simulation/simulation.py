@@ -136,8 +136,7 @@ class Simulation:
                     raise
 
                 interrupted = True
-                self.logger.log(
-                    "ECLYPSE",
+                self.logger.warning(
                     (
                         "Simulation stop requested. Press Ctrl+C again to "
                         "stop the simulation."
