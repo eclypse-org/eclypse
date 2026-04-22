@@ -62,7 +62,7 @@ def test_infrastructure_contains_and_helper_functions(sample_infrastructure):
     requirements.add_node("edge-b", cpu=1)
     requirements.add_edge("edge-a", "edge-b", latency=0, bandwidth=1000, strict=False)
 
-    not_respected = sample_infrastructure.contains(requirements)
+    not_respected = sample_infrastructure.validate(requirements)
 
     assert "edge-a" in not_respected
     assert "edge-b" in not_respected

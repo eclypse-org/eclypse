@@ -100,16 +100,19 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         self.add_node(service.id, **assets)
 
-    def set_flows(self):
+    def set_flows(self, ingress: str = "gateway"):
         """Set the flows of the application, using the following rules.
 
         - If the flows are already set, do nothing.
-        - If the flows are not set, use the gateway as the source and all\
+        - If the flows are not set, use the `ingress` as the source and all
             the other nodes as the target.
-        - If there is no gateway, set the flows to an empty list.
+        - If there is no ingress, set the flows to an empty list.
+
+        Args:
+            ingress (str): The name of the ingress node. Defaults to "gateway".
         """
         if self.flows == []:
-            gateway_name = next((s for s in self.nodes if "gateway" in s.lower()), None)
+            gateway_name = next((s for s in self.nodes if s == ingress), None)
             if gateway_name is not None:
                 self.flows = []
                 for target in self.nodes:
@@ -123,7 +126,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
                         continue
 
     @cached_property
-    def has_logic(self) -> bool:
+    def has_service_implementations(self) -> bool:
         """Check if the application has a logic for each service.
 
         This property requires to be True for the remote execution.

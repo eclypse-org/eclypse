@@ -200,7 +200,8 @@ def test_simulation_remote_paths_and_report_cache(
 
     with pytest.raises(ValueError, match="All services must have a logic"):
         simulation.register(
-            SimpleNamespace(id="plain-app", has_logic=False), static_strategy
+            SimpleNamespace(id="plain-app", has_service_implementations=False),
+            static_strategy,
         )
 
 
