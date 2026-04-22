@@ -118,7 +118,7 @@ class AssetGraph(nx.DiGraph):
 
         violations = self.node_assets.is_consistent(_assets, violations=True)
         if isinstance(violations, dict) and violations:
-            msg = f"Node {node_for_adding} has inconsistent assets | " + format_log_kv(
+            msg = f"{node_for_adding} has inconsistent assets | " + format_log_kv(
                 assets=",".join(sorted(violations))
             )
             if strict:
@@ -168,7 +168,7 @@ class AssetGraph(nx.DiGraph):
         violations = self.edge_assets.is_consistent(_assets, violations=True)
         if isinstance(violations, dict) and violations:
             msg = (
-                f"Edge {u_of_edge} -> {v_of_edge} has inconsistent assets | "
+                f"({u_of_edge} -> {v_of_edge}) has inconsistent assets | "
                 + format_log_kv(assets=",".join(sorted(violations)))
             )
             if strict:
