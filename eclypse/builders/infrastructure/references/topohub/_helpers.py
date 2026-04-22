@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -73,7 +74,7 @@ def get_topohub(
     """
     _require_module("topohub")
 
-    import topohub  # type: ignore[import-not-found,import-untyped]
+    topohub = import_module("topohub")
 
     topo = topohub.get(topology, use_names=use_names)
     graph = nx.node_link_graph(topo, edges="edges")

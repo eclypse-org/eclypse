@@ -157,3 +157,7 @@ __all__ = [
     "log_placement_violations",
     "print_exception",
 ]
+
+# Configure the default ECLYPSE logging format at import time so components
+# created before simulation runtime setup still emit consistently formatted logs.
+config_logger()

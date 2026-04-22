@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 from datetime import datetime as dt
+from importlib import import_module
 from pathlib import Path
 from typing import (
     TYPE_CHECKING,
@@ -35,9 +36,7 @@ class ParquetReporter(Reporter):
     async def init(self):
         """Initialize the reporter and import polars lazily."""
         await super().init()
-        import polars as pl  # pylint: disable=import-outside-toplevel
-
-        self._pl = pl
+        self._pl = import_module("polars")
 
     def report(
         self,

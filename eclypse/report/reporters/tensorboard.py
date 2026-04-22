@@ -9,6 +9,7 @@ contains multiple lines, one for each unique path in the data dictionary.
 
 from __future__ import annotations
 
+from importlib import import_module
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -39,10 +40,7 @@ class TensorBoardReporter(Reporter):
 
     async def init(self):
         """Initialize the TensorBoard reporter."""
-        from tensorboardX import (  # pylint: disable=import-outside-toplevel
-            SummaryWriter,
-        )
-
+        SummaryWriter = import_module("tensorboardX").SummaryWriter
         self._writer = SummaryWriter(log_dir=self.report_path)
 
     async def close(self):
