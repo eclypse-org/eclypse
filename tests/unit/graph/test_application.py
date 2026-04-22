@@ -17,7 +17,7 @@ def test_application_add_service_and_set_flows():
     app.set_flows()
 
     assert app.flows == [["gateway", "worker"]]
-    assert app.has_logic
+    assert app.has_service_implementations
 
     with pytest.raises(TypeError):
         app.add_service("not-a-service")  # type: ignore[arg-type]
@@ -56,4 +56,4 @@ def test_application_detects_missing_service_logic():
     app = Application("broken")
     app.add_node("orphan")
 
-    assert not app.has_logic
+    assert not app.has_service_implementations

@@ -19,9 +19,9 @@ def test_sock_shop_builder_configures_supported_interfaces_and_flows():
         flows=[["FrontendService", "CatalogService"]],
     )
 
-    assert sock_shop.has_logic is False
-    assert remote_sock_shop.has_logic is True
-    assert rest_sock_shop.has_logic is True
+    assert sock_shop.has_service_implementations is False
+    assert remote_sock_shop.has_service_implementations is True
+    assert rest_sock_shop.has_service_implementations is True
     assert all(
         isinstance(service, Service) for service in remote_sock_shop.services.values()
     )

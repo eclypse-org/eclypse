@@ -164,7 +164,7 @@ class Simulation:
             )
 
         if self.remote:
-            if application.has_logic:
+            if application.has_service_implementations:
                 ray_backend.get(
                     self.simulator.register.remote(  # type: ignore[attr-defined]
                         application,

@@ -194,8 +194,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         super().remove_edge(u, v)
         self._invalidate_cache()
 
-    def contains(self, other: nx.DiGraph) -> list[str]:
-        """Comparison between requirements and infrastructure resources.
+    def validate(self, other: nx.DiGraph) -> list[str]:
+        """Validate the infrastructure against a set of requirements.
 
         Compares the requirements of the nodes and edges in the PlacementView with
         the resources of the nodes and edges in the Infrastructure.

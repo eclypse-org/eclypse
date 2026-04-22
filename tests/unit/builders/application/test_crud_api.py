@@ -17,9 +17,9 @@ def test_crud_api_builder():
         communication_interface="rest",
     )
 
-    assert plain_app.has_logic is False
-    assert mpi_app.has_logic is True
-    assert rest_app.has_logic is True
+    assert plain_app.has_service_implementations is False
+    assert mpi_app.has_service_implementations is True
+    assert rest_app.has_service_implementations is True
     assert all(isinstance(service, Service) for service in mpi_app.services.values())
     assert all(isinstance(service, Service) for service in rest_app.services.values())
     assert plain_app.has_edge("GatewayService", "AuthService")

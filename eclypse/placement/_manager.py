@@ -171,7 +171,7 @@ class PlacementManager:
 
             self.placement_view._update_view(p)
 
-            not_respected = self.infrastructure.contains(self.placement_view)
+            not_respected = self.infrastructure.validate(self.placement_view)
             yield (p, not_respected)
 
     def register(
