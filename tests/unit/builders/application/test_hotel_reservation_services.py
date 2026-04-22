@@ -2,8 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.builders.application.hotel_reservation import mpi_services as hotel_mpi
-from eclypse.builders.application.hotel_reservation import rest_services as hotel_rest
+from eclypse.builders.application.deathstarbench.hotel_reservation import (
+    mpi_services as hotel_mpi,
+)
+from eclypse.builders.application.deathstarbench.hotel_reservation import (
+    rest_services as hotel_rest,
+)
 from eclypse.remote.communication.rest.codes import HTTPStatusCode
 from tests.unit.builders.application._service_test_helpers import (
     FakeRESTInterface,
@@ -31,7 +35,7 @@ async def test_hotel_reservation_services(monkeypatch):
     assert body["user"]["name"] == "Ada Lovelace"
 
     monkeypatch.setattr(
-        "eclypse.builders.application.hotel_reservation.rest_services.payment.rnd.randint",
+        "eclypse.builders.application.deathstarbench.hotel_reservation.rest_services.payment.rnd.randint",
         lambda _low, _high: 1234,
     )
     code, body = payment.pay("rsv-2001", 129.0)
@@ -111,7 +115,7 @@ async def test_hotel_reservation_services(monkeypatch):
     assert profile_comm.sent[0][1]["user"]["name"] == "Ada Lovelace"
 
     monkeypatch.setattr(
-        "eclypse.builders.application.hotel_reservation.mpi_services.payment.rnd.randint",
+        "eclypse.builders.application.deathstarbench.hotel_reservation.mpi_services.payment.rnd.randint",
         lambda _low, _high: 1234,
     )
     payment_comm = set_mpi(
