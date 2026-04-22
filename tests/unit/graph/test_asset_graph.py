@@ -67,13 +67,11 @@ def test_asset_graph_handles_invalid_init_and_non_strict_violations(monkeypatch)
     graph.add_edge("a", "b", bandwidth=11, strict=False)
     graph.evolve()
 
-    assert any("Node a has inconsistent assets" in message for _, message in messages)
+    assert any("a has inconsistent assets" in message for _, message in messages)
     assert any(
-        "Edge a -> b has inconsistent assets" in message for _, message in messages
+        "(a -> b) has inconsistent assets" in message for _, message in messages
     )
-    assert any(
-        "Applying 1 update policies." in message for _, message in messages
-    )
+    assert any("Applying 1 update policies." in message for _, message in messages)
     assert traces == [
         {"cpu": 11},
         {"bandwidth": 11},
@@ -101,7 +99,7 @@ def test_asset_graph_rejects_strict_edge_violations_and_allows_static_evolve():
     graph.add_node("a", cpu=1)
     graph.add_node("b", cpu=2)
 
-    with pytest.raises(ValueError, match="Edge a -> b has inconsistent assets"):
+    with pytest.raises(ValueError, match=r"\(a -> b\) has inconsistent assets"):
         graph.add_edge("a", "b", bandwidth=11)
 
     graph.evolve()
