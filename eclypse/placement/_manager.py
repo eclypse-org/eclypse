@@ -32,14 +32,21 @@ if TYPE_CHECKING:
 class PlacementManager:
     """PlacementManager manages the placement of applications in the infrastructure."""
 
-    def __init__(self, infrastructure: Infrastructure):
+    def __init__(
+        self,
+        infrastructure: Infrastructure,
+        default_strategy: PlacementStrategy | None = None,
+    ):
         """Initializes the PlacementManager.
 
         Args:
             infrastructure (Infrastructure):
                 The infrastructure to place the applications onto.
+            default_strategy (PlacementStrategy | None):
+                Strategy used when an application is registered without one.
         """
         self.infrastructure = infrastructure
+        self.default_strategy = default_strategy
         self.placements: dict[str, Placement] = {}
         self.placement_view: PlacementView = PlacementView(self.infrastructure)
 
@@ -95,25 +102,27 @@ class PlacementManager:
         Args:
             placement (Placement): The placement to generate the mapping for.
         """
+        strategy = placement.strategy or self.default_strategy
+
+        if strategy is None:
+            raise ValueError(
+                f"No placement strategy provided for {placement.application.id}"
+            )
+
         if placement.strategy is None:
             self.logger.trace(
-                f"Using {self.infrastructure.strategy.__class__.__name__} "
+                f"Using {strategy.__class__.__name__} "
                 f" strategy for {placement.application.id}",
             )
-            if self.infrastructure.has_strategy:
-                placement.mapping = self.infrastructure.strategy.place(  # type: ignore[union-attr]
-                    self.infrastructure,
-                    placement.application,
-                    self.placements,
-                    self.placement_view,
-                )
-            else:
-                raise ValueError(
-                    f"No placement strategy provided for {placement.application.id}"
-                )
+            placement.mapping = strategy.place(
+                self.infrastructure,
+                placement.application,
+                self.placements,
+                self.placement_view,
+            )
         else:
             self.logger.trace(
-                f"Using {placement.strategy.__class__.__name__} "
+                f"Using {strategy.__class__.__name__} "
                 f"strategy for {placement.application.id}"
             )
             placement._generate_mapping(self.placements, self.placement_view)

@@ -11,7 +11,6 @@ import os
 import random as rnd
 from typing import (
     TYPE_CHECKING,
-    Any,
 )
 
 from eclypse.utils.constants import RND_SEED
@@ -53,7 +52,7 @@ class RandomStrategy(PlacementStrategy):
         application: Application,
         __: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> dict[Any, Any]:
+    ) -> dict[str, str]:
         """Places the services of an application on the infrastructure nodes, randomly.
 
         Args:

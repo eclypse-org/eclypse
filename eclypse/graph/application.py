@@ -38,7 +38,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         update_policies: UpdatePolicies = None,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
-        include_default_assets: bool = False,
+        include_default_assets: bool = True,
         requirement_init: InitPolicy = "min",
         flows: list[list[str]] | None = None,
         seed: int | None = None,
@@ -52,7 +52,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
             node_assets (dict[str, Asset] | None): The assets of the nodes.
             edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
-                Defaults to False.
+                Defaults to True.
             requirement_init (InitPolicy):
                 The initialization of the requirements.
             flows (list[list[str]] | None): The flows of the application.

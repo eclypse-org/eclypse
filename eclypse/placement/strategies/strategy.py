@@ -10,10 +10,7 @@ from abc import (
     ABC,
     abstractmethod,
 )
-from typing import (
-    TYPE_CHECKING,
-    Any,
-)
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.graph import (
@@ -40,7 +37,7 @@ class PlacementStrategy(ABC):
         application: Application,
         placements: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> dict[Any, Any]:
+    ) -> dict[str, str]:
         """Defines the placement logic.
 
         Given an infrastructure, an application, a dictionary of placements, and a
@@ -58,9 +55,8 @@ class PlacementStrategy(ABC):
             placement_view (PlacementView): The placement view to use for the placement.
 
         Returns:
-            dict[Any, Any]:
-                A dictionary mapping service IDs to node IDs, or None if
-                the application cannot be placed onto the infrastructure.
+            dict[str, str]:
+                A dictionary mapping service IDs to node IDs.
         """
 
     def is_feasible(
