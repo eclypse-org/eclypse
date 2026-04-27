@@ -16,6 +16,12 @@ The full code lives in the
 `examples/off_the_shelf <https://github.com/eclypse-org/eclypse/tree/main/examples/off_the_shelf>`_
 directory.
 
+Run it from the repository root with:
+
+.. code-block:: bash
+
+   poetry run off-the-shelf
+
 Application
 -----------
 

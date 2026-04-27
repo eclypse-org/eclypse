@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 from eclypse import policies
-from eclypse.builders.infrastructure import hierarchical
+from eclypse.builders.infrastructure import get_hierarchical
 
 
 def get_infrastructure(seed: int = 7):
     """Create a generated infrastructure with built-in update policies."""
-    return hierarchical(
+    return get_hierarchical(
         n=64,
         infrastructure_id="BuiltinsInfrastructure",
         symmetric=True,

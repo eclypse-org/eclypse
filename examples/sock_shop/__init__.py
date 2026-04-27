@@ -1,0 +1,1 @@
+"""Sock Shop example package."""

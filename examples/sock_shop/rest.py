@@ -1,15 +1,17 @@
-from update_policy import get_update_policies
+from .update_policy import get_update_policies
 
 from eclypse.builders.application import get_sock_shop
-from eclypse.builders.infrastructure import hierarchical
+from eclypse.builders.infrastructure import get_hierarchical
 from eclypse.placement.strategies import RandomStrategy
 from eclypse.simulation import Simulation
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils.defaults import get_default_sim_path
 
-if __name__ == "__main__":
+
+def main() -> None:
+    """Run the Sock Shop REST example."""
     seed = 22
-    infrastructure = hierarchical(
+    infrastructure = get_hierarchical(
         n=30,
         node_partitioning=[0.6, 0.2, 0.1, 0.1],
         update_policies=get_update_policies(),
@@ -32,5 +34,8 @@ if __name__ == "__main__":
     app = get_sock_shop(communication_interface="rest", include_default_assets=True)
 
     sim.register(app, RandomStrategy(seed=seed))
-    sim.start()
-    sim.wait()
+    sim.run()
+
+
+if __name__ == "__main__":
+    main()

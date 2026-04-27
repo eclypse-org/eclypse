@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
-from application import get_application
-from infrastructure import get_infrastructure
+import os
+
+from .application import get_application
+from .infrastructure import get_infrastructure
 
 from eclypse.placement.strategies import BestFitStrategy
 from eclypse.simulation import (
@@ -12,10 +14,11 @@ from eclypse.simulation import (
 )
 from eclypse.utils.defaults import get_default_sim_path
 
-if __name__ == "__main__":
 
+def main() -> None:
+    """Run the off-the-shelf example."""
     SEED = 42
-    MAX_STEPS = 50
+    MAX_STEPS = int(os.environ.get("ECLYPSE_EXAMPLE_MAX_STEPS", "50"))
     simulation = Simulation(
         get_infrastructure(seed=SEED),
         simulation_config=SimulationConfig(
@@ -30,6 +33,9 @@ if __name__ == "__main__":
     )
 
     simulation.register(get_application(seed=SEED), BestFitStrategy())
-    simulation.start()
-    simulation.wait()
+    simulation.run()
     print(simulation.report.application())
+
+
+if __name__ == "__main__":
+    main()

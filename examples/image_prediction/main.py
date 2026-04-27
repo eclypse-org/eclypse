@@ -1,27 +1,23 @@
-from application import image_app as app
-from metrics import get_metrics
-from services.utils import (
+from .application import image_app as app
+from .metrics import get_metrics
+from .services.utils import (
     BASE_PATH,
     STEP_EVERY_MS,
     STEPS,
 )
-from update_policy import DegradePolicy
+from .update_policy import DegradePolicy
 
-from eclypse.builders.infrastructure import star
+from eclypse.builders.infrastructure import get_star
 from eclypse.placement.strategies import RandomStrategy
-from eclypse.remote.bootstrap import (
-    RayOptionsFactory,
-    RemoteBootstrap,
-)
 from eclypse.simulation import (
     Simulation,
     SimulationConfig,
 )
 
-if __name__ == "__main__":
 
+def main() -> None:
+    """Run the Image Prediction example."""
     seed = 2
-    with_gpus = RemoteBootstrap(ray_options_factory=RayOptionsFactory(num_gpus=0.1))
 
     sim_config = SimulationConfig(
         seed=seed,
@@ -31,11 +27,12 @@ if __name__ == "__main__":
         events=get_metrics(),
         log_to_file=True,
         path=BASE_PATH,
-        remote=True,  # use "with_gpus" instead of "True" if you have available GPUs
+        # Pass a RemoteBootstrap instance here to request specific Ray resources.
+        remote=True,
     )
 
     sim = Simulation(
-        star(
+        get_star(
             infrastructure_id="IPInfr",
             n_clients=5,
             seed=seed,
@@ -49,5 +46,8 @@ if __name__ == "__main__":
     strategy = RandomStrategy(spread=True)
 
     sim.register(app, strategy)
-    sim.start()
-    sim.wait()
+    sim.run()
+
+
+if __name__ == "__main__":
+    main()

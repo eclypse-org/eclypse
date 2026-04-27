@@ -7,8 +7,11 @@ Examples
    :hidden:
 
    echo
+   grid_analysis
+   image_prediction
    off_the_shelf
    sock_shop
+   user_distribution
 
 The examples section complements the getting-started guides with runnable
 scenarios you can inspect and adapt.
@@ -48,3 +51,32 @@ subdirectory of the repository.
 
          A microservices application that simulates an online shop and is
          provided in both MPI and REST variants.
+
+   .. grid-item::
+
+      .. card:: :octicon:`graph;1em;info` **Grid analysis**
+         :link-type: doc
+         :link: grid_analysis
+
+         A Ray Tune sweep over infrastructure topologies, update policies, and
+         placement strategies.
+
+
+   .. grid-item::
+
+      .. card:: :octicon:`image;1em;info` **Image prediction**
+         :link-type: doc
+         :link: image_prediction
+
+         A remote image-prediction pipeline with custom services, metrics, and
+         degradation policies.
+
+
+   .. grid-item::
+
+      .. card:: :octicon:`people;1em;info` **User distribution**
+         :link-type: doc
+         :link: user_distribution
+
+         A custom metric and update-policy example driven by changing user
+         distributions.
