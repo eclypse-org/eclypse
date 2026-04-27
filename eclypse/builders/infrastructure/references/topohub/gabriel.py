@@ -30,7 +30,6 @@ if TYPE_CHECKING:
 
     from eclypse.graph import Infrastructure
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
@@ -47,7 +46,6 @@ def get_gabriel(
     include_default_assets: bool = False,
     resource_init: InitPolicy = "max",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-    placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
     """Create a Gabriel-graph infrastructure from TopoHub.
@@ -75,8 +73,6 @@ def get_gabriel(
             Initialisation policy used for graph assets.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         seed (int | None):
             Seed forwarded to the infrastructure random generator.
 
@@ -95,7 +91,6 @@ def get_gabriel(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

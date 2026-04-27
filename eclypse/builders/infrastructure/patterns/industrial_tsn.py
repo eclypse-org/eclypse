@@ -30,14 +30,13 @@ if TYPE_CHECKING:
     import networkx as nx
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def industrial_tsn(
+def get_industrial_tsn(
     endpoint_count: int,
     switch_count: int = 2,
     controller_count: int = 2,
@@ -50,7 +49,6 @@ def industrial_tsn(
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: InitPolicy = "max",
-    placement_strategy: PlacementStrategy | None = None,
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
@@ -81,8 +79,6 @@ def industrial_tsn(
             Whether inconsistent asset values should raise.
         resource_init (InitPolicy):
             Initialisation policy used for graph assets.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
         seed (int | None):
@@ -105,7 +101,6 @@ def industrial_tsn(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

@@ -27,14 +27,13 @@ if TYPE_CHECKING:
     import networkx as nx
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def fat_tree(
+def get_fat_tree(
     k: int,
     infrastructure_id: str = "fat_tree",
     update_policies: UpdatePolicies = None,
@@ -44,7 +43,6 @@ def fat_tree(
     strict: bool = False,
     resource_init: InitPolicy = "max",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-    placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
     """Factory for generating a Fat-Tree network topology.
@@ -72,7 +70,6 @@ def fat_tree(
             Defaults to "max".
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
             Algorithm to compute paths. Defaults to None.
-        placement_strategy (PlacementStrategy | None): Strategy for resource placement.\
             Defaults to None.
         seed (int | None): Seed for random number generation. Defaults to None.
 
@@ -90,7 +87,6 @@ def fat_tree(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
     num_pods = k

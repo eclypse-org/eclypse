@@ -24,14 +24,13 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def small_world(
+def get_small_world(
     n: int,
     k: int,
     p: float,
@@ -44,7 +43,6 @@ def small_world(
     strict: bool = False,
     resource_init: InitPolicy = "min",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-    placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
     """Create a small-world infrastructure using the Watts-Strogatz model.
@@ -74,8 +72,6 @@ def small_world(
             Initialisation policy used for graph assets.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         seed (int | None):
             Seed forwarded to the random graph model.
 
@@ -90,7 +86,6 @@ def small_world(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

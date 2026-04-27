@@ -25,14 +25,13 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def random(
+def get_random(
     n: int,
     infrastructure_id: str = "random",
     p: float = 0.5,
@@ -44,7 +43,6 @@ def random(
     strict: bool = False,
     resource_init: InitPolicy = "min",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-    placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ):
     """Create a random infrastructure with `n` nodes and a connection probability `p`.
@@ -72,8 +70,6 @@ def random(
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             The algorithm to compute the paths between nodes. Defaults to
             None.
-        placement_strategy (PlacementStrategy | None):
-            The strategy to place the resources. Defaults to None.
         seed (int | None): The seed for the random number generator. Defaults to None.
 
     Returns:
@@ -87,7 +83,6 @@ def random(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

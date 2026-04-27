@@ -1,4 +1,4 @@
-"""Infrastructure builders (e.g. hierarchical, mec_5g, get_orion_cev).
+"""Infrastructure builders (e.g. get_hierarchical, get_mec_5g, get_orion_cev).
 
 The package groups the off-the-shelf infrastructure builders provided by
 ECLYPSE. It combines generic topology generators, architecture-shaped
@@ -12,21 +12,21 @@ from . import (
     references,
 )
 from .generators import (
-    b_cube,
-    fat_tree,
-    hierarchical,
-    random,
-    scale_free,
-    small_world,
-    star,
+    get_b_cube,
+    get_fat_tree,
+    get_hierarchical,
+    get_random,
+    get_scale_free,
+    get_small_world,
+    get_star,
 )
 from .patterns import (
-    continuum_tiered,
-    factory_cells,
-    industrial_tsn,
-    mec_5g,
-    multi_region_wan,
-    vehicular_edge,
+    get_continuum_tiered,
+    get_factory_cells,
+    get_industrial_tsn,
+    get_mec_5g,
+    get_multi_region_wan,
+    get_vehicular_edge,
 )
 from .references import get_orion_cev
 from .references.topohub import (
@@ -39,27 +39,27 @@ from .references.topohub import (
 )
 
 __all__ = [
-    "b_cube",
-    "continuum_tiered",
-    "factory_cells",
-    "fat_tree",
     "generators",
+    "get_b_cube",
     "get_backbone",
     "get_caida",
+    "get_continuum_tiered",
+    "get_factory_cells",
+    "get_fat_tree",
     "get_gabriel",
+    "get_hierarchical",
+    "get_industrial_tsn",
+    "get_mec_5g",
+    "get_multi_region_wan",
     "get_orion_cev",
+    "get_random",
+    "get_scale_free",
+    "get_small_world",
     "get_sndlib",
+    "get_star",
     "get_topohub",
     "get_topology_zoo",
-    "hierarchical",
-    "industrial_tsn",
-    "mec_5g",
-    "multi_region_wan",
+    "get_vehicular_edge",
     "patterns",
-    "random",
     "references",
-    "scale_free",
-    "small_world",
-    "star",
-    "vehicular_edge",
 ]
