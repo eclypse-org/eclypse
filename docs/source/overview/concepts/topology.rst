@@ -33,7 +33,6 @@ The two classes share many structural similarities, but differ in purpose and in
              edge_assets=[...],
              resource_init="min",
              seed=42,
-             placement_strategy=...,
              path_assets_aggregators=...,
              path_algorithm=...,
          )
@@ -45,7 +44,6 @@ The two classes share many structural similarities, but differ in purpose and in
       - ``node_assets`` / ``edge_assets``: available capabilities (:doc:`asset <assets>` values) of nodes and links
       - ``resource_init``: initialisation of resources (*min* or *max*)
       - ``seed``: random seed for reproducibility
-      - ``placement_strategy``: global :doc:`placement strategy <placement-strategy>` for all applications
       - ``path_assets_aggregators``: aggregators for *each link asset* evaluation across paths
       - ``path_algorithm``: path logic to retrieve and check the paths among nodes
 
@@ -199,9 +197,9 @@ assets and flows.
       .. code-block:: python
 
          from eclypse.builders.infrastructure import (
-             b_cube,
-             continuum_tiered,
-             fat_tree,
+             get_b_cube,
+             get_continuum_tiered,
+             get_fat_tree,
              get_backbone,
              get_caida,
              get_gabriel,
@@ -209,26 +207,44 @@ assets and flows.
              get_sndlib,
              get_topohub,
              get_topology_zoo,
-             hierarchical,
-             mec_5g,
-             multi_region_wan,
-             random,
-             scale_free,
-             small_world,
-             star,
+             get_hierarchical,
+             get_mec_5g,
+             get_multi_region_wan,
+             get_random,
+             get_scale_free,
+             get_small_world,
+             get_star,
          )
 
       ECLYPSE includes several off-the-shelf infrastructure builders across
       generic generators, architecture patterns, and named references. For the
       full list, see :mod:`eclypse.builders.infrastructure`.
 
+      .. list-table::
+         :header-rows: 1
+
+         * - Category
+           - Builders
+         * - Generic generators
+           - ``get_star``, ``get_random``, ``get_hierarchical``,
+             ``get_fat_tree``, ``get_b_cube``, ``get_small_world``,
+             ``get_scale_free``
+         * - Architecture patterns
+           - ``get_continuum_tiered``, ``get_mec_5g``,
+             ``get_multi_region_wan``, ``get_industrial_tsn``,
+             ``get_factory_cells``, ``get_vehicular_edge``
+         * - References
+           - ``get_orion_cev``, ``get_topohub``, ``get_topology_zoo``,
+             ``get_sndlib``, ``get_backbone``, ``get_caida``,
+             ``get_gabriel``
+
       **Example:**
 
       .. code-block:: python
 
-         from eclypse.builders.infrastructure import fat_tree
+         from eclypse.builders.infrastructure import get_fat_tree
 
-         infra = fat_tree(k=4)
+         infra = get_fat_tree(k=4)
 
    .. tab-item:: Application
       :sync: app

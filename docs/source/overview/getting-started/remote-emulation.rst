@@ -20,13 +20,13 @@ Minimal setup
 .. code-block:: python
 
    from eclypse.builders.application import get_sock_shop
-   from eclypse.builders.infrastructure import hierarchical
+   from eclypse.builders.infrastructure import get_hierarchical
    from eclypse.placement.strategies import RandomStrategy
    from eclypse.simulation import Simulation, SimulationConfig
 
    seed = 22
 
-   infrastructure = hierarchical(
+   infrastructure = get_hierarchical(
        n=30,
        include_default_assets=True,
        seed=seed,
@@ -44,12 +44,12 @@ Minimal setup
        max_steps=100,
        step_every_ms=500,
        include_default_metrics=True,
+       default_strategy=RandomStrategy(seed=seed),
    )
 
    simulation = Simulation(infrastructure, simulation_config=config)
-   simulation.register(application, RandomStrategy(seed=seed))
-   simulation.start()
-   simulation.wait()
+   simulation.register(application)
+   simulation.run()
 
 Choosing the communication interface
 ------------------------------------
