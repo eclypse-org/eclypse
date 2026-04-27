@@ -45,6 +45,7 @@ def test_manual_simulation_runtime_applies_replay_policies_across_steps(
         path=tmp_path / "replay-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application, static_strategy)
@@ -77,6 +78,7 @@ def test_manual_simulation_runtime_resets_and_then_fails_placement_after_degrada
         path=tmp_path / "placement-reset-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application, BestFitStrategy())
@@ -119,6 +121,7 @@ def test_manual_simulation_runtime_resets_when_service_path_disappears(
         path=tmp_path / "path-loss-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application, static_strategy)

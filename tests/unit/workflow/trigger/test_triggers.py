@@ -46,7 +46,7 @@ def test_triggers_and_trigger_bucket(monkeypatch):
     assert repr(periodic) == "PeriodicTrigger(trigger_every_ms=10)"
 
     scheduled = ScheduledTrigger(timedelta(seconds=1))
-    scheduled.init()
+    scheduled.prepare()
     scheduled._scheduled_times = [datetime.now() - timedelta(seconds=1)]  # pylint: disable=protected-access
     assert scheduled.trigger()
     assert (
@@ -56,7 +56,7 @@ def test_triggers_and_trigger_bucket(monkeypatch):
 
     monkeypatch.setenv("ECLYPSE_RND_SEED", "3")
     random_trigger = RandomTrigger(1.0)
-    random_trigger.init()
+    random_trigger.prepare()
     assert random_trigger.trigger()
     assert repr(random_trigger) == "RandomTrigger(probability=1.0)"
 
@@ -80,7 +80,7 @@ def test_triggers_and_trigger_bucket(monkeypatch):
     )
 
     random_cascade = RandomCascadeTrigger("step", probability=1.0, seed=4)
-    random_cascade.init()
+    random_cascade.prepare()
     assert random_cascade.trigger(trigger_event)
     assert (
         repr(random_cascade)
@@ -98,7 +98,7 @@ def test_triggers_and_trigger_bucket(monkeypatch):
 
 def test_trigger_helpers_cover_error_and_reset_paths(monkeypatch):
     dummy = DummyTrigger()
-    assert dummy.init() is None
+    assert dummy.prepare() is None
     assert dummy.reset() is None
     assert repr(dummy) == "DummyTrigger"
 
@@ -108,8 +108,11 @@ def test_trigger_helpers_cover_error_and_reset_paths(monkeypatch):
 
     monkeypatch.setenv("ECLYPSE_RND_SEED", "11")
     seeded_random = RandomTrigger(0.5)
-    seeded_random.init()
+    seeded_random.prepare()
     assert seeded_random.rnd is not None
+
+    scheduled.prepare()
+    assert scheduled.trigger() is False
 
     uninitialised_random = RandomTrigger(0.5)
     with pytest.raises(RuntimeError, match="Trigger not initialised"):

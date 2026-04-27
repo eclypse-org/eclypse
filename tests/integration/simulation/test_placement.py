@@ -21,14 +21,12 @@ def test_manual_simulation_runtime_uses_global_strategy_when_application_has_non
     sample_infrastructure,
     sample_application,
 ):
-    sample_infrastructure.strategy = StaticStrategy(
-        {"gateway": "edge-a", "worker": "edge-b"}
-    )
-
     config = SimulationConfig(
         path=tmp_path / "global-strategy-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
+        default_strategy=StaticStrategy({"gateway": "edge-a", "worker": "edge-b"}),
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application)
@@ -55,6 +53,7 @@ def test_manual_simulation_runtime_handles_partial_placement(
         path=tmp_path / "partial-placement-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application, BestFitStrategy())
@@ -82,6 +81,7 @@ def test_manual_simulation_runtime_handles_no_placement(
         path=tmp_path / "no-placement-simulation",
         report_backend="pandas",
         report_format="csv",
+        step_every_ms=None,
     )
     simulation = Simulation(sample_infrastructure, config)
     simulation.register(sample_application, BestFitStrategy())

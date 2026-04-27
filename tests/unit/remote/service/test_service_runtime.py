@@ -129,7 +129,7 @@ def _make_node(dummy_logger):
 
 def test_service_guard_properties_and_basic_accessors(dummy_logger):
     with pytest.raises(ValueError, match="Invalid communication interface"):
-        Service("broken", communication_interface="grpc")  # type: ignore[arg-type]
+        ScriptedService("broken", [1], communication_interface="grpc")  # type: ignore[arg-type]
 
     service = ScriptedService("worker", [1], store_step=True)
 
@@ -143,8 +143,8 @@ def test_service_guard_properties_and_basic_accessors(dummy_logger):
         service.node
     with pytest.raises(ValueError, match="Application ID not set"):
         service.full_id
-    with pytest.raises(NotImplementedError, match="must be overridden"):
-        asyncio.run(Service("base").step())
+    with pytest.raises(TypeError, match="abstract"):
+        Service("base")  # type: ignore[abstract]
 
     node = _make_node(dummy_logger)
     service.attach_node(node)
@@ -316,7 +316,7 @@ def test_start_loop_handles_forever_cancelled_and_error_paths(monkeypatch):
     )
     monkeypatch.setattr(
         "eclypse.remote.service.service.print_exception",
-        lambda exc, label: printed.append((str(exc), label)),
+        lambda exc, label, _logger: printed.append((str(exc), label)),
     )
 
     normal_loop = FakeLoop()

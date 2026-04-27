@@ -146,7 +146,7 @@ class RandomCascadeTrigger(CascadeTrigger):
         self.seed = seed
         self.rnd = None
 
-    def init(self):
+    def prepare(self):
         """Initialize the random number generator."""
         self.seed = int(os.getenv(RND_SEED)) if self.seed is None else self.seed
         self.rnd = random.Random(self.seed)
@@ -154,7 +154,9 @@ class RandomCascadeTrigger(CascadeTrigger):
     def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its condition."""
         if self.rnd is None:
-            raise RuntimeError("Trigger not initialised. Call init() before trigger().")
+            raise RuntimeError(
+                "Trigger not initialised. Call prepare() before trigger()."
+            )
         return super().trigger(trigger_event) and self.rnd.random() < self.probability
 
     def __repr__(self) -> str:

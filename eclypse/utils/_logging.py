@@ -4,7 +4,10 @@ from __future__ import annotations
 
 import os
 import traceback
-from sys import stdout
+from sys import (
+    stderr,
+    stdout,
+)
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -25,9 +28,9 @@ if TYPE_CHECKING:
 def config_logger():
     """Configure the loguru logger.
 
-    It adds a custom level ECLYPSE for the logs related to the Eclypse library. The logs
-    are printed to stdout and saved to a file if the LOG_FILE environment variable is
-    set.
+    It adds custom ECLYPSE levels for library logs and async exception reports.
+    Regular logs are printed to stdout, exception reports are printed to stderr,
+    and all logs are saved to a file if the LOG_FILE environment variable is set.
     """
     head = "{time:HH:mm:ss.SSS} | <level>{level}</level> | "
     fmt = head + "<b><level>{extra[id]}</level></b> - <level>{message}</level>"
@@ -36,6 +39,10 @@ def config_logger():
     eclypse_fmt = head + "<b><level>{extra[id]}</level></b> - <white>{message}</white>"
     if "ECLYPSE" not in logger.__dict__["_core"].__dict__["levels"]:
         logger.level("ECLYPSE", no=15, color="<b><magenta>", icon="🌘")
+    if "ECLYPSE_EXCEPTION" not in logger.__dict__["_core"].__dict__["levels"]:
+        logger.level("ECLYPSE_EXCEPTION", no=45, color="<red>", icon="!")
+
+    exception_fmt = head + "<red>{extra[id]}</red> - <level>{message}</level>"
 
     level = os.getenv(LOG_LEVEL, "ECLYPSE")
     file = os.getenv(LOG_FILE)
@@ -57,6 +64,14 @@ def config_logger():
             "level": level,
             "enqueue": True,
         },
+        {
+            "sink": stderr,
+            "filter": _is_eclypse_exception,
+            "format": exception_fmt,
+            "colorize": True,
+            "level": level,
+            "enqueue": True,
+        },
     ]
     if file:
         handlers.append({"sink": file, "format": fmt, "enqueue": True, "level": level})
@@ -67,24 +82,32 @@ def _is_eclypse(record: dict[str, Any]):
     return record["level"].name == "ECLYPSE"
 
 
+def _is_eclypse_exception(record: dict[str, Any]):
+    return record["level"].name == "ECLYPSE_EXCEPTION"
+
+
 def _is_not_eclypse(record: dict[str, Any]):
-    return record["level"].name != "ECLYPSE"
+    return record["level"].name not in {"ECLYPSE", "ECLYPSE_EXCEPTION"}
 
 
-def print_exception(e: Exception, raised_by: str):
-    """Print the exception traceback and message.
+def print_exception(e: Exception, raised_by: str, exception_logger: Logger):
+    """Log an exception traceback and message.
 
-    This is an internal function used to catch and print exception from asyncio tasks.
+    This is an internal helper used to surface exceptions from asyncio tasks.
 
     Args:
         e (Exception): The exception raised.
         raised_by (str): The name of the function that raised the exception.
+        exception_logger (Logger): Logger bound to the component that caught it.
     """
     tb_lines = traceback.format_tb(e.__traceback__)
     tb_string = "".join(tb_lines)
-    print("Traceback (most recent call last):")
-    print(tb_string)
-    print(f"{e.__class__.__name__} in {raised_by}: {e}")
+    exception_logger.log(
+        "ECLYPSE_EXCEPTION",
+        "Traceback (most recent call last):\n"
+        + tb_string
+        + f"{e.__class__.__name__} in {raised_by}: {e}",
+    )
 
 
 def format_log_kv(separator: str = " | ", **values: Any) -> str:

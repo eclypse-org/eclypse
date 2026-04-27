@@ -27,6 +27,12 @@ class ConfigEvent(EclypseEvent):
 
 
 def test_simulation_config_normalises_and_serialises(list_frame_backend, tmp_path):
+    default_config = SimulationConfig(
+        path=tmp_path / "default-run",
+        report_backend=list_frame_backend,
+    )
+    assert default_config.step_every_ms == 0.0
+
     config = SimulationConfig(
         path=tmp_path / "run",
         report_backend=list_frame_backend,
@@ -57,7 +63,9 @@ def test_require_module_surfaces_install_hint():
         _require_module("module_that_does_not_exist", extras_name="remote")
 
 
-def test_simulation_config_helper_methods_cover_optional_paths(monkeypatch, tmp_path):
+def test_simulation_config_helper_methods_cover_optional_paths(
+    monkeypatch, tmp_path, dummy_logger
+):
     require_calls: list[tuple[str, str | None]] = []
 
     monkeypatch.setattr(
@@ -67,14 +75,23 @@ def test_simulation_config_helper_methods_cover_optional_paths(monkeypatch, tmp_
     monkeypatch.setattr(
         "eclypse.simulation.config.strftime", lambda _fmt: "20260407_120000"
     )
+    monkeypatch.setattr("eclypse.simulation.config.logger", dummy_logger)
 
     existing_path = tmp_path / "run"
     existing_path.mkdir()
 
     assert SimulationConfig._resolve_step_every_ms(2) == 2
     assert SimulationConfig._resolve_step_every_ms(None) is None
+    assert SimulationConfig._resolve_step_every_ms("manual") is None
+    assert SimulationConfig._resolve_step_every_ms("auto") == 0.0
+    assert SimulationConfig._resolve_step_every_ms("auto", remote=True) is None
     assert SimulationConfig._resolve_path(existing_path) == Path(
         f"{existing_path}-20260407_120000"
+    )
+    assert any(
+        "Target path exists; writing to" in args[0]
+        for level, args in dummy_logger.records
+        if level == "info"
     )
 
     bootstrap = RemoteBootstrap()

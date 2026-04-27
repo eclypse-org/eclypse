@@ -52,6 +52,11 @@ class DemoService(Service):
         return "step"
 
 
+class DummyRESTRuntime(RESTService):
+    async def step(self):
+        return None
+
+
 class DemoRESTHandlers:
     def __init__(self):
         self.id = "svc"
@@ -581,7 +586,7 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     assert service.logger == {"id": "worker"}
     assert service.deployed is True
 
-    rest_runtime = RESTService("frontend")
+    rest_runtime = DummyRESTRuntime("frontend")
     rest_runtime.attach_node(node)
 
     with pytest.raises(RuntimeError, match="not mpi"):
