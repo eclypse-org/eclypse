@@ -68,9 +68,7 @@ def test_asset_graph_handles_invalid_init_and_non_strict_violations(monkeypatch)
     graph.evolve()
 
     assert any("a has inconsistent assets" in message for _, message in messages)
-    assert any(
-        "(a -> b) has inconsistent assets" in message for _, message in messages
-    )
+    assert any("(a -> b) has inconsistent assets" in message for _, message in messages)
     assert any("Applying 1 update policies." in message for _, message in messages)
     assert traces == [
         {"cpu": 11},

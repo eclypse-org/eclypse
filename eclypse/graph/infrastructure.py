@@ -4,7 +4,6 @@ It represents a network, with nodes representing devices and
 edges representing links between them.
 
 The infrastructure also stores:
-- A global placement strategy (optional).
 - A set of path assets aggregators, one per edge asset.
 - A path algorithm to compute the paths between nodes.
 - A view of the available nodes and edges.
@@ -42,7 +41,6 @@ if TYPE_CHECKING:
     from collections.abc import Callable
 
     from eclypse.graph.assets.asset import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
@@ -55,11 +53,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     def __init__(
         self,
         infrastructure_id: str = "Infrastructure",
-        placement_strategy: PlacementStrategy | None = None,
         update_policies: UpdatePolicies = None,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
-        include_default_assets: bool = False,
+        include_default_assets: bool = True,
         path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None,
         path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
         resource_init: InitPolicy = "min",
@@ -69,14 +66,12 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         Args:
             infrastructure_id (str): The ID of the infrastructure.
-            placement_strategy (PlacementStrategy | None): The placement \
-                strategy to use.
             update_policies (Callable | list[Callable] | None):\
                 Graph update policies executed during ``evolve()``.
             node_assets (dict[str, Asset] | None): The assets of the nodes.
             edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
-                Defaults to False.
+                Defaults to True.
             path_assets_aggregators (dict[str, Callable[[list[Any]], Any]] | None): \
                 The aggregators to use for the path assets.
             path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
@@ -128,8 +123,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             if path_algorithm is not None
             else _get_default_path_algorithm
         )
-
-        self.strategy = placement_strategy
 
         self._available: nx.DiGraph | None = None
         self._paths: dict[str, dict[str, list[str]]] = {}
@@ -390,15 +383,6 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             bool: True if the node is available, False otherwise.
         """
         return self.nodes[n].get("availability", 1) > 0
-
-    @property
-    def has_strategy(self) -> bool:
-        """Check if the infrastructure has a placement strategy.
-
-        Returns:
-            bool: True if the infrastructure has a placement strategy, False otherwise.
-        """
-        return self.strategy is not None
 
 
 def _default_weight_function(_: str, __: str, eattr: dict[str, Any]) -> float:

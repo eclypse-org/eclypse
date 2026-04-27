@@ -41,7 +41,7 @@ class BestFitStrategy(PlacementStrategy):
         application: Application,
         _: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> dict[Any, Any]:
+    ) -> dict[str, str]:
         """Performs the placement according to a best-fit logic.
 
         Places the services of an application on the infrastructure nodes based on
@@ -80,9 +80,9 @@ class BestFitStrategy(PlacementStrategy):
                     best_fit = node
                     best_nattr = nattr
                     best_idx = idx
-            mapping[service] = best_fit
             if best_fit is None or best_nattr is None or best_idx is None:
                 continue
+            mapping[service] = best_fit
 
             infrastructure_nodes[best_idx] = (
                 best_fit,

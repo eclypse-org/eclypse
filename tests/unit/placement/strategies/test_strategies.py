@@ -6,8 +6,8 @@ from eclypse.placement.strategies import (
     RandomStrategy,
     RoundRobinStrategy,
     StaticStrategy,
+    PlacementStrategy,
 )
-from eclypse.placement.strategies.strategy import PlacementStrategy
 from eclypse.placement.view import PlacementView
 from eclypse.utils.constants import RND_SEED
 

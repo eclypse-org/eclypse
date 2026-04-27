@@ -51,7 +51,7 @@ class RoundRobinStrategy(PlacementStrategy):
         application: Application,
         __: dict[str, Placement],
         placement_view: PlacementView,
-    ) -> dict[Any, Any]:
+    ) -> dict[str, str]:
         """Performs the placement according to a round-robin logic.
 
         Places the services of an application on the infrastructure nodes, attempting

@@ -13,10 +13,10 @@ def test_manager_generate_mapping_uses_global_strategy_and_enact_resets(
     sample_infrastructure,
     sample_application,
 ):
-    sample_infrastructure.strategy = StaticStrategy(
-        {"gateway": "edge-a", "worker": "edge-b"}
+    manager = PlacementManager(
+        sample_infrastructure,
+        default_strategy=StaticStrategy({"gateway": "edge-a", "worker": "edge-b"}),
     )
-    manager = PlacementManager(sample_infrastructure)
     manager.register(sample_application)
     placement = manager.get(sample_application.id)
 
@@ -92,7 +92,7 @@ def test_manager_handles_empty_mappings_and_respected_audits(
 ):
     manager = PlacementManager(sample_infrastructure)
     standalone = Placement(sample_infrastructure, sample_application)
-    sample_infrastructure.strategy = SimpleNamespace(
+    manager.default_strategy = SimpleNamespace(
         place=lambda *_args, **_kwargs: {"gateway": None, "worker": None}
     )
     monkeypatch.setattr("eclypse.placement._manager.logger", dummy_logger)

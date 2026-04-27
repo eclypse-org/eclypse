@@ -7,10 +7,7 @@ based on a predefined mapping of services to nodes in the form of a dictionary.
 
 from __future__ import annotations
 
-from typing import (
-    TYPE_CHECKING,
-    Any,
-)
+from typing import TYPE_CHECKING
 
 from .strategy import PlacementStrategy
 
@@ -51,7 +48,7 @@ class StaticStrategy(PlacementStrategy):
         application: Application,
         _: dict[str, Placement],
         __: PlacementView,
-    ) -> dict[Any, Any]:
+    ) -> dict[str, str]:
         """Returns the static mapping of services to nodes, given at initialization.
 
         Returns:
