@@ -5,6 +5,9 @@ Triggers are conditions that determine **when an event should fire** during the 
 
 Each trigger must implement a :py:meth:`~eclypse.workflow.trigger.trigger.Trigger.trigger`
 method that returns ``True`` if the event should be executed at that moment.
+Triggers that need internal state can also override
+:py:meth:`~eclypse.workflow.trigger.trigger.Trigger.prepare` and
+:py:meth:`~eclypse.workflow.trigger.trigger.Trigger.reset`.
 
 ECLYPSE provides both:
 
@@ -64,11 +67,11 @@ The tables below compares all available trigger types:
       - ``probability: float``
       - ``seed: int (optional)``
 
-Define triggers in the @event decorator
-----------------------------------------
+Define triggers in scheduled decorators
+---------------------------------------
 
 You can define cascade triggers more compactly, using the ``activates_on`` parameter
-in the :ref:`@event decorator <event-decorator>`:
+in the :ref:`scheduled event decorators <event-decorator>`:
 
 .. list-table::
    :header-rows: 1
@@ -84,6 +87,49 @@ in the :ref:`@event decorator <event-decorator>`:
    * - ``("event_name", 0.2)``
      - RandomCascadeTrigger("event_name", 0.2)
 
+Schedule helpers
+----------------
+
+For the most common scheduling cases, import the helper decorators directly
+from :mod:`eclypse.workflow`:
+
+.. code-block:: python
+
+  from eclypse.workflow import after, every, once_at
+
+  @every(ms=500, event_type="simulation")
+  def heartbeat(triggering_event):
+      return {"value": triggering_event.n_triggers}
+
+  @after(sim_seconds=10)
+  def warmup_complete():
+      return {"value": True}
+
+  @once_at(sim_seconds=60)
+  def final_checkpoint():
+      return {"value": True}
+
+``@every`` creates a :class:`~eclypse.workflow.trigger.trigger.PeriodicTrigger`.
+``@after`` and ``@once_at`` create
+:class:`~eclypse.workflow.trigger.trigger.ScheduledTrigger` instances and
+default to one firing.
+
+Trigger lifecycle
+-----------------
+
+The simulator prepares every registered trigger bucket before the run starts.
+The state machine is:
+
+#. ``prepare()``: allocate state such as scheduled timestamps or random-number
+   generators.
+#. ``trigger(...)``: evaluate whether the event should fire.
+#. event execution.
+#. ``reset()``: update post-execution state before the next evaluation.
+
+If you implement a custom trigger that depends on prepared state, raise a clear
+error from ``trigger()`` when ``prepare()`` has not been called. This mirrors the
+built-in scheduled and random triggers.
+
 Having multiple triggers
 ------------------------
 
@@ -95,23 +141,36 @@ When an event is associated with **multiple triggers**, the ``activates_on`` par
 .. code-block:: python
   :caption: **Example:** Using multiple triggers with different conditions
 
-  @event(event_type="application",
-        triggers=[
-          PeriodicTrigger(500),
-          CascadeTrigger("check_resources")
+  from eclypse.workflow import every
+  from eclypse.workflow.trigger import CascadeTrigger
+
+  @every(
+      ms=500,
+      event_type="application",
+      triggers=[
+          CascadeTrigger("check_resources"),
       ],
       trigger_condition="any"  # event fires on either
   )
   def log_app_health(application, placement, infrastructure, **event_data):
       ...
 
-You can also set this field when manually instantiating an
-:class:`~eclypse.workflow.event.event.EclypseEvent`:
+For more particular workflows, subclass
+:class:`~eclypse.workflow.event.event.EclypseEvent` and pass custom triggers to
+``super().__init__``:
 
 .. code-block:: python
 
-  event = EclypseEvent(
-      name="monitor",
-      triggers=[PeriodicTrigger(1000), CascadeTrigger("step")],
-      trigger_condition="all"  # fires only if both trigger
-  )
+  from eclypse.workflow.event import EclypseEvent
+  from eclypse.workflow.trigger import CascadeTrigger, PeriodicTrigger
+
+  class Monitor(EclypseEvent):
+      def __init__(self):
+          super().__init__(
+              name="monitor",
+              triggers=[PeriodicTrigger(1000), CascadeTrigger("step")],
+              trigger_condition="all",  # fires only if both trigger
+          )
+
+      def __call__(self, triggering_event):
+          return {"source": triggering_event.name}

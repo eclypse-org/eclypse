@@ -40,8 +40,8 @@ There are 7 decorators corresponding to different metric types:
 - :py:func:`~eclypse.report.metrics.metric.service`
 - :py:func:`~eclypse.report.metrics.metric.interaction`
 
-See :ref:`event-decorator` for details on defining and triggering events. A
-metric lets you specify:
+See :ref:`event-decorator` for details on scheduled event helpers. A metric lets
+you specify:
 
 - **What data to collect**
 - **How often to report** (using :doc:`triggers <triggers>`)
@@ -60,6 +60,28 @@ Example:
 
 .. note::
    Metrics are executed like events, and use the same underlying logic, including support for cascade triggers and trigger conditions.
+
+Custom metric recipe
+~~~~~~~~~~~~~~~~~~~~
+
+Use the metric decorator that matches the object you want to inspect, choose
+when it activates, and return either a scalar or a mapping.
+
+.. code-block:: python
+   :caption: Custom service metric
+
+   from eclypse.report.metrics import metric
+
+   @metric.service(activates_on="step", report=["csv"])
+   def requested_cpu(service_id, requirements, placement, infrastructure):
+       return {
+           "service": service_id,
+           "value": requirements["cpu"],
+       }
+
+The reporting pipeline records the event metadata and stores the returned
+``value``. For multi-field mappings, keep a stable ``value`` key for the main
+measurement and use the other keys as context.
 
 Metric and callback types
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -161,6 +183,14 @@ Example usage:
 
    report = Report("./output")
    df = report.service(application_ids="app1", service_ids="srv2")
+
+For a quick run summary, call
+:py:meth:`~eclypse.report.report.Report.describe`:
+
+.. code-block:: python
+
+   print(report.describe())
+   # 84 rows x 10 steps x 12 metrics | 5 applications | ...
 
 Each accessor method supports filtering by:
 

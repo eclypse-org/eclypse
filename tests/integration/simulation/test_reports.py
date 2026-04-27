@@ -11,7 +11,7 @@ from eclypse.simulation.config import SimulationConfig
 from eclypse.simulation.simulation import Simulation
 from eclypse.workflow.event import (
     EventRole,
-    event,
+    once_at,
 )
 
 
@@ -27,6 +27,7 @@ def test_manual_simulation_runtime_generates_reports_and_config(
         report_backend="pandas",
         report_format="csv",
         include_default_metrics=True,
+        step_every_ms=None,
         max_steps=2,
     )
     simulation = Simulation(sample_infrastructure, config)
@@ -90,7 +91,8 @@ def test_wrapped_event_runtime_reports_custom_metric(
     sample_application,
     static_strategy,
 ):
-    @event(
+    @once_at(
+        sim_seconds=0,
         event_type="simulation",
         activates_on=["start", ("start", 1.0), ("start", [1])],
         role=EventRole.METRIC,
@@ -131,7 +133,8 @@ def test_auto_simulation_runtime_stops_after_event_failure(
     sample_application,
     static_strategy,
 ):
-    @event(
+    @once_at(
+        sim_seconds=0,
         event_type="simulation",
         activates_on=["start"],
         verbose=True,

@@ -26,6 +26,7 @@ from eclypse.report.metrics.defaults import (
     seed,
     step_result,
 )
+from eclypse.report.metrics import metric
 from eclypse.utils.constants import (
     DRIVING_EVENT,
     RND_SEED,
@@ -92,3 +93,15 @@ def test_simulation_metric_helpers_and_default_metric_list(
     assert isinstance(time_metric(object()), float)
     assert step_result(service_with_results) == "first"
     assert len(get_default_metrics()) >= 10
+
+
+def test_metric_decorators_share_event_options():
+    @metric.link(name="latency_probe", activates_on="step", report="json")
+    def latency():
+        return 1
+
+    assert latency.name == "latency_probe"
+    assert latency.type == "link"
+    assert latency.is_metric
+    assert latency.report_types == ["json"]
+    assert latency.triggers
