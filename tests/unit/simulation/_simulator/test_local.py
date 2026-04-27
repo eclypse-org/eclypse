@@ -188,7 +188,7 @@ async def test_local_simulator_run_enqueues_stop_after_event_failures(
     simulator.fire = fake_fire  # type: ignore[method-assign]
     monkeypatch.setattr(
         "eclypse.simulation._simulator.local.print_exception",
-        lambda exc, origin: printed.append((str(exc), origin)),
+        lambda exc, origin, _logger: printed.append((str(exc), origin)),
     )
     monkeypatch.setattr(
         "eclypse.simulation._simulator.local.asyncio.sleep",

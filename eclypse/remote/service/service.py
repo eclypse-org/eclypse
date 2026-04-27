@@ -21,6 +21,10 @@ from __future__ import annotations
 
 import asyncio
 import threading
+from abc import (
+    ABC,
+    abstractmethod,
+)
 from collections import deque
 from typing import (
     TYPE_CHECKING,
@@ -31,7 +35,10 @@ from typing import (
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.request import RouteNotFoundError
 from eclypse.remote.communication.rest import EclypseREST
-from eclypse.utils._logging import print_exception
+from eclypse.utils._logging import (
+    logger,
+    print_exception,
+)
 from eclypse.utils.defaults import (
     DEFAULT_STEP_QUEUE_SIZE,
     SUPPORTED_COMMUNICATION_INTERFACES,
@@ -48,7 +55,7 @@ if TYPE_CHECKING:
     from eclypse.utils.types import CommunicationInterface
 
 
-class Service:
+class Service(ABC):
     """Base class for services in ECLYPSE remote applications."""
 
     def __init__(
@@ -106,24 +113,23 @@ class Service:
             if step_result is not None and self._store_step:
                 self._step_queue.append(step_result)
 
+    @abstractmethod
     async def step(self):
         """The service's main loop.
 
-        This method must be overridden by the user.
+        Subclasses must implement this method with their service logic.
 
         Returns:
             Any: The result of the step (if any).
-
-        Raises:
-            NotImplementedError: If the method is not overridden.
         """
-        raise NotImplementedError("Method `step` must be overridden.")
 
     def on_deploy(self):
         """Hook called when the service is deployed on a node."""
+        return None
 
     def on_undeploy(self):
         """Hook called when the service is undeployed from a node."""
+        return None
 
     def _init_thread(self):
         """Initializes the thread for the service."""
@@ -300,9 +306,17 @@ def _start_loop(service: Service):
         if str(e) == "Event loop stopped before Future completed.":
             pass
         else:
-            print_exception(e, f"{service.id}")
+            print_exception(e, f"{service.id}", _exception_logger(service))
     except Exception as e:
-        print_exception(e, f"{service.id}")
+        print_exception(e, f"{service.id}", _exception_logger(service))
     if service._comm is not None:
         service._comm.disconnect()
     service.event_loop.close()
+
+
+def _exception_logger(service: Service) -> Logger:
+    """Return a service-bound logger without masking the original exception."""
+    try:
+        return service.logger
+    except Exception:
+        return logger.bind(id=service.id)

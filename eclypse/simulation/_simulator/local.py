@@ -47,7 +47,7 @@ if TYPE_CHECKING:
         Placement,
         PlacementView,
     )
-    from eclypse.placement.strategies.strategy import PlacementStrategy
+    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.simulation.config import SimulationConfig
     from eclypse.utils._logging import Logger
     from eclypse.workflow.event import EclypseEvent
@@ -85,14 +85,17 @@ class Simulator:
             )
 
         self._infrastructure = infrastructure
-        self._manager = PlacementManager(infrastructure=self._infrastructure)
+        self._manager = PlacementManager(
+            infrastructure=self._infrastructure,
+            default_strategy=self._config.default_strategy,
+        )
 
         self._events: dict[str, EclypseEvent] = {
             event.name: event for event in self._config.events
         }
         for event in self._events.values():
             event.attach_simulator(self)
-            event.trigger_bucket.init()
+            event.trigger_bucket.prepare()
 
             # Simulation state
         self._event_loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
@@ -217,7 +220,7 @@ class Simulator:
                 except (asyncio.QueueEmpty, TimeoutError):
                     pass
                 except Exception as e:
-                    print_exception(e, self.__class__.__name__)
+                    print_exception(e, self.__class__.__name__, self.logger)
                     if self.status != SimulationState.STOPPING:
                         await self.enqueue_event(STOP_EVENT)
                 finally:

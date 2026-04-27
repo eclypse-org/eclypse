@@ -4,6 +4,7 @@ from pathlib import Path
 
 from eclypse.utils._logging import (
     _is_eclypse,
+    _is_eclypse_exception,
     _is_not_eclypse,
     config_logger,
     log_assets_violations,
@@ -18,7 +19,6 @@ from eclypse.utils.constants import (
 
 def test_logging_helpers_configure_and_format_messages(
     monkeypatch,
-    capsys,
     tmp_path: Path,
     dummy_logger,
     sample_infrastructure,
@@ -36,18 +36,26 @@ def test_logging_helpers_configure_and_format_messages(
 
     handlers = configured["handlers"]
     assert isinstance(handlers, list)
-    assert len(handlers) == 3
+    assert len(handlers) == 4
     assert _is_eclypse({"level": type("Level", (), {"name": "ECLYPSE"})()}) is True
+    assert (
+        _is_eclypse_exception(
+            {"level": type("Level", (), {"name": "ECLYPSE_EXCEPTION"})()}
+        )
+        is True
+    )
     assert _is_not_eclypse({"level": type("Level", (), {"name": "INFO"})()}) is True
 
     try:
         raise ValueError("broken")
     except ValueError as exc:
-        print_exception(exc, "worker")
+        print_exception(exc, "worker", dummy_logger)
 
-    output = capsys.readouterr().out
-    assert "Traceback (most recent call last):" in output
-    assert "ValueError in worker: broken" in output
+    exception_messages = [
+        args[0] for level, args in dummy_logger.records if level == "ECLYPSE_EXCEPTION"
+    ]
+    assert "Traceback (most recent call last):" in exception_messages[0]
+    assert "ValueError in worker: broken" in exception_messages[0]
 
     log_placement_violations(
         dummy_logger,

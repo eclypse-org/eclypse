@@ -107,6 +107,20 @@ def test_report_filter_ignores_unknown_columns(
     assert report.filter([], service_id=["gateway"]) == []
 
 
+def test_report_describe_summarises_available_frames(
+    csv_report_dir: Path, list_frame_backend
+):
+    report = Report(csv_report_dir, backend=list_frame_backend)
+
+    description = report.describe()
+
+    assert "6 rows x 3 steps x 3 metrics" in description
+    assert "1 applications" in description
+    assert "application: 1 rows, 1 metrics" in description
+    assert "service: 3 rows, 1 metrics" in description
+    assert "simulation: 2 rows, 1 metrics" in description
+
+
 def test_report_config_and_report_format_fallbacks(tmp_path: Path, list_frame_backend):
     explicit_path = tmp_path / "explicit"
     (explicit_path / "csv").mkdir(parents=True)

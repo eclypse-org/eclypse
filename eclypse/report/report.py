@@ -284,6 +284,52 @@ class Report:
         """Create a composable query for the given report type."""
         return ReportQuery(self, report_type)
 
+    def describe(self) -> str:
+        """Return a compact human-readable summary of available reports.
+
+        The summary includes total rows, unique simulation steps, unique metric
+        callback IDs, and a per-report breakdown. Missing report files are skipped.
+
+        Returns:
+            A summary string such as ``"12 rows x 3 steps x 5 metrics"``.
+        """
+        total_rows = 0
+        steps: set[Any] = set()
+        metrics: set[Any] = set()
+        applications: set[Any] = set()
+        breakdown: list[str] = []
+
+        for report_type in REPORT_TYPES:
+            try:
+                self._read_frame(report_type)
+            except FileNotFoundError:
+                continue
+
+            frame = self.stats[report_type]
+            if frame is None:
+                continue
+            materialized = _materialize_frame(frame)
+            row_count = _frame_row_count(materialized)
+            total_rows += row_count
+
+            report_steps = set(_column_values(materialized, "n_event"))
+            report_metrics = set(_column_values(materialized, "callback_id"))
+            steps.update(report_steps)
+            metrics.update(report_metrics)
+            applications.update(_column_values(materialized, "application_id"))
+
+            breakdown.append(
+                f"{report_type}: {row_count} rows, {len(report_metrics)} metrics"
+            )
+
+        summary = (
+            f"{total_rows} rows x {len(steps)} steps x {len(metrics)} metrics"
+            f" | {len(applications)} applications"
+        )
+        if breakdown:
+            return f"{summary} | " + "; ".join(breakdown)
+        return summary
+
     def get_dataframes(
         self,
         report_types: list[EventType] | None = None,
@@ -444,3 +490,53 @@ class Report:
                 return cast("ReportFormat", config_format)
 
         return cast("ReportFormat", DEFAULT_REPORT_TYPE)
+
+
+def _materialize_frame(frame: Any) -> Any:
+    """Materialise lazy frames for summary inspection."""
+    collect = getattr(frame, "collect", None)
+    if callable(collect):
+        return collect()
+    return frame
+
+
+def _frame_row_count(frame: Any) -> int:
+    """Return a frame's row count across supported backends."""
+    if hasattr(frame, "height"):
+        return int(frame.height)
+    try:
+        return len(frame)
+    except TypeError:
+        return 0
+
+
+def _column_values(frame: Any, column: str) -> list[Any]:
+    """Return non-null values for a column across supported backends."""
+    if isinstance(frame, list):
+        return [
+            row[column] for row in frame if column in row and row[column] is not None
+        ]
+
+    columns = getattr(frame, "columns", None)
+    if columns is None or column not in columns:
+        return []
+
+    get_column = getattr(frame, "get_column", None)
+    if callable(get_column):
+        series = get_column(column)
+        drop_nulls = getattr(series, "drop_nulls", None)
+        if callable(drop_nulls):
+            series = drop_nulls()
+        return list(series.to_list())
+
+    series = frame[column]
+    dropna = getattr(series, "dropna", None)
+    if callable(dropna):
+        series = dropna()
+    to_list = getattr(series, "to_list", None)
+    if callable(to_list):
+        return list(to_list())
+    tolist = getattr(series, "tolist", None)
+    if callable(tolist):
+        return list(tolist())
+    return list(series)

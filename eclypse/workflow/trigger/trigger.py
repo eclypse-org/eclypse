@@ -46,7 +46,7 @@ class Trigger(ABC):
             bool: True if the trigger should fire, False otherwise.
         """
 
-    def init(self):
+    def prepare(self):
         """Prepare the trigger for use.
 
         This method can be overridden in subclasses to perform any necessary
@@ -130,7 +130,7 @@ class ScheduledTrigger(Trigger):
         self._init_time: datetime | None = None
         self._scheduled_times: list[datetime] = []
 
-    def init(self):
+    def prepare(self):
         """Prepare the trigger by setting the initial time."""
         self._init_time = datetime.now()
         self._scheduled_timedelta = sorted(self._scheduled_timedelta)
@@ -141,7 +141,12 @@ class ScheduledTrigger(Trigger):
     def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Return True if the current call count matches a scheduled time."""
         if self._init_time is None:
-            raise RuntimeError("Trigger not initialised. Call init() before trigger().")
+            raise RuntimeError(
+                "Trigger not initialised. Call prepare() before trigger()."
+            )
+
+        if not self._scheduled_times:
+            return False
 
         current_time = datetime.now()
         if current_time >= self._scheduled_times[0]:
@@ -171,7 +176,7 @@ class RandomTrigger(Trigger):
         self.seed = seed
         self.rnd = None
 
-    def init(self):
+    def prepare(self):
         """Initialize the random number generator."""
         self.seed = int(os.getenv(RND_SEED)) if self.seed is None else self.seed
         self.rnd = random.Random(self.seed)
@@ -179,7 +184,9 @@ class RandomTrigger(Trigger):
     def trigger(self, _: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire based on its probability."""
         if self.rnd is None:
-            raise RuntimeError("Trigger not initialised. Call init() before trigger().")
+            raise RuntimeError(
+                "Trigger not initialised. Call prepare() before trigger()."
+            )
         return self.rnd.random() < self.probability
 
     def __repr__(self) -> str:

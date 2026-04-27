@@ -36,7 +36,7 @@ class DummyLogger:
 
     def __init__(self):
         self.records: list[tuple[str, tuple[Any, ...]]] = []
-        self.levels = {"ECLYPSE"}
+        self.levels = {"ECLYPSE", "ECLYPSE_EXCEPTION"}
 
     def bind(self, **_: Any) -> DummyLogger:
         return self
@@ -58,6 +58,9 @@ class DummyLogger:
 
     def error(self, *args: Any):
         self.records.append(("error", args))
+
+    def info(self, *args: Any):
+        self.records.append(("info", args))
 
 
 @pytest.fixture

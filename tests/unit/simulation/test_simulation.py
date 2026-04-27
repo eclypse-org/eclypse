@@ -36,6 +36,7 @@ def test_simulation_register_start_step_stop_and_report(
     sample_application,
     simulation_config,
     static_strategy,
+    dummy_logger,
 ):
     event_calls: list[tuple[str, tuple, dict]] = []
 
@@ -50,6 +51,7 @@ def test_simulation_register_start_step_stop_and_report(
     )
 
     simulation = Simulation(sample_infrastructure, simulation_config)
+    monkeypatch.setattr(simulation, "_logger", dummy_logger)
     simulation.register(sample_application, static_strategy)
     simulation.start()
     simulation.step()
@@ -58,6 +60,12 @@ def test_simulation_register_start_step_stop_and_report(
     assert sample_application.id in simulation.applications
     assert event_calls[0][0] == "start"
     assert event_calls[1][0] == "trigger"
+    eclypse_messages = [
+        args[0] for level, args in dummy_logger.records if level == "ECLYPSE"
+    ]
+    assert any("Simulation configuration | " in msg for msg in eclypse_messages)
+    assert any("infrastructure=edge-cloud" in msg for msg in eclypse_messages)
+    assert "Simulation started." in eclypse_messages
     assert simulation.report == "report-object"
     assert report_calls
     assert simulation.path == simulation_config.path
@@ -144,6 +152,48 @@ def test_simulation_start_without_path_and_blocking_stop(
     ]
 
 
+def test_simulation_run_helpers_and_context_cleanup(
+    monkeypatch,
+    sample_infrastructure,
+    simulation_config,
+):
+    simulation = Simulation(sample_infrastructure, simulation_config)
+    calls: list[object] = []
+
+    monkeypatch.setattr(simulation, "start", lambda: calls.append("start"))
+    monkeypatch.setattr(simulation, "step", lambda: calls.append("step"))
+    monkeypatch.setattr(simulation, "stop", lambda: calls.append("stop"))
+    monkeypatch.setattr(
+        simulation,
+        "wait",
+        lambda timeout=None: calls.append(("wait", timeout)),
+    )
+    monkeypatch.setattr(
+        type(simulation),
+        "status",
+        property(lambda _self: SimpleNamespace(name="RUNNING")),
+    )
+
+    simulation.run(steps=2)
+    assert calls == ["start", "step", "step", "stop"]
+
+    calls.clear()
+    simulation.run(seconds=0.5)
+    assert calls == ["start", ("wait", 0.5), "stop"]
+
+    with pytest.raises(ValueError, match="Only one"):
+        simulation.run(steps=1, seconds=1)
+    with pytest.raises(ValueError, match="steps"):
+        simulation.run(steps=-1)
+    with pytest.raises(ValueError, match="seconds"):
+        simulation.run(seconds=-1)
+
+    calls.clear()
+    with simulation as managed:
+        assert managed is simulation
+    assert calls == ["stop"]
+
+
 def test_simulation_remote_paths_and_report_cache(
     monkeypatch,
     sample_infrastructure,
@@ -205,7 +255,7 @@ def test_simulation_remote_paths_and_report_cache(
         )
 
 
-def test_simulation_register_prefers_global_strategy_and_requires_one(
+def test_simulation_register_uses_default_strategy_and_requires_one(
     monkeypatch,
     sample_infrastructure,
     sample_application,
@@ -215,12 +265,13 @@ def test_simulation_register_prefers_global_strategy_and_requires_one(
 ):
     simulation = Simulation(sample_infrastructure, simulation_config)
 
-    with pytest.raises(ValueError, match="Must provide a global placement strategy"):
+    with pytest.raises(ValueError, match="Must provide a default placement strategy"):
         simulation.register(sample_application)
 
-    sample_infrastructure.strategy = static_strategy
+    simulation_config.default_strategy = static_strategy
+    simulation = Simulation(sample_infrastructure, simulation_config)
     monkeypatch.setattr(simulation, "_logger", dummy_logger)
-    simulation.register(sample_application, static_strategy)
+    simulation.register(sample_application)
 
     assert sample_application.id in simulation.applications
-    assert any(level == "warning" for level, _ in dummy_logger.records)
+    assert not any(level == "warning" for level, _ in dummy_logger.records)

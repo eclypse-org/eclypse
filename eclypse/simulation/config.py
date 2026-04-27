@@ -49,6 +49,7 @@ from eclypse.workflow.trigger import (
 if TYPE_CHECKING:
     from collections.abc import Callable
 
+    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.report import FrameBackend
     from eclypse.report.reporter import Reporter
     from eclypse.utils._logging import Logger
@@ -64,8 +65,13 @@ if TYPE_CHECKING:
 class SimulationConfig:
     """Configuration object for a simulation runtime."""
 
-    step_every_ms: Literal["manual", "auto"] | float | None = "manual"
-    """Cadence of the driving event in milliseconds, or ``"manual"``/``"auto"``."""
+    step_every_ms: Literal["manual", "auto"] | float | None = "auto"
+    """Cadence of the driving event.
+
+    ``"auto"`` continuously advances local simulations and resolves to manual mode
+    for remote simulations. Use ``None`` or ``"manual"`` for explicit manual
+    stepping, or pass a number for a millisecond cadence.
+    """
 
     timeout: float | None = None
     """Maximum wall-clock duration of the simulation, in seconds."""
@@ -107,13 +113,20 @@ class SimulationConfig:
     remote: bool | RemoteBootstrap = False
     """Whether to run in remote emulation mode, or the bootstrap to use for it."""
 
+    default_strategy: PlacementStrategy | None = None
+    """Default placement strategy used when ``Simulation.register`` gets none."""
+
     _runtime_prepared: bool = field(init=False, default=False, repr=False)
 
     def __post_init__(self):
         """Normalize permissive user input into a runtime-ready configuration."""
-        self.step_every_ms = self._resolve_step_every_ms(self.step_every_ms)
         self.seed = self.seed if self.seed is not None else randint(0, int(1e9))
         self.path = self._resolve_path(self.path)
+        self.remote = self._resolve_remote(self.remote)
+        self.step_every_ms = self._resolve_step_every_ms(
+            self.step_every_ms,
+            remote=self.remote is not None,
+        )
         self.report_format = cast(
             "ReportFormat",
             (
@@ -130,7 +143,6 @@ class SimulationConfig:
                 else DEFAULT_REPORT_BACKEND
             ),
         )
-        self.remote = self._resolve_remote(self.remote)
         self.events = self._build_events(self.events, self.include_default_metrics)
         self._apply_default_report_format(self.events)
         self.reporters = self._resolve_reporters(self.reporters, self.events)
@@ -191,11 +203,13 @@ class SimulationConfig:
     @staticmethod
     def _resolve_step_every_ms(
         step_every_ms: Literal["manual", "auto"] | float | None,
+        *,
+        remote: bool = False,
     ) -> float | None:
         if isinstance(step_every_ms, str) and step_every_ms == "manual":
             return None
         if isinstance(step_every_ms, str) and step_every_ms == "auto":
-            return 0.0
+            return None if remote else 0.0
         if isinstance(step_every_ms, (float, int)) or step_every_ms is None:
             return step_every_ms
         raise ValueError("step_every_ms must be a float, 'manual', 'auto' or None.")
@@ -204,7 +218,11 @@ class SimulationConfig:
     def _resolve_path(path: str | Path | None) -> Path:
         base_path = get_default_sim_path() if path is None else Path(path)
         if base_path.exists():
-            return Path(f"{base_path}-{strftime('%Y%m%d_%H%M%S')}")
+            resolved = Path(f"{base_path}-{strftime('%Y%m%d_%H%M%S')}")
+            logger.bind(id="SimulationConfig").info(
+                f"Target path exists; writing to {resolved} instead"
+            )
+            return resolved
         return base_path
 
     @staticmethod
@@ -315,6 +333,11 @@ class SimulationConfig:
                 else self.report_backend
             ),
             "remote": bool(self.remote),
+            "default_strategy": (
+                self.default_strategy.__class__.__name__
+                if self.default_strategy is not None
+                else None
+            ),
         }
 
 

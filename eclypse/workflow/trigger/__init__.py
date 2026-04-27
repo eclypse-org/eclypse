@@ -10,6 +10,7 @@ from .trigger import (
     PeriodicTrigger,
     ScheduledTrigger,
 )
+from .bucket import TriggerBucket
 
 from .cascade import (
     CascadeTrigger,
@@ -27,4 +28,5 @@ __all__ = [
     "ScheduledCascadeTrigger",
     "ScheduledTrigger",
     "Trigger",
+    "TriggerBucket",
 ]

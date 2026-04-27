@@ -53,14 +53,14 @@ class TriggerBucket:
         self._n_triggers: int = 0
         self._n_executions: int = 0
 
-    def init(self):
+    def prepare(self):
         """Prepare the trigger for use.
 
         This method can be overridden in subclasses to perform any necessary
         initialization before the trigger is used.
         """
         for trigger in self.triggers:
-            trigger.init()
+            trigger.prepare()
 
     def trigger(self, trigger_event: EclypseEvent | None = None) -> bool:
         """Check if the trigger should fire.
