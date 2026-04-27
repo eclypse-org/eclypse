@@ -21,7 +21,7 @@
 =====================
 ECLYPSE documentation
 =====================
-**ECLYPSE** (Edge-Cloud raY-based Platform for Simulated Environments) stands as a groundbreaking simulation library, crafted entirely in Python.
+**ECLYPSE** (Edge-CLoud pYthon Platform for Simulated runtime Environments) stands as a groundbreaking simulation library, crafted entirely in Python.
 It offers a practical interface for experimenting with deployment strategies across different infrastructure settings.
 
 One of its key strengths lies in its ability to simulate the deployment of service-based applications in environments that closely mimic real-world conditions, with or without actual application implementation.
