@@ -14,6 +14,12 @@ The full code lives in the
 `examples/echo <https://github.com/eclypse-org/eclypse/tree/main/examples/echo>`_
 directory.
 
+Run it from the repository root with:
+
+.. code-block:: bash
+
+   poetry run echo
+
 Application
 -----------
 

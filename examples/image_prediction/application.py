@@ -1,4 +1,4 @@
-from services import (
+from .services import (
     EndService,
     PredictorService,
     TrainerService,

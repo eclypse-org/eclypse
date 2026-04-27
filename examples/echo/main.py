@@ -1,5 +1,5 @@
-from application import echo_app as app
-from infrastructure import get_infrastructure
+from .application import echo_app as app
+from .infrastructure import get_infrastructure
 
 from eclypse.placement.strategies import RandomStrategy
 from eclypse.simulation import (
@@ -8,8 +8,9 @@ from eclypse.simulation import (
 )
 from eclypse.utils.defaults import get_default_sim_path
 
-if __name__ == "__main__":
 
+def main() -> None:
+    """Run the Echo example."""
     seed = 2
     sim_config = SimulationConfig(
         seed=seed,
@@ -28,6 +29,9 @@ if __name__ == "__main__":
     )
 
     sim.register(app, RandomStrategy(seed=seed))
-    sim.start()
-    sim.wait()
+    sim.run()
     print(sim.report.application())
+
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,4 @@
-from echo import EchoService
+from .echo import EchoService
 
 from eclypse.graph import Application
 

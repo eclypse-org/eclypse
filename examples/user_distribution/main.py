@@ -1,7 +1,7 @@
 from time import time
 
-from infrastructure import get_infrastructure
-from metric import get_metrics
+from .infrastructure import get_infrastructure
+from .metric import get_metrics
 
 from eclypse.builders.application import get_sock_shop
 from eclypse.placement.strategies import BestFitStrategy
@@ -14,23 +14,29 @@ from eclypse.utils.defaults import get_default_sim_path
 SEED = 42
 STEPS = 4167
 
-app = get_sock_shop(seed=SEED)
-strategy = BestFitStrategy()
 
-sim_config = SimulationConfig(
-    step_every_ms="auto",
-    seed=SEED,
-    max_steps=STEPS,
-    path=get_default_sim_path() / "user-distribution",
-    events=get_metrics(),
-    log_to_file=True,
-)
-infrastructure = get_infrastructure(SEED)
+def main() -> None:
+    """Run the user distribution example."""
+    app = get_sock_shop(seed=SEED)
+    strategy = BestFitStrategy()
 
-sim = Simulation(infrastructure, simulation_config=sim_config)
-sim.register(app, strategy)
+    sim_config = SimulationConfig(
+        step_every_ms="auto",
+        seed=SEED,
+        max_steps=STEPS,
+        path=get_default_sim_path() / "user-distribution",
+        events=get_metrics(),
+        log_to_file=True,
+    )
+    infrastructure = get_infrastructure(SEED)
 
-start_time = time()
-sim.start()
-sim.wait()
-print("Elapsed time: ", time() - start_time)
+    sim = Simulation(infrastructure, simulation_config=sim_config)
+    sim.register(app, strategy)
+
+    start_time = time()
+    sim.run()
+    print("Elapsed time: ", time() - start_time)
+
+
+if __name__ == "__main__":
+    main()

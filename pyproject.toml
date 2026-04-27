@@ -91,6 +91,15 @@ optional = true
 requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
 
+[project.scripts]
+echo = "examples.echo.main:main"
+grid-analysis = "examples.grid_analysis.main:main"
+image-prediction = "examples.image_prediction.main:main"
+off-the-shelf = "examples.off_the_shelf.main:main"
+sock-shop-mpi = "examples.sock_shop.mpi:main"
+sock-shop-rest = "examples.sock_shop.rest:main"
+user-distribution = "examples.user_distribution.main:main"
+
 
 # -------------------------
 # Third-party tool settings

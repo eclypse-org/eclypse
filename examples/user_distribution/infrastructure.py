@@ -1,19 +1,20 @@
 import networkx as nx
-from metric import user_count_asset
-from update_policy import (
+
+from .metric import user_count_asset
+from .update_policy import (
     LatencyUpdatePolicy,
     UserDistributionPolicy,
     kill_policy,
 )
 
-from eclypse.builders.infrastructure import hierarchical
+from eclypse.builders.infrastructure import get_hierarchical
 
 
 def get_infrastructure(seed: int):
     kill_probability = 0.1
-    i = hierarchical(
+    i = get_hierarchical(
         node_assets={"user_count": user_count_asset()},
-        infrastructure_id="hierarchical",
+        infrastructure_id="get_hierarchical",
         n=187,
         update_policies=[
             kill_policy(kill_probability=kill_probability),

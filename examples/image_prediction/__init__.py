@@ -1,0 +1,1 @@
+"""Image prediction example package."""

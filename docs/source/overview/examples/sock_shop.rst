@@ -24,6 +24,13 @@ and
 `examples/sock_shop/rest.py <https://github.com/eclypse-org/eclypse/blob/main/examples/sock_shop/rest.py>`_
 directories.
 
+Run either variant from the repository root with:
+
+.. code-block:: bash
+
+   poetry run sock-shop-mpi
+   poetry run sock-shop-rest
+
 .. warning::
 
    Both interfaces are asynchronous. When you call the low-level request APIs

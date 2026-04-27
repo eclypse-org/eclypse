@@ -7,15 +7,15 @@ from typing import (
     Union,
 )
 
-from policies import (
+from .policies import (
     degrade_policy,
     kill_policy,
 )
 
 from eclypse.builders.infrastructure import (
-    hierarchical,
-    random,
-    star,
+    get_hierarchical,
+    get_random,
+    get_star,
 )
 from eclypse.graph import Infrastructure
 from eclypse.graph.assets import Concave
@@ -41,20 +41,20 @@ def get_infrastructure(config) -> Infrastructure:
         "include_default_assets": True,
     }
     if config["topology"][0] == "star":
-        infr = star(
+        infr = get_star(
             infrastructure_id="star",
             n_clients=config["nodes"],
             **common_config,
         )
     elif config["topology"][0] == "random":
-        infr = random(
+        infr = get_random(
             infrastructure_id="random",
             n=config["nodes"],
             p=config["topology"][1],
             **common_config,
         )
     elif config["topology"][0] == "hierarchical":
-        infr = hierarchical(
+        infr = get_hierarchical(
             infrastructure_id="hierarchical",
             n=config["nodes"],
             **common_config,

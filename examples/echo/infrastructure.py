@@ -1,4 +1,4 @@
-from update_policy import random_update
+from .update_policy import random_update
 
 from eclypse.graph import Infrastructure
 

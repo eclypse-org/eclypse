@@ -2,14 +2,15 @@ from pathlib import Path
 from time import time
 
 import ray
-from applications import get_apps
-from infrastructure import get_infrastructure
-from metrics import get_metrics
 from ray import (
     train,
     tune,
 )
-from strategy import EnergyMinimizationStrategy
+
+from .applications import get_apps
+from .infrastructure import get_infrastructure
+from .metrics import get_metrics
+from .strategy import EnergyMinimizationStrategy
 
 from eclypse.placement.strategies import (
     BestFitStrategy,
@@ -48,8 +49,7 @@ def eclypse_grid(config):
 
     for app in apps:
         sim.register(app, get_strategy(config))
-    sim.start()
-    sim.wait()
+    sim.run()
 
     print("End of simulation")
 
@@ -121,17 +121,8 @@ search_space = {
     ),
 }
 
-if __name__ == "__main__":
-    config_example = {
-        "max_steps": 10,
-        "load": 0,
-        "nodes": 50,
-        "seed": 42,
-        "policy": ("kill", 0.1),
-        "strategy": "min-energy",
-        "topology": ("hierarchical",),
-    }
-
+def main() -> None:
+    """Run the Grid Analysis Ray Tune example."""
     ray.init(address="auto")
 
     start_time = time()
@@ -144,3 +135,7 @@ if __name__ == "__main__":
     )
     tuner.fit()
     print("Elapsed time: ", time() - start_time)
+
+
+if __name__ == "__main__":
+    main()
