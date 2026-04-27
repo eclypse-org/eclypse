@@ -20,7 +20,7 @@ from eclypse.builders.infrastructure._helpers import (
     relabel_hierarchical_levels,
     tier_node_assets,
 )
-from eclypse.builders.infrastructure.generators.hierarchical import hierarchical
+from eclypse.builders.infrastructure.generators.hierarchical import get_hierarchical
 
 if TYPE_CHECKING:
     from collections.abc import Callable
@@ -29,14 +29,13 @@ if TYPE_CHECKING:
 
     from eclypse.graph import Infrastructure
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def continuum_tiered(
+def get_continuum_tiered(
     device_count: int,
     edge_count: int,
     fog_count: int = 0,
@@ -51,7 +50,6 @@ def continuum_tiered(
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: InitPolicy = "max",
-    placement_strategy: PlacementStrategy | None = None,
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
@@ -71,9 +69,9 @@ def continuum_tiered(
         symmetric (bool):
             Whether generated links should be mirrored.
         connectivity (list[float] | None):
-            Cross-tier connectivity probabilities passed to ``hierarchical``.
+            Cross-tier connectivity probabilities passed to ``get_hierarchical``.
         cross_level_connectivity (list[float] | None):
-            Intra-tier connectivity probabilities passed to ``hierarchical``.
+            Intra-tier connectivity probabilities passed to ``get_hierarchical``.
         update_policies (UpdatePolicies):
             Graph update policies executed during ``evolve()``.
         node_assets (dict[str, Asset] | None):
@@ -86,8 +84,6 @@ def continuum_tiered(
             Whether inconsistent asset values should raise.
         resource_init (InitPolicy):
             Initialisation policy used for graph assets.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
         seed (int | None):
@@ -129,7 +125,7 @@ def continuum_tiered(
             for name, _ in non_empty_tiers
         ]
 
-    infrastructure = hierarchical(
+    infrastructure = get_hierarchical(
         n=total_nodes,
         infrastructure_id=infrastructure_id,
         symmetric=symmetric,
@@ -142,7 +138,6 @@ def continuum_tiered(
         include_default_assets=include_default_assets,
         strict=strict,
         resource_init=resource_init,
-        placement_strategy=placement_strategy,
         path_algorithm=path_algorithm,
         seed=seed,
     )

@@ -30,14 +30,13 @@ if TYPE_CHECKING:
     import networkx as nx
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
     )
 
 
-def multi_region_wan(
+def get_multi_region_wan(
     region_count: int,
     nodes_per_region: int,
     infrastructure_id: str = "multi_region_wan",
@@ -48,7 +47,6 @@ def multi_region_wan(
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: InitPolicy = "max",
-    placement_strategy: PlacementStrategy | None = None,
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
@@ -75,8 +73,6 @@ def multi_region_wan(
             Whether inconsistent asset values should raise.
         resource_init (InitPolicy):
             Initialisation policy used for graph assets.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
         seed (int | None):
@@ -99,7 +95,6 @@ def multi_region_wan(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

@@ -31,7 +31,6 @@ if TYPE_CHECKING:
     import networkx as nx
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         InitPolicy,
         UpdatePolicies,
@@ -46,7 +45,6 @@ def get_orion_cev(
     include_default_assets: bool = False,
     resource_init: InitPolicy = "max",
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-    placement_strategy: PlacementStrategy | None = None,
     seed: int | None = None,
 ) -> Infrastructure:
     """Create the Orion CEV reference infrastructure.
@@ -66,8 +64,6 @@ def get_orion_cev(
             Initialisation policy used for graph assets.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             Path computation function for infrastructure routing.
-        placement_strategy (PlacementStrategy | None):
-            Optional placement strategy attached to the infrastructure.
         seed (int | None):
             Seed forwarded to the infrastructure random generator.
 
@@ -82,7 +78,6 @@ def get_orion_cev(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

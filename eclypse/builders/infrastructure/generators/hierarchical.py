@@ -31,7 +31,6 @@ if TYPE_CHECKING:
     from networkx import nx
 
     from eclypse.graph.assets import Asset
-    from eclypse.placement.strategies import PlacementStrategy
     from eclypse.utils.types import (
         ConnectivityFn,
         InitPolicy,
@@ -41,7 +40,7 @@ if TYPE_CHECKING:
 DEFAULT_NODE_PARTITIONING = [0.35, 0.3, 0.2, 0.15]
 
 
-def hierarchical(
+def get_hierarchical(
     n: int,
     infrastructure_id: str = "hierarchical",
     symmetric: bool = False,
@@ -54,7 +53,6 @@ def hierarchical(
     include_default_assets: bool = False,
     strict: bool = False,
     resource_init: InitPolicy = "max",
-    placement_strategy: PlacementStrategy | None = None,
     path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
     seed: int | None = None,
 ):
@@ -90,9 +88,6 @@ def hierarchical(
             consistent with their spaces. Defaults to False.
         resource_init (InitPolicy):
             The initialization policy for the resources. Defaults to "min".
-        placement_strategy (PlacementStrategy | None):
-            The placement strategy for the infrastructure. Defaults to
-            None.
         path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None):
             The algorithm to compute the paths between nodes. Defaults to
             None.
@@ -140,7 +135,6 @@ def hierarchical(
         include_default_assets=include_default_assets,
         resource_init=resource_init,
         path_algorithm=path_algorithm,
-        placement_strategy=placement_strategy,
         seed=seed,
     )
 

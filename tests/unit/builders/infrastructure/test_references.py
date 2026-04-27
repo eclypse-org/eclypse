@@ -155,6 +155,7 @@ def test_get_topohub_preserves_name_metadata_when_not_used_as_id(
     monkeypatch: pytest.MonkeyPatch,
 ):
     def get(path: str, use_names: bool = False):
+        del use_names
         graph = nx.Graph(name=path)
         graph.add_node(0, name="Alpha", pos=[1.0, 2.0])
         graph.add_node(1, name="Beta", pos=[3.0, 4.0])
