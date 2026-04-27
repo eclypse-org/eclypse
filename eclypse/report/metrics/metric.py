@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from typing import (
     TYPE_CHECKING,
 )
@@ -11,10 +12,8 @@ from eclypse.utils.constants import (
     MAX_FLOAT,
 )
 from eclypse.utils.defaults import DEFAULT_REPORT_TYPE
-from eclypse.workflow.event import (
-    EventRole,
-    event,
-)
+from eclypse.workflow.event import EventRole
+from eclypse.workflow.event.decorator import _event
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -23,9 +22,48 @@ if TYPE_CHECKING:
 
     from eclypse.utils.types import (
         ActivatesOnType,
+        EventType,
         TriggerCondition,
     )
     from eclypse.workflow.trigger import Trigger
+
+
+@dataclass(frozen=True)
+class _MetricOptions:
+    """Shared options accepted by metric decorators."""
+
+    name: str | None
+    activates_on: ActivatesOnType
+    trigger_every_ms: float | None
+    max_triggers: int | None
+    triggers: Trigger | list[Trigger] | None
+    trigger_condition: TriggerCondition | None
+    report: str | list[str] | None
+    remote: bool
+    verbose: bool
+
+
+def _metric(
+    fn_or_class: Callable | None,
+    *,
+    event_type: EventType,
+    options: _MetricOptions,
+) -> Callable:
+    """Create a metric event decorator for a report event type."""
+    return _event(
+        fn_or_class,
+        name=options.name,
+        event_type=event_type,
+        role=EventRole.METRIC,
+        activates_on=options.activates_on,
+        trigger_every_ms=options.trigger_every_ms,
+        max_triggers=options.max_triggers,
+        triggers=options.triggers,
+        trigger_condition=options.trigger_condition,
+        report=options.report,
+        remote=options.remote,
+        verbose=options.verbose,
+    )
 
 
 def simulation(
@@ -74,19 +112,20 @@ def simulation(
     Returns:
         Callable: The decorated function or class.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="simulation",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )
 
 
@@ -134,19 +173,20 @@ def application(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="application",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )
 
 
@@ -194,19 +234,20 @@ def service(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="service",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )
 
 
@@ -254,19 +295,20 @@ def interaction(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="interaction",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )
 
 
@@ -314,19 +356,20 @@ def infrastructure(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="infrastructure",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )
 
 
@@ -372,18 +415,20 @@ def node(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="node",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            False,
+            verbose,
+        ),
     )
 
 
@@ -431,17 +476,18 @@ def link(
     Returns:
         Callable: The decorated function.
     """
-    return event(
+    return _metric(
         fn_or_class,
-        name=name,
         event_type="link",
-        role=EventRole.METRIC,
-        activates_on=activates_on,
-        trigger_every_ms=trigger_every_ms,
-        max_triggers=max_triggers,
-        triggers=triggers,
-        trigger_condition=trigger_condition,
-        report=report,
-        remote=remote,
-        verbose=verbose,
+        options=_MetricOptions(
+            name,
+            activates_on,
+            trigger_every_ms,
+            max_triggers,
+            triggers,
+            trigger_condition,
+            report,
+            remote,
+            verbose,
+        ),
     )

@@ -161,32 +161,36 @@ Regular events, callbacks, and metrics can all use the same event types. For exa
 
 .. _event-decorator:
 
-@event() decorator
-~~~~~~~~~~~~~~~~~~
+Scheduled event decorators
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The simplest way to define an event and its parameters is the
-:py:func:`@event() <eclypse.workflow.event.decorator.event>` decorator.
+The public decorator API exposes the common scheduling shapes directly:
 
-This flexible decorator allows you to register both functions and classes as **simulation events**, giving full control over when and how they are triggered. You can apply the decorator to:
+- :py:func:`@every(ms=...) <eclypse.workflow.event.decorator.every>` for periodic events,
+- :py:func:`@after(sim_seconds=...) <eclypse.workflow.event.decorator.after>` for delayed events,
+- :py:func:`@once_at(sim_seconds=...) <eclypse.workflow.event.decorator.once_at>` for one-shot events.
 
-- A **function**, which becomes the logic of the event
-- A **class** (with a ``__call__`` method), to maintain internal state
+These decorators allow you to register both functions and callable classes as
+**simulation events**. You can apply them to:
+
+- a **function**, which becomes the logic of the event,
+- a **class** with a ``__call__`` method, to maintain internal state.
 
 .. code-block:: python
    :caption: Example: Decorating a *function*
 
-   from eclypse.workflow.event import event
+   from eclypse.workflow.event import every
 
-   @event(name="step_logger", event_type="simulation", activates_on=["step"])
+   @every(ms=500, name="step_logger", event_type="simulation")
    def log_step():
        print("Simulation step")
 
 .. code-block:: python
    :caption: Example: Decorating a *class*
 
-   from eclypse.workflow.event import event
+   from eclypse.workflow.event import once_at
 
-   @event(name="step_counter", event_type="simulation", activates_on=["step"])
+   @once_at(sim_seconds=10, name="step_counter", event_type="simulation")
    class StepCounter:
        def __init__(self):
            self.counter = 0
@@ -198,14 +202,16 @@ This flexible decorator allows you to register both functions and classes as **s
 Callbacks
 ---------
 
-Callbacks use the same decorator as regular events, but with a different role:
+Callbacks use the same scheduled decorators as regular events, but with a
+different role:
 
 .. code-block:: python
    :caption: Example: Defining a callback
 
-   from eclypse.workflow.event import EventRole, event
+   from eclypse.workflow.event import EventRole, after
 
-   @event(
+   @after(
+       sim_seconds=0,
        name="after_step",
        event_type="simulation",
        activates_on=["step"],
@@ -219,6 +225,28 @@ Callbacks are best suited for:
 - chaining workflow logic after another event,
 - deriving transient information from the triggering event,
 - reacting to another event without necessarily reporting the result.
+
+If the scheduling decorators do not fit a particular workflow, define a custom
+event by subclassing :class:`~eclypse.workflow.event.event.EclypseEvent` and
+overriding ``__call__``. This gives full control over construction, state, and
+trigger configuration:
+
+.. code-block:: python
+   :caption: Example: Custom event class
+
+   from eclypse.workflow.event import EclypseEvent
+   from eclypse.workflow.trigger import CascadeTrigger
+
+   class StepAudit(EclypseEvent):
+       def __init__(self):
+           super().__init__(
+               name="step_audit",
+               event_type="simulation",
+               triggers=[CascadeTrigger("step")],
+           )
+
+       def __call__(self, triggering_event):
+           return {"source": triggering_event.name}
 
 .. _event-metrics:
 

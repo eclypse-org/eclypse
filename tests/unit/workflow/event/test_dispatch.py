@@ -8,7 +8,7 @@ import pytest
 from eclypse.workflow.event import (
     EclypseEvent,
     EventRole,
-    event,
+    every,
 )
 from eclypse.workflow.event.event import (
     _application_fn,
@@ -358,8 +358,8 @@ def test_event_dispatch_by_type_and_runtime_logging(
     assert any(level == "debug" for level, _ in dummy_logger.records)
 
 
-def test_event_decorator_wraps_callable_classes():
-    @event
+def test_scheduled_decorator_wraps_callable_classes():
+    @every(ms=1)
     class CustomCallable:
         def __call__(self):
             return {"ok": True}

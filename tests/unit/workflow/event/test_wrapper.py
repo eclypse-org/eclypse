@@ -8,9 +8,12 @@ from eclypse.report.metrics import application as application_metric
 from eclypse.workflow.event import (
     EclypseEvent,
     EventRole,
-    event,
+    after,
+    every,
     get_default_events,
+    once_at,
 )
+from eclypse.workflow.event import decorator as decorator_module
 from eclypse.workflow.event.event import _application_fn
 from eclypse.workflow.event.wrapper import EventWrapper
 from eclypse.workflow.trigger import (
@@ -18,6 +21,7 @@ from eclypse.workflow.trigger import (
     PeriodicCascadeTrigger,
     PeriodicTrigger,
     RandomCascadeTrigger,
+    ScheduledTrigger,
     ScheduledCascadeTrigger,
 )
 
@@ -30,12 +34,12 @@ class ConstantEvent(EclypseEvent):
         return {"value": 1}
 
 
-def test_event_decorator_wrapper_and_defaults(
+def test_scheduled_decorator_wrapper_and_defaults(
     sample_infrastructure, sample_application
 ):
-    @event(
+    @every(
+        ms=5,
         activates_on=["start", ("step", 2), ("start", 1.0), ("start", [1])],
-        trigger_every_ms=5,
         verbose=True,
         remote=True,
         role=EventRole.METRIC,
@@ -87,3 +91,30 @@ def test_wrapper_validation_rejects_invalid_activation_shapes():
 
     with pytest.raises(ValueError, match="Invalid activates_on type"):
         EventWrapper(lambda: None, "bad", [], activates_on={"step"})  # type: ignore[arg-type]
+
+
+def test_scheduling_decorators_create_expected_triggers():
+    @every(ms=25, event_type="simulation")
+    def heartbeat():
+        return {"ok": True}
+
+    @after(sim_seconds=2)
+    def delayed():
+        return {"ok": True}
+
+    @once_at(sim_seconds=3, name="single")
+    def once():
+        return {"ok": True}
+
+    assert heartbeat.type == "simulation"
+    assert heartbeat.trigger_bucket.max_triggers > 1
+    assert any(isinstance(trigger, PeriodicTrigger) for trigger in heartbeat.triggers)
+    assert any(isinstance(trigger, ScheduledTrigger) for trigger in delayed.triggers)
+    assert delayed.trigger_bucket.max_triggers == 1
+    assert once.name == "single"
+    assert once.trigger_bucket.max_triggers == 1
+    assert any(isinstance(trigger, ScheduledTrigger) for trigger in once.triggers)
+
+
+def test_scheduling_decorators_do_not_expose_scheduled_helper():
+    assert not hasattr(decorator_module, "_scheduled_event")
