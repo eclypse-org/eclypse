@@ -104,7 +104,7 @@ We use `pytest` for the test suite.
 Useful command:
 
 ```bash
-make test
+pytest
 ```
 
 ## Pre-commit Hooks
