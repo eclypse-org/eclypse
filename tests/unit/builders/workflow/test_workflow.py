@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import sys
 import types
 from dataclasses import (
@@ -217,10 +218,14 @@ def test_get_workflow(monkeypatch: pytest.MonkeyPatch):
     )
     assert application.nodes["mProject_0001"]["processing_time"] == 12.5
     assert application.nodes["mProject_0001"]["workflow_task_type"] == "COMPUTE"
-    assert application.nodes["mProject_0001"]["workflow_input_size_mib"] == pytest.approx(
+    assert application.nodes["mProject_0001"][
+        "workflow_input_size_mib"
+    ] == pytest.approx(
         100 / _BYTES_PER_MIB,
     )
-    assert application.nodes["mProject_0001"]["workflow_output_size_mib"] == pytest.approx(
+    assert application.nodes["mProject_0001"][
+        "workflow_output_size_mib"
+    ] == pytest.approx(
         200 / _BYTES_PER_MIB,
     )
 
@@ -230,10 +235,9 @@ def test_get_workflow(monkeypatch: pytest.MonkeyPatch):
     assert application["mProject_0001"]["mDiffFit_0002"]["bandwidth"] == pytest.approx(
         200 / _BYTES_PER_MIB,
     )
-    assert (
-        application["mProject_0001"]["mDiffFit_0002"]["workflow_transferred_size_mib"]
-        == pytest.approx(200 / _BYTES_PER_MIB)
-    )
+    assert application["mProject_0001"]["mDiffFit_0002"][
+        "workflow_transferred_size_mib"
+    ] == pytest.approx(200 / _BYTES_PER_MIB)
     assert application["mProject_0001"]["mDiffFit_0002"]["weight"] == 1
 
     assert "latency" in application["mProject_0001"]["mDiffFit_0002"]
@@ -272,7 +276,7 @@ def test_get_workflow_rejects_too_small_num_tasks(
 
     with pytest.raises(
         ValueError,
-        match="Workflow family 'genome' requires num_tasks >= 54, got 10.",
+        match=re.escape("Workflow family 'genome' requires num_tasks >= 54, got 10."),
     ):
         get_workflow("genome", num_tasks=10)
 
