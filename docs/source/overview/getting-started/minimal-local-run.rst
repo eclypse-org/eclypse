@@ -19,22 +19,22 @@ Build the scenario
 
 The following example uses:
 
-- :func:`~eclypse.builders.infrastructure.generators.hierarchical` to build a
+- :func:`~eclypse.builders.infrastructure.get_hierarchical` to build a
   small infrastructure,
 - :func:`~eclypse.builders.application.sock_shop.application.get_sock_shop` to
   build a reference application,
-- :class:`~eclypse.placement.strategies.random.RandomStrategy` for placement.
+- :class:`~eclypse.placement.strategies.RandomStrategy` for placement.
 
 .. code-block:: python
 
    from eclypse.builders.application import get_sock_shop
-   from eclypse.builders.infrastructure import hierarchical
+   from eclypse.builders.infrastructure import get_hierarchical
    from eclypse.placement.strategies import RandomStrategy
    from eclypse.simulation import Simulation, SimulationConfig
 
    seed = 22
 
-   infrastructure = hierarchical(
+   infrastructure = get_hierarchical(
        n=20,
        include_default_assets=True,
        seed=seed,
@@ -49,10 +49,11 @@ The following example uses:
        seed=seed,
        max_steps=20,
        include_default_metrics=True,
+       default_strategy=RandomStrategy(seed=seed),
    )
 
    simulation = Simulation(infrastructure, simulation_config=config)
-   simulation.register(application, RandomStrategy(seed=seed))
+   simulation.register(application)
 
 Run the simulation
 ------------------
@@ -62,8 +63,7 @@ simulation and wait for it to finish:
 
 .. code-block:: python
 
-   simulation.start()
-   simulation.wait()
+   simulation.run()
 
 Inspect the report
 ------------------

@@ -23,7 +23,7 @@ The usual flow is:
 #. create a :class:`~eclypse.simulation.config.SimulationConfig`,
 #. create a :class:`~eclypse.simulation.simulation.Simulation`,
 #. register one or more applications with a placement strategy,
-#. start the simulation and wait for completion.
+#. run the simulation and wait for completion.
 
 .. code-block:: python
 
@@ -42,8 +42,7 @@ The usual flow is:
    simulation = Simulation(example_infra, config)
    simulation.register(example_app, RandomStrategy(seed=42))
 
-   simulation.start()
-   simulation.wait()
+   simulation.run()
 
    application_frame = simulation.report.application()
 
@@ -61,10 +60,12 @@ The table below summarises every public parameter of
      - Default
      - Meaning
    * - ``step_every_ms``
-     - ``"manual"``
+     - ``"auto"``
      - Controls how the driving ``enact`` event is scheduled. Use
-       ``"manual"`` for fully manual stepping, ``"auto"`` for continuous
-       progression, or a numeric value for a fixed periodic step.
+       ``"auto"`` for continuous local progression, ``"manual"`` or ``None``
+       for fully manual stepping, or a numeric value for a fixed periodic step.
+       In remote mode, ``"auto"`` resolves to manual stepping unless a numeric
+       cadence is provided.
    * - ``timeout``
      - ``None``
      - Stops the simulation after the given number of seconds.
@@ -82,6 +83,12 @@ The table below summarises every public parameter of
    * - ``include_default_metrics``
      - ``False``
      - Adds the built-in metrics shipped by ECLYPSE to the event set.
+   * - ``default_strategy``
+     - ``None``
+     - Placement strategy used for applications registered without an explicit
+       strategy. Per-application strategies passed to
+       :meth:`~eclypse.simulation.simulation.Simulation.register` take
+       precedence.
    * - ``seed``
      - random
      - Seed used for deterministic sampling and reproducible scenarios.
@@ -131,11 +138,11 @@ This configuration asks the simulation to:
 - stop after one minute,
 - or stop earlier if 120 steps are reached first.
 
-If you want manual progression instead, keep the default:
+If you want manual progression instead, opt in explicitly:
 
 .. code-block:: python
 
-   config = SimulationConfig(step_every_ms="manual")
+   config = SimulationConfig(step_every_ms=None)
 
 and then advance the run explicitly with
 :py:meth:`~eclypse.simulation.simulation.Simulation.step`.
@@ -247,8 +254,7 @@ applications together with a placement strategy:
    simulation = Simulation(example_infra, config)
    simulation.register(example_app, RandomStrategy(seed=42))
 
-   simulation.start()
-   simulation.wait()
+   simulation.run()
 
 When the run finishes, the :attr:`~eclypse.simulation.simulation.Simulation.report`
 property exposes a :class:`~eclypse.report.report.Report` object:

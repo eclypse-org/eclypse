@@ -1,7 +1,7 @@
 Placement Strategy
 ==================
 
-In ECLYPSE, a :class:`~eclypse.placement.strategies.strategy.PlacementStrategy`
+In ECLYPSE, a :class:`~eclypse.placement.strategies.PlacementStrategy`
 defines how application services are assigned to infrastructure nodes.
 Placement can be performed globally across the infrastructure, or separately
 for each application.
@@ -19,7 +19,7 @@ There are two ways to choose which strategy to use:
          :link-type: ref
 
          Subclass the abstract
-         :class:`~eclypse.placement.strategies.strategy.PlacementStrategy` base
+         :class:`~eclypse.placement.strategies.PlacementStrategy` base
          class or one of the built-in specialisations.
 
    .. grid-item::
@@ -36,9 +36,9 @@ Extend the PlacementStrategy class
 ----------------------------------
 
 To define a custom placement strategy, subclass the base class
-:class:`~eclypse.placement.strategies.strategy.PlacementStrategy` and override
+:class:`~eclypse.placement.strategies.PlacementStrategy` and override
 the
-:py:meth:`~eclypse.placement.strategies.strategy.PlacementStrategy.place`
+:py:meth:`~eclypse.placement.strategies.PlacementStrategy.place`
 method.
 
 This method must return a mapping from **service IDs** to **node IDs**, representing where each service in the application should be deployed.
@@ -62,7 +62,7 @@ This method must return a mapping from **service IDs** to **node IDs**, represen
 .. important::
 
    The `infrastructure` parameter passed to the
-   :py:meth:`~eclypse.placement.strategies.strategy.PlacementStrategy.place`
+   :py:meth:`~eclypse.placement.strategies.PlacementStrategy.place`
    method is **already filtered** to include only the available portion of the
    infrastructure.
 
@@ -80,29 +80,31 @@ ECLYPSE provides a collection of predefined placement strategies that can be use
 
 The available default strategies are:
 
-- :class:`~eclypse.placement.strategies.round_robin.RoundRobinStrategy` — assigns services to nodes in a round-robin fashion.
-- :class:`~eclypse.placement.strategies.random.RandomStrategy` — randomly selects a node for each service.
-- :class:`~eclypse.placement.strategies.static.StaticStrategy` — expects service-to-node mappings to be provided statically.
-- :class:`~eclypse.placement.strategies.first_fit.FirstFitStrategy` — places services on the first node that satisfies their requirements.
-- :class:`~eclypse.placement.strategies.best_fit.BestFitStrategy` — selects the node with the tightest fit (smallest surplus) for each service.
+- :class:`~eclypse.placement.strategies.RoundRobinStrategy` — assigns services to nodes in a round-robin fashion.
+- :class:`~eclypse.placement.strategies.RandomStrategy` — randomly selects a node for each service.
+- :class:`~eclypse.placement.strategies.StaticStrategy` — expects service-to-node mappings to be provided statically.
+- :class:`~eclypse.placement.strategies.FirstFitStrategy` — places services on the first node that satisfies their requirements.
+- :class:`~eclypse.placement.strategies.BestFitStrategy` — selects the node with the tightest fit (smallest surplus) for each service.
 
 Attaching a Placement Strategy
 ------------------------------
 
-To use a placement strategy during simulation, it must be associated with either an application or the infrastructure.
+To use a placement strategy during simulation, provide it either as the
+simulation default or for a specific application registration.
 
 There are two ways to attach a strategy:
 
-- **Via the infrastructure:**
-  You can pass the strategy when instantiating the :class:`~eclypse.graph.infrastructure.Infrastructure` object:
+- **Via ``SimulationConfig.default_strategy``:**
+  Use this when most applications should share the same placement policy:
 
   .. code-block:: python
 
-     from eclypse.graph.infrastructure import Infrastructure
      from eclypse.placement.strategies import RandomStrategy
+     from eclypse.simulation import Simulation, SimulationConfig
 
-     strategy = RandomStrategy()
-     infr = Infrastructure(..., placement_strategy=strategy)
+     config = SimulationConfig(default_strategy=RandomStrategy())
+     sim = Simulation(infrastructure, config)
+     sim.register(application)
 
 - **Via the application registration:**
   You can associate a strategy when registering the application with the simulation using the :py:meth:`~eclypse.simulation.simulation.Simulation.register` method:
@@ -117,6 +119,8 @@ There are two ways to attach a strategy:
 
 .. important::
 
-   If **no strategy is attached** to either the application or the infrastructure, the simulation will raise an error.
+   If no strategy is provided through ``SimulationConfig.default_strategy`` or
+   ``Simulation.register(...)``, the simulation raises an error.
 
-   If **both** are provided, the strategy associated with the **application** takes precedence over the one defined in the infrastructure.
+   If both are provided, the strategy passed to ``register`` takes precedence
+   for that application.
