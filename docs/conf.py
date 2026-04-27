@@ -35,7 +35,6 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.autosectionlabel",
     "sphinx.ext.coverage",
-    "sphinx.ext.napoleon",
     "sphinxcontrib.icon",
     "sphinx_copybutton",
     "sphinx_favicon",
@@ -48,7 +47,31 @@ autosectionlabel_prefix_document = True
 myst_enable_extensions = ["colon_fence"]
 
 templates_path = ["_templates"]
-exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "README.md"]
+exclude_patterns = [
+    "_build",
+    "Thumbs.db",
+    ".DS_Store",
+    "README.md",
+    "source/api/reference/graph/application/Application/"
+    "eclypse.graph.application.Application.has_logic.rst",
+    "source/api/reference/graph/infrastructure/Infrastructure/"
+    "eclypse.graph.infrastructure.Infrastructure.contains.rst",
+    "source/api/reference/graph/infrastructure/Infrastructure/"
+    "eclypse.graph.infrastructure.Infrastructure.has_strategy.rst",
+    "source/api/reference/workflow/trigger/bucket/TriggerBucket/"
+    "eclypse.workflow.trigger.bucket.TriggerBucket.init.rst",
+    "source/api/reference/workflow/trigger/cascade/RandomCascadeTrigger/"
+    "eclypse.workflow.trigger.cascade.RandomCascadeTrigger.init.rst",
+    "source/api/reference/workflow/trigger/trigger/RandomTrigger/"
+    "eclypse.workflow.trigger.trigger.RandomTrigger.init.rst",
+    "source/api/reference/workflow/trigger/trigger/ScheduledTrigger/"
+    "eclypse.workflow.trigger.trigger.ScheduledTrigger.init.rst",
+    "source/api/reference/workflow/trigger/trigger/Trigger/"
+    "eclypse.workflow.trigger.trigger.Trigger.init.rst",
+    "source/api/reference/workflow/event/decorator/"
+    "eclypse.workflow.event.decorator.event.rst",
+]
+suppress_warnings = ["toc.not_included"]
 
 coverage_show_missing_items = True
 # Automatically extract typehints when specified and place them in
@@ -156,12 +179,9 @@ html_scaled_image_link = False
 def patch_autosummary_name_collisions():
     """Resolve package-level name collisions for autosummary generation.
 
-    The ``eclypse.workflow.event`` package re-exports the ``event`` decorator,
-    which shadows the ``event`` submodule when autosummary resolves dotted
-    names. During the docs build we point the package attribute to the submodule
-    so the generated module page documents ``eclypse.workflow.event.event``
-    rather than the decorator function. The decorator remains documented through
-    ``eclypse.workflow.event.decorator``.
+    The ``eclypse.workflow.event`` package contains an ``event`` submodule. During
+    the docs build we point the package attribute to the submodule so the
+    generated module page documents ``eclypse.workflow.event.event`` reliably.
 
     Recent autosummary releases also expect package-level attributes for
     relative submodule entries such as ``simulation`` under ``eclypse`` and
@@ -177,7 +197,6 @@ def patch_autosummary_name_collisions():
     metrics_pkg.defaults = import_module("eclypse.report.metrics.defaults")
 
     event_pkg = import_module("eclypse.workflow.event")
-    event_pkg.decorator_event = event_pkg.event
     event_pkg.event = import_module("eclypse.workflow.event.event")
 
 
