@@ -6,7 +6,7 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
-from eclypse.policies._filters import apply_numeric_transform_to_values
+from eclypse.policies.workload._helpers import apply_selected_asset_transform
 
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
@@ -89,9 +89,17 @@ def diurnal_load(
 
 
 def _scale_assets(data, assets, factor):
-    if assets is None:
-        return
-    apply_numeric_transform_to_values(
+    """Scale selected assets inside one asset mapping.
+
+    Args:
+        data (dict[str, object]): Asset mapping to mutate.
+        assets (str | list[str] | None): Optional asset selector.
+        factor (float): Multiplicative factor to apply.
+
+    Returns:
+        None.
+    """
+    apply_selected_asset_transform(
         data,
         assets,
         transform=lambda _key, current: current * factor,

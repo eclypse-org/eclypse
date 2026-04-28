@@ -9,6 +9,7 @@ from eclypse.policies._filters import (
     iter_selected_nodes,
 )
 from eclypse.policies._helpers import validate_probability
+from eclypse.policies.failure._helpers import set_availability_with_probability
 from eclypse.utils.constants import MIN_AVAILABILITY
 
 if TYPE_CHECKING:
@@ -57,12 +58,14 @@ def kill_nodes(
             )
             if graph.rnd.random() < probability:
                 data[availability_key] = down_availability
-            elif (
-                revive_probability is not None
-                and availability <= down_availability
-                and graph.rnd.random() < revive_probability
-            ):
-                data[availability_key] = revived_availability
+            elif revive_probability is not None and availability <= down_availability:
+                set_availability_with_probability(
+                    data,
+                    probability=revive_probability,
+                    availability_key=availability_key,
+                    target_availability=revived_availability,
+                    random=graph.rnd,
+                )
 
         graph.logger.trace("Applied kill_nodes policy.")
 

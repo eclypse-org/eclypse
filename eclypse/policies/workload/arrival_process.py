@@ -5,11 +5,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import (
-    apply_numeric_transform_to_values,
     iter_selected_edges,
     iter_selected_nodes,
 )
 from eclypse.policies.distribution.poisson import _sample_poisson
+from eclypse.policies.workload._helpers import apply_selected_asset_transform
 
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
@@ -67,9 +67,18 @@ def arrival_process(
 
 
 def _add_arrivals(data, assets, rate, graph):
-    if assets is None:
-        return
-    apply_numeric_transform_to_values(
+    """Apply sampled arrivals to one asset mapping.
+
+    Args:
+        data (dict[str, object]): Asset mapping to mutate.
+        assets (str | list[str] | None): Optional asset selector.
+        rate (float): Poisson arrival rate.
+        graph (AssetGraph): Graph providing the random generator.
+
+    Returns:
+        None.
+    """
+    apply_selected_asset_transform(
         data,
         assets,
         transform=lambda _key, current: current + _sample_poisson(graph.rnd, rate),
