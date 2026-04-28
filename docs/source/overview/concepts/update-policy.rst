@@ -30,14 +30,29 @@ ECLYPSE also provides a catalogue of off-the-shelf policies in
 :mod:`eclypse.policies`. The module groups reusable policies into a few common
 families:
 
-- **failure**: availability flapping, node failures, and latency spikes
-- **noise**: bounded random walks, momentum walks, and impulse shocks
+- **failure**: node and edge failures, availability flapping, correlated
+  failures, partitions, brownouts, resource exhaustion, and latency spikes
+- **noise**: bounded and momentum random walks, additive or multiplicative
+  jitter, Gaussian jitter, correlated noise, seasonal noise, dropout, and
+  impulse shocks
 - **distribution**: uniform, normal, lognormal, triangular, beta, gamma,
-  truncated-normal, and categorical multiplicative perturbations
-- **degrade**: progressive increase or reduction of selected assets through
-  explicit ``increase()`` and ``reduce()`` policies
-- **replay**: replay of node or edge values from records, dataframes, or parquet files
-- **schedule**: wrappers such as ``every()``, ``after()``, ``between()``, and ``once_at()``
+  truncated-normal, categorical, constant, Bernoulli, Poisson, exponential,
+  Weibull, Pareto, empirical, and weighted discrete multiplicative
+  perturbations
+- **degrade**: progressive increase or reduction, direct assignment, scaling,
+  decay, clamping, restoring, and ramping of selected assets
+- **replay**: replay of node, edge, graph, and event values from records,
+  dataframes, CSV files, or parquet files, with optional cyclic replay
+- **schedule**: wrappers such as ``every()``, ``after()``, ``between()``,
+  ``once_at()``, ``at()``, ``until()``, ``repeat()``, ``with_probability()``,
+  ``jittered_every()``, and ``cooldown()``
+- **compose**: reusable policy composition with ``chain()``, ``all_of()``,
+  ``one_of()``, ``weighted_choice()``, and ``conditional()``
+- **workload**: arrival processes, traffic matrices, and diurnal load
+- **topology**: graph mutation policies for adding, removing, rewiring, and
+  churn
+- **constraints**: invariant-enforcing policies such as clamping,
+  normalisation, rounding, and capacity floors
 
 For most simulations, the easiest workflow is to compose a few built-in
 policies and only fall back to a custom callable when the behaviour is
@@ -128,6 +143,21 @@ Scheduling wrappers let you activate a policy only during part of the run.
                 edge_assets=["latency"],
             ),
         ),
+        policies.with_probability(
+            0.2,
+            policies.failure.brownout(
+                factor=0.75,
+                node_assets=["cpu", "ram"],
+            ),
+        ),
+        policies.jittered_every(
+            10,
+            policies.noise.additive_jitter(
+                edge_ranges={"latency": (-1.0, 2.0)},
+                lower=0.0,
+            ),
+            jitter=2,
+        ),
     ]
 
 Replay Policies
@@ -148,6 +178,59 @@ or synthetic measurements over time.
         time_column="time",
         value_columns=["user_count"],
         start_step=0,
+        cyclic=True,
+    )
+
+.. code-block:: python
+    :caption: **Example:** Replay node and edge values together
+
+    from eclypse import policies
+
+    replay_trace = policies.replay.replay_graph(
+        node_records=[
+            {"time": 0, "node_id": "edge-1", "users": 10},
+            {"time": 1, "node_id": "edge-1", "users": 18},
+        ],
+        edge_records=[
+            {"time": 0, "source": "edge-1", "target": "cloud", "latency": 12},
+            {"time": 1, "source": "edge-1", "target": "cloud", "latency": 20},
+        ],
+        node_value_columns=["users"],
+        edge_value_columns=["latency"],
+        cyclic=True,
+    )
+
+Composition, Workloads, Topology, and Constraints
+-------------------------------------------------
+
+The higher-level families help keep scenario code small when multiple effects
+must be combined.
+
+.. code-block:: python
+    :caption: **Example:** Compose workload, topology, and constraints
+
+    from eclypse import policies
+
+    update_policy = policies.compose.chain(
+        policies.workload.arrival_process(
+            rate=20,
+            node_assets="users",
+            node_filter=lambda node_id, data: data.get("tier") == "edge",
+        ),
+        policies.workload.traffic_matrix(
+            {("edge-1", "cloud"): 120.0},
+            asset="traffic",
+        ),
+        policies.constraints.ensure_capacity_floor(
+            1.0,
+            edge_assets="bandwidth",
+        ),
+        policies.topology.churn(
+            add_probability=0.1,
+            candidate_nodes={
+                "burst-edge": {"cpu": 16, "ram": 32, "availability": 1.0},
+            },
+        ),
     )
 
 Writing Custom Policies

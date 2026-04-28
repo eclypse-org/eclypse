@@ -8,12 +8,13 @@ from typing import (
     Any,
 )
 
+from eclypse.policies._helpers import validate_missing_behaviour
 from eclypse.policies.replay._helpers import (
     group_records_by_step,
     infer_value_columns,
     initial_step,
     normalise_records,
-    validate_missing_behaviour,
+    resolve_replay_step,
 )
 
 if TYPE_CHECKING:
@@ -36,11 +37,17 @@ class ReplayEdgesPolicy:
     selected_edge_ids: set[tuple[str, str]] | None = None
     edge_filter: EdgeFilter | None = None
     missing: MissingPolicyBehaviour = "ignore"
+    cyclic: bool = False
     current_step: int = 0
 
     def __call__(self, graph: AssetGraph):
         """Apply the replay records for the current step to matching edges."""
-        for record in self.records_by_step.get(self.current_step, []):
+        replay_step = resolve_replay_step(
+            self.records_by_step,
+            self.current_step,
+            cyclic=self.cyclic,
+        )
+        for record in self.records_by_step.get(replay_step, []):
             _update_edge_from_record(
                 graph,
                 record,
@@ -52,7 +59,7 @@ class ReplayEdgesPolicy:
                 missing=self.missing,
             )
 
-        graph.logger.trace(f"Applied replay_edges policy for step {self.current_step}.")
+        graph.logger.trace(f"Applied replay_edges policy for step {replay_step}.")
         self.current_step += 1
 
 
@@ -67,8 +74,26 @@ def replay_edges(
     edge_filter: EdgeFilter | None = None,
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
+    cyclic: bool = False,
 ) -> UpdatePolicy:
-    """Replay edge attributes from time-indexed records."""
+    """Replay edge attributes from time-indexed records.
+
+    Args:
+        record_source (Any): Iterable of mapping records to replay.
+        source_column (str): Column containing edge source identifiers.
+        target_column (str): Column containing edge target identifiers.
+        time_column (str): Column containing replay steps.
+        value_columns (list[str] | tuple[str, ...] | None):
+            Optional explicit columns to copy from records.
+        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing edge.
+        start_step (int | None): Optional starting replay step.
+        cyclic (bool): Whether to wrap past the final available replay step.
+
+    Returns:
+        Stateful edge replay policy.
+    """
     validate_missing_behaviour(missing)
     records = normalise_records(record_source)
     columns = infer_value_columns(
@@ -88,6 +113,7 @@ def replay_edges(
         selected_edge_ids=selected_edge_ids,
         edge_filter=edge_filter,
         missing=missing,
+        cyclic=cyclic,
         current_step=current_step,
     )
 

@@ -5,17 +5,19 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import (
+    clamp,
+    coerce_numeric_like,
+    ensure_numeric_value,
     iter_selected_edges,
+    iter_selected_keys,
     iter_selected_nodes,
 )
-from eclypse.policies.noise._helpers import (
-    apply_impulses,
-    validate_factor_range,
-    validate_probability,
-)
+from eclypse.policies._helpers import validate_probability
 from eclypse.utils.constants import MIN_FLOAT
 
 if TYPE_CHECKING:
+    from random import Random
+
     from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
@@ -61,12 +63,12 @@ def impulse(
         raise ValueError("At least one of node_assets or edge_assets must be provided.")
 
     validate_probability("probability", probability)
-    validate_factor_range("node_factor_range", node_factor_range)
+    _validate_factor_range("node_factor_range", node_factor_range)
 
     effective_edge_factor_range = (
         node_factor_range if edge_factor_range is None else edge_factor_range
     )
-    validate_factor_range("edge_factor_range", effective_edge_factor_range)
+    _validate_factor_range("edge_factor_range", effective_edge_factor_range)
 
     def policy(graph: AssetGraph):
         for _, data in iter_selected_nodes(
@@ -74,7 +76,7 @@ def impulse(
             node_ids=node_ids,
             node_filter=node_filter,
         ):
-            apply_impulses(
+            _apply_impulses(
                 data,
                 node_assets,
                 probability=probability,
@@ -88,7 +90,7 @@ def impulse(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
-            apply_impulses(
+            _apply_impulses(
                 data,
                 edge_assets,
                 probability=probability,
@@ -100,3 +102,34 @@ def impulse(
         graph.logger.trace("Applied impulse policy.")
 
     return policy
+
+
+def _validate_factor_range(name: str, factor_range: tuple[float, float]) -> None:
+    lower, upper = factor_range
+    if lower < 0:
+        raise ValueError(f"{name} must use non-negative factors.")
+    if lower > upper:
+        raise ValueError(f"{name} must be ordered as (low, high).")
+
+
+def _apply_impulses(
+    values: dict[str, object],
+    assets: str | list[str] | None,
+    *,
+    probability: float,
+    factor_range: tuple[float, float],
+    minimum: float,
+    random: Random,
+) -> None:
+    lower_factor, upper_factor = factor_range
+
+    for key in iter_selected_keys(values, assets):
+        if random.random() >= probability:
+            continue
+
+        current = ensure_numeric_value(key, values[key])
+        factor = random.uniform(lower_factor, upper_factor)
+        values[key] = coerce_numeric_like(
+            values[key],
+            clamp(current * factor, lower=minimum),
+        )

@@ -8,12 +8,13 @@ from typing import (
     Any,
 )
 
+from eclypse.policies._helpers import validate_missing_behaviour
 from eclypse.policies.replay._helpers import (
     group_records_by_step,
     infer_value_columns,
     initial_step,
     normalise_records,
-    validate_missing_behaviour,
+    resolve_replay_step,
 )
 
 if TYPE_CHECKING:
@@ -35,11 +36,17 @@ class ReplayNodesPolicy:
     selected_node_ids: set[str] | None = None
     node_filter: NodeFilter | None = None
     missing: MissingPolicyBehaviour = "ignore"
+    cyclic: bool = False
     current_step: int = 0
 
     def __call__(self, graph: AssetGraph):
         """Apply the replay records for the current step to matching nodes."""
-        for record in self.records_by_step.get(self.current_step, []):
+        replay_step = resolve_replay_step(
+            self.records_by_step,
+            self.current_step,
+            cyclic=self.cyclic,
+        )
+        for record in self.records_by_step.get(replay_step, []):
             _update_node_from_record(
                 graph,
                 record,
@@ -50,7 +57,7 @@ class ReplayNodesPolicy:
                 missing=self.missing,
             )
 
-        graph.logger.trace(f"Applied replay_nodes policy for step {self.current_step}.")
+        graph.logger.trace(f"Applied replay_nodes policy for step {replay_step}.")
         self.current_step += 1
 
 
@@ -64,8 +71,25 @@ def replay_nodes(
     node_filter: NodeFilter | None = None,
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
+    cyclic: bool = False,
 ) -> UpdatePolicy:
-    """Replay node attributes from time-indexed records."""
+    """Replay node attributes from time-indexed records.
+
+    Args:
+        record_source (Any): Iterable of mapping records to replay.
+        node_id_column (str): Column containing node identifiers.
+        time_column (str): Column containing replay steps.
+        value_columns (list[str] | tuple[str, ...] | None):
+            Optional explicit columns to copy from records.
+        node_ids (list[str] | None): Optional explicit node identifiers to mutate.
+        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing node.
+        start_step (int | None): Optional starting replay step.
+        cyclic (bool): Whether to wrap past the final available replay step.
+
+    Returns:
+        Stateful node replay policy.
+    """
     validate_missing_behaviour(missing)
     records = normalise_records(record_source)
     columns = infer_value_columns(
@@ -84,6 +108,7 @@ def replay_nodes(
         selected_node_ids=selected_node_ids,
         node_filter=node_filter,
         missing=missing,
+        cyclic=cyclic,
         current_step=current_step,
     )
 

@@ -323,3 +323,65 @@ def test_categorical_distribution_validates_inputs():
 
     with pytest.raises(ValueError):
         policies.distribution.categorical(node_asset_weights={"cpu": [1.0]})
+
+
+def test_new_distribution_policies_apply_numeric_multipliers():
+    graph = build_graph()
+
+    policies.distribution.constant(
+        node_assets="cpu",
+        edge_assets="bandwidth",
+        node_distribution=2.0,
+        edge_distribution=0.5,
+    )(graph)
+    assert graph.nodes["a"]["cpu"] == 160
+    assert graph.edges["a", "b"]["bandwidth"] == 50
+
+    policies.distribution.bernoulli(
+        node_assets="ram",
+        node_distribution=(1.0, 2.0, 0.0),
+    )(graph)
+    assert graph.nodes["a"]["ram"] == 64
+
+    policies.distribution.empirical(node_assets="cpu", node_distribution=[0.5])(graph)
+    assert graph.nodes["a"]["cpu"] == 80
+
+    policies.distribution.discrete(
+        edge_assets="latency",
+        edge_distribution=[(3.0, 1.0)],
+    )(graph)
+    assert graph.edges["a", "b"]["latency"] == 30
+
+
+def test_new_distribution_policies_validate_and_use_seeded_rng():
+    with pytest.raises(ValueError):
+        policies.distribution.bernoulli(
+            node_assets="cpu", node_distribution=(1.5, 1, 0)
+        )
+    with pytest.raises(ValueError):
+        policies.distribution.exponential(node_assets="cpu", node_distribution=0)
+    with pytest.raises(ValueError):
+        policies.distribution.poisson(node_assets="cpu", node_distribution=-1)
+    with pytest.raises(ValueError):
+        policies.distribution.pareto(node_assets="cpu", node_distribution=0)
+    with pytest.raises(ValueError):
+        policies.distribution.weibull(node_assets="cpu", node_distribution=(0, 1))
+    with pytest.raises(ValueError):
+        policies.distribution.empirical(node_assets="cpu", node_distribution=[])
+    with pytest.raises(ValueError):
+        policies.distribution.discrete(node_assets="cpu", node_distribution=[(1, 0)])
+
+    first_graph = build_graph()
+    second_graph = build_graph()
+    for builder, distribution in [
+        (policies.distribution.exponential, 1.0),
+        (policies.distribution.poisson, 2.0),
+        (policies.distribution.pareto, 2.0),
+        (policies.distribution.weibull, (1.0, 2.0)),
+    ]:
+        first_policy = builder(node_assets="cpu", node_distribution=distribution)
+        second_policy = builder(node_assets="cpu", node_distribution=distribution)
+        first_policy(first_graph)
+        second_policy(second_graph)
+
+    assert first_graph.nodes["a"]["cpu"] == second_graph.nodes["a"]["cpu"]

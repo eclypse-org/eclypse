@@ -41,23 +41,25 @@ def increase(
     ``edge_asset_overrides`` for specific assets.
 
     Args:
-        factor: Relative multiplicative factor applied to each selected asset.
+        factor (float | None): Relative multiplicative factor applied to each selected asset.
             Provide either ``factor`` or ``target``.
-        target: Absolute value reached by each selected asset at the end of the
+        target (float | None): Absolute value reached by each selected asset at the end of the
             adjustment horizon. Provide either ``factor`` or ``target``.
-        epochs: Number of evolution steps over which the increase is applied.
-        node_assets: Node asset names using the default adjustment
+        epochs (int | None): Number of evolution steps over which the increase is applied.
+        node_assets (str | list[str] | None): Node asset names using the default adjustment
             configuration.
-        edge_assets: Edge asset names using the default adjustment
+        edge_assets (str | list[str] | None): Edge asset names using the default adjustment
             configuration.
-        node_asset_overrides: Per-node-asset overrides for ``factor``,
+        node_asset_overrides (ValueAdjustmentOverrides | None):
+            Per-node-asset overrides for ``factor``,
             ``target``, or ``epochs``.
-        edge_asset_overrides: Per-edge-asset overrides for ``factor``,
+        edge_asset_overrides (ValueAdjustmentOverrides | None):
+            Per-edge-asset overrides for ``factor``,
             ``target``, or ``epochs``.
-        node_ids: Optional subset of node identifiers to update.
-        node_filter: Optional predicate used to select nodes dynamically.
-        edge_ids: Optional subset of edge identifiers to update.
-        edge_filter: Optional predicate used to select edges dynamically.
+        node_ids (list[str] | None): Optional subset of node identifiers to update.
+        node_filter (NodeFilter | None): Optional predicate used to select nodes dynamically.
+        edge_ids (list[tuple[str, str]] | None): Optional subset of edge identifiers to update.
+        edge_filter (EdgeFilter | None): Optional predicate used to select edges dynamically.
 
     Returns:
         A graph update policy that increases the selected asset values.
