@@ -28,11 +28,6 @@ Homepage = "https://github.com/eclypse-org/eclypse"
 Repository = "https://github.com/eclypse-org/eclypse"
 
 
-[project.optional-dependencies]
-remote = ["ray[default] (>=2.54.0,<3.0.0)"]
-tboard = ["tensorboardx (>=2.6.5,<3.0.0)"]
-
-
 # Dependency Groups
 [dependency-groups]
 dev = [
@@ -159,7 +154,7 @@ filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
 markers = [
     "integration: end-to-end integration tests",
     "emulation: ray-backed remote integration tests",
-    "extras: tests that exercise optional dependencies",
+    "optional: tests that exercise optional dependencies",
 ]
 
 [tool.coverage.run]

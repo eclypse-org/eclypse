@@ -27,7 +27,7 @@ def _require_installed(module_name: str):
         pytest.skip(f"Optional dependency {module_name!r} is not installed.")
 
 
-@pytest.mark.extras
+@pytest.mark.optional
 @pytest.mark.asyncio
 async def test_optional_reporters_initialise_with_real_dependencies(tmp_path: Path):
     _require_installed("polars")
@@ -73,7 +73,7 @@ async def test_optional_reporters_initialise_with_real_dependencies(tmp_path: Pa
     await tensorboard_reporter.close()
 
 
-@pytest.mark.extras
+@pytest.mark.optional
 def test_ray_interface_smoke_round_trip():
     _require_installed("ray")
 

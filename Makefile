@@ -19,7 +19,7 @@ setup-build: setup
 	poetry install --with=dev,deploy --no-root
 
 setup-test: setup
-	poetry install --with=test --extras remote --extras tboard --no-root
+	poetry install --with=test --no-root
 
 format:
 	isort eclypse
