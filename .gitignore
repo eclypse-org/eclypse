@@ -167,3 +167,7 @@ cython_debug/
 # personal
 *.DS_Store
 docs/source/api/reference/*
+
+# graphify
+.graphifyignore
+graphify-out/

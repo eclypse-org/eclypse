@@ -57,14 +57,10 @@ If you want to cite ECLYPSE in your work, you can use the following BibTeX entry
 }
 ```
 
-## Authors
+## Maintainers
 
-- **Jacopo Massa**
-  - Website: [https://pages.di.unipi.it/massa](https://pages.di.unipi.it/massa)
-  - GitHub: [jacopo-massa](https://github.com/jacopo-massa)
-- **Valerio De Caro**
-  - Website: [https://vdecaro.github.io](https://vdecaro.github.io)
-  - GitHub: [vdecaro](https://github.com/vdecaro)
+ECLYPSE is maintained by [Jacopo Massa](https://github.com/jacopo-massa) and
+[Valerio De Caro](https://github.com/vdecaro).
 
 ## Contact Us
 
