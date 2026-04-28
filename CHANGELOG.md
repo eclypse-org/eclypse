@@ -1,3 +1,35 @@
+## 0.9.0 (2026-04-28)
+
+### Feat
+
+- Add new policy families
+- Add policy composition and scheduling helpers
+- Package runnable examples
+- Replace generic event decorator with scheduled helpers
+- Improve simulation runtime and reporting
+- Improve graph and placement quality of life
+- Add infrastructure builder presets
+- Add workflow builders
+- Add DeathStarBench application builders
+- Add infrastructure builder families
+- Add benchmark application builders
+
+### Fix
+
+- Correct logging exports and constant docs
+
+### Refactor
+
+- Reduce duplication in failure and workload policies
+- Standardise policy helper structure
+- Rename graph validation helpers
+- Harmonise asset-graph violation messages
+- Simplify lazy imports and bootstrap logging
+- Align Sock Shop flows and service logic
+- Simplify optional default handling
+- Simplify default asset initialisers
+- Improve placement and logger typing
+
 ## 0.8.5 (2026-04-16)
 
 ### Feat
