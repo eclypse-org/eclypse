@@ -11,6 +11,7 @@ from typing import (
 )
 
 from eclypse.policies._filters import (
+    apply_numeric_transform,
     coerce_numeric_like,
     effective_assets,
     ensure_numeric_value,
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
 
 
 @dataclass(slots=True)
-class ValueAdjustmentPolicy:
+class _ValueAdjustmentPolicy:
     """Adjust selected asset values over a fixed number of epochs."""
 
     direction: ValueAdjustmentDirection
@@ -53,7 +54,7 @@ class ValueAdjustmentPolicy:
 
     def __post_init__(self):
         """Validate the value-adjustment configuration."""
-        validate_adjustment_parameters(
+        _validate_adjustment_parameters(
             self.direction,
             factor=self.factor,
             target=self.target,
@@ -99,7 +100,7 @@ class ValueAdjustmentPolicy:
         self.step += 1
 
 
-def build_value_adjustment_policy(
+def _build_value_adjustment_policy(
     direction: ValueAdjustmentDirection,
     *,
     factor: float | None = None,
@@ -112,11 +113,28 @@ def build_value_adjustment_policy(
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
 ) -> UpdatePolicy:
-    """Build a stateful value-adjustment policy."""
+    """Build a stateful value-adjustment policy.
+
+    Args:
+        direction (ValueAdjustmentDirection):
+            Adjustment direction, either ``"increase"`` or ``"reduce"``.
+        factor (float | None): Optional multiplicative target factor.
+        target (float | None): Optional absolute target value.
+        epochs (int): Number of calls used to complete the adjustment.
+        node_assets (str | list[str] | None): Optional node asset key selector.
+        edge_assets (str | list[str] | None): Optional edge asset key selector.
+        node_ids (list[str] | None): Optional explicit node identifiers to mutate.
+        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+
+    Returns:
+        Stateful value-adjustment policy.
+    """
     if node_assets is None and edge_assets is None:
         raise ValueError("At least one of node_assets or edge_assets must be provided.")
 
-    return ValueAdjustmentPolicy(
+    return _ValueAdjustmentPolicy(
         direction=direction,
         factor=factor,
         target=target,
@@ -145,7 +163,28 @@ def build_configured_value_adjustment_policy(
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
 ) -> UpdatePolicy:
-    """Build a value-adjustment policy with defaults and per-asset overrides."""
+    """Build a value-adjustment policy with defaults and per-asset overrides.
+
+    Args:
+        direction (ValueAdjustmentDirection):
+            Adjustment direction, either ``"increase"`` or ``"reduce"``.
+        factor (float | None): Optional default multiplicative target factor.
+        target (float | None): Optional default absolute target value.
+        epochs (int | None): Optional default number of calls used for adjustment.
+        node_assets (str | list[str] | None): Optional node asset key selector.
+        edge_assets (str | list[str] | None): Optional edge asset key selector.
+        node_asset_overrides (ValueAdjustmentOverrides | None):
+            Optional per-node-asset adjustment overrides.
+        edge_asset_overrides (ValueAdjustmentOverrides | None):
+            Optional per-edge-asset adjustment overrides.
+        node_ids (list[str] | None): Optional explicit node identifiers to mutate.
+        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+
+    Returns:
+        Policy that applies one child adjustment per selected asset.
+    """
     effective_node_assets = effective_assets(node_assets, node_asset_overrides)
     effective_edge_assets = effective_assets(edge_assets, edge_asset_overrides)
 
@@ -155,18 +194,18 @@ def build_configured_value_adjustment_policy(
             "node_asset_overrides, or edge_asset_overrides must be provided."
         )
 
-    validate_overrides(
+    _validate_overrides(
         direction,
         {
-            **normalize_overrides("node_asset_overrides", node_asset_overrides),
-            **normalize_overrides("edge_asset_overrides", edge_asset_overrides),
+            **_normalize_overrides("node_asset_overrides", node_asset_overrides),
+            **_normalize_overrides("edge_asset_overrides", edge_asset_overrides),
         },
     )
 
     child_policies: list[UpdatePolicy] = []
 
     for asset in effective_node_assets:
-        adjustment = resolve_adjustment(
+        adjustment = _resolve_adjustment(
             direction,
             asset_name=asset,
             factor=factor,
@@ -175,7 +214,7 @@ def build_configured_value_adjustment_policy(
             per_asset_overrides=node_asset_overrides,
         )
         child_policies.append(
-            build_value_adjustment_policy(
+            _build_value_adjustment_policy(
                 direction,
                 factor=adjustment.get("factor"),
                 target=adjustment.get("target"),
@@ -187,7 +226,7 @@ def build_configured_value_adjustment_policy(
         )
 
     for asset in effective_edge_assets:
-        adjustment = resolve_adjustment(
+        adjustment = _resolve_adjustment(
             direction,
             asset_name=asset,
             factor=factor,
@@ -196,7 +235,7 @@ def build_configured_value_adjustment_policy(
             per_asset_overrides=edge_asset_overrides,
         )
         child_policies.append(
-            build_value_adjustment_policy(
+            _build_value_adjustment_policy(
                 direction,
                 factor=adjustment.get("factor"),
                 target=adjustment.get("target"),
@@ -216,14 +255,24 @@ def build_configured_value_adjustment_policy(
     return policy
 
 
-def validate_adjustment_parameters(
+def _validate_adjustment_parameters(
     direction: ValueAdjustmentDirection,
     *,
     factor: float | None,
     target: float | None,
     epochs: int | None,
 ) -> None:
-    """Validate a value-adjustment policy configuration."""
+    """Validate a value-adjustment policy configuration.
+
+    Args:
+        direction (ValueAdjustmentDirection): Adjustment direction to validate.
+        factor (float | None): Optional multiplicative target factor.
+        target (float | None): Optional absolute target value.
+        epochs (int | None): Optional number of calls used for adjustment.
+
+    Returns:
+        None.
+    """
     if epochs is None:
         raise ValueError("epochs must be provided.")
     if epochs <= 0:
@@ -243,11 +292,19 @@ def validate_adjustment_parameters(
         raise ValueError("target must be non-negative.")
 
 
-def normalize_overrides(
+def _normalize_overrides(
     name: str,
     overrides: ValueAdjustmentOverrides | None,
 ) -> dict[str, ValueAdjustmentOverride]:
-    """Normalise one or more named overrides into a flat mapping."""
+    """Normalise one or more named overrides into a flat mapping.
+
+    Args:
+        name (str): Name assigned to the override mapping.
+        overrides (ValueAdjustmentOverrides | None): Optional mapping of asset names to overrides.
+
+    Returns:
+        Flat mapping from display names to overrides.
+    """
     if overrides is None:
         return {}
 
@@ -257,14 +314,22 @@ def normalize_overrides(
     }
 
 
-def validate_overrides(
+def _validate_overrides(
     direction: ValueAdjustmentDirection,
     overrides: dict[str, ValueAdjustmentOverride],
 ) -> None:
-    """Validate one or more named value-adjustment overrides."""
+    """Validate one or more named value-adjustment overrides.
+
+    Args:
+        direction (ValueAdjustmentDirection): Adjustment direction to validate against.
+        overrides (dict[str, ValueAdjustmentOverride]): Mapping from display names to overrides.
+
+    Returns:
+        None.
+    """
     for name, adjustment in overrides.items():
         _ensure_only_supported_adjustment_fields(name, adjustment)
-        validate_adjustment_parameters(
+        _validate_adjustment_parameters(
             direction,
             factor=adjustment.get("factor"),
             target=adjustment.get("target"),
@@ -272,7 +337,7 @@ def validate_overrides(
         )
 
 
-def resolve_adjustment(
+def _resolve_adjustment(
     direction: ValueAdjustmentDirection,
     *,
     asset_name: str,
@@ -281,7 +346,19 @@ def resolve_adjustment(
     epochs: int | None,
     per_asset_overrides: ValueAdjustmentOverrides | None,
 ) -> ValueAdjustmentOverride:
-    """Merge default and per-asset override settings for a selected asset."""
+    """Merge default and per-asset override settings for a selected asset.
+
+    Args:
+        direction (ValueAdjustmentDirection): Adjustment direction to validate against.
+        asset_name (str): Asset whose settings are being resolved.
+        factor (float | None): Optional default multiplicative target factor.
+        target (float | None): Optional default absolute target value.
+        epochs (int | None): Optional default number of calls used for adjustment.
+        per_asset_overrides (ValueAdjustmentOverrides | None): Optional per-asset override mapping.
+
+    Returns:
+        Resolved value-adjustment override.
+    """
     adjustment: ValueAdjustmentOverride = {}
 
     if factor is not None:
@@ -297,7 +374,7 @@ def resolve_adjustment(
     if "target" in override:
         adjustment.pop("factor", None)
     adjustment.update(override)
-    validate_overrides(direction, {asset_name: adjustment})
+    _validate_overrides(direction, {asset_name: adjustment})
     return adjustment
 
 
@@ -317,7 +394,7 @@ def _adjust_value(
     original: object,
     current: float,
     state_key: tuple[str, ...],
-    policy: ValueAdjustmentPolicy,
+    policy: _ValueAdjustmentPolicy,
 ) -> int | float:
     if policy.factor is not None:
         step_factor = policy.factor ** (1 / policy.epochs)
@@ -350,7 +427,62 @@ def interpolate_value(
     target_value: float,
     progress: float,
 ) -> float:
-    """Interpolate smoothly between an initial value and a target."""
+    """Interpolate smoothly between an initial value and a target.
+
+    Args:
+        initial_value (float): Value at progress ``0``.
+        target_value (float): Value at progress ``1``.
+        progress (float): Interpolation progress between ``0`` and ``1``.
+
+    Returns:
+        Interpolated value.
+    """
     if initial_value > 0 and target_value > 0:
         return initial_value * ((target_value / initial_value) ** progress)
     return initial_value + ((target_value - initial_value) * progress)
+
+
+def build_asset_transform_policy(
+    *,
+    node_assets: str | list[str] | None = None,
+    edge_assets: str | list[str] | None = None,
+    node_ids: list[str] | None = None,
+    node_filter: NodeFilter | None = None,
+    edge_ids: list[tuple[str, str]] | None = None,
+    edge_filter: EdgeFilter | None = None,
+    transform,
+    label: str,
+) -> UpdatePolicy:
+    """Build a stateless value-transform policy for selected assets.
+
+    Args:
+        node_assets (str | list[str] | None): Optional node asset key selector.
+        edge_assets (str | list[str] | None): Optional edge asset key selector.
+        node_ids (list[str] | None): Optional explicit node identifiers to mutate.
+        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        transform (Any): Callable receiving ``(asset_key, current_value)``.
+        label (str): Trace-log label for the generated policy.
+
+    Returns:
+        Policy that mutates selected numeric assets.
+    """
+    if node_assets is None and edge_assets is None:
+        raise ValueError("At least one of node_assets or edge_assets must be provided.")
+
+    def policy(graph: AssetGraph):
+        apply_numeric_transform(
+            graph,
+            node_assets=node_assets,
+            edge_assets=edge_assets,
+            node_ids=node_ids,
+            node_filter=node_filter,
+            edge_ids=edge_ids,
+            edge_filter=edge_filter,
+            transform=transform,
+        )
+
+        graph.logger.trace(f"Applied {label} value policy.")
+
+    return policy
