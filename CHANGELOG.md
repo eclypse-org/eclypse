@@ -1,3 +1,46 @@
+## 0.9.0 (2026-04-28)
+
+### Breaking changes
+
+- Remove the `remote` and `tboard` extras. Install the required dependencies
+  directly instead of relying on optional extras.
+- Replace the generic event decorator workflow with the scheduled helpers
+  (`every`, `after`, `once_at`, and related wrappers). For more specialised
+  event behaviour, extend `EclypseEvent` directly.
+
+### Added
+
+- Add new built-in policy families: `compose`, `schedule`, `constraints`,
+  `topology`, and `workload`.
+- Expand built-in policies across the existing families, including new failure,
+  noise, distribution, replay, and degrade policies.
+- Add runnable packaged examples through `project.scripts`.
+- Add infrastructure builder presets and families, workflow builders, benchmark
+  application builders, and DeathStarBench application builders.
+
+### Changed
+
+- Improve simulation runtime, reporting, graph ergonomics, and placement
+  quality-of-life behaviour.
+- Standardise policy helper structure and reduce duplication across failure and
+  workload policies.
+- Harmonise validation and typing around graph assets, placement, logging, and
+  bootstrap handling.
+- Align examples and service flows, including the Sock Shop example suite.
+
+### Fixed
+
+- Correct logging exports and constant documentation.
+
+### Migration notes
+
+- Replace older generic event-decorator usage with the new scheduled helpers in
+  user code, documentation snippets, and examples.
+- If a workflow requires more specific event semantics than the built-in
+  helpers provide, implement a custom `EclypseEvent` subclass.
+- Update installation and CI scripts that previously depended on the removed
+  extras.
+
 ## 0.8.5 (2026-04-16)
 
 ### Feat

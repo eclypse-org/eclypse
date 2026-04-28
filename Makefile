@@ -22,15 +22,15 @@ setup-test: setup
 	poetry install --with=test --no-root
 
 format:
-	isort eclypse
-	ruff check
-	ruff format
+	poetry run isort eclypse
+	poetry run ruff check
+	poetry run ruff format
 
 build: format
 	poetry build -v --no-cache --format wheel
 
 verify:
-	twine check --strict dist/*
+	poetry run twine check --strict dist/*
 
 publish-test: build verify
 	poetry publish -r test-pypi --skip-existing -v
