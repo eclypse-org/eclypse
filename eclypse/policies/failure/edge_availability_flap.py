@@ -4,11 +4,9 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from eclypse.policies._filters import (
-    ensure_numeric_value,
-    iter_selected_edges,
-)
+from eclypse.policies._filters import iter_selected_edges
 from eclypse.policies._helpers import validate_probability
+from eclypse.policies.failure._helpers import flap_availability
 from eclypse.utils.constants import (
     MAX_AVAILABILITY,
     MIN_AVAILABILITY,
@@ -59,12 +57,16 @@ def edge_availability_flap(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
-            current = ensure_numeric_value(availability_key, data[availability_key])
-            if current <= unavailable_at_or_below:
-                if graph.rnd.random() < effective_up_probability:
-                    data[availability_key] = up_availability
-            elif graph.rnd.random() < down_probability:
-                data[availability_key] = down_availability
+            flap_availability(
+                data,
+                down_probability=down_probability,
+                up_probability=effective_up_probability,
+                down_availability=down_availability,
+                up_availability=up_availability,
+                availability_key=availability_key,
+                unavailable_at_or_below=unavailable_at_or_below,
+                random=graph.rnd,
+            )
 
         graph.logger.trace("Applied edge_availability_flap policy.")
 

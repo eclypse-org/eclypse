@@ -9,6 +9,7 @@ from eclypse.policies._filters import (
     iter_selected_nodes,
 )
 from eclypse.policies._helpers import validate_probability
+from eclypse.policies.failure._helpers import set_availability_with_probability
 from eclypse.utils.constants import MIN_AVAILABILITY
 
 if TYPE_CHECKING:
@@ -49,8 +50,14 @@ def revive_nodes(
             node_filter=node_filter,
         ):
             current = ensure_numeric_value(availability_key, data[availability_key])
-            if current <= unavailable_at_or_below and graph.rnd.random() < probability:
-                data[availability_key] = availability
+            if current <= unavailable_at_or_below:
+                set_availability_with_probability(
+                    data,
+                    probability=probability,
+                    availability_key=availability_key,
+                    target_availability=availability,
+                    random=graph.rnd,
+                )
 
         graph.logger.trace("Applied revive_nodes policy.")
 

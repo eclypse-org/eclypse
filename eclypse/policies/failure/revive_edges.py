@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import iter_selected_edges
 from eclypse.policies._helpers import validate_probability
+from eclypse.policies.failure._helpers import set_availability_with_probability
 from eclypse.utils.constants import MAX_AVAILABILITY
 
 if TYPE_CHECKING:
@@ -42,8 +43,13 @@ def revive_edges(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
-            if graph.rnd.random() < probability:
-                data[availability_key] = revived_availability
+            set_availability_with_probability(
+                data,
+                probability=probability,
+                availability_key=availability_key,
+                target_availability=revived_availability,
+                random=graph.rnd,
+            )
 
         graph.logger.trace("Applied revive_edges policy.")
 
