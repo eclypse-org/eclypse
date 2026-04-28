@@ -55,3 +55,43 @@ def test_failure_policy_validation_and_alternative_branches():
 
     policies.failure.latency_spike(1.0, factor=2.0)(graph)
     assert graph.edges["a", "b"]["latency"] == 20
+
+
+def test_edge_and_correlated_failure_policies():
+    graph = build_graph()
+    graph.edges["a", "b"]["availability"] = 1.0
+    graph.nodes["a"]["zone"] = "z1"
+    graph.nodes["b"]["zone"] = "z1"
+
+    policies.failure.kill_edges(1.0)(graph)
+    assert graph.edges["a", "b"]["availability"] == 0.0
+
+    policies.failure.revive_edges(1.0)(graph)
+    assert graph.edges["a", "b"]["availability"] == 1.0
+
+    policies.failure.edge_availability_flap(1.0)(graph)
+    assert graph.edges["a", "b"]["availability"] == 0.0
+
+    policies.failure.correlated_failure(1.0, group_key="zone")(graph)
+    assert graph.nodes["a"]["availability"] == 0.0
+    assert graph.nodes["b"]["availability"] == 0.0
+
+
+def test_partition_brownout_and_resource_exhaustion_policies():
+    graph = build_graph()
+    graph.add_node("c", cpu=20, ram=8, availability=1.0)
+    graph.add_edge("b", "c", latency=30, bandwidth=50, availability=1.0)
+    graph.edges["a", "b"]["availability"] = 1.0
+
+    policies.failure.network_partition([["a"], ["b", "c"]])(graph)
+    assert graph.edges["a", "b"]["availability"] == 0.0
+    assert graph.edges["b", "c"]["availability"] == 1.0
+
+    policies.failure.resource_exhaustion(1.0, factor=0.5, node_assets="cpu")(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    policies.failure.brownout(1.0, factor=0.5, edge_assets="bandwidth")(graph)
+    assert graph.edges["a", "b"]["bandwidth"] == 50
+
+    with pytest.raises(ValueError):
+        policies.failure.network_partition([["a"]])

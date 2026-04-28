@@ -8,7 +8,7 @@ from eclypse.policies._filters import (
     ensure_numeric_value,
     iter_selected_nodes,
 )
-from eclypse.policies.failure._helpers import validate_probability
+from eclypse.policies._helpers import validate_probability
 from eclypse.utils.constants import (
     MAX_AVAILABILITY,
     MIN_AVAILABILITY,

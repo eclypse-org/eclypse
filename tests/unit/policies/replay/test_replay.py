@@ -158,3 +158,73 @@ def test_replay_filters_start_step_and_edge_missing_behaviour():
     )
     with pytest.raises(KeyError):
         failing_edge_policy(graph)
+
+
+def test_replay_cyclic_graph_mapping_events_and_interpolation(monkeypatch):
+    graph = build_graph()
+
+    cyclic = policies.replay.replay_nodes(
+        [
+            {"time": 0, "node_id": "a", "cpu": 1},
+            {"time": 1, "node_id": "a", "cpu": 2},
+        ],
+        value_columns=["cpu"],
+        cyclic=True,
+    )
+    cyclic(graph)
+    cyclic(graph)
+    cyclic(graph)
+    assert graph.nodes["a"]["cpu"] == 1
+
+    graph_policy = policies.replay.replay_graph(
+        node_records=[{"time": 0, "node_id": "a", "ram": 44}],
+        edge_records=[{"time": 0, "source": "a", "target": "b", "latency": 22}],
+        node_value_columns=["ram"],
+        edge_value_columns=["latency"],
+    )
+    graph_policy(graph)
+    assert graph.nodes["a"]["ram"] == 44
+    assert graph.edges["a", "b"]["latency"] == 22
+
+    mapped = policies.replay.replay_with_mapping(
+        [{"time": 0, "external": "A", "value": 33}],
+        target="nodes",
+        column_mapping={"external": "node_id", "value": "cpu"},
+        id_mapping={"A": "a"},
+        value_columns=["cpu"],
+    )
+    mapped(graph)
+    assert graph.nodes["a"]["cpu"] == 33
+
+    events = policies.replay.replay_events(
+        [
+            {
+                "time": 0,
+                "policy": lambda target_graph: target_graph.nodes["a"].update(cpu=12),
+            }
+        ]
+    )
+    events(graph)
+    assert graph.nodes["a"]["cpu"] == 12
+
+    interpolated = policies.replay.interpolated_replay(
+        [
+            {"time": 0, "node_id": "a", "cpu": 0},
+            {"time": 2, "node_id": "a", "cpu": 20},
+        ],
+        target="nodes",
+        value_columns=["cpu"],
+    )
+    interpolated(graph)
+    interpolated(graph)
+    assert graph.nodes["a"]["cpu"] == 10
+
+    class FakePandas:
+        @staticmethod
+        def read_csv(path):
+            assert path == "trace.csv"
+            return FakeDataFrame([{"time": 0, "node_id": "a", "cpu": 5}])
+
+    monkeypatch.setitem(__import__("sys").modules, "pandas", FakePandas)
+    policies.replay.from_csv("trace.csv", target="nodes", value_columns=["cpu"])(graph)
+    assert graph.nodes["a"]["cpu"] == 5

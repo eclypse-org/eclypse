@@ -153,7 +153,19 @@ def normalize_weight_sets(
     asset_distributions: dict[str, list[float]] | None,
     asset_weights: dict[str, list[float]] | None,
 ) -> dict[str, tuple[list[float], list[float] | None]]:
-    """Normalise default and per-asset categorical weights into one mapping."""
+    """Normalise default and per-asset categorical weights into one mapping.
+
+    Args:
+        default_name (str): Display name for the default distribution.
+        default_distribution (list[float]): Default categorical choices.
+        default_weights (list[float] | None): Optional default categorical weights.
+        asset_name (str): Display name for per-asset distributions.
+        asset_distributions (dict[str, list[float]] | None): Optional per-asset categorical choices.
+        asset_weights (dict[str, list[float]] | None): Optional per-asset categorical weights.
+
+    Returns:
+        Mapping from display names to ``(choices, weights)`` pairs.
+    """
     normalized_weights = {
         default_name: (default_distribution, default_weights),
     }
@@ -176,7 +188,15 @@ def normalize_weight_sets(
 def validate_weights(
     weight_sets: dict[str, tuple[list[float], list[float] | None]],
 ) -> None:
-    """Validate one or more named categorical weight sets."""
+    """Validate one or more named categorical weight sets.
+
+    Args:
+        weight_sets (dict[str, tuple[list[float], list[float] | None]]):
+            Mapping from display names to ``(choices, weights)`` pairs.
+
+    Returns:
+        None.
+    """
     for name, (distribution, weights) in weight_sets.items():
         if weights is None:
             continue

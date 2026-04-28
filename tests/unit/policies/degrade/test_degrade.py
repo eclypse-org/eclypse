@@ -134,3 +134,52 @@ def test_increase_and_reduce_can_be_composed_explicitly():
     assert graph.nodes["a"]["ram"] == 64
     assert graph.edges["a", "b"]["bandwidth"] == 25
     assert graph.edges["a", "b"]["latency"] == 20
+
+
+def test_additional_degrade_policies_transform_values():
+    graph = build_graph()
+
+    policies.degrade.set_value(
+        10,
+        node_assets="cpu",
+        edge_values={"bandwidth": 40},
+    )(graph)
+    assert graph.nodes["a"]["cpu"] == 10
+    assert graph.edges["a", "b"]["bandwidth"] == 40
+
+    policies.degrade.scale(2, node_assets="cpu")(graph)
+    assert graph.nodes["a"]["cpu"] == 20
+
+    policies.degrade.decay(0.5, edge_assets="bandwidth")(graph)
+    assert graph.edges["a", "b"]["bandwidth"] == 20
+
+    policies.degrade.clamp_values(upper=15, node_assets="cpu")(graph)
+    assert graph.nodes["a"]["cpu"] == 15
+
+    ramp = policies.degrade.ramp_to(60, epochs=2, node_assets="cpu")
+    ramp(graph)
+    ramp(graph)
+    assert graph.nodes["a"]["cpu"] == 60
+
+    graph.nodes["a"]["cpu"] = 10
+    restore = policies.degrade.restore(
+        epochs=2,
+        node_assets="cpu",
+        node_values={"cpu": 80},
+    )
+    restore(graph)
+    restore(graph)
+    assert graph.nodes["a"]["cpu"] == 80
+
+
+def test_additional_degrade_policies_validate_inputs():
+    with pytest.raises(ValueError):
+        policies.degrade.scale(1.0)
+    with pytest.raises(ValueError):
+        policies.degrade.decay(1.5, node_assets="cpu")
+    with pytest.raises(ValueError):
+        policies.degrade.clamp_values(lower=2, upper=1, node_assets="cpu")
+    with pytest.raises(ValueError):
+        policies.degrade.ramp_to(1, epochs=0, node_assets="cpu")
+    with pytest.raises(ValueError):
+        policies.degrade.restore(epochs=0, node_assets="cpu")

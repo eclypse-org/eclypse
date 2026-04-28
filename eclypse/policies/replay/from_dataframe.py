@@ -34,8 +34,30 @@ def from_dataframe(
     edge_filter: EdgeFilter | None = None,
     missing: MissingPolicyBehaviour = "ignore",
     start_step: int | None = None,
+    cyclic: bool = False,
 ) -> UpdatePolicy:
-    """Build a replay policy from a dataframe-like object."""
+    """Build a replay policy from a dataframe-like object.
+
+    Args:
+        dataframe (Any): DataFrame-like object convertible to replay records.
+        target (ReplayTarget): Replay target, either ``"nodes"`` or ``"edges"``.
+        node_id_column (str): Column containing node identifiers.
+        source_column (str): Column containing edge source identifiers.
+        target_column (str): Column containing edge target identifiers.
+        time_column (str): Column containing replay steps.
+        value_columns (list[str] | tuple[str, ...] | None):
+            Optional explicit columns to copy from records.
+        node_ids (list[str] | None): Optional explicit node identifiers to mutate.
+        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing item.
+        start_step (int | None): Optional starting replay step.
+        cyclic (bool): Whether to wrap past the final available replay step.
+
+    Returns:
+        Stateful replay policy.
+    """
     return from_records(
         normalise_records(dataframe),
         target=target,
@@ -50,4 +72,5 @@ def from_dataframe(
         edge_filter=edge_filter,
         missing=missing,
         start_step=start_step,
+        cyclic=cyclic,
     )
