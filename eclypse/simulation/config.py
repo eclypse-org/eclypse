@@ -190,11 +190,11 @@ class SimulationConfig:
             raise RuntimeError("Reporters must be resolved before dependency checks.")
 
         if TENSORBOARD_REPORT_DIR in self.reporters:
-            _require_module("tensorboardX", extras_name="tboard")
+            _require_module("tensorboardX")
         if PARQUET_REPORT_DIR in self.reporters:
             _require_module("polars")
         if self.remote is not None:
-            _require_module("ray", extras_name="remote")
+            _require_module("ray")
         if self.report_backend == "pandas":
             _require_module("pandas")
         if self.report_backend in ("polars", "polars_lazy"):
@@ -341,18 +341,14 @@ class SimulationConfig:
         }
 
 
-def _require_module(module_name: str, extras_name: str | None = None):
+def _require_module(module_name: str):
     """Require a module and raise an ImportError if it is not found."""
     try:
         __import__(module_name)
     except ImportError as e:
-        install_hint = (
-            f"pip install eclypse[{extras_name}]"
-            if extras_name is not None
-            else f"pip install {module_name}"
-        )
         raise ImportError(
-            f"{module_name} is not installed. Please install it with '{install_hint}'."
+            f"{module_name} is not installed. Please install it with "
+            f"'pip install {module_name}'."
         ) from e
 
 

@@ -96,14 +96,24 @@ ValueAdjustmentOverrides: TypeAlias = dict[str, ValueAdjustmentOverride]
 
 Distribution: TypeAlias = Literal[
     "beta",
+    "bernoulli",
+    "constant",
+    "discrete",
+    "empirical",
+    "exponential",
     "gamma",
     "lognormal",
     "normal",
+    "pareto",
+    "poisson",
+    "triangular",
+    "truncated_normal",
     "uniform",
+    "weibull",
 ]
 """Type alias for the supported built-in distribution policies."""
 
-ReplayTarget: TypeAlias = Literal["nodes", "edges"]
+ReplayTarget: TypeAlias = Literal["nodes", "edges", "graph"]
 """Type alias for the supported replay targets."""
 
 MissingPolicyBehaviour: TypeAlias = Literal["ignore", "error"]

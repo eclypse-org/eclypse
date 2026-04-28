@@ -59,18 +59,18 @@ def test_simulation_config_rejects_invalid_step_and_duplicate_keys(list_frame_ba
 
 
 def test_require_module_surfaces_install_hint():
-    with pytest.raises(ImportError, match="pip install eclypse\\[remote\\]"):
-        _require_module("module_that_does_not_exist", extras_name="remote")
+    with pytest.raises(ImportError, match="pip install module_that_does_not_exist"):
+        _require_module("module_that_does_not_exist")
 
 
 def test_simulation_config_helper_methods_cover_optional_paths(
     monkeypatch, tmp_path, dummy_logger
 ):
-    require_calls: list[tuple[str, str | None]] = []
+    require_calls: list[str] = []
 
     monkeypatch.setattr(
         "eclypse.simulation.config._require_module",
-        lambda module, extras_name=None: require_calls.append((module, extras_name)),
+        lambda module: require_calls.append(module),
     )
     monkeypatch.setattr(
         "eclypse.simulation.config.strftime", lambda _fmt: "20260407_120000"
@@ -109,10 +109,10 @@ def test_simulation_config_helper_methods_cover_optional_paths(
     config._ensure_optional_dependencies()
 
     assert require_calls == [
-        ("tensorboardX", "tboard"),
-        ("polars", None),
-        ("ray", "remote"),
-        ("pandas", None),
+        "tensorboardX",
+        "polars",
+        "ray",
+        "pandas",
     ]
 
     require_calls.clear()
@@ -120,10 +120,10 @@ def test_simulation_config_helper_methods_cover_optional_paths(
     config._ensure_optional_dependencies()
 
     assert require_calls == [
-        ("tensorboardX", "tboard"),
-        ("polars", None),
-        ("ray", "remote"),
-        ("polars", None),
+        "tensorboardX",
+        "polars",
+        "ray",
+        "polars",
     ]
 
 

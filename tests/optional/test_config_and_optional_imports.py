@@ -37,8 +37,8 @@ class ExtraMetricEvent(EclypseEvent):
         return {"value": 1}
 
 
-@pytest.mark.extras
-def test_config_import_targets_are_available_for_installed_extras():
+@pytest.mark.optional
+def test_config_import_targets_are_available_for_installed_optional_dependencies():
     _require_installed("pandas")
     _require_installed("polars")
     _require_installed("ray")
@@ -46,12 +46,12 @@ def test_config_import_targets_are_available_for_installed_extras():
 
     _require_module("pandas")
     _require_module("polars")
-    _require_module("ray", extras_name="remote")
-    _require_module("tensorboardX", extras_name="tboard")
+    _require_module("ray")
+    _require_module("tensorboardX")
 
 
-@pytest.mark.extras
-def test_simulation_config_accepts_optional_backend_extras(tmp_path: Path):
+@pytest.mark.optional
+def test_simulation_config_accepts_optional_backend_dependencies(tmp_path: Path):
     _require_installed("pandas")
     _require_installed("polars")
 
@@ -73,14 +73,14 @@ def test_simulation_config_accepts_optional_backend_extras(tmp_path: Path):
     assert lazy_config.report_backend == "polars_lazy"
 
 
-@pytest.mark.extras
+@pytest.mark.optional
 def test_simulation_config_resolves_optional_reporters_and_remote(tmp_path: Path):
     _require_installed("ray")
     _require_installed("polars")
     _require_installed("tensorboardX")
 
     config = SimulationConfig(
-        path=tmp_path / "extra-reporters",
+        path=tmp_path / "optional-reporters",
         report_backend="pandas",
         remote=True,
         events=[
