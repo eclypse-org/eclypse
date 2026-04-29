@@ -20,7 +20,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   poetry run off-the-shelf
+   uv run off-the-shelf
 
 Application
 -----------

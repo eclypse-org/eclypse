@@ -18,7 +18,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   poetry run grid-analysis
+   uv run grid-analysis
 
 Simulation sweep
 ----------------

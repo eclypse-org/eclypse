@@ -18,7 +18,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   poetry run echo
+   uv run echo
 
 Application
 -----------

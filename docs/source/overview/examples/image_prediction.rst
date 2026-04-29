@@ -19,7 +19,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   poetry run image-prediction
+   uv run image-prediction
 
 Application
 -----------

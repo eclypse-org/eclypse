@@ -28,8 +28,8 @@ Run either variant from the repository root with:
 
 .. code-block:: bash
 
-   poetry run sock-shop-mpi
-   poetry run sock-shop-rest
+   uv run sock-shop-mpi
+   uv run sock-shop-rest
 
 .. warning::
 

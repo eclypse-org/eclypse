@@ -18,7 +18,7 @@ EXPECTED_EXAMPLE_SCRIPTS = {
 }
 
 
-def test_example_poetry_scripts_target_main_functions():
+def test_example_scripts_target_main_functions():
     with (REPO_ROOT / "pyproject.toml").open("rb") as pyproject:
         config = tomllib.load(pyproject)
 
