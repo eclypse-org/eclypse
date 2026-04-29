@@ -8,14 +8,14 @@ on:
       - "eclypse/**"
       - "tests/**"
       - "pyproject.toml"
-      - "poetry.lock"
+      - "uv.lock"
       - ".github/workflows/upload_coverage.yaml"
   pull_request:
     paths:
       - "eclypse/**"
       - "tests/**"
       - "pyproject.toml"
-      - "poetry.lock"
+      - "uv.lock"
       - ".github/workflows/upload_coverage.yaml"
 
 jobs:
@@ -39,7 +39,7 @@ jobs:
         run: make setup-test
 
       - name: Run tests
-        run: poetry run pytest
+        run: uv run --no-sync pytest
 
       - name: Upload results to Codecov
         if: matrix.python-version == '3.11'

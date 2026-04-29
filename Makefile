@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := check
 
+PYTHON ?= python3
+
 check:
 	pre-commit run -a
 
@@ -10,30 +12,37 @@ patch:
 	cz bump --changelog --increment patch
 
 setup:
-	python -m pip install --upgrade pip
-	pip install poetry
-	poetry config virtualenvs.create false
-	echo "Poetry virtualenv creation disabled for CI. To re-enable, run `poetry config virtualenvs.create true`."
+	$(PYTHON) -m pip install --upgrade pip uv poetry
 
 setup-build: setup
-	poetry install --with=dev,deploy --no-root
+	uv sync --group dev --group deploy --no-install-project
 
 setup-test: setup
-	poetry install --with=test --no-root
+	uv sync --group test --no-install-project
 
 format:
-	poetry run isort eclypse
-	poetry run ruff check
-	poetry run ruff format
-
-build: format
-	poetry build -v --no-cache --format wheel
+	uv run --no-sync isort eclypse
+	uv run --no-sync ruff check
+	uv run --no-sync ruff format
 
 verify:
-	poetry run twine check --strict dist/*
+	uv run --no-sync twine check --strict dist/*
+
+build: format
+	uv build --wheel --clear
 
 publish-test: build verify
-	poetry publish -r test-pypi --skip-existing -v
+	uv publish --index testpypi -v
 
 publish: build verify
-	poetry publish --skip-existing -v
+	uv publish -v
+
+
+# build: format
+# 	poetry build -v --no-cache --format wheel
+
+# publish-test: build verify
+# 	poetry publish -r test-pypi --skip-existing -v
+
+# publish: build verify
+# 	poetry publish --skip-existing -v

@@ -96,6 +96,13 @@ sock-shop-mpi = "examples.sock_shop.mpi:main"
 sock-shop-rest = "examples.sock_shop.rest:main"
 user-distribution = "examples.user_distribution.main:main"
 
+[[tool.uv.index]]
+name = "testpypi"
+# username = "__token__"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
+
 
 # -------------------------
 # Third-party tool settings
