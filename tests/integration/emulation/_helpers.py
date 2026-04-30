@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -10,6 +11,40 @@ from typing import Any
 import pytest
 
 _RAY_PROBE_STATE: dict[str, str | None] = {"blocked_reason": None}
+
+
+_ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
+
+
+def _extract_json_object(output: str) -> dict[str, Any] | None:
+    """Extract the most recent JSON object from potentially noisy probe output."""
+    cleaned = _ANSI_ESCAPE_RE.sub("", output)
+    decoder = json.JSONDecoder()
+
+    lines = [line.strip() for line in cleaned.splitlines() if line.strip()]
+    for line in reversed(lines):
+        candidates = [line]
+        if "{" in line:
+            candidates.append(line[line.find("{") :])
+        for candidate in candidates:
+            try:
+                payload, _ = decoder.raw_decode(candidate)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(payload, dict):
+                return payload
+
+    for index in range(len(cleaned) - 1, -1, -1):
+        if cleaned[index] != "{":
+            continue
+        try:
+            payload, _ = decoder.raw_decode(cleaned[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(payload, dict):
+            return payload
+
+    return None
 
 
 def run_remote_probe(
@@ -59,16 +94,11 @@ def run_remote_probe(
             f"stderr:\n{completed.stderr}"
         )
 
-    lines = [line for line in completed.stdout.splitlines() if line.strip()]
-    assert lines, "Expected JSON output from the Ray integration probe."
-
-    for line in reversed(lines):
-        try:
-            payload = json.loads(line)
-        except json.JSONDecodeError:
-            continue
-        if isinstance(payload, dict):
-            return payload
+    payload = _extract_json_object(completed.stdout)
+    if payload is None:
+        payload = _extract_json_object(completed.stderr)
+    if payload is not None:
+        return payload
 
     pytest.fail(
         "Ray integration probe did not emit a JSON object.\n"
