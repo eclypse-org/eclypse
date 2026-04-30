@@ -1,4 +1,5 @@
 name: Build and Deploy to PyPI
+
 on:
   workflow_dispatch:
   push:
@@ -18,16 +19,33 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Dependencies
-        run: make setup-build
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
 
-      - name: Build the Package
-        run: make build
+      - name: Install dependencies
+        run: |
+          uv sync --group dev --group deploy --no-install-project
 
-      - name: Verify the distribution
-        run: make verify
+      - name: Check formatting and linting
+        run: |
+          uv run --no-sync isort --check-only eclypse
+          uv run --no-sync ruff check
+          uv run --no-sync ruff format --check
+
+      - name: Build wheel
+        run: |
+          uv build --wheel --clear --no-create-gitignore
+
+      - name: Verify distribution
+        run: |
+          uv run --no-sync twine check --strict dist/*
 
       - name: Upload to PyPI
+        # publish only on tags
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN_PUBLIC }}
         run: |
-          poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN_PUBLIC }}
-          poetry publish --skip-existing -vv --no-interaction
+          uv publish -v
