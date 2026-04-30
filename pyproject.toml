@@ -17,7 +17,7 @@ maintainers = [
 ]
 
 dependencies = [
-    "networkx (>=3.6.1,<4.0.0)",
+    "networkx>=3.6.1,<4.0.0",
     "loguru (>=0.7.3,<0.8.0)",
     "aiofiles (>=25.1.0,<26.0.0)",
     "pandas (>=3.0.2,<4.0.0)",
@@ -38,11 +38,7 @@ dev = [
     "ruff (>=0.15.11,<0.16.0)",
 ]
 
-deploy = [
-    "wheel (>=0.47.0,<0.48.0)",
-    "setuptools (>=82.0.1,<83.0.0)",
-    "twine (>=6.2.0,<7.0.0)",
-]
+deploy = ["twine (>=6.2.0,<7.0.0)"]
 
 test = [
     "pytest (>=9.0.3,<10.0.0)",
@@ -65,27 +61,19 @@ docs = [
     "sphinx-design (>=0.7.0,<0.8.0)",
     "sphinx-icon (>=0.2.2,<0.3.0)",
     "pydata-sphinx-theme (>=0.17.1,<0.18.0)",
-    "sphinx (>=9.1.0,<10.0.0) ; python_version >= '3.12'",
-    "sphinx (>=9.0.4,<9.1.0) ; python_version < '3.12'",
+    # "sphinx (>=9.1.0,<10.0.0) ; python_version >= '3.12'",
+    # "sphinx (>=9.0.4,<9.1.0) ; python_version < '3.12'",
+    "sphinx>=9.0.4",
 ]
-
-[tool.poetry.group.dev]
-optional = true
-
-[tool.poetry.group.deploy]
-optional = true
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.docs]
-optional = true
-
 
 # Build backend
 [build-system]
-requires = ["poetry-core>=2.0.0,<3.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["uv_build>=0.11.8,<0.12"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-root = "."
+module-name = "eclypse"
 
 [project.scripts]
 echo = "examples.echo.main:main"
@@ -98,7 +86,6 @@ user-distribution = "examples.user_distribution.main:main"
 
 [[tool.uv.index]]
 name = "testpypi"
-# username = "__token__"
 url = "https://test.pypi.org/simple/"
 publish-url = "https://test.pypi.org/legacy/"
 explicit = true
