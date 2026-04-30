@@ -1,5 +1,9 @@
-FROM mcr.microsoft.com/devcontainers/python:3.12-bookworm
+FROM mcr.microsoft.com/devcontainers/python:3.11-bookworm
 
-RUN pip3 install "poetry==2.3.3"
+COPY --from=ghcr.io/astral-sh/uv:0.11.8 /uv /uvx /bin/
+
+ENV UV_PROJECT_ENVIRONMENT=.venv
+ENV UV_LINK_MODE=copy
+ENV UV_COMPILE_BYTECODE=1
 
 USER vscode

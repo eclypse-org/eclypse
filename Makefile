@@ -1,7 +1,5 @@
 .DEFAULT_GOAL := check
 
-PYTHON ?= python3
-
 check:
 	pre-commit run -a
 
