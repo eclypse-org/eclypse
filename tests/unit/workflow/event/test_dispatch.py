@@ -359,7 +359,7 @@ def test_event_dispatch_by_type_and_runtime_logging(
 
 
 def test_scheduled_decorator_wraps_callable_classes():
-    @every(ms=1)
+    @every(steps=1)
     class CustomCallable:
         def __call__(self):
             return {"ok": True}

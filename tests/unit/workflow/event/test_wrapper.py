@@ -19,9 +19,7 @@ from eclypse.workflow.event.wrapper import EventWrapper
 from eclypse.workflow.trigger import (
     CascadeTrigger,
     PeriodicCascadeTrigger,
-    PeriodicTrigger,
     RandomCascadeTrigger,
-    ScheduledTrigger,
     ScheduledCascadeTrigger,
 )
 
@@ -38,7 +36,7 @@ def test_scheduled_decorator_wrapper_and_defaults(
     sample_infrastructure, sample_application
 ):
     @every(
-        ms=5,
+        steps=5,
         activates_on=["start", ("step", 2), ("start", 1.0), ("start", [1])],
         verbose=True,
         remote=True,
@@ -65,7 +63,9 @@ def test_scheduled_decorator_wrapper_and_defaults(
     assert any(
         isinstance(trigger, RandomCascadeTrigger) for trigger in wrapped.triggers
     )
-    assert any(isinstance(trigger, PeriodicTrigger) for trigger in wrapped.triggers)
+    assert sum(
+        isinstance(trigger, PeriodicCascadeTrigger) for trigger in wrapped.triggers
+    ) == 2
 
     @application_metric(name="app_metric")
     def app_metric(app, placement, infrastructure):
@@ -94,26 +94,47 @@ def test_wrapper_validation_rejects_invalid_activation_shapes():
 
 
 def test_scheduling_decorators_create_expected_triggers():
-    @every(ms=25, event_type="simulation")
+    @every(steps=25, event_type="simulation")
     def heartbeat():
         return {"ok": True}
 
-    @after(sim_seconds=2)
+    @after(step=2)
     def delayed():
         return {"ok": True}
 
-    @once_at(sim_seconds=3, name="single")
+    @once_at(step=3, name="single")
     def once():
         return {"ok": True}
 
     assert heartbeat.type == "simulation"
     assert heartbeat.trigger_bucket.max_triggers > 1
-    assert any(isinstance(trigger, PeriodicTrigger) for trigger in heartbeat.triggers)
-    assert any(isinstance(trigger, ScheduledTrigger) for trigger in delayed.triggers)
+    assert any(
+        isinstance(trigger, PeriodicCascadeTrigger) for trigger in heartbeat.triggers
+    )
+    assert any(
+        isinstance(trigger, ScheduledCascadeTrigger) for trigger in delayed.triggers
+    )
     assert delayed.trigger_bucket.max_triggers == 1
     assert once.name == "single"
     assert once.trigger_bucket.max_triggers == 1
-    assert any(isinstance(trigger, ScheduledTrigger) for trigger in once.triggers)
+    assert any(isinstance(trigger, ScheduledCascadeTrigger) for trigger in once.triggers)
+
+
+def test_scheduling_decorators_validate_step_arguments():
+    with pytest.raises(ValueError, match="steps must be greater than or equal to 1"):
+        every(steps=0)
+
+    with pytest.raises(TypeError, match="step must be an integer"):
+        after(step=1.5)  # type: ignore[arg-type]
+
+    with pytest.raises(ValueError, match="step must be greater than or equal to 0"):
+        once_at(step=-1)
+
+    @once_at(step=0)
+    def immediate():
+        return {"ok": True}
+
+    assert any(isinstance(trigger, CascadeTrigger) for trigger in immediate.triggers)
 
 
 def test_scheduling_decorators_do_not_expose_scheduled_helper():

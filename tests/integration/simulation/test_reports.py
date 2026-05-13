@@ -92,7 +92,7 @@ def test_wrapped_event_runtime_reports_custom_metric(
     static_strategy,
 ):
     @once_at(
-        sim_seconds=0,
+        step=0,
         event_type="simulation",
         activates_on=["start", ("start", 1.0), ("start", [1])],
         role=EventRole.METRIC,
@@ -134,7 +134,7 @@ def test_auto_simulation_runtime_stops_after_event_failure(
     static_strategy,
 ):
     @once_at(
-        sim_seconds=0,
+        step=0,
         event_type="simulation",
         activates_on=["start"],
         verbose=True,
