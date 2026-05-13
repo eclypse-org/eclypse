@@ -7,15 +7,18 @@ from __future__ import annotations
 
 import inspect
 import re
-from datetime import timedelta
 from typing import (
     TYPE_CHECKING,
 )
 
-from eclypse.utils.constants import MAX_FLOAT
+from eclypse.utils.constants import (
+    DRIVING_EVENT,
+    MAX_FLOAT,
+)
 from eclypse.workflow.trigger import (
-    PeriodicTrigger,
-    ScheduledTrigger,
+    CascadeTrigger,
+    PeriodicCascadeTrigger,
+    ScheduledCascadeTrigger,
 )
 
 from .event import (
@@ -65,8 +68,8 @@ def _event(
         activates_on (ActivatesOnType | None, optional): The conditions that will
             trigger the event. Defaults to None.
         schedule_trigger: Trigger added by the public scheduling decorator.
-        trigger_every_ms (float | None, optional): The time in milliseconds between
-            each trigger of the event. Defaults to None.
+        trigger_every_ms (float | None, optional): The time in milliseconds
+            between each trigger of the event. Defaults to None.
         max_triggers (int | None, optional): The maximum number of times the event
             can be triggered. Defaults to no limit.
         triggers (Trigger | list[Trigger] | None, optional): The triggers that will
@@ -140,7 +143,7 @@ def _event(
 def every(
     fn_or_class: Callable | None = None,
     *,
-    ms: float,
+    steps: int,
     name: str | None = None,
     event_type: EventType | None = None,
     activates_on: ActivatesOnType | None = None,
@@ -156,7 +159,7 @@ def every(
 
     Args:
         fn_or_class: The function or class to decorate.
-        ms: The period between triggers in milliseconds.
+        steps: The period between triggers in simulation steps.
         name: Optional event name. Defaults to the decorated object name.
         event_type: Optional report event type.
         activates_on: Cascade activation rules.
@@ -171,12 +174,16 @@ def every(
     Returns:
         The decorated event wrapper.
     """
+    if not isinstance(steps, int):
+        raise TypeError("steps must be an integer.")
+    if steps < 1:
+        raise ValueError("steps must be greater than or equal to 1.")
     return _event(
         fn_or_class,
         name=name,
         event_type=event_type,
         activates_on=activates_on,
-        schedule_trigger=PeriodicTrigger(ms),
+        schedule_trigger=PeriodicCascadeTrigger(DRIVING_EVENT, steps),
         max_triggers=max_triggers,
         triggers=triggers,
         trigger_condition=trigger_condition,
@@ -190,7 +197,7 @@ def every(
 def after(
     fn_or_class: Callable | None = None,
     *,
-    sim_seconds: float,
+    step: int,
     name: str | None = None,
     event_type: EventType | None = None,
     activates_on: ActivatesOnType | None = None,
@@ -202,11 +209,11 @@ def after(
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
-    """Define an event that fires after a simulation-time delay.
+    """Define an event that fires after a simulation step.
 
     Args:
         fn_or_class: The function or class to decorate.
-        sim_seconds: Delay in simulation seconds before the event can fire.
+        step: Simulation step after which the event can fire.
         name: Optional event name. Defaults to the decorated object name.
         event_type: Optional report event type.
         activates_on: Cascade activation rules.
@@ -221,12 +228,20 @@ def after(
     Returns:
         The decorated event wrapper.
     """
+    if not isinstance(step, int):
+        raise TypeError("step must be an integer.")
+    if step < 0:
+        raise ValueError("step must be greater than or equal to 0.")
     return _event(
         fn_or_class,
         name=name,
         event_type=event_type,
         activates_on=activates_on,
-        schedule_trigger=ScheduledTrigger(timedelta(seconds=sim_seconds)),
+        schedule_trigger=(
+            CascadeTrigger(DRIVING_EVENT)
+            if step == 0
+            else ScheduledCascadeTrigger(DRIVING_EVENT, [step])
+        ),
         max_triggers=max_triggers,
         triggers=triggers,
         trigger_condition=trigger_condition,
@@ -240,7 +255,7 @@ def after(
 def once_at(
     fn_or_class: Callable | None = None,
     *,
-    sim_seconds: float,
+    step: int,
     name: str | None = None,
     event_type: EventType | None = None,
     activates_on: ActivatesOnType | None = None,
@@ -251,11 +266,11 @@ def once_at(
     remote: bool = False,
     verbose: bool = False,
 ) -> Callable:
-    """Define an event that fires once at a simulation-time offset.
+    """Define an event that fires once after a simulation step.
 
     Args:
         fn_or_class: The function or class to decorate.
-        sim_seconds: Simulation-time offset in seconds.
+        step: Simulation step after which the event fires once.
         name: Optional event name. Defaults to the decorated object name.
         event_type: Optional report event type.
         activates_on: Cascade activation rules.
@@ -269,9 +284,14 @@ def once_at(
     Returns:
         The decorated event wrapper.
     """
+    if not isinstance(step, int):
+        raise TypeError("step must be an integer.")
+    if step < 0:
+        raise ValueError("step must be greater than or equal to 0.")
+
     return after(
         fn_or_class,
-        sim_seconds=sim_seconds,
+        step=step,
         name=name,
         event_type=event_type,
         activates_on=activates_on,
