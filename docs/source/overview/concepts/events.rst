@@ -166,9 +166,9 @@ Scheduled event decorators
 
 The public decorator API exposes the common scheduling shapes directly:
 
-- :py:func:`@every(ms=...) <eclypse.workflow.event.decorator.every>` for periodic events,
-- :py:func:`@after(sim_seconds=...) <eclypse.workflow.event.decorator.after>` for delayed events,
-- :py:func:`@once_at(sim_seconds=...) <eclypse.workflow.event.decorator.once_at>` for one-shot events.
+- :py:func:`@every(steps=...) <eclypse.workflow.event.decorator.every>` for periodic events,
+- :py:func:`@after(step=...) <eclypse.workflow.event.decorator.after>` for delayed events,
+- :py:func:`@once_at(step=...) <eclypse.workflow.event.decorator.once_at>` for one-shot events.
 
 These decorators allow you to register both functions and callable classes as
 **simulation events**. You can apply them to:
@@ -181,7 +181,7 @@ These decorators allow you to register both functions and callable classes as
 
    from eclypse.workflow.event import every
 
-   @every(ms=500, name="step_logger", event_type="simulation")
+   @every(steps=5, name="step_logger", event_type="simulation")
    def log_step():
        print("Simulation step")
 
@@ -190,7 +190,7 @@ These decorators allow you to register both functions and callable classes as
 
    from eclypse.workflow.event import once_at
 
-   @once_at(sim_seconds=10, name="step_counter", event_type="simulation")
+   @once_at(step=10, name="step_counter", event_type="simulation")
    class StepCounter:
        def __init__(self):
            self.counter = 0
@@ -211,7 +211,7 @@ different role:
    from eclypse.workflow.event import EventRole, after
 
    @after(
-       sim_seconds=0,
+       step=0,
        name="after_step",
        event_type="simulation",
        activates_on=["step"],

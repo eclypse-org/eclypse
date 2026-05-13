@@ -30,10 +30,10 @@ The tables below compares all available trigger types:
     - Abstract base class. Must override ``trigger()``.
     - *(none)*
   * - :class:`~eclypse.workflow.trigger.trigger.PeriodicTrigger`
-    - Fires every fixed amount of milliseconds.
+    - Fires every fixed amount of wall-clock time.
     - - ``trigger_every_ms: float``
   * - :class:`~eclypse.workflow.trigger.trigger.ScheduledTrigger`
-    - Fires at predefined simulation times.
+    - Fires at predefined wall-clock offsets.
     - - `scheduled_timedelta: timedelta | List[timedelta]`
   * - :class:`~eclypse.workflow.trigger.trigger.RandomTrigger`
     - Fires randomly with given probability at each evaluation.
@@ -97,21 +97,23 @@ from :mod:`eclypse.workflow`:
 
   from eclypse.workflow import after, every, once_at
 
-  @every(ms=500, event_type="simulation")
+  @every(steps=5, event_type="simulation")
   def heartbeat(triggering_event):
       return {"value": triggering_event.n_triggers}
 
-  @after(sim_seconds=10)
+  @after(step=10)
   def warmup_complete():
       return {"value": True}
 
-  @once_at(sim_seconds=60)
+  @once_at(step=60)
   def final_checkpoint():
       return {"value": True}
 
-``@every`` creates a :class:`~eclypse.workflow.trigger.trigger.PeriodicTrigger`.
+``@every`` creates a
+:class:`~eclypse.workflow.trigger.cascade.PeriodicCascadeTrigger` on the default
+simulation driving event.
 ``@after`` and ``@once_at`` create
-:class:`~eclypse.workflow.trigger.trigger.ScheduledTrigger` instances and
+:class:`~eclypse.workflow.trigger.cascade.ScheduledCascadeTrigger` instances and
 default to one firing.
 
 Trigger lifecycle
@@ -145,7 +147,7 @@ When an event is associated with **multiple triggers**, the ``activates_on`` par
   from eclypse.workflow.trigger import CascadeTrigger
 
   @every(
-      ms=500,
+      steps=5,
       event_type="application",
       triggers=[
           CascadeTrigger("check_resources"),
@@ -162,13 +164,16 @@ For more particular workflows, subclass
 .. code-block:: python
 
   from eclypse.workflow.event import EclypseEvent
-  from eclypse.workflow.trigger import CascadeTrigger, PeriodicTrigger
+  from eclypse.workflow.trigger import CascadeTrigger, PeriodicCascadeTrigger
 
   class Monitor(EclypseEvent):
       def __init__(self):
           super().__init__(
               name="monitor",
-              triggers=[PeriodicTrigger(1000), CascadeTrigger("step")],
+              triggers=[
+                  PeriodicCascadeTrigger("enact", 5),
+                  CascadeTrigger("step"),
+              ],
               trigger_condition="all",  # fires only if both trigger
           )
 
