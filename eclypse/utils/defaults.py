@@ -8,6 +8,14 @@ from typing import get_args
 from eclypse.utils.constants import MAX_FLOAT
 from eclypse.utils.types import CommunicationInterface
 
+# Infrastructure
+
+DEFAULT_EDGE_LATENCY = 1.0
+"""Default latency used when a link does not define one explicitly."""
+
+DEFAULT_COST_ATTR = "latency"
+"""Default edge attribute considered as the cost for path computations."""
+
 # Reporting
 
 DEFAULT_REPORT_TYPE = "csv"
@@ -21,9 +29,6 @@ DEFAULT_REPORT_CHUNK_SIZE = 100
 
 DEFAULT_STEP_QUEUE_SIZE = 1024
 """Default maximum number of stored service step results."""
-
-DEFAULT_EDGE_LATENCY = 1.0
-"""Default latency used when a link does not define one explicitly."""
 
 DEFAULT_REPORT_RANGE = (0, int(MAX_FLOAT))
 """Default inclusive event range used by report queries."""

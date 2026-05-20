@@ -29,7 +29,10 @@ from eclypse.utils.constants import (
     COST_RECOMPUTATION_THRESHOLD,
     MIN_FLOAT,
 )
-from eclypse.utils.defaults import DEFAULT_EDGE_LATENCY
+from eclypse.utils.defaults import (
+    DEFAULT_COST_ATTR,
+    DEFAULT_EDGE_LATENCY,
+)
 
 from .assets.defaults import (
     get_default_edge_assets,
@@ -227,7 +230,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         return list(not_respected)
 
     def path(
-        self, source: str, target: str
+        self,
+        source: str,
+        target: str,
+        cost_attr: str = DEFAULT_COST_ATTR,
     ) -> list[tuple[str, str, dict[str, Any]]] | None:
         """Retrieve the hop-level path between two nodes, if it exists.
 
@@ -237,6 +243,8 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         Args:
             source (str): The name of the source node.
             target (str): The name of the target node.
+            cost_attr (str): The edge attribute to consider as the cost for \
+                determining whether to recompute the path. Defaults to "latency".
 
         Returns:
             list[tuple[str, str, dict[str, Any]]] | None: The per-hop costs as \
@@ -249,11 +257,11 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
                 self._compute_path(source, target)
             else:
                 costs = [
-                    c.get("latency", DEFAULT_EDGE_LATENCY)
+                    c.get(cost_attr, DEFAULT_EDGE_LATENCY)
                     for _, _, c in self._path_costs(self._paths[source][target])
                 ]
                 cached_costs = [
-                    cc.get("latency", DEFAULT_EDGE_LATENCY)
+                    cc.get(cost_attr, DEFAULT_EDGE_LATENCY)
                     for _, _, cc in self._costs[source][target]
                 ]
 

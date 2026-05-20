@@ -31,6 +31,38 @@ def test_infrastructure_path_resources_and_cache_behaviour(sample_infrastructure
     assert sample_infrastructure.path("edge-a", "edge-b") is None
 
 
+def test_infrastructure_path_custom_cost_attr_controls_cache_refresh(
+    sample_infrastructure,
+    monkeypatch,
+):
+    sample_infrastructure.path("edge-a", "edge-b")
+    sample_infrastructure.edges["edge-a", "edge-b"]["routing_cost"] = 50
+    sample_infrastructure._costs["edge-a"]["edge-b"] = [  # pylint: disable=protected-access
+        (
+            "edge-a",
+            "edge-b",
+            {
+                **sample_infrastructure.edges["edge-a", "edge-b"],
+                "routing_cost": 1,
+            },
+        )
+    ]
+    calls = []
+    original_compute_path = sample_infrastructure._compute_path  # pylint: disable=protected-access
+
+    def recompute_spy(source: str, target: str):
+        calls.append((source, target))
+        return original_compute_path(source, target)
+
+    monkeypatch.setattr(sample_infrastructure, "_compute_path", recompute_spy)
+
+    sample_infrastructure.path("edge-a", "edge-b")
+    assert calls == []
+
+    sample_infrastructure.path("edge-a", "edge-b", cost_attr="routing_cost")
+    assert calls == [("edge-a", "edge-b")]
+
+
 def test_infrastructure_evolve_invalidates_cached_path_resources(sample_infrastructure):
     assert sample_infrastructure.path_resources("edge-a", "edge-b")["bandwidth"] == 10
 
