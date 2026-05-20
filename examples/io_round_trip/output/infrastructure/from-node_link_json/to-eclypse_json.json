@@ -1,0 +1,217 @@
+{
+  "eclypse_schema": "1.0",
+  "edge_assets": {
+    "bandwidth": {
+      "functional": true,
+      "init": {
+        "high": 1500,
+        "low": 50,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "latency": {
+      "functional": true,
+      "init": {
+        "high": 40,
+        "low": 1,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 1000000000.0,
+      "type": "concave",
+      "upper_bound": 0.0
+    }
+  },
+  "edges": [
+    {
+      "attrs": {
+        "bandwidth": 500,
+        "latency": 18,
+        "link_type": "wan"
+      },
+      "source": "edge-a",
+      "target": "cloud"
+    },
+    {
+      "attrs": {
+        "bandwidth": 1000,
+        "latency": 4,
+        "link_type": "lan"
+      },
+      "source": "edge-a",
+      "target": "edge-b"
+    },
+    {
+      "attrs": {
+        "bandwidth": 450,
+        "latency": 22,
+        "link_type": "wan"
+      },
+      "source": "edge-b",
+      "target": "cloud"
+    }
+  ],
+  "extras": {
+    "path_assets_aggregators": {
+      "bandwidth": "bandwidth",
+      "latency": "latency"
+    },
+    "resource_init": "min"
+  },
+  "graph": {
+    "id": "cloud-edge-node-link",
+    "scenario": "io-round-trip",
+    "source_format": "node-link-json"
+  },
+  "id": "cloud-edge-node-link",
+  "kind": "infrastructure",
+  "node_assets": {
+    "availability": {
+      "functional": true,
+      "init": {
+        "high": 1,
+        "low": 0.99,
+        "type": "uniform"
+      },
+      "lower_bound": 0.0,
+      "type": "multiplicative",
+      "upper_bound": 1.0
+    },
+    "cpu": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "gpu": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "processing_time": {
+      "functional": false,
+      "init": {
+        "high": 25,
+        "low": 1,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 1000000000.0,
+      "type": "concave",
+      "upper_bound": 0.0
+    },
+    "ram": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "storage": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048,
+          4096
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    }
+  },
+  "nodes": [
+    {
+      "attrs": {
+        "availability": 0.999,
+        "cpu": 64,
+        "gpu": 32,
+        "processing_time": 5,
+        "ram": 128,
+        "storage": 2048,
+        "tier": "cloud"
+      },
+      "id": "cloud"
+    },
+    {
+      "attrs": {
+        "availability": 0.995,
+        "cpu": 16,
+        "gpu": 128,
+        "processing_time": 3,
+        "ram": 32,
+        "storage": 512,
+        "tier": "edge"
+      },
+      "id": "edge-a"
+    },
+    {
+      "attrs": {
+        "availability": 0.99,
+        "cpu": 12,
+        "gpu": 2,
+        "processing_time": 23,
+        "ram": 24,
+        "storage": 256,
+        "tier": "edge"
+      },
+      "id": "edge-b"
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "eclypse_schema": "1.0",
+  "edge_assets": {
+    "bandwidth": {
+      "functional": true,
+      "init": {
+        "high": 1500,
+        "low": 50,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "latency": {
+      "functional": true,
+      "init": {
+        "high": 40,
+        "low": 1,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 0.0,
+      "type": "convex",
+      "upper_bound": 1000000000.0
+    }
+  },
+  "edges": [
+    {
+      "attrs": {
+        "bandwidth": 80.0,
+        "latency": 8.0
+      },
+      "source": "camera-gateway",
+      "target": "inference"
+    },
+    {
+      "attrs": {
+        "bandwidth": 40.0,
+        "latency": 5.0
+      },
+      "source": "inference",
+      "target": "dashboard"
+    }
+  ],
+  "extras": {
+    "flows": [],
+    "requirement_init": "min",
+    "services": {}
+  },
+  "graph": {
+    "edge_default": {},
+    "node_default": {},
+    "scenario": "io-round-trip",
+    "source_format": "graphml"
+  },
+  "id": "application",
+  "kind": "application",
+  "node_assets": {
+    "availability": {
+      "functional": true,
+      "init": {
+        "high": 1,
+        "low": 0.99,
+        "type": "uniform"
+      },
+      "lower_bound": 1.0,
+      "type": "concave",
+      "upper_bound": 0.0
+    },
+    "cpu": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "gpu": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "processing_time": {
+      "functional": false,
+      "init": {
+        "high": 25,
+        "low": 1,
+        "step": 1,
+        "type": "int_uniform"
+      },
+      "lower_bound": 0.0,
+      "type": "convex",
+      "upper_bound": 1000000000.0
+    },
+    "ram": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    },
+    "storage": {
+      "functional": true,
+      "init": {
+        "choices": [
+          2,
+          4,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048,
+          4096
+        ],
+        "type": "choice"
+      },
+      "lower_bound": 0.0,
+      "type": "additive",
+      "upper_bound": 1000000000.0
+    }
+  },
+  "nodes": [
+    {
+      "attrs": {
+        "availability": 0.9924489185380347,
+        "cpu": 1.0,
+        "gpu": 32,
+        "image": "ghcr.io/eclypse/camera-gateway:latest",
+        "processing_time": 5,
+        "ram": 1.0,
+        "storage": 4096
+      },
+      "id": "camera-gateway"
+    },
+    {
+      "attrs": {
+        "availability": 0.9903178267948178,
+        "cpu": 4.0,
+        "gpu": 128,
+        "image": "ghcr.io/eclypse/inference:latest",
+        "processing_time": 3,
+        "ram": 6.0,
+        "storage": 4
+      },
+      "id": "inference"
+    },
+    {
+      "attrs": {
+        "availability": 0.9956124506293861,
+        "build": "./dashboard",
+        "cpu": 1.0,
+        "gpu": 2,
+        "processing_time": 23,
+        "ram": 1.0,
+        "storage": 512
+      },
+      "id": "dashboard"
+    }
+  ]
+}

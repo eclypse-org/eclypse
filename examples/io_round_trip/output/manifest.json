@@ -1,0 +1,446 @@
+{
+  "application_export_formats": [
+    "docker-compose",
+    "eclypse-json",
+    "gml",
+    "graphml",
+    "node-link-json",
+    "tosca"
+  ],
+  "infrastructure_export_formats": [
+    "eclypse-json",
+    "gml",
+    "graphml",
+    "node-link-json",
+    "tosca"
+  ],
+  "outputs": [
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-eclypse_json/to-docker_compose.yaml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-eclypse_json/to-eclypse_json.json"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-eclypse_json/to-gml.gml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-eclypse_json/to-graphml.graphml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-eclypse_json/to-node_link_json.json"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-eclypse_json/to-tosca.yaml"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-docker_compose/to-docker_compose.yaml"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-docker_compose/to-eclypse_json.json"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-docker_compose/to-gml.gml"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-docker_compose/to-graphml.graphml"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-docker_compose/to-node_link_json.json"
+    },
+    {
+      "input": "docker_compose",
+      "input_format": "docker-compose",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-docker_compose/to-tosca.yaml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-gml/to-docker_compose.yaml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-gml/to-eclypse_json.json"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-gml/to-gml.gml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-gml/to-graphml.graphml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-gml/to-node_link_json.json"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-gml/to-tosca.yaml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-graphml/to-docker_compose.yaml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-graphml/to-eclypse_json.json"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-graphml/to-gml.gml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-graphml/to-graphml.graphml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-graphml/to-node_link_json.json"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-graphml/to-tosca.yaml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-node_link_json/to-docker_compose.yaml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-node_link_json/to-eclypse_json.json"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-node_link_json/to-gml.gml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-node_link_json/to-graphml.graphml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-node_link_json/to-node_link_json.json"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-node_link_json/to-tosca.yaml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "docker-compose",
+      "path": "application/from-tosca/to-docker_compose.yaml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "eclypse-json",
+      "path": "application/from-tosca/to-eclypse_json.json"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "gml",
+      "path": "application/from-tosca/to-gml.gml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "graphml",
+      "path": "application/from-tosca/to-graphml.graphml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "node-link-json",
+      "path": "application/from-tosca/to-node_link_json.json"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "application",
+      "output_format": "tosca",
+      "path": "application/from-tosca/to-tosca.yaml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "infrastructure",
+      "output_format": "eclypse-json",
+      "path": "infrastructure/from-eclypse_json/to-eclypse_json.json"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "infrastructure",
+      "output_format": "gml",
+      "path": "infrastructure/from-eclypse_json/to-gml.gml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "infrastructure",
+      "output_format": "graphml",
+      "path": "infrastructure/from-eclypse_json/to-graphml.graphml"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "infrastructure",
+      "output_format": "node-link-json",
+      "path": "infrastructure/from-eclypse_json/to-node_link_json.json"
+    },
+    {
+      "input": "eclypse_json",
+      "input_format": "eclypse-json",
+      "kind": "infrastructure",
+      "output_format": "tosca",
+      "path": "infrastructure/from-eclypse_json/to-tosca.yaml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "infrastructure",
+      "output_format": "eclypse-json",
+      "path": "infrastructure/from-gml/to-eclypse_json.json"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "infrastructure",
+      "output_format": "gml",
+      "path": "infrastructure/from-gml/to-gml.gml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "infrastructure",
+      "output_format": "graphml",
+      "path": "infrastructure/from-gml/to-graphml.graphml"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "infrastructure",
+      "output_format": "node-link-json",
+      "path": "infrastructure/from-gml/to-node_link_json.json"
+    },
+    {
+      "input": "gml",
+      "input_format": "gml",
+      "kind": "infrastructure",
+      "output_format": "tosca",
+      "path": "infrastructure/from-gml/to-tosca.yaml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "infrastructure",
+      "output_format": "eclypse-json",
+      "path": "infrastructure/from-graphml/to-eclypse_json.json"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "infrastructure",
+      "output_format": "gml",
+      "path": "infrastructure/from-graphml/to-gml.gml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "infrastructure",
+      "output_format": "graphml",
+      "path": "infrastructure/from-graphml/to-graphml.graphml"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "infrastructure",
+      "output_format": "node-link-json",
+      "path": "infrastructure/from-graphml/to-node_link_json.json"
+    },
+    {
+      "input": "graphml",
+      "input_format": "graphml",
+      "kind": "infrastructure",
+      "output_format": "tosca",
+      "path": "infrastructure/from-graphml/to-tosca.yaml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "infrastructure",
+      "output_format": "eclypse-json",
+      "path": "infrastructure/from-node_link_json/to-eclypse_json.json"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "infrastructure",
+      "output_format": "gml",
+      "path": "infrastructure/from-node_link_json/to-gml.gml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "infrastructure",
+      "output_format": "graphml",
+      "path": "infrastructure/from-node_link_json/to-graphml.graphml"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "infrastructure",
+      "output_format": "node-link-json",
+      "path": "infrastructure/from-node_link_json/to-node_link_json.json"
+    },
+    {
+      "input": "node_link_json",
+      "input_format": "node-link-json",
+      "kind": "infrastructure",
+      "output_format": "tosca",
+      "path": "infrastructure/from-node_link_json/to-tosca.yaml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "infrastructure",
+      "output_format": "eclypse-json",
+      "path": "infrastructure/from-tosca/to-eclypse_json.json"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "infrastructure",
+      "output_format": "gml",
+      "path": "infrastructure/from-tosca/to-gml.gml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "infrastructure",
+      "output_format": "graphml",
+      "path": "infrastructure/from-tosca/to-graphml.graphml"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "infrastructure",
+      "output_format": "node-link-json",
+      "path": "infrastructure/from-tosca/to-node_link_json.json"
+    },
+    {
+      "input": "tosca",
+      "input_format": "tosca",
+      "kind": "infrastructure",
+      "output_format": "tosca",
+      "path": "infrastructure/from-tosca/to-tosca.yaml"
+    }
+  ]
+}

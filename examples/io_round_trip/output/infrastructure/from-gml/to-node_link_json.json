@@ -1,0 +1,64 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "id": "cloud-edge-gml",
+    "scenario": "io-round-trip",
+    "source_format": "gml"
+  },
+  "nodes": [
+    {
+      "cpu": 64,
+      "ram": 128,
+      "storage": 2048,
+      "gpu": 32,
+      "availability": 0.999,
+      "processing_time": 5,
+      "tier": "cloud",
+      "id": "cloud"
+    },
+    {
+      "cpu": 16,
+      "ram": 32,
+      "storage": 512,
+      "gpu": 128,
+      "availability": 0.995,
+      "processing_time": 3,
+      "tier": "edge",
+      "id": "edge-a"
+    },
+    {
+      "cpu": 12,
+      "ram": 24,
+      "storage": 256,
+      "gpu": 2,
+      "availability": 0.99,
+      "processing_time": 23,
+      "tier": "edge",
+      "id": "edge-b"
+    }
+  ],
+  "edges": [
+    {
+      "latency": 18,
+      "bandwidth": 500,
+      "link_type": "wan",
+      "source": "edge-a",
+      "target": "cloud"
+    },
+    {
+      "latency": 4,
+      "bandwidth": 1000,
+      "link_type": "lan",
+      "source": "edge-a",
+      "target": "edge-b"
+    },
+    {
+      "latency": 22,
+      "bandwidth": 450,
+      "link_type": "wan",
+      "source": "edge-b",
+      "target": "cloud"
+    }
+  ]
+}

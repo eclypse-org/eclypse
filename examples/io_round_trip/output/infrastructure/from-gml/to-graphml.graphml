@@ -1,0 +1,61 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d11" for="edge" attr.name="link_type" attr.type="string" />
+  <key id="d10" for="edge" attr.name="bandwidth" attr.type="long" />
+  <key id="d9" for="edge" attr.name="latency" attr.type="long" />
+  <key id="d8" for="node" attr.name="tier" attr.type="string" />
+  <key id="d7" for="node" attr.name="processing_time" attr.type="long" />
+  <key id="d6" for="node" attr.name="availability" attr.type="double" />
+  <key id="d5" for="node" attr.name="gpu" attr.type="long" />
+  <key id="d4" for="node" attr.name="storage" attr.type="long" />
+  <key id="d3" for="node" attr.name="ram" attr.type="long" />
+  <key id="d2" for="node" attr.name="cpu" attr.type="long" />
+  <key id="d1" for="graph" attr.name="source_format" attr.type="string" />
+  <key id="d0" for="graph" attr.name="scenario" attr.type="string" />
+  <graph edgedefault="directed" id="cloud-edge-gml">
+    <node id="cloud">
+      <data key="d2">64</data>
+      <data key="d3">128</data>
+      <data key="d4">2048</data>
+      <data key="d5">32</data>
+      <data key="d6">0.999</data>
+      <data key="d7">5</data>
+      <data key="d8">cloud</data>
+    </node>
+    <node id="edge-a">
+      <data key="d2">16</data>
+      <data key="d3">32</data>
+      <data key="d4">512</data>
+      <data key="d5">128</data>
+      <data key="d6">0.995</data>
+      <data key="d7">3</data>
+      <data key="d8">edge</data>
+    </node>
+    <node id="edge-b">
+      <data key="d2">12</data>
+      <data key="d3">24</data>
+      <data key="d4">256</data>
+      <data key="d5">2</data>
+      <data key="d6">0.99</data>
+      <data key="d7">23</data>
+      <data key="d8">edge</data>
+    </node>
+    <edge source="edge-a" target="cloud">
+      <data key="d9">18</data>
+      <data key="d10">500</data>
+      <data key="d11">wan</data>
+    </edge>
+    <edge source="edge-a" target="edge-b">
+      <data key="d9">4</data>
+      <data key="d10">1000</data>
+      <data key="d11">lan</data>
+    </edge>
+    <edge source="edge-b" target="cloud">
+      <data key="d9">22</data>
+      <data key="d10">450</data>
+      <data key="d11">wan</data>
+    </edge>
+    <data key="d0">io-round-trip</data>
+    <data key="d1">gml</data>
+  </graph>
+</graphml>
