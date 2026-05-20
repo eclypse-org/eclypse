@@ -1,0 +1,50 @@
+name: application
+services:
+  camera-gateway:
+    image: ghcr.io/eclypse/camera-gateway:latest
+    x-eclypse-assets:
+      cpu: 1.0
+      ram: 1.0
+      storage: 4096
+      gpu: 32
+      availability: 0.9924489185380347
+      processing_time: 5
+    depends_on:
+    - inference
+    x-eclypse-edges:
+      inference:
+        latency: 8.0
+        bandwidth: 80.0
+  inference:
+    image: ghcr.io/eclypse/inference:latest
+    x-eclypse-assets:
+      cpu: 4.0
+      ram: 6.0
+      storage: 4
+      gpu: 128
+      availability: 0.9903178267948178
+      processing_time: 3
+    depends_on:
+    - dashboard
+    x-eclypse-edges:
+      dashboard:
+        latency: 5.0
+        bandwidth: 40.0
+  dashboard:
+    build: ./dashboard
+    x-eclypse-assets:
+      cpu: 1.0
+      ram: 1.0
+      storage: 512
+      gpu: 2
+      availability: 0.9956124506293861
+      processing_time: 23
+x-eclypse:
+  kind: application
+  id: application
+  graph:
+    node_default: {}
+    edge_default: {}
+    scenario: io-round-trip
+    source_format: graphml
+  flows: []

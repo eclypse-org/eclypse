@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d11" for="edge" attr.name="bandwidth" attr.type="double" />
+  <key id="d10" for="edge" attr.name="latency" attr.type="double" />
+  <key id="d9" for="node" attr.name="build" attr.type="string" />
+  <key id="d8" for="node" attr.name="image" attr.type="string" />
+  <key id="d7" for="node" attr.name="processing_time" attr.type="long" />
+  <key id="d6" for="node" attr.name="availability" attr.type="double" />
+  <key id="d5" for="node" attr.name="gpu" attr.type="long" />
+  <key id="d4" for="node" attr.name="storage" attr.type="long" />
+  <key id="d3" for="node" attr.name="ram" attr.type="double" />
+  <key id="d2" for="node" attr.name="cpu" attr.type="double" />
+  <key id="d1" for="graph" attr.name="source_format" attr.type="string" />
+  <key id="d0" for="graph" attr.name="scenario" attr.type="string" />
+  <graph edgedefault="directed" id="application">
+    <node id="camera-gateway">
+      <data key="d2">1.0</data>
+      <data key="d3">1.0</data>
+      <data key="d4">4096</data>
+      <data key="d5">32</data>
+      <data key="d6">0.9924489185380347</data>
+      <data key="d7">5</data>
+      <data key="d8">ghcr.io/eclypse/camera-gateway:latest</data>
+    </node>
+    <node id="inference">
+      <data key="d2">4.0</data>
+      <data key="d3">6.0</data>
+      <data key="d4">4</data>
+      <data key="d5">128</data>
+      <data key="d6">0.9903178267948178</data>
+      <data key="d7">3</data>
+      <data key="d8">ghcr.io/eclypse/inference:latest</data>
+    </node>
+    <node id="dashboard">
+      <data key="d2">1.0</data>
+      <data key="d3">1.0</data>
+      <data key="d4">512</data>
+      <data key="d5">2</data>
+      <data key="d6">0.9956124506293861</data>
+      <data key="d7">23</data>
+      <data key="d9">./dashboard</data>
+    </node>
+    <edge source="camera-gateway" target="inference">
+      <data key="d10">8.0</data>
+      <data key="d11">80.0</data>
+    </edge>
+    <edge source="inference" target="dashboard">
+      <data key="d10">5.0</data>
+      <data key="d11">40.0</data>
+    </edge>
+    <data key="d0">io-round-trip</data>
+    <data key="d1">graphml</data>
+  </graph>
+</graphml>

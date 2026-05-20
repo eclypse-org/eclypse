@@ -1,0 +1,147 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+metadata:
+  template_name: infrastructure
+topology_template:
+  node_templates:
+    cloud:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 64.0
+            mem_size: 128.0 GB
+    edge-a:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 16.0
+            mem_size: 32.0 GB
+    edge-b:
+      type: tosca.nodes.Compute
+      capabilities:
+        host:
+          properties:
+            num_cpus: 12.0
+            mem_size: 24.0 GB
+    edge_a_cloud_network:
+      type: tosca.nodes.network.Network
+      properties:
+        network_name: edge_a_cloud_network
+    edge_a_cloud_edge_a_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: edge-a
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_a_cloud_network
+          relationship: tosca.relationships.network.LinksTo
+    edge_a_cloud_cloud_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: cloud
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_a_cloud_network
+          relationship: tosca.relationships.network.LinksTo
+    edge_a_edge_b_network:
+      type: tosca.nodes.network.Network
+      properties:
+        network_name: edge_a_edge_b_network
+    edge_a_edge_b_edge_a_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: edge-a
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_a_edge_b_network
+          relationship: tosca.relationships.network.LinksTo
+    edge_a_edge_b_edge_b_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: edge-b
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_a_edge_b_network
+          relationship: tosca.relationships.network.LinksTo
+    edge_b_cloud_network:
+      type: tosca.nodes.network.Network
+      properties:
+        network_name: edge_b_cloud_network
+    edge_b_cloud_edge_b_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: edge-b
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_b_cloud_network
+          relationship: tosca.relationships.network.LinksTo
+    edge_b_cloud_cloud_port:
+      type: tosca.nodes.network.Port
+      requirements:
+      - binding:
+          node: cloud
+          relationship: tosca.relationships.HostedOn
+      - link:
+          node: edge_b_cloud_network
+          relationship: tosca.relationships.network.LinksTo
+x-eclypse:
+  kind: infrastructure
+  id: infrastructure
+  graph:
+    node_default: {}
+    edge_default: {}
+    scenario: io-round-trip
+    source_format: graphml
+  nodes:
+    cloud:
+      cpu: 64.0
+      ram: 128.0
+      storage: 2048.0
+      gpu: 32
+      availability: 0.999
+      processing_time: 5
+      tier: cloud
+    edge-a:
+      cpu: 16.0
+      ram: 32.0
+      storage: 512.0
+      gpu: 128
+      availability: 0.995
+      processing_time: 3
+      tier: edge
+    edge-b:
+      cpu: 12.0
+      ram: 24.0
+      storage: 256.0
+      gpu: 2
+      availability: 0.99
+      processing_time: 23
+      tier: edge
+  edges:
+  - source: edge-a
+    target: cloud
+    attrs:
+      latency: 18.0
+      bandwidth: 500.0
+      link_type: wan
+  - source: edge-a
+    target: edge-b
+    attrs:
+      latency: 4.0
+      bandwidth: 1000.0
+      link_type: lan
+  - source: edge-b
+    target: cloud
+    attrs:
+      latency: 22.0
+      bandwidth: 450.0
+      link_type: wan
+  path_assets_aggregators:
+  - bandwidth
+  - latency

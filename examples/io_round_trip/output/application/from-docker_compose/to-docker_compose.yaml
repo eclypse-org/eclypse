@@ -1,0 +1,52 @@
+name: vision-compose
+services:
+  camera-gateway:
+    image: ghcr.io/eclypse/camera-gateway:latest
+    x-eclypse-assets:
+      cpu: 1
+      ram: 1
+      storage: 4096
+      gpu: 32
+      availability: 0.9924489185380347
+      processing_time: 5
+  inference:
+    image: ghcr.io/eclypse/inference:latest
+    x-eclypse-assets:
+      cpu: 4
+      ram: 6
+      storage: 4
+      gpu: 128
+      availability: 0.9903178267948178
+      processing_time: 3
+    depends_on:
+    - camera-gateway
+    x-eclypse-edges:
+      camera-gateway:
+        latency: 8
+        bandwidth: 80
+  dashboard:
+    build: ./dashboard
+    x-eclypse-assets:
+      cpu: 1
+      ram: 1
+      storage: 512
+      gpu: 2
+      availability: 0.9956124506293861
+      processing_time: 23
+    depends_on:
+    - inference
+    x-eclypse-edges:
+      inference:
+        latency: 5
+        bandwidth: 40
+x-eclypse:
+  kind: application
+  id: vision-compose
+  graph:
+    id: vision-compose
+    scenario: io-round-trip
+    source_format: docker-compose
+  flows:
+  - - camera-gateway
+    - inference
+    - dashboard
