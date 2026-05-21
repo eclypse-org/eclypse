@@ -78,10 +78,11 @@ def test_create_remote_bootstrap_build_and_default_classes(
         ray_options_factory=RayOptionsFactory(detached=True),
         label="node",
     )
+    bootstrap.env_vars = simulation_config.runtime_env()
     manager_name = bootstrap.build(sample_infrastructure, simulation_config)
 
     assert manager_name == "edge-cloud/manager"
-    assert recorded["runtime_env"] == {"env_vars": {}}
+    assert recorded["runtime_env"] == {"env_vars": simulation_config.runtime_env()}
     assert len(create_calls) == len(sample_infrastructure.nodes) + 1
     assert create_calls[-1][0] == "edge-cloud/manager"
     assert "remotes" in create_calls[-1][2]

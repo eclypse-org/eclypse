@@ -41,5 +41,6 @@ def build_runtime_env(
 
 def apply_runtime_env(env_vars: dict[str, str]):
     """Apply runtime environment variables and refresh logging configuration."""
-    os.environ.update(env_vars)
+    for key, value in env_vars.items():
+        os.environ.setdefault(key, value)
     config_logger()

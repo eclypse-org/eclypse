@@ -11,6 +11,7 @@ from eclypse.utils.constants import (
     LOG_LEVEL,
     RND_SEED,
 )
+from eclypse.utils.defaults import DEFAULT_RAY_RUNTIME_ENV_VARS
 
 
 def test_build_and_apply_runtime_env(monkeypatch, tmp_path):
@@ -32,3 +33,7 @@ def test_build_and_apply_runtime_env(monkeypatch, tmp_path):
     assert os.environ[LOG_LEVEL] == "DEBUG"
     assert os.environ[LOG_FILE].endswith("simulation.log")
     assert calls == ["configured"]
+
+
+def test_default_ray_runtime_env_disables_ray_uv_runtime():
+    assert DEFAULT_RAY_RUNTIME_ENV_VARS["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] == "0"

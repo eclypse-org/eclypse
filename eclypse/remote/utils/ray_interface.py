@@ -14,6 +14,8 @@ from typing import (
     Any,
 )
 
+from eclypse.utils.defaults import DEFAULT_RAY_RUNTIME_ENV_VARS
+
 if TYPE_CHECKING:
     from ray import ObjectRef
     from ray.actor import ActorHandle
@@ -25,6 +27,7 @@ class RayInterface:
     def __init__(self):
         """Initialize the RayInterface."""
         self._backend = None
+        os.environ.update(DEFAULT_RAY_RUNTIME_ENV_VARS)
 
     def init(self, runtime_env: dict[str, Any]):
         """Initialize the Ray backend with the given runtime environment.
