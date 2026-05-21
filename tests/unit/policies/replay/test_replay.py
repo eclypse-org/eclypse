@@ -8,7 +8,15 @@ from typing import (
 import pytest
 
 from eclypse import policies
-from tests.unit.policies._helpers import build_graph
+from eclypse.policies.replay._helpers import (
+    initial_step,
+    normalise_records,
+    resolve_replay_step,
+)
+from tests.unit.policies._helpers import (
+    IterRowsFrame,
+    build_graph,
+)
 
 if TYPE_CHECKING:
     from eclypse.utils.types import ReplayTarget
@@ -21,6 +29,26 @@ class FakeDataFrame:
     def to_dict(self, orient: str):
         assert orient == "records"
         return self._records
+
+
+class TypeErrorDataFrame:
+    def __init__(self, records):
+        self._records = records
+
+    def to_dict(self, orient: str):
+        del orient
+        raise TypeError
+
+    def iterrows(self):
+        yield from enumerate(self._records)
+
+
+class RowWithToDict:
+    def __init__(self, data):
+        self._data = data
+
+    def to_dict(self):
+        return self._data
 
 
 def test_replay_policies_replay_node_and_edge_records():
@@ -91,6 +119,12 @@ def test_replay_builders_cover_invalid_targets_and_parquet_loading(
         FakeDataFrame([]),
         target="nodes",
     )
+    assert normalise_records(TypeErrorDataFrame([{"time": 0}])) == [{"time": 0}]
+    assert normalise_records(IterRowsFrame([RowWithToDict({"time": 1})])) == [
+        {"time": 1}
+    ]
+    assert initial_step({}, None) == 0
+    assert resolve_replay_step({}, 3, cyclic=True) == 3
 
     class FakePandas:
         @staticmethod
@@ -138,6 +172,13 @@ def test_replay_filters_start_step_and_edge_missing_behaviour():
     )
     node_policy(graph)
     assert graph.nodes["a"]["cpu"] == 11
+    filtered_node_policy = policies.replay.replay_nodes(
+        [{"time": 0, "node_id": "a", "cpu": 99}],
+        node_filter=lambda _node_id, _data: False,
+        value_columns=["cpu"],
+    )
+    filtered_node_policy(graph)
+    assert graph.nodes["a"]["cpu"] == 11
 
     edge_policy = policies.replay.replay_edges(
         [
@@ -149,6 +190,13 @@ def test_replay_filters_start_step_and_edge_missing_behaviour():
         value_columns=["bandwidth"],
     )
     edge_policy(graph)
+    assert graph.edges["a", "b"]["bandwidth"] == 77
+    filtered_edge_policy = policies.replay.replay_edges(
+        [{"time": 0, "source": "a", "target": "b", "bandwidth": 99}],
+        edge_filter=lambda _source, _target, _data: False,
+        value_columns=["bandwidth"],
+    )
+    filtered_edge_policy(graph)
     assert graph.edges["a", "b"]["bandwidth"] == 77
 
     failing_edge_policy = policies.replay.replay_edges(
@@ -185,6 +233,9 @@ def test_replay_cyclic_graph_mapping_events_and_interpolation(monkeypatch):
     graph_policy(graph)
     assert graph.nodes["a"]["ram"] == 44
     assert graph.edges["a", "b"]["latency"] == 22
+
+    with pytest.raises(ValueError):
+        policies.replay.replay_graph()
 
     mapped = policies.replay.replay_with_mapping(
         [{"time": 0, "external": "A", "value": 33}],
