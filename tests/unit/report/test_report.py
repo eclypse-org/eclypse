@@ -16,7 +16,11 @@ def test_report_query_and_filtering(csv_report_dir: Path, list_frame_backend):
 
     service_frame = report.service(service_ids="worker")
     query_frame = (
-        report.query("service").range(1, 2).where(service_id="worker").to_frame()
+        report.query("service")
+        .range(1, 2)
+        .step(1)
+        .where(service_id="worker")
+        .to_frame()
     )
 
     assert report.backend_name == "list"

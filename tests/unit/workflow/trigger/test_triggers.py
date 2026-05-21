@@ -47,7 +47,9 @@ def test_triggers_and_trigger_bucket(monkeypatch):
 
     scheduled = ScheduledTrigger(timedelta(seconds=1))
     scheduled.prepare()
-    scheduled._scheduled_times = [datetime.now() - timedelta(seconds=1)]  # pylint: disable=protected-access
+    scheduled._scheduled_times = [  # pylint: disable=protected-access
+        datetime.now() - timedelta(seconds=1)
+    ]
     assert scheduled.trigger()
     assert (
         repr(scheduled)
@@ -112,6 +114,10 @@ def test_trigger_helpers_cover_error_and_reset_paths(monkeypatch):
     assert seeded_random.rnd is not None
 
     scheduled.prepare()
+    assert scheduled.trigger() is False
+    scheduled._scheduled_times = [  # pylint: disable=protected-access
+        datetime.now() + timedelta(seconds=1)
+    ]
     assert scheduled.trigger() is False
 
     uninitialised_random = RandomTrigger(0.5)
