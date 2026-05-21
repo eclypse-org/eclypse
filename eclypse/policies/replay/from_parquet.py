@@ -47,10 +47,14 @@ def from_parquet(
         value_columns (list[str] | tuple[str, ...] | None):
             Optional explicit columns to copy from records.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
-        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing item.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
+        missing (MissingPolicyBehaviour):
+            Behaviour when a replay record targets a missing item.
         start_step (int | None): Optional starting replay step.
         cyclic (bool): Whether to wrap past the final available replay step.
 
@@ -58,7 +62,7 @@ def from_parquet(
         Stateful replay policy.
     """
     try:
-        import pandas as pd
+        import pandas as pd  # noqa: PLC0415
     except ImportError as exc:  # pragma: no cover - optional dependency
         raise ImportError(
             "from_parquet requires pandas with parquet support installed."
