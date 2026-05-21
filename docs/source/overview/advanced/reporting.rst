@@ -108,17 +108,30 @@ arguments they receive, but the role they play in the workflow and whether their
 is meant to be reported.
 
 
-Report formats and reporters
-----------------------------
+Report storage formats and reporters
+------------------------------------
+
+ECLYPSE separates **storage formats** from **reporters**.
+
+The storage format is selected through
+:class:`~eclypse.simulation.config.SimulationConfig` and controls how report
+frames are written on disk:
+
+- ``csv`` for human-readable tabular files,
+- ``json`` for JSONL outputs,
+- ``parquet`` for analytical workloads and larger runs.
 
 The ``report`` argument on an event or metric selects one or more reporter
-types. Built-in reporters cover the most common outputs:
+types for that specific event. Built-in reporter types cover the common sinks:
 
 - ``csv`` for human-readable tabular files,
 - ``json`` for JSONL outputs,
 - ``parquet`` for analytical workloads and larger runs,
-- ``gml`` for graph exports,
 - ``tensorboard`` for TensorBoard-compatible metrics.
+
+For CSV, JSON, and Parquet, the reporter type usually matches the configured
+storage format. TensorBoard is different: it is a reporter sink, not a dataframe
+storage format loaded later through :class:`~eclypse.report.report.Report`.
 
 You can also implement your own
 :class:`~eclypse.report.reporter.Reporter` subclass if you want to persist data
@@ -133,7 +146,6 @@ ECLYPSE includes a set of built-in reporters:
 - :class:`~eclypse.report.reporters.csv.CSVReporter`
 - :class:`~eclypse.report.reporters.json.JSONReporter`
 - :class:`~eclypse.report.reporters.parquet.ParquetReporter`
-- :class:`~eclypse.report.reporters.gml.GMLReporter`
 - :class:`~eclypse.report.reporters.tensorboard.TensorBoardReporter`
 
 In most cases you do not instantiate them manually. Instead, you select the

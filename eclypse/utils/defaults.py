@@ -49,9 +49,6 @@ SIMULATION_LOG_FILENAME = "simulation.log"
 CSV_REPORT_DIR = "csv"
 """Directory name used by the CSV reporter."""
 
-GML_REPORT_DIR = "gml"
-"""Directory name used by the GML reporter."""
-
 JSON_REPORT_DIR = "json"
 """Directory name used by the JSON reporter."""
 
@@ -64,6 +61,7 @@ TENSORBOARD_REPORT_DIR = "tensorboard"
 DEFAULT_RAY_RUNTIME_ENV_VARS: dict[str, str] = {
     "RAY_DEDUP_LOGS": "0",
     "RAY_COLOR_PREFIX": "1",
+    "RAY_ENABLE_UV_RUN_RUNTIME_ENV": "0",
 }
 """Default Ray environment variables applied to simulation runtimes."""
 
@@ -88,7 +86,6 @@ __all__ = [
     "DEFAULT_REPORT_STEP",
     "DEFAULT_REPORT_TYPE",
     "DEFAULT_STEP_QUEUE_SIZE",
-    "GML_REPORT_DIR",
     "JSON_REPORT_DIR",
     "PARQUET_REPORT_DIR",
     "SIMULATION_CONFIG_FILENAME",
