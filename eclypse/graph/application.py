@@ -34,7 +34,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
     def __init__(
         self,
-        application_id: str,
+        application_id: str = "Application",
         update_policies: UpdatePolicies = None,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
@@ -46,7 +46,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         """Create a new Application.
 
         Args:
-            application_id (str): The ID of the application.
+            application_id (str): The ID of the application. Defaults to "Application".
             update_policies (Callable | list[Callable] | None):\
                 Graph update policies executed during ``evolve()``.
             node_assets (dict[str, Asset] | None): The assets of the nodes.

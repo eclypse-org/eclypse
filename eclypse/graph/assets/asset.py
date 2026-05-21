@@ -15,7 +15,10 @@ assets:
 
 from __future__ import annotations
 
-from abc import abstractmethod
+from abc import (
+    ABC,
+    abstractmethod,
+)
 from copy import deepcopy
 from typing import (
     TYPE_CHECKING,
@@ -33,11 +36,11 @@ if TYPE_CHECKING:
     from eclypse.utils.types import PrimitiveType
 
 
-class Asset:
+class Asset(ABC):
     """The Asset class.
 
-    An Asset represents a resource of the infrastructure, such as CPU, GPU, RAM or
-    node availability.
+    An Asset represents a resource of the infrastructure, such as CPU, GPU, RAM or node
+    availability.
 
     It provides the inteface for the basic algebraic functions between assets.
     """

@@ -11,6 +11,7 @@ from typing import (
     Literal,
     TypeAlias,
     TypedDict,
+    TypeVar,
 )
 
 if TYPE_CHECKING:
@@ -70,6 +71,20 @@ UpdatePolicy: TypeAlias = Callable[["AssetGraph"], None]
 
 UpdatePolicies: TypeAlias = UpdatePolicy | list[UpdatePolicy] | None
 """Type alias for one or more graph update policies."""
+
+# IO
+
+GraphKind: TypeAlias = Literal["application", "infrastructure"]
+"""Type alias for graph kinds supported by the IO package."""
+
+TGraph = TypeVar("TGraph", bound="AssetGraph")
+"""Type variable bound to ECLYPSE graph objects."""
+
+TData = TypeVar("TData")
+"""Type variable for importer and exporter intermediate data."""
+
+THandler = TypeVar("THandler")
+"""Type variable for importer and exporter handler classes or instances."""
 
 ReportFormat: TypeAlias = Literal["csv", "parquet", "json"]
 """Type alias for the supported report storage formats."""

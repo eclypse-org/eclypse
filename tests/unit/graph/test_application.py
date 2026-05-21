@@ -11,6 +11,12 @@ class ConcreteService(Service):
         return None
 
 
+def test_application_has_default_id():
+    app = Application()
+
+    assert app.id == "Application"
+
+
 def test_application_add_service_and_set_flows():
     app = Application("demo")
     gateway = ConcreteService("gateway")
