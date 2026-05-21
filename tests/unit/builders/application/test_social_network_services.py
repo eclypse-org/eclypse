@@ -270,6 +270,10 @@ async def test_social_network_services(monkeypatch):
     assert code == 200
     assert 404 in body["followers"]
 
+    code, duplicate_body = social_graph.follow(user_id=101, follower_id=404)
+    assert code == 200
+    assert duplicate_body["followers"].count(404) == 1
+
     mpi_compose = attach_service_logger(
         social_mpi.ComposePostService("ComposePostService"),
     )
@@ -392,6 +396,32 @@ async def test_social_network_services(monkeypatch):
     assert storage_comm.sent[0][0] == "UserTimelineService"
     assert storage_comm.sent[0][1]["request_type"] == "write_user_timeline"
 
+    storage_read_comm = set_mpi(
+        mpi_post_storage,
+        [
+            {
+                "sender_id": "UserTimelineService",
+                "request_type": "read_posts",
+                "post_ids": [5001, 9999],
+            }
+        ],
+    )
+    await mpi_post_storage.step()
+    assert storage_read_comm.sent[0][0] == "UserTimelineService"
+    assert storage_read_comm.sent[0][1] == {
+        "response_type": "read_posts_response",
+        "posts": [
+            {
+                "post_id": 5001,
+                "creator": {"user_id": 101, "username": "alice"},
+                "text": "Hello",
+                "user_mentions": [],
+                "media": [],
+                "urls": [],
+            }
+        ],
+    }
+
     user_timeline_comm = set_mpi(
         mpi_user_timeline,
         [
@@ -407,6 +437,24 @@ async def test_social_network_services(monkeypatch):
     )
     await mpi_user_timeline.step()
     assert user_timeline_comm.sent[0][0] == "HomeTimelineService"
+
+    user_timeline_read_comm = set_mpi(
+        mpi_user_timeline,
+        [
+            {
+                "sender_id": "FrontendService",
+                "request_type": "read_user_timeline",
+                "user_id": 101,
+            }
+        ],
+    )
+    await mpi_user_timeline.step()
+    assert user_timeline_read_comm.sent[0][0] == "PostStorageService"
+    assert user_timeline_read_comm.sent[0][1] == {
+        "request_type": "read_posts",
+        "reply_to": "FrontendService",
+        "post_ids": [5001],
+    }
 
     social_graph_comm = set_mpi(
         mpi_social_graph,

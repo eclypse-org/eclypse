@@ -23,9 +23,13 @@ def test_infrastructure_path_resources_and_cache_behaviour(sample_infrastructure
         "bandwidth": 10,
     }
     assert sample_infrastructure.path("edge-a", "missing") is None
+    assert sample_infrastructure.path_resources("edge-a", "missing") == (
+        sample_infrastructure.edge_assets.lower_bound
+    )
 
     sample_infrastructure.nodes["edge-b"]["availability"] = 0
     assert "edge-b" not in sample_infrastructure.available
+    assert sample_infrastructure.path("edge-a", "edge-b") is None
 
     sample_infrastructure.remove_edge("edge-a", "edge-b")
     assert sample_infrastructure.path("edge-a", "edge-b") is None
@@ -80,6 +84,17 @@ def test_infrastructure_requires_path_aggregators_for_custom_edge_assets():
         Infrastructure(
             edge_assets={"bandwidth": Additive(0, 10)},
             include_default_assets=False,
+        )
+
+    class PretendingAggregators(dict):
+        def __contains__(self, key):
+            return key == "bandwidth" or super().__contains__(key)
+
+    with pytest.raises(ValueError, match="Every edge asset"):
+        Infrastructure(
+            edge_assets={"bandwidth": Additive(0, 10)},
+            include_default_assets=False,
+            path_assets_aggregators=PretendingAggregators(),
         )
 
 
