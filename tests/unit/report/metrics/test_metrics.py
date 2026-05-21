@@ -6,7 +6,6 @@ from eclypse.report.metrics.defaults import (
     SimulationTime,
     StepNumber,
     alive_nodes,
-    app_gml,
     featured_bandwidth,
     featured_cpu,
     featured_gpu,
@@ -14,7 +13,6 @@ from eclypse.report.metrics.defaults import (
     featured_ram,
     featured_storage,
     get_default_metrics,
-    infr_gml,
     placement_mapping,
     required_bandwidth,
     required_cpu,
@@ -75,9 +73,6 @@ def test_default_metrics_compute_expected_values(mapped_placement, placement_vie
         )
         == 10
     )
-    assert app_gml(app, mapped_placement, infr) is app
-    assert infr_gml(infr, placement_view) is infr
-
 
 def test_simulation_metric_helpers_and_default_metric_list(
     monkeypatch,

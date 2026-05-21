@@ -53,7 +53,7 @@ def test_manual_simulation_runtime_generates_reports_and_config(
 
 
 @pytest.mark.integration
-def test_auto_simulation_runtime_writes_summary_and_gml_outputs(
+def test_auto_simulation_runtime_writes_summary_outputs(
     tmp_path: Path,
     sample_infrastructure,
     sample_application,
@@ -79,8 +79,6 @@ def test_auto_simulation_runtime_writes_summary_and_gml_outputs(
     assert simulation.status is SimulationState.IDLE
     assert "seed" in simulation_rows["callback_id"].tolist()
     assert "simulation_time" in simulation_rows["callback_id"].tolist()
-    assert (simulation.path / "gml" / "app_gml-shop.gml").exists()
-    assert (simulation.path / "gml" / "infr_gml-edge-cloud.gml").exists()
     assert report.infrastructure().iloc[0]["callback_id"] == "alive_nodes"
 
 

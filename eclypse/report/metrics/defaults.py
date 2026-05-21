@@ -21,7 +21,6 @@ from eclypse.utils.constants import (
     RND_SEED,
     STOP_EVENT,
 )
-from eclypse.utils.defaults import GML_REPORT_DIR
 
 from . import metric
 
@@ -450,35 +449,6 @@ class SimulationTime:
         return time() - self.start
 
 
-@metric.application(report=GML_REPORT_DIR, activates_on=STOP_EVENT)
-def app_gml(app: Application, _: Placement, __: Infrastructure) -> Application:
-    """Return the application graph to be saved in a GML file.
-
-    Args:
-        app (Application): The application.
-        _: The placement of the application.
-        __: The infrastructure.
-
-    Returns:
-        dict[str, Application]: The application graph to be saved in a GML file.
-    """
-    return app
-
-
-@metric.infrastructure(report=GML_REPORT_DIR, activates_on=STOP_EVENT)
-def infr_gml(infr: Infrastructure, __: PlacementView) -> Infrastructure:
-    """Return the infrastructure graph to be saved in a GML file.
-
-    Args:
-        infr (Infrastructure): The infrastructure.
-        __: The placement view.
-
-    Returns:
-        Infrastructure: The infrastructure graph to be saved in a GML file.
-    """
-    return infr
-
-
 @metric.service(remote=True)
 def step_result(service: Service) -> Any | None:
     """Return the result of the step executed by the service.
@@ -505,8 +475,6 @@ def get_default_metrics():
             - seed
             - step number
             - simulation time
-            - application in GML format
-            - infrastructure in GML format
     """
     return [
         # REQUIRED ASSETS
@@ -532,9 +500,6 @@ def get_default_metrics():
         seed,
         StepNumber(),
         SimulationTime(),
-        # GML
-        app_gml,
-        infr_gml,
         # REMOTE
         step_result,
     ]
@@ -544,14 +509,12 @@ __all__ = [
     "SimulationTime",
     "StepNumber",
     "alive_nodes",
-    "app_gml",
     "featured_bandwidth",
     "featured_cpu",
     "featured_gpu",
     "featured_latency",
     "featured_ram",
     "featured_storage",
-    "infr_gml",
     "placement_mapping",
     "required_bandwidth",
     "required_cpu",
