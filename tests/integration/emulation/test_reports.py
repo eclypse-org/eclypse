@@ -13,8 +13,7 @@ from ._helpers import run_remote_probe
 def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
     repo_root = Path(__file__).resolve().parents[3]
     output_dir = tmp_path / "ray-simulation"
-    script = textwrap.dedent(
-        f"""
+    script = textwrap.dedent(f"""
         from __future__ import annotations
 
         import json
@@ -67,7 +66,7 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
             report_format="csv",
             include_default_metrics=True,
             remote=True,
-            step_every_ms="auto",
+            step_every_ms=100,
             max_steps=3,
         )
         simulation = Simulation(infrastructure, config)
@@ -87,8 +86,7 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
         print(json.dumps(payload))
 
         ray.shutdown()
-        """
-    )
+        """)
 
     result = run_remote_probe(repo_root, script)
 
