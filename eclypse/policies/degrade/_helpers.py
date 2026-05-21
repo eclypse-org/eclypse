@@ -124,9 +124,12 @@ def _build_value_adjustment_policy(
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Stateful value-adjustment policy.
@@ -178,9 +181,12 @@ def build_configured_value_adjustment_policy(
         edge_asset_overrides (ValueAdjustmentOverrides | None):
             Optional per-edge-asset adjustment overrides.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that applies one child adjustment per selected asset.
@@ -300,7 +306,8 @@ def _normalize_overrides(
 
     Args:
         name (str): Name assigned to the override mapping.
-        overrides (ValueAdjustmentOverrides | None): Optional mapping of asset names to overrides.
+        overrides (ValueAdjustmentOverrides | None):
+            Optional mapping of asset names to overrides.
 
     Returns:
         Flat mapping from display names to overrides.
@@ -322,7 +329,8 @@ def _validate_overrides(
 
     Args:
         direction (ValueAdjustmentDirection): Adjustment direction to validate against.
-        overrides (dict[str, ValueAdjustmentOverride]): Mapping from display names to overrides.
+        overrides (dict[str, ValueAdjustmentOverride]):
+            Mapping from display names to overrides.
 
     Returns:
         None.
@@ -354,7 +362,8 @@ def _resolve_adjustment(
         factor (float | None): Optional default multiplicative target factor.
         target (float | None): Optional default absolute target value.
         epochs (int | None): Optional default number of calls used for adjustment.
-        per_asset_overrides (ValueAdjustmentOverrides | None): Optional per-asset override mapping.
+        per_asset_overrides (ValueAdjustmentOverrides | None):
+            Optional per-asset override mapping.
 
     Returns:
         Resolved value-adjustment override.
@@ -459,9 +468,12 @@ def build_asset_transform_policy(
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
         transform (Any): Callable receiving ``(asset_key, current_value)``.
         label (str): Trace-log label for the generated policy.
 

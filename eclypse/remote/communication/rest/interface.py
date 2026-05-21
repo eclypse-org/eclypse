@@ -38,8 +38,8 @@ if TYPE_CHECKING:
 class EclypseREST(EclypseCommunicationInterface):
     """EclypseREST class.
 
-    It implements the REST communication interface among services in the
-    same application, deployed within the same infrastructure.
+    It implements the REST communication interface among services in the same
+    application, deployed within the same infrastructure.
 
     It allows to send and receive HTTP requests at specific endpoints, which are defined
     by each service, using the @endpoint decorator.

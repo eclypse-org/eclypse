@@ -1,15 +1,14 @@
 """Vehicular-edge infrastructure pattern.
 
 The vehicular-edge pattern models vehicles attached to roadside units, backed by MEC
-hosts and an optional cloud tier. The proposed layers are vehicles, roadside
-units, MEC hosts, and cloud nodes. Vehicles attach to nearby roadside units,
-roadside units forward traffic to edge compute, and MEC nodes connect onward to
-the cloud for less latency-sensitive processing.
+hosts and an optional cloud tier. The proposed layers are vehicles, roadside units, MEC
+hosts, and cloud nodes. Vehicles attach to nearby roadside units, roadside units forward
+traffic to edge compute, and MEC nodes connect onward to the cloud for less latency-
+sensitive processing.
 
-Its QoS profile reflects connected-mobility assumptions: access links favour low
-latency but limited bandwidth, roadside and MEC links provide stronger local
-capacity, and the cloud uplink captures the longer-latency control or archival
-path.
+Its QoS profile reflects connected-mobility assumptions: access links favour low latency
+but limited bandwidth, roadside and MEC links provide stronger local capacity, and the
+cloud uplink captures the longer-latency control or archival path.
 """
 
 from __future__ import annotations

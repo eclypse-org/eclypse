@@ -32,15 +32,19 @@ def multiplicative_jitter(
     Args:
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
-        node_factor_range (tuple[float, float]): Multiplicative range for selected node assets.
+        node_factor_range (tuple[float, float]):
+            Multiplicative range for selected node assets.
         edge_factor_range (tuple[float, float] | None):
             Multiplicative range for selected edge assets. When
             omitted, ``node_factor_range`` is reused.
         minimum (float): Lower bound after jitter.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that applies multiplicative jitter to selected assets.

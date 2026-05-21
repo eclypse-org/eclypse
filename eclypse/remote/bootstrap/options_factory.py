@@ -21,11 +21,13 @@ class RayOptionsFactory:
         """Create a new RayOptionsFactory.
 
         Args:
-            detached (bool, optional): Whether to run the actor detached. Defaults to False.
-            **ray_options: The options for Ray. See the documentation \
-                `here <https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote>`_ \
+            detached (bool, optional):
+                Whether to run the actor detached. Defaults to False.
+            **ray_options: The options for Ray. See the documentation
+                `here
+                <https://docs.ray.io/en/latest/ray-core/api/doc/ray.remote.html#ray.remote>`_
                 for more information.
-        """  # noqa E501
+        """
         self.detached = detached
         self.ray_options = ray_options
         self._infrastructure: Infrastructure | None = None

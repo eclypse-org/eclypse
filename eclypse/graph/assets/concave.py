@@ -99,7 +99,7 @@ class Concave(Asset):
         Returns:
             Convex: The flipped convex asset.
         """
-        from .convex import Convex  # pylint: disable=import-outside-toplevel
+        from .convex import Convex  # noqa: PLC0415
 
         return Convex(
             self.upper_bound,

@@ -26,7 +26,8 @@ def network_partition(
         groups (list[list[str]]): Node identifiers grouped by partition.
         availability_key (str): Edge asset used when cross-group edges are disabled.
         unavailable_value (float): Value written to disabled cross-group edges.
-        remove_edges (bool): Whether to remove cross-group edges instead of mutating them.
+        remove_edges (bool):
+            Whether to remove cross-group edges instead of mutating them.
 
     Returns:
         Policy that isolates the configured partitions.

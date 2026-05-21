@@ -1,10 +1,10 @@
 """Report class backed by a pluggable DataFrame backend.
 
-The Report reads CSV files produced by a simulation and provides convenient
-accessors (application, service, etc.) returning a filtered DataFrame.
+The Report reads CSV files produced by a simulation and provides convenient accessors
+(application, service, etc.) returning a filtered DataFrame.
 
-The backend is selectable (pandas, polars eager, polars lazy) and can be
-extended by providing custom FrameBackend subclasses.
+The backend is selectable (pandas, polars eager, polars lazy) and can be extended by
+providing custom FrameBackend subclasses.
 """
 
 from __future__ import annotations

@@ -35,7 +35,8 @@ def correlated_failure(
         availability_key (str): Node asset used to store availability.
         failed_availability (float): Value written when a group fails.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
 
     Returns:
         Policy that fails whole selected node groups.

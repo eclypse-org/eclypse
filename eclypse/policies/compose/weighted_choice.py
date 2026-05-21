@@ -16,8 +16,10 @@ def weighted_choice(
     """Run one policy sampled from explicit weights.
 
     Args:
-        policies (list[UpdatePolicy] | tuple[UpdatePolicy, ...]): Candidate policies to sample from.
-        weights (list[float] | tuple[float, ...]): Sampling weights aligned with ``policies``.
+        policies (list[UpdatePolicy] | tuple[UpdatePolicy, ...]):
+            Candidate policies to sample from.
+        weights (list[float] | tuple[float, ...]):
+            Sampling weights aligned with ``policies``.
 
     Returns:
         Policy that calls one weighted-sampled child policy.

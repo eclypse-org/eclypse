@@ -1,4 +1,5 @@
 """Shared helpers for selecting graph items in built-in policies."""
+
 # ruff: noqa: UP035
 
 from __future__ import annotations
@@ -27,7 +28,8 @@ def iter_selected_nodes(
     Args:
         graph (AssetGraph): Asset graph to inspect.
         node_ids (list[str] | None): Optional explicit node identifiers to keep.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
 
     Returns:
         Matching ``(node_id, data)`` pairs.
@@ -57,7 +59,8 @@ def iter_selected_edges(
         graph (AssetGraph): Asset graph to inspect.
         edge_ids (list[tuple[str, str]] | None):
             Optional explicit ``(source, target)`` pairs to keep.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Matching ``(source, target, data)`` triples.
@@ -215,9 +218,12 @@ def apply_numeric_transform(
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
         transform (Callable[[str, float], float]):
             Callable receiving ``(asset_key, current_value)``.
 
@@ -251,7 +257,8 @@ def apply_numeric_transform_to_values(
 
     Args:
         data (dict[str, Any]): Asset mapping to mutate.
-        assets (str | list[str] | None): Asset key selector. ``None`` selects all existing keys.
+        assets (str | list[str] | None):
+            Asset key selector. ``None`` selects all existing keys.
         transform (Callable[[str, float], float]):
             Callable receiving ``(asset_key, current_value)``.
 

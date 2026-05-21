@@ -1,8 +1,8 @@
 # pylint: disable=no-value-for-parameter
 """The `OrderService` class.
 
-It processes user orders, ensuring the coordination between\
-different services like payment, inventory, and shipping.
+It processes user orders, ensuring the coordination between different services
+like payment, inventory, and shipping.
 
 - Key Responsibilities:
     - Creates, updates, and manages customer orders.
@@ -36,8 +36,8 @@ class OrderService(Service):
     async def step(self):
         """Example workflow of the `OrderService` class.
 
-        It starts with processing the order request,\
-            then sending requests to the `PaymentService` and `ShippingService`.
+        It starts with processing the order request, then sending requests to the
+        `PaymentService` and `ShippingService`.
         """
         await self.frontend_request()
         await self.payment_request()

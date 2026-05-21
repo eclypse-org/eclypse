@@ -35,13 +35,17 @@ def correlated_noise(
     Args:
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
-        delta_range (tuple[float, float]): Inclusive range used to sample the shared delta.
+        delta_range (tuple[float, float]):
+            Inclusive range used to sample the shared delta.
         lower (float | None): Optional lower bound after adding the delta.
         upper (float | None): Optional upper bound after adding the delta.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that adds a shared random delta to selected assets.

@@ -1,15 +1,14 @@
 """Small-world infrastructure generator.
 
-This module provides a Watts-Strogatz style topology generator for infrastructure
-graphs with strong local clustering and a small number of long-range shortcuts.
-Each node starts in a ring-like neighbourhood, which preserves short-hop local
-connectivity, and then a fraction of links is rewired to introduce longer
-shortcuts across the graph.
+This module provides a Watts-Strogatz style topology generator for infrastructure graphs
+with strong local clustering and a small number of long-range shortcuts. Each node
+starts in a ring-like neighbourhood, which preserves short-hop local connectivity, and
+then a fraction of links is rewired to introduce longer shortcuts across the graph.
 
-The resulting topology is useful when modelling peer infrastructures with soft
-QoS expectations: nearby nodes can communicate through short local paths, while
-the added shortcuts reduce the average end-to-end distance for latency-sensitive
-traffic without imposing a rigid hierarchy or a single backbone.
+The resulting topology is useful when modelling peer infrastructures with soft QoS
+expectations: nearby nodes can communicate through short local paths, while the added
+shortcuts reduce the average end-to-end distance for latency-sensitive traffic without
+imposing a rigid hierarchy or a single backbone.
 """
 
 from __future__ import annotations

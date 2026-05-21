@@ -1,8 +1,8 @@
 """Module for the RemoteSimulator class.
 
-It operates like the local simulator, but performs the simulation using ray actors.
-It also performs operations on the Services placed on the infrastructure,
-such as deploying, starting, stopping and undeploying them.
+It operates like the local simulator, but performs the simulation using ray actors. It
+also performs operations on the Services placed on the infrastructure, such as
+deploying, starting, stopping and undeploying them.
 
 The RemoteSimulator is also the entry point for the communication between services, as
 it ask to the infrastructure the computation of the routes between them, retrieving the

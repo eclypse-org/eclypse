@@ -1,7 +1,7 @@
 """Module for the RoundRobin placement strategy.
 
-A `PlacementStrategy` that attempts to distribute services across nodes,
-in a round-robin fashion.
+A `PlacementStrategy` that attempts to distribute services across nodes, in a round-
+robin fashion.
 """
 
 from __future__ import annotations
@@ -31,8 +31,8 @@ if TYPE_CHECKING:
 class RoundRobinStrategy(PlacementStrategy):
     """RoundRobin class.
 
-    A `PlacementStrategy` that attempts to distribute services across nodes, in a
-    round-robin fashion.
+    A `PlacementStrategy` that attempts to distribute services across nodes, in a round-
+    robin fashion.
     """
 
     def __init__(self, sort_fn: Callable[[Any], Any] | None = None):

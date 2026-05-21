@@ -35,13 +35,12 @@ if TYPE_CHECKING:
 class EclypseMPI(EclypseCommunicationInterface):
     """EclypseMPI class.
 
-    It implements the MPI communication protocol among services in the
-    same application, deployed within the same infrastructure.
+    It implements the MPI communication protocol among services in the same application,
+    deployed within the same infrastructure.
 
-        It allows to send and receive messages among services, and to
-        broadcast messages as well. The protocol is implemented by using
-        the `MPIRequest` objects, which employ asynchrony to handle the
-        simulation of communication costs of interactions.
+    It allows to send and receive messages among services, and to broadcast messages as
+    well. The protocol is implemented by using the `MPIRequest` objects, which employ
+    asynchrony to handle the simulation of communication costs of interactions.
     """
 
     def __init__(self, service: Service):

@@ -108,9 +108,12 @@ def build_distribution_policy(
             Optional per-edge-asset distributions.
         minimum (float): Lower bound after applying sampled multipliers.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that multiplies selected numeric assets by sampled values.
@@ -182,13 +185,18 @@ def build_sampled_distribution_policy(
         edge_assets (str | list[str] | None): Optional edge asset key selector.
         node_distribution (Any): Default node distribution configuration.
         edge_distribution (Any): Default edge distribution configuration.
-        node_asset_distributions (dict[str, Any] | None): Optional per-node-asset distributions.
-        edge_asset_distributions (dict[str, Any] | None): Optional per-edge-asset distributions.
+        node_asset_distributions (dict[str, Any] | None):
+            Optional per-node-asset distributions.
+        edge_asset_distributions (dict[str, Any] | None):
+            Optional per-edge-asset distributions.
         minimum (float): Lower bound after applying sampled multipliers.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
         sampler (Any): Callable receiving ``(random, distribution)``.
 
     Returns:
@@ -267,8 +275,10 @@ def _build_distribution_log_message(
         kind (str): Distribution name.
         node_distribution (Any): Default node distribution configuration.
         edge_distribution (Any): Default edge distribution configuration.
-        node_asset_distributions (dict[str, Any] | None): Optional per-node-asset distributions.
-        edge_asset_distributions (dict[str, Any] | None): Optional per-edge-asset distributions.
+        node_asset_distributions (dict[str, Any] | None):
+            Optional per-node-asset distributions.
+        edge_asset_distributions (dict[str, Any] | None):
+            Optional per-edge-asset distributions.
 
     Returns:
         Trace-log message for the policy.

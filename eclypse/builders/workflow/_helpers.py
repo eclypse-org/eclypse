@@ -311,8 +311,8 @@ def _copy_workflow_metadata(
 def _task_asset_values(task: Any) -> dict[str, float]:
     """Map task metadata onto default ECLYPSE node assets.
 
-    Workflow storage requirements are normalised from raw WfCommons byte counts
-    to MiB before they are assigned to the ECLYPSE ``storage`` asset.
+    Workflow storage requirements are normalised from raw WfCommons byte counts to MiB
+    before they are assigned to the ECLYPSE ``storage`` asset.
     """
     if task is None:
         return {}
@@ -367,8 +367,8 @@ def _task_metadata(task: Any) -> dict[str, Any]:
 def _edge_asset_values(source_task: Any, target_task: Any) -> dict[str, float]:
     """Map workflow dependency metadata onto default ECLYPSE edge assets.
 
-    Dependency transfer sizes are normalised from raw WfCommons byte counts to
-    MiB before they are assigned to the ECLYPSE ``bandwidth`` asset.
+    Dependency transfer sizes are normalised from raw WfCommons byte counts to MiB
+    before they are assigned to the ECLYPSE ``bandwidth`` asset.
     """
     transferred_size = _transferred_size(source_task, target_task)
     if transferred_size is None:

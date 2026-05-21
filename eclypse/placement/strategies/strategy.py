@@ -1,7 +1,7 @@
 """Module for defining a global placement strategy.
 
-It provides an abstract class that must be implemented by the user to
-define a global placement strategy for the entire infrastructure.
+It provides an abstract class that must be implemented by the user to define a global
+placement strategy for the entire infrastructure.
 """
 
 from __future__ import annotations
@@ -26,8 +26,8 @@ if TYPE_CHECKING:
 class PlacementStrategy(ABC):
     """PlacementStrategy abstract class.
 
-    A global placement strategy that places services of an application
-    on infrastructure nodes.
+    A global placement strategy that places services of an application on infrastructure
+    nodes.
     """
 
     @abstractmethod

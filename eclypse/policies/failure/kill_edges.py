@@ -29,8 +29,10 @@ def kill_edges(
         probability (float): Per-edge probability of applying the failure.
         availability_key (str): Edge asset used to store availability.
         failed_availability (float): Value written when an edge fails.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that marks selected edges as failed.

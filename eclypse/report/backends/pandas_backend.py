@@ -1,7 +1,7 @@
 """Pandas backend implementation.
 
-This module provides a concrete FrameBackend implementation using pandas.
-Pandas is imported lazily so that it remains an optional dependency.
+This module provides a concrete FrameBackend implementation using pandas. Pandas is
+imported lazily so that it remains an optional dependency.
 """
 
 from __future__ import annotations

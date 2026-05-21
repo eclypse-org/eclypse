@@ -48,7 +48,8 @@ def infer_value_columns(
     Args:
         records (list[dict[str, Any]]): Replay records.
         reserved_columns (list[str]): Columns used for identity or timing.
-        value_columns (list[str] | tuple[str, ...] | None): Optional explicit value columns.
+        value_columns (list[str] | tuple[str, ...] | None):
+            Optional explicit value columns.
 
     Returns:
         Columns copied from records to graph assets.
@@ -88,7 +89,8 @@ def initial_step(
     """Resolve the step from which the replay should start.
 
     Args:
-        records_by_step (dict[int, list[dict[str, Any]]]): Replay records grouped by step.
+        records_by_step (dict[int, list[dict[str, Any]]]):
+            Replay records grouped by step.
         start_step (int | None): Optional explicit start step.
 
     Returns:
@@ -110,7 +112,8 @@ def resolve_replay_step(
     """Resolve the source replay step for a possibly cyclic policy.
 
     Args:
-        records_by_step (dict[int, list[dict[str, Any]]]): Replay records grouped by source step.
+        records_by_step (dict[int, list[dict[str, Any]]]):
+            Replay records grouped by source step.
         current_step (int): Policy call step to resolve.
         cyclic (bool): Whether to wrap within available replay steps.
 

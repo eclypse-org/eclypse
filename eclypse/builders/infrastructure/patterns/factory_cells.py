@@ -2,13 +2,12 @@
 
 The factory-cells pattern models repeated production cells connected to plant-edge
 compute, suitable for industrial monitoring and assembly workloads. Each cell is
-organised around a local controller with its machines and sensors, while one or
-more plant-edge nodes aggregate traffic across cells and optionally uplink to a
-cloud tier.
+organised around a local controller with its machines and sensors, while one or more
+plant-edge nodes aggregate traffic across cells and optionally uplink to a cloud tier.
 
-The pattern combines two QoS domains: short, high-quality local links inside a
-cell for operational traffic, and slower uplinks from cells to plant-edge or
-cloud resources for coordination, analytics, or historical storage.
+The pattern combines two QoS domains: short, high-quality local links inside a cell for
+operational traffic, and slower uplinks from cells to plant-edge or cloud resources for
+coordination, analytics, or historical storage.
 """
 
 from __future__ import annotations

@@ -1,9 +1,9 @@
 """Infrastructure builders (e.g. get_hierarchical, get_mec_5g, get_orion_cev).
 
-The package groups the off-the-shelf infrastructure builders provided by
-ECLYPSE. It combines generic topology generators, architecture-shaped
-deployment patterns, and named reference topologies derived from literature or
-datasets, while re-exporting them from a single public entrypoint.
+The package groups the off-the-shelf infrastructure builders provided by ECLYPSE. It
+combines generic topology generators, architecture-shaped deployment patterns, and named
+reference topologies derived from literature or datasets, while re-exporting them from a
+single public entrypoint.
 """
 
 from . import (

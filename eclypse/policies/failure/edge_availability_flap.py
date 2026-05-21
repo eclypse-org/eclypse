@@ -33,14 +33,17 @@ def edge_availability_flap(
 
     Args:
         down_probability (float): Probability of moving an available edge down.
-        up_probability (float | None): Probability of moving an unavailable edge up. When
+        up_probability (float | None):
+            Probability of moving an unavailable edge up. When
             omitted, ``down_probability`` is reused.
         down_availability (float): Availability value for unavailable edges.
         up_availability (float): Availability value for recovered edges.
         availability_key (str): Edge asset used to store availability.
         unavailable_at_or_below (float): Threshold for considering an edge unavailable.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that flips selected edge availability.

@@ -20,8 +20,10 @@ def validate_steps(
     """Validate additive walk step sizes.
 
     Args:
-        node_steps (dict[str, float] | None): Mapping from node asset name to maximum step size.
-        edge_steps (dict[str, float] | None): Mapping from edge asset name to maximum step size.
+        node_steps (dict[str, float] | None):
+            Mapping from node asset name to maximum step size.
+        edge_steps (dict[str, float] | None):
+            Mapping from edge asset name to maximum step size.
 
     Returns:
         None.

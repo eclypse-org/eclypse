@@ -1,8 +1,7 @@
 """Module for the Random placement strategy.
 
-It overrides the `place` method of the
-PlacementStrategy class to place services of an application on infrastructure nodes
-randomly.
+It overrides the `place` method of the PlacementStrategy class to place services of an
+application on infrastructure nodes randomly.
 """
 
 from __future__ import annotations

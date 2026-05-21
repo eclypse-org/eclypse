@@ -1,14 +1,12 @@
 """Random infrastructure generator.
 
-This module provides a generator for creating unstructured network
-topologies using the Erdos-Rényi random graph model. Each pair of nodes
-has a configurable probability `p` of being connected, allowing the
-simulation of a wide variety of sparse or dense graphs.
+This module provides a generator for creating unstructured network topologies using the
+Erdos-Rényi random graph model. Each pair of nodes has a configurable probability `p` of
+being connected, allowing the simulation of a wide variety of sparse or dense graphs.
 
-This is useful for stress-testing placement or routing algorithms,
-comparing performance against structured topologies, or modelling
-loosely connected networks such as P2P overlays or ad-hoc wireless
-systems.
+This is useful for stress-testing placement or routing algorithms, comparing performance
+against structured topologies, or modelling loosely connected networks such as P2P
+overlays or ad-hoc wireless systems.
 """
 
 from __future__ import annotations

@@ -28,9 +28,9 @@ if TYPE_CHECKING:
 def config_logger():
     """Configure the loguru logger.
 
-    It adds custom ECLYPSE levels for library logs and async exception reports.
-    Regular logs are printed to stdout, exception reports are printed to stderr,
-    and all logs are saved to a file if the LOG_FILE environment variable is set.
+    It adds custom ECLYPSE levels for library logs and async exception reports. Regular
+    logs are printed to stdout, exception reports are printed to stderr, and all logs
+    are saved to a file if the LOG_FILE environment variable is set.
     """
     head = "{time:HH:mm:ss.SSS} | <level>{level}</level> | "
     fmt = head + "<b><level>{extra[id]}</level></b> - <level>{message}</level>"

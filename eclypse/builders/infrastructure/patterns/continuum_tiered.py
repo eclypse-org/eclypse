@@ -1,15 +1,15 @@
 """Continuum-tiered infrastructure pattern.
 
 The continuum-tiered pattern models a device-edge-fog-cloud deployment by adapting the
-generic hierarchical generator with tier-aware naming and resource defaults. It
-proposes up to four semantic layers: device, edge, fog, and cloud. Nodes are
-grouped by tier and connected primarily across adjacent layers, while the
-intra-tier connectivity grows progressively richer from device to cloud.
+generic hierarchical generator with tier-aware naming and resource defaults. It proposes
+up to four semantic layers: device, edge, fog, and cloud. Nodes are grouped by tier and
+connected primarily across adjacent layers, while the intra-tier connectivity grows
+progressively richer from device to cloud.
 
-The pattern is designed for continuum QoS studies where latency and capacity are
-not uniform across the stack: devices are close to the data source but resource
-poor, edge and fog tiers progressively improve compute and availability, and the
-cloud tier offers the highest capacity with the loosest proximity guarantees.
+The pattern is designed for continuum QoS studies where latency and capacity are not
+uniform across the stack: devices are close to the data source but resource poor, edge
+and fog tiers progressively improve compute and availability, and the cloud tier offers
+the highest capacity with the loosest proximity guarantees.
 """
 
 from __future__ import annotations

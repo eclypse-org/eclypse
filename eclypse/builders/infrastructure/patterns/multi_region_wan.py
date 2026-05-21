@@ -1,14 +1,14 @@
 """Multi-region WAN infrastructure pattern.
 
 The multi-region WAN pattern models several compute regions connected by a slower
-backbone, with each region containing local compute nodes behind a regional
-gateway. The architecture proposes two layers inside each region, a gateway and
-its attached regional nodes, and then a WAN backbone between gateways.
+backbone, with each region containing local compute nodes behind a regional gateway. The
+architecture proposes two layers inside each region, a gateway and its attached regional
+nodes, and then a WAN backbone between gateways.
 
-This captures the QoS asymmetry of geo-distributed deployments: intra-region
-links are relatively fast and high-bandwidth, while inter-region communication
-is costlier in latency and capacity, making the pattern useful for placement and
-replication studies across distant sites.
+This captures the QoS asymmetry of geo-distributed deployments: intra-region links are
+relatively fast and high-bandwidth, while inter-region communication is costlier in
+latency and capacity, making the pattern useful for placement and replication studies
+across distant sites.
 """
 
 from __future__ import annotations

@@ -2,13 +2,13 @@
 
 This module provides a Barabasi-Albert style topology generator for infrastructure
 graphs dominated by a small number of highly connected hubs. New nodes attach
-preferentially to already well-connected nodes, creating a network with a few
-backbone-like hubs and many low-degree peripheral nodes.
+preferentially to already well-connected nodes, creating a network with a few backbone-
+like hubs and many low-degree peripheral nodes.
 
-This is useful for infrastructures where QoS depends on hub capacity and
-resilience: most flows traverse a limited set of critical nodes, so the topology
-is well suited to studying congestion, bottlenecks, and the impact of hub
-failures on latency and bandwidth.
+This is useful for infrastructures where QoS depends on hub capacity and resilience:
+most flows traverse a limited set of critical nodes, so the topology is well suited to
+studying congestion, bottlenecks, and the impact of hub failures on latency and
+bandwidth.
 """
 
 from __future__ import annotations

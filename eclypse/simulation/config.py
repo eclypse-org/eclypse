@@ -68,9 +68,9 @@ class SimulationConfig:
     step_every_ms: Literal["manual", "auto"] | float | None = "auto"
     """Cadence of the driving event.
 
-    ``"auto"`` continuously advances local simulations and resolves to manual mode
-    for remote simulations. Use ``None`` or ``"manual"`` for explicit manual
-    stepping, or pass a number for a millisecond cadence.
+    ``"auto"`` continuously advances local simulations and resolves to manual mode for
+    remote simulations. Use ``None`` or ``"manual"`` for explicit manual stepping, or
+    pass a number for a millisecond cadence.
     """
 
     timeout: float | None = None

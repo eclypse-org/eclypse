@@ -1,10 +1,9 @@
 """Module for a Best Fit placement strategy.
 
-It overrides the `place` method of the
-PlacementStrategy class to place services of an application on
-infrastructure nodes based on the node that best fits the requirements
-of the service, i.e. the node that satisfies the requirements and has
-the least amount of resources left after the placement.
+It overrides the `place` method of the PlacementStrategy class to place services of an
+application on infrastructure nodes based on the node that best fits the requirements of
+the service, i.e. the node that satisfies the requirements and has the least amount of
+resources left after the placement.
 """
 
 from __future__ import annotations
