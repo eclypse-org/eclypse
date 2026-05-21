@@ -283,6 +283,24 @@ async def test_media_service_services(monkeypatch):
     assert movie_id_comm.sent[0][0] == "TextService"
     assert movie_id_comm.sent[0][1]["movie_id"] == "m1"
 
+    movie_id_lookup_comm = set_mpi(
+        mpi_movie_id,
+        [
+            {
+                "sender_id": "MovieInfoService",
+                "request_type": "lookup_movie",
+                "movie_title": "The Matrix",
+            }
+        ],
+    )
+    await mpi_movie_id.step()
+    assert movie_id_lookup_comm.sent[0][0] == "MovieInfoService"
+    assert movie_id_lookup_comm.sent[0][1] == {
+        "response_type": "lookup_movie_response",
+        "movie_id": "m1",
+        "title": "The Matrix",
+    }
+
     text_comm = set_mpi(
         mpi_text,
         [{"sender_id": "MovieIdService", "text": " Great movie "}],
@@ -327,6 +345,30 @@ async def test_media_service_services(monkeypatch):
     assert storage_comm.sent[0][0] == "UserReviewService"
     assert storage_comm.sent[0][1]["request_type"] == "write_user_review"
 
+    storage_read_comm = set_mpi(
+        mpi_review_storage,
+        [
+            {
+                "sender_id": "MovieInfoService",
+                "request_type": "read_reviews",
+                "review_ids": [7001, 9999],
+            }
+        ],
+    )
+    await mpi_review_storage.step()
+    assert storage_read_comm.sent[0][0] == "MovieInfoService"
+    assert storage_read_comm.sent[0][1]["response_type"] == "read_reviews_response"
+    assert storage_read_comm.sent[0][1]["reviews"] == [
+        {
+            "review_id": 7001,
+            "movie_id": "m1",
+            "movie_title": "The Matrix",
+            "rating": 5,
+            "text": "Great movie",
+            "user": {"user_id": 101, "username": "ada"},
+        }
+    ]
+
     user_review_comm = set_mpi(
         mpi_user_review,
         [
@@ -364,6 +406,29 @@ async def test_media_service_services(monkeypatch):
     await mpi_movie_review.step()
     assert movie_review_comm.sent[0][0] == "ComposeReviewService"
     assert movie_review_comm.sent[0][1]["review_count"] == 1
+
+    movie_review_read_comm = set_mpi(
+        mpi_movie_review,
+        [
+            {
+                "sender_id": "MovieInfoService",
+                "request_type": "read_movie_reviews",
+                "movie_id": "m1",
+            }
+        ],
+    )
+    await mpi_movie_review.step()
+    assert movie_review_read_comm.sent[0][0] == "MovieInfoService"
+    assert movie_review_read_comm.sent[0][1] == {
+        "response_type": "read_movie_reviews_response",
+        "reviews": [
+            {
+                "review_id": 7001,
+                "movie_id": "m1",
+                "movie_title": "The Matrix",
+            }
+        ],
+    }
 
     cast_comm = set_mpi(
         mpi_cast,

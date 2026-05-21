@@ -7,11 +7,25 @@ from dataclasses import (
     dataclass,
     field,
 )
+from types import SimpleNamespace
 
 import networkx as nx
 import pytest
 
 from eclypse.builders.workflow import get_workflow
+from eclypse.builders.workflow._helpers import (
+    _copy_workflow_metadata,
+    _edge_asset_values,
+    _shared_output_input_files,
+    _task_asset_values,
+    _task_metadata,
+    coerce_workflow_base_method,
+    coerce_workflow_family,
+    derive_workflow_flows,
+)
+from eclypse.builders.workflow.base_method import WorkflowBaseMethod
+from eclypse.builders.workflow.workflow_family import WorkflowFamily
+from eclypse.graph import Application
 
 _BYTES_PER_MIB = 2**20
 
@@ -242,6 +256,46 @@ def test_get_workflow(monkeypatch: pytest.MonkeyPatch):
 
     assert "latency" in application["mProject_0001"]["mDiffFit_0002"]
     assert "availability" in application.nodes["mProject_0001"]
+    assert coerce_workflow_family(WorkflowFamily.MONTAGE) is WorkflowFamily.MONTAGE
+    assert (
+        coerce_workflow_base_method(WorkflowBaseMethod.RANDOM)
+        is WorkflowBaseMethod.RANDOM
+    )
+
+    plain_workflow = nx.DiGraph()
+    plain_workflow.add_edges_from([("a", "b"), ("c", "d")])
+    assert derive_workflow_flows(plain_workflow) == [["a", "b"], ["c", "d"]]
+
+    metadata_application = Application()
+    _copy_workflow_metadata(
+        metadata_application,
+        SimpleNamespace(graph=object()),
+        WorkflowFamily.MONTAGE,
+    )
+    assert metadata_application.graph["workflow_backend"] == "wfcommons"
+    assert metadata_application.graph["workflow_family"] == "montage"
+
+    partial_task = SimpleNamespace(
+        cores=None,
+        memory=None,
+        runtime=None,
+        input_files=[],
+        output_files=[],
+        bytes_read=None,
+        bytes_written=None,
+    )
+    assert _task_asset_values(None) == {}
+    assert _task_asset_values(partial_task) == {}
+    assert _task_metadata(None) == {}
+    assert _edge_asset_values(None, None) == {}
+    assert _shared_output_input_files(None, partial_task) == {}
+    assert (
+        _shared_output_input_files(
+            SimpleNamespace(output_files=[SimpleNamespace(file_id=None, size=1)]),
+            partial_task,
+        )
+        == {}
+    )
 
 
 def test_get_workflow_uses_family_minimum_when_num_tasks_is_omitted(
@@ -279,6 +333,11 @@ def test_get_workflow_rejects_too_small_num_tasks(
         match=re.escape("Workflow family 'genome' requires num_tasks >= 54, got 10."),
     ):
         get_workflow("genome", num_tasks=10)
+
+    with pytest.raises(ValueError, match="Unknown workflow family"):
+        coerce_workflow_family("unknown")
+    with pytest.raises(ValueError, match="Unknown workflow base method"):
+        coerce_workflow_base_method("unknown")
 
 
 def test_get_workflow_requires_wfcommons(monkeypatch: pytest.MonkeyPatch):
