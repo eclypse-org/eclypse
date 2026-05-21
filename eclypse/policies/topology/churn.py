@@ -22,7 +22,8 @@ def churn(
     Args:
         remove_probability (float): Per-existing-node probability of removal.
         add_probability (float): Per-candidate-node probability of addition.
-        candidate_nodes (dict[str, dict] | None): Optional mapping from node id to node assets.
+        candidate_nodes (dict[str, dict] | None):
+            Optional mapping from node id to node assets.
 
     Returns:
         Policy that applies node churn.

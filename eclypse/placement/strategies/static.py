@@ -1,8 +1,8 @@
 """Module for the Static placement strategy.
 
-It overrides the `place` method of the
-PlacementStrategy class to place services of an application on infrastructure nodes
-based on a predefined mapping of services to nodes in the form of a dictionary.
+It overrides the `place` method of the PlacementStrategy class to place services of an
+application on infrastructure nodes based on a predefined mapping of services to nodes
+in the form of a dictionary.
 """
 
 from __future__ import annotations
@@ -25,8 +25,8 @@ if TYPE_CHECKING:
 class StaticStrategy(PlacementStrategy):
     """StaticStrategy class.
 
-    Static placement strategy based on a predefined mapping of services
-    to nodes in the form of a dictionary.
+    Static placement strategy based on a predefined mapping of services to nodes in the
+    form of a dictionary.
     """
 
     def __init__(self, mapping: dict[str, str]):

@@ -1,14 +1,14 @@
 """Industrial TSN infrastructure pattern.
 
-The industrial TSN pattern models a deterministic switched LAN for controllers,
-field devices, and local edge compute in industrial automation settings. It
-proposes a switching fabric at the centre, with endpoints, controllers, and
-plant-edge compute attached to the same deterministic network.
+The industrial TSN pattern models a deterministic switched LAN for controllers, field
+devices, and local edge compute in industrial automation settings. It proposes a
+switching fabric at the centre, with endpoints, controllers, and plant-edge compute
+attached to the same deterministic network.
 
 The featured QoS assumption is strict and predictable service quality: TSN links
-represent low-latency, high-bandwidth paths intended for bounded-delay control
-traffic, while the switching fabric provides deterministic connectivity between
-control and production nodes instead of best-effort routing.
+represent low-latency, high-bandwidth paths intended for bounded-delay control traffic,
+while the switching fabric provides deterministic connectivity between control and
+production nodes instead of best-effort routing.
 """
 
 from __future__ import annotations

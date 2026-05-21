@@ -1,8 +1,8 @@
 """Module for a First Fit placement strategy.
 
-It overrides the `place` method of the
-PlacementStrategy class to place services of an application on infrastructure nodes
-based on the first node that satisfies the requirements of the service.
+It overrides the `place` method of the PlacementStrategy class to place services of an
+application on infrastructure nodes based on the first node that satisfies the
+requirements of the service.
 """
 
 from __future__ import annotations

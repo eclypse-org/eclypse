@@ -1,9 +1,9 @@
 """TopoHub references (e.g. get_topohub, get_sndlib, get_topology_zoo).
 
 The package groups dataset-backed infrastructure references loaded through the
-``topohub`` Python wrapper. It includes a generic ``get_topohub`` entrypoint
-for arbitrary TopoHub paths together with family-specific helpers for SNDlib,
-the Internet Topology Zoo, CAIDA, synthetic backbones, and Gabriel graphs.
+``topohub`` Python wrapper. It includes a generic ``get_topohub`` entrypoint for
+arbitrary TopoHub paths together with family-specific helpers for SNDlib, the Internet
+Topology Zoo, CAIDA, synthetic backbones, and Gabriel graphs.
 """
 
 from ._helpers import get_topohub

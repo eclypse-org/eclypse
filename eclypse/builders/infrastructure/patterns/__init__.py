@@ -1,9 +1,9 @@
 """Infrastructure patterns (e.g. get_continuum_tiered, get_mec_5g).
 
-The package groups parameterised infrastructure blueprints whose structure is
-tied to an architectural deployment model rather than to a pure graph family.
-These builders encode recognisable system layouts such as cloud-edge continua,
-MEC deployments, industrial cells, and vehicular edge backbones.
+The package groups parameterised infrastructure blueprints whose structure is tied to an
+architectural deployment model rather than to a pure graph family. These builders encode
+recognisable system layouts such as cloud-edge continua, MEC deployments, industrial
+cells, and vehicular edge backbones.
 """
 
 from .continuum_tiered import get_continuum_tiered

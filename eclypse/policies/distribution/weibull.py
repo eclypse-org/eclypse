@@ -34,8 +34,10 @@ def weibull(
     Args:
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
-        node_distribution (tuple[float, float]): Default ``(alpha, beta)`` tuple for node assets.
-        edge_distribution (tuple[float, float] | None): Default tuple for edge assets. When omitted,
+        node_distribution (tuple[float, float]):
+            Default ``(alpha, beta)`` tuple for node assets.
+        edge_distribution (tuple[float, float] | None):
+            Default tuple for edge assets. When omitted,
             ``node_distribution`` is reused.
         node_asset_distributions (dict[str, tuple[float, float]] | None):
             Optional per-node-asset distributions.
@@ -43,9 +45,12 @@ def weibull(
             Optional per-edge-asset distributions.
         minimum (float): Lower bound after applying the sampled multiplier.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Policy that multiplies selected numeric assets by Weibull samples.

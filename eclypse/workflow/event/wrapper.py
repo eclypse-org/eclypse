@@ -42,8 +42,7 @@ if TYPE_CHECKING:
 class EventWrapper(EclypseEvent):
     """EventWrapper class.
 
-    Class to wrap an event function into a class that can be managed by the
-    Simulator.
+    Class to wrap an event function into a class that can be managed by the Simulator.
     """
 
     def __init__(

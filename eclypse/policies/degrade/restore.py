@@ -110,12 +110,17 @@ def restore(
         epochs (int): Number of calls used to complete the restore operation.
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
-        node_values (dict[str, float] | None): Optional per-node-asset baseline overrides.
-        edge_values (dict[str, float] | None): Optional per-edge-asset baseline overrides.
+        node_values (dict[str, float] | None):
+            Optional per-node-asset baseline overrides.
+        edge_values (dict[str, float] | None):
+            Optional per-edge-asset baseline overrides.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Stateful policy that restores selected numeric assets.

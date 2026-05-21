@@ -1,7 +1,7 @@
 """Module for the Placement class.
 
-It represents the mapping of application services onto infrastructure nodes, a
-ccording to a placement strategy.
+It represents the mapping of application services onto infrastructure nodes, a ccording
+to a placement strategy.
 """
 
 from __future__ import annotations

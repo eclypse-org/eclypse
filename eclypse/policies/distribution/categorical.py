@@ -160,8 +160,10 @@ def normalize_weight_sets(
         default_distribution (list[float]): Default categorical choices.
         default_weights (list[float] | None): Optional default categorical weights.
         asset_name (str): Display name for per-asset distributions.
-        asset_distributions (dict[str, list[float]] | None): Optional per-asset categorical choices.
-        asset_weights (dict[str, list[float]] | None): Optional per-asset categorical weights.
+        asset_distributions (dict[str, list[float]] | None):
+            Optional per-asset categorical choices.
+        asset_weights (dict[str, list[float]] | None):
+            Optional per-asset categorical weights.
 
     Returns:
         Mapping from display names to ``(choices, weights)`` pairs.

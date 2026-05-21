@@ -1,8 +1,8 @@
 """Abstract base class for Report DataFrame backends.
 
-This module defines the FrameBackend abstract base class used by Report to
-perform IO and filtering operations without depending on a specific DataFrame
-library (e.g. pandas or polars).
+This module defines the FrameBackend abstract base class used by Report to perform IO
+and filtering operations without depending on a specific DataFrame library (e.g. pandas
+or polars).
 
 Backends are implemented as subclasses providing concrete behaviour.
 """

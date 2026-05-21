@@ -1,7 +1,7 @@
 """Polars lazy backend implementation.
 
-This module provides a concrete FrameBackend implementation using polars LazyFrame.
-It builds a lazy query plan and only executes when you call `.collect()`.
+This module provides a concrete FrameBackend implementation using polars LazyFrame. It
+builds a lazy query plan and only executes when you call `.collect()`.
 
 Polars is imported lazily so that it remains an optional dependency.
 """

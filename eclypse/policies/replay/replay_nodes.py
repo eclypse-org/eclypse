@@ -82,8 +82,10 @@ def replay_nodes(
         value_columns (list[str] | tuple[str, ...] | None):
             Optional explicit columns to copy from records.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing node.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        missing (MissingPolicyBehaviour):
+            Behaviour when a replay record targets a missing node.
         start_step (int | None): Optional starting replay step.
         cyclic (bool): Whether to wrap past the final available replay step.
 

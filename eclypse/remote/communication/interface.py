@@ -29,12 +29,12 @@ if TYPE_CHECKING:
 class EclypseCommunicationInterface:
     """EclypseCommunicationInterface class.
 
-    It is used to implement and simulate the interactions between
-    services deployed and running in the same infrastructure.
+    It is used to implement and simulate the interactions between services deployed and
+    running in the same infrastructure.
 
-    It allows to interact with the `RemoteSimulator`, which provides the
-    details regarding the current state of the infrastructure, and
-    simulate the behaviour of the services accordingly.
+    It allows to interact with the `RemoteSimulator`, which provides the details
+    regarding the current state of the infrastructure, and simulate the behaviour of the
+    services accordingly.
     """
 
     def __init__(self, service: Service):

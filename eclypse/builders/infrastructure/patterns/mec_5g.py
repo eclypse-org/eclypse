@@ -1,14 +1,14 @@
 """MEC 5G infrastructure pattern.
 
-The MEC 5G pattern models user equipment attached to radio sites, each backed by
-edge compute close to the access network and connected onward to a cloud tier.
-The proposed layers are user equipment, radio access nodes, MEC hosts, and
-cloud nodes. Vehicles or mobile users attach to the radio tier, the radio tier
-uplinks to nearby MEC compute, and MEC nodes connect to a more distant cloud.
+The MEC 5G pattern models user equipment attached to radio sites, each backed by edge
+compute close to the access network and connected onward to a cloud tier. The proposed
+layers are user equipment, radio access nodes, MEC hosts, and cloud nodes. Vehicles or
+mobile users attach to the radio tier, the radio tier uplinks to nearby MEC compute, and
+MEC nodes connect to a more distant cloud.
 
-The built-in QoS profile reflects this structure: access links favour low
-latency and moderate bandwidth, backhaul links are faster and more stable, and
-the cloud uplink trades proximity for larger aggregate capacity.
+The built-in QoS profile reflects this structure: access links favour low latency and
+moderate bandwidth, backhaul links are faster and more stable, and the cloud uplink
+trades proximity for larger aggregate capacity.
 """
 
 from __future__ import annotations

@@ -85,9 +85,12 @@ def replay_edges(
         time_column (str): Column containing replay steps.
         value_columns (list[str] | tuple[str, ...] | None):
             Optional explicit columns to copy from records.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
-        missing (MissingPolicyBehaviour): Behaviour when a replay record targets a missing edge.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
+        missing (MissingPolicyBehaviour):
+            Behaviour when a replay record targets a missing edge.
         start_step (int | None): Optional starting replay step.
         cyclic (bool): Whether to wrap past the final available replay step.
 

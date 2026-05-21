@@ -110,12 +110,17 @@ def ramp_to(
         epochs (int): Number of calls used to complete the ramp.
         node_assets (str | list[str] | None): Optional node asset key selector.
         edge_assets (str | list[str] | None): Optional edge asset key selector.
-        node_targets (dict[str, float] | None): Optional per-node-asset target overrides.
-        edge_targets (dict[str, float] | None): Optional per-edge-asset target overrides.
+        node_targets (dict[str, float] | None):
+            Optional per-node-asset target overrides.
+        edge_targets (dict[str, float] | None):
+            Optional per-edge-asset target overrides.
         node_ids (list[str] | None): Optional explicit node identifiers to mutate.
-        node_filter (NodeFilter | None): Optional predicate receiving ``(node_id, data)``.
-        edge_ids (list[tuple[str, str]] | None): Optional explicit edge identifiers to mutate.
-        edge_filter (EdgeFilter | None): Optional predicate receiving ``(source, target, data)``.
+        node_filter (NodeFilter | None):
+            Optional predicate receiving ``(node_id, data)``.
+        edge_ids (list[tuple[str, str]] | None):
+            Optional explicit edge identifiers to mutate.
+        edge_filter (EdgeFilter | None):
+            Optional predicate receiving ``(source, target, data)``.
 
     Returns:
         Stateful policy that ramps selected numeric assets.

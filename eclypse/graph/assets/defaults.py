@@ -1,8 +1,8 @@
 """Default asset initializers for nodes, links and aggregator for links assets.
 
-Default node assets are: cpu, ram, storage, gpu, availability, processing_time.
-Default link assets are: latency, bandwidth.
-Default path aggregators are: latency (sum), bandwidth (min).
+Default node assets are: cpu, ram, storage, gpu, availability, processing_time. Default
+link assets are: latency, bandwidth. Default path aggregators are: latency (sum),
+bandwidth (min).
 """
 
 from __future__ import annotations

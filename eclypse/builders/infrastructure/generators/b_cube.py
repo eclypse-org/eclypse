@@ -17,7 +17,8 @@ A BCube(k, n) contains:
 The implementation follows the definition from:
 Guo et al. "BCube: a high performance, server-centric network
 architecture for modular data centers"
-ACM SIGCOMM Computer Communication Review, 2009. https://dl.acm.org/doi/10.1145/1592568.1592577
+ACM SIGCOMM Computer Communication Review, 2009.
+https://dl.acm.org/doi/10.1145/1592568.1592577
 """
 
 from __future__ import annotations

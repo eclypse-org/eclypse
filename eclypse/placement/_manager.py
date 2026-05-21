@@ -1,8 +1,8 @@
 """Module for the PlacementManager class.
 
-It manages the placement of applications in the infrastructure and is
-responsible for the mapping phase, where the application services are
-mapped to the infrastructure nodes.
+It manages the placement of applications in the infrastructure and is responsible for
+the mapping phase, where the application services are mapped to the infrastructure
+nodes.
 """
 
 from __future__ import annotations
@@ -53,11 +53,11 @@ class PlacementManager:
     def audit(self):
         """Check placements and reset those violating infrastructure constraints.
 
-        Iterates over the placements of all the involved applications, checking if
-        the placement constraints are respected by the infrastructure capabilities.
+        Iterates over the placements of all the involved applications, checking if the
+        placement constraints are respected by the infrastructure capabilities.
 
-        If not, it resets the placement of the applications whose requirements
-        are not respected.
+        If not, it resets the placement of the applications whose requirements are not
+        respected.
         """
         reset_requests = 0
         for _, not_respected in self.mapping_phase():

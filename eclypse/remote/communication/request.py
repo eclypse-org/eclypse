@@ -126,9 +126,9 @@ class EclypseRequest:
     def routes(self) -> list[Route | None]:
         """Wait for the routes to be computed.
 
-        This method can be awaited explicitly to
-        compute the routes to the recipients. Otherwise, it is awaited implicitly when
-        the `EclypseRequest` object is awaited to process the request.
+        This method can be awaited explicitly to compute the routes to the recipients.
+        Otherwise, it is awaited implicitly when the `EclypseRequest` object is awaited
+        to process the request.
         """
         return [(r.result() if r.done() else None) for r in self._routes]
 
@@ -136,9 +136,9 @@ class EclypseRequest:
     def responses(self) -> list[Any | None]:
         """Wait for the responses to the MPI request.
 
-        This method can be called explicitly to wait for the responses
-        to the EclypseRequest. Otherwise, it is called implicitly when
-        the `EclypseRequest` object is awaited to process the request.
+        This method can be called explicitly to wait for the responses to the
+        EclypseRequest. Otherwise, it is called implicitly when the `EclypseRequest`
+        object is awaited to process the request.
         """
         return [(f.result()["future"] if f.done() else None) for f in self._futures]
 

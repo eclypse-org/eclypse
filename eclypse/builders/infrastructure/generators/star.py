@@ -1,13 +1,12 @@
 """Star infrastructure generator.
 
-This module provides a generator for building star-shaped network
-topologies, where a central node is connected directly to multiple
-peripheral client nodes. The centre can be configured separately from
-the outer nodes in terms of resource assets and roles.
+This module provides a generator for building star-shaped network topologies, where a
+central node is connected directly to multiple peripheral client nodes. The centre can
+be configured separately from the outer nodes in terms of resource assets and roles.
 
-This topology is useful for modelling centralised communication systems
-such as access points, base stations, master-slave control, or
-cloud-edge scenarios with a hub-spoke structure.
+This topology is useful for modelling centralised communication systems such as access
+points, base stations, master-slave control, or cloud-edge scenarios with a hub-spoke
+structure.
 """
 
 from __future__ import annotations

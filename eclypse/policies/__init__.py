@@ -1,7 +1,7 @@
 """Utilities and built-in update policies.
 
-This module hosts the public update-policy interface used by ECLYPSE graphs.
-Policies are graph-oriented callables that mutate an
+This module hosts the public update-policy interface used by ECLYPSE graphs. Policies
+are graph-oriented callables that mutate an
 :class:`~eclypse.graph.asset_graph.AssetGraph` during ``evolve()``.
 """
 
