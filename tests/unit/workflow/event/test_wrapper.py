@@ -63,9 +63,10 @@ def test_scheduled_decorator_wrapper_and_defaults(
     assert any(
         isinstance(trigger, RandomCascadeTrigger) for trigger in wrapped.triggers
     )
-    assert sum(
-        isinstance(trigger, PeriodicCascadeTrigger) for trigger in wrapped.triggers
-    ) == 2
+    assert (
+        sum(isinstance(trigger, PeriodicCascadeTrigger) for trigger in wrapped.triggers)
+        == 2
+    )
 
     @application_metric(name="app_metric")
     def app_metric(app, placement, infrastructure):
@@ -83,14 +84,35 @@ def test_scheduled_decorator_wrapper_and_defaults(
 
     explicit_wrapper = EventWrapper(lambda: {"ok": True}, "plain", [])
     assert explicit_wrapper() == {"ok": True}
+    timed_wrapper = EventWrapper(lambda: {"ok": True}, "timed", [], trigger_every_ms=10)
+    assert len(timed_wrapper.triggers) == 1
 
 
 def test_wrapper_validation_rejects_invalid_activation_shapes():
+    with pytest.raises(ValueError, match="decorator must be applied"):
+        every(steps=1)(None)  # type: ignore[arg-type]
+    with pytest.raises(TypeError, match="steps"):
+        every(steps=1.5)(lambda: None)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="steps"):
+        every(steps=0)(lambda: None)
+    with pytest.raises(TypeError, match="step"):
+        after(step=1.5)(lambda: None)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="step"):
+        after(step=-1)(lambda: None)
+    with pytest.raises(TypeError, match="step"):
+        once_at(step=1.5)(lambda: None)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="step"):
+        once_at(step=-1)(lambda: None)
     with pytest.raises(ValueError, match="Invalid tuple format"):
         EventWrapper(lambda: None, "bad", [], activates_on=("step", "nope"))
 
     with pytest.raises(ValueError, match="Invalid activates_on type"):
-        EventWrapper(lambda: None, "bad", [], activates_on={"step"})  # type: ignore[arg-type]
+        EventWrapper(
+            lambda: None,
+            "bad",
+            [],
+            activates_on={"step"},  # type: ignore[arg-type]
+        )
 
 
 def test_scheduling_decorators_create_expected_triggers():
@@ -117,7 +139,9 @@ def test_scheduling_decorators_create_expected_triggers():
     assert delayed.trigger_bucket.max_triggers == 1
     assert once.name == "single"
     assert once.trigger_bucket.max_triggers == 1
-    assert any(isinstance(trigger, ScheduledCascadeTrigger) for trigger in once.triggers)
+    assert any(
+        isinstance(trigger, ScheduledCascadeTrigger) for trigger in once.triggers
+    )
 
 
 def test_scheduling_decorators_validate_step_arguments():

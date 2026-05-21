@@ -39,6 +39,10 @@ class ExampleObject:
         self.payload = {"items": [1, 2, 3], "name": "demo"}
 
 
+class SlottedObject:
+    __slots__ = ()
+
+
 class DummyInterface(EclypseCommunicationInterface):
     async def _not_connected_response(self):
         return "offline"
@@ -166,6 +170,7 @@ def test_route_size_helper_handles_objects_and_nested_structures():
 
     assert _get_bytes_size({"nested": [1, 2, {"x": 3}]}) > 0
     assert _get_bytes_size(obj) == _get_bytes_size(obj.__dict__)
+    assert _get_bytes_size(SlottedObject()) > 0
 
 
 @pytest.mark.asyncio
@@ -336,6 +341,8 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 
     with pytest.raises(ValueError, match="not connected"):
         interface.request_route("worker")
+    with pytest.raises(ValueError, match="not connected"):
+        interface.get_neighbors()
 
     monkeypatch.setattr(
         "eclypse.remote.communication.interface.ray_backend.get_actor",
@@ -503,6 +510,8 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
 
     with pytest.raises(ValueError, match="body must be a dictionary"):
         mpi.bcast("bad")  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="recipient_ids"):
+        mpi.send(None, {"x": 1})  # type: ignore[arg-type]
 
     monkeypatch.setattr(
         "eclypse.remote.communication.mpi.interface.UnicastRequest",

@@ -193,6 +193,16 @@ def test_simulation_run_helpers_and_context_cleanup(
         assert managed is simulation
     assert calls == ["stop"]
 
+    def fail_stop():
+        calls.append("failed-stop")
+        raise RuntimeError("boom")
+
+    monkeypatch.setattr(simulation, "stop", fail_stop)
+    with pytest.raises(RuntimeError, match="boom"):
+        with simulation:
+            pass
+    assert calls[-1] == "failed-stop"
+
 
 def test_simulation_remote_paths_and_report_cache(
     monkeypatch,
