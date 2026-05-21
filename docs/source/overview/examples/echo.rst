@@ -83,3 +83,15 @@ results under the default simulation path.
 
     .. literalinclude:: ../../../../examples/echo/main.py
         :language: python
+
+What to inspect
+---------------
+
+After the run, compare the communication metrics produced by unicast and
+broadcast exchanges. This example is a good template when you want to test a
+small emulated service loop before moving to a larger application.
+
+Related concepts:
+
+- :doc:`../advanced/emulation/messaging`
+- :doc:`../advanced/reporting`

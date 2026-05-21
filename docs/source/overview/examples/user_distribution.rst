@@ -44,3 +44,16 @@ Simulation
 
     .. literalinclude:: ../../../../examples/user_distribution/main.py
         :language: python
+
+What to inspect
+---------------
+
+Use this example when the infrastructure has domain-specific state. The
+``user_count`` asset shows how custom node attributes can drive metrics and
+update policies without changing the core simulator.
+
+Related concepts:
+
+- :doc:`../concepts/assets`
+- :doc:`../concepts/update-policy`
+- :doc:`../advanced/reporting`

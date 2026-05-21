@@ -51,9 +51,9 @@ to define communication behaviour declaratively inside service methods.
 
 You can decorate a method to:
 
-- receive a message before it runs (`receive=True`)
-- send the return value to a target (`send=True`)
-- broadcast the return value to all neighbours (`broadcast=True`)
+- receive a message before it runs (``receive=True``)
+- send the return value to a target (``send=True``)
+- broadcast the return value to all neighbours (``broadcast=True``)
 
 **Sending and broadcasting are mutually exclusive.**
 
@@ -88,9 +88,9 @@ You define REST endpoints inside your service by decorating methods with
 
 Each endpoint:
 
-- is associated with a URL pattern and an HTTP method (`GET`, `POST`, `PUT`, `DELETE`)
+- is associated with a URL pattern and an HTTP method (``GET``, ``POST``, ``PUT``, ``DELETE``)
 - receives the request data as keyword arguments
-- must return a tuple: `(HTTPStatusCode, response_dict)`
+- must return a tuple: ``(HTTPStatusCode, response_dict)``
 
 Example:
 
@@ -143,13 +143,11 @@ executed and the object exposes:
 
 For example:
 
-   .. code-block:: python
+.. code-block:: python
 
-      request = await self.rest.post("StoreService/data", key="item1", value=42)
-      print(request.status_code)
-      print(request.body)
-
----
+   request = await self.rest.post("StoreService/data", key="item1", value=42)
+   print(request.status_code)
+   print(request.body)
 
 Endpoint Resolution
 ~~~~~~~~~~~~~~~~~~~

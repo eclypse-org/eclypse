@@ -164,3 +164,6 @@ docs/source/api/reference/*
 # graphify
 .graphifyignore
 graphify-out/
+
+# codegraph
+.codegraph/

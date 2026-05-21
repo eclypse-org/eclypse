@@ -20,6 +20,7 @@ The two classes share many structural similarities, but differ in purpose and in
 
          infrastructure = Infrastructure(
              infrastructure_id="infra",
+             include_default_assets=True,
              update_policies=[
                  policies.failure.availability_flap(0.01, up_probability=0.2),
                  policies.distribution.uniform(
@@ -29,12 +30,8 @@ The two classes share many structural similarities, but differ in purpose and in
                      edge_distribution=(0.95, 1.05),
                  ),
              ],
-             node_assets=[...],
-             edge_assets=[...],
              resource_init="min",
              seed=42,
-             path_assets_aggregators=...,
-             path_algorithm=...,
          )
 
       **Key parameters:**
@@ -42,10 +39,10 @@ The two classes share many structural similarities, but differ in purpose and in
       - ``infrastructure_id``: identifier of the infrastructure
       - ``update_policies``: list of :doc:`update policies <update-policy>` for infrastructure resources
       - ``node_assets`` / ``edge_assets``: available capabilities (:doc:`asset <assets>` values) of nodes and links
+      - ``include_default_assets``: include the built-in CPU, RAM, storage, availability, latency, and bandwidth assets
       - ``resource_init``: initialisation of resources (*min* or *max*)
       - ``seed``: random seed for reproducibility
       - ``path_assets_aggregators``: aggregators for *each link asset* evaluation across paths
-      - ``path_algorithm``: path logic to retrieve and check the paths among nodes
 
    .. tab-item:: Application
       :sync: app
@@ -57,6 +54,7 @@ The two classes share many structural similarities, but differ in purpose and in
 
          application = Application(
              application_id="app",
+             include_default_assets=True,
              update_policies=[
                  policies.after(
                      50,
@@ -76,18 +74,17 @@ The two classes share many structural similarities, but differ in purpose and in
                      ),
                  ),
              ],
-             node_assets=[...],
-             edge_assets=[...],
              requirement_init="min",
              seed=42,
-             flows=[["serviceA", "serviceB"], ...],
+             flows=[["frontend", "worker"]],
          )
 
       **Key parameters:**
 
-      - ``application_id``: identifier of the application
+      - ``application_id``: identifier of the application. Defaults to ``"Application"``
       - ``update_policies``: list of :doc:`update policies <update-policy>` for application requirements
       - ``node_assets`` / ``edge_assets``: resource requirements (:doc:`asset <assets>` values) of services and links
+      - ``include_default_assets``: include the built-in requirement assets
       - ``requirement_init``: initialisation of resources (*min* or *max*)
       - ``seed``: random seed for reproducibility
       - ``flows``: list of service chains or communication flows
@@ -118,10 +115,11 @@ These methods allow you to associate assets and automatically validate their val
         from eclypse.graph.infrastructure import Infrastructure
         from eclypse.graph.assets.defaults import cpu, ram, latency, bandwidth
 
-        infra = Infrastructure(infrastructure_id="my-infra",
+        infra = Infrastructure(
+            infrastructure_id="my-infra",
             node_assets={"cpu": cpu, "ram": ram},
             edge_assets={"latency": latency, "bandwidth": bandwidth},
-            ...)
+        )
 
         # Add two compute node
         infra.add_node("node-1", cpu=4.0, ram=8.0)
@@ -146,10 +144,11 @@ These methods allow you to associate assets and automatically validate their val
         from eclypse.graph.application import Application
         from eclypse.graph.assets.defaults import cpu, ram, latency, bandwidth
 
-        app = Application(application_id="my-app",
+        app = Application(
+            application_id="my-app",
             node_assets={"cpu": cpu, "ram": ram},
             edge_assets={"latency": latency, "bandwidth": bandwidth},
-            ...)
+        )
 
         # Add a service with specific resource requirements
         app.add_node("service-A", cpu=1.0, ram=0.5)
@@ -174,102 +173,28 @@ These methods allow you to associate assets and automatically validate their val
 .. note::
 
    All assets passed to :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_node` or :py:meth:`~eclypse.graph.asset_graph.AssetGraph.add_edge` are checked against the declared asset definitions.
-   If validation fails and `strict` is `True`, an exception is raised. Otherwise, a warning is logged.
+   If validation fails and ``strict`` is ``True``, an exception is raised. Otherwise, a warning is logged.
 
 Default builders
 ----------------
 
 ECLYPSE provides several built-in builder functions that allow you to quickly
 instantiate commonly used topologies and reference applications.
+They return mutable :class:`~eclypse.graph.application.Application` or
+:class:`~eclypse.graph.infrastructure.Infrastructure` objects with sensible
+asset defaults and, for applications, representative flows.
 
-These builders return fully initialised
-:class:`~eclypse.graph.application.Application` or
-:class:`~eclypse.graph.infrastructure.Infrastructure` objects with predefined
-assets and flows.
+.. code-block:: python
 
-.. tab-set::
+   from eclypse.builders.application import get_sock_shop
+   from eclypse.builders.infrastructure import get_fat_tree
 
-   .. tab-item:: Infrastructure
-      :sync: infra
-
-      You can import infrastructure builders from:
-
-      .. code-block:: python
-
-         from eclypse.builders.infrastructure import (
-             get_b_cube,
-             get_continuum_tiered,
-             get_fat_tree,
-             get_backbone,
-             get_caida,
-             get_gabriel,
-             get_orion_cev,
-             get_sndlib,
-             get_topohub,
-             get_topology_zoo,
-             get_hierarchical,
-             get_mec_5g,
-             get_multi_region_wan,
-             get_random,
-             get_scale_free,
-             get_small_world,
-             get_star,
-         )
-
-      ECLYPSE includes several off-the-shelf infrastructure builders across
-      generic generators, architecture patterns, and named references. For the
-      full list, see :mod:`eclypse.builders.infrastructure`.
-
-      .. list-table::
-         :header-rows: 1
-
-         * - Category
-           - Builders
-         * - Generic generators
-           - ``get_star``, ``get_random``, ``get_hierarchical``,
-             ``get_fat_tree``, ``get_b_cube``, ``get_small_world``,
-             ``get_scale_free``
-         * - Architecture patterns
-           - ``get_continuum_tiered``, ``get_mec_5g``,
-             ``get_multi_region_wan``, ``get_industrial_tsn``,
-             ``get_factory_cells``, ``get_vehicular_edge``
-         * - References
-           - ``get_orion_cev``, ``get_topohub``, ``get_topology_zoo``,
-             ``get_sndlib``, ``get_backbone``, ``get_caida``,
-             ``get_gabriel``
-
-      **Example:**
-
-      .. code-block:: python
-
-         from eclypse.builders.infrastructure import get_fat_tree
-
-         infra = get_fat_tree(k=4)
-
-   .. tab-item:: Application
-      :sync: app
-
-      ECLYPSE includes several built-in application builders, all collected in
-      the :mod:`eclypse.builders.application` package. Sock Shop remains the
-      reference example used throughout this section, using
-      :func:`~eclypse.builders.application.sock_shop.application.get_sock_shop`.
-
-      For simulation-only task DAGs, ECLYPSE also provides workflow builders in
-      :mod:`eclypse.builders.workflow`. These builders use WfCommons to
-      generate workflows and normalise file-size-derived ``storage`` and
-      dependency ``bandwidth`` values from bytes to MiB before assigning them
-      to the default ECLYPSE assets.
-
-      .. code-block:: python
-
-         from eclypse.builders.application import get_sock_shop
-
-         app = get_sock_shop()
-
-      This application contains multiple interconnected services and
-      representative communication flows. For the full list of built-in
-      applications, see :mod:`eclypse.builders.application`.
+   infra = get_fat_tree(k=4, include_default_assets=True)
+   app = get_sock_shop(include_default_assets=True)
 
 .. tip::
 
-   Builders are useful for prototyping or benchmarking standard scenarios. All returned graphs are mutable and can be extended using the :ref:`standard interface <define-topology>`.
+   Builders are useful for prototyping or benchmarking standard scenarios. All
+   returned graphs are mutable and can be extended using the
+   :ref:`standard interface <define-topology>`. See :doc:`builders` for the
+   available builder families.

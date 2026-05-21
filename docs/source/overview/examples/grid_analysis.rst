@@ -43,3 +43,15 @@ Placement strategy
 
     .. literalinclude:: ../../../../examples/grid_analysis/strategy.py
         :language: python
+
+What to inspect
+---------------
+
+Use this example as a template for repeated experiments. The main result is not
+a single simulation trace, but a grid of runs that lets you compare placement
+strategies and infrastructure choices under the same sweep logic.
+
+Related concepts:
+
+- :doc:`../concepts/placement-strategy`
+- :doc:`../concepts/update-policy`

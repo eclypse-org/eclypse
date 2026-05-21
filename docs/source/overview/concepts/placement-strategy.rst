@@ -41,7 +41,8 @@ the
 :py:meth:`~eclypse.placement.strategies.PlacementStrategy.place`
 method.
 
-This method must return a mapping from **service IDs** to **node IDs**, representing where each service in the application should be deployed.
+This method must return a mapping from **service IDs** to **node IDs**,
+representing where each service in the application should be deployed.
 
 .. code-block:: python
 
@@ -50,9 +51,10 @@ This method must return a mapping from **service IDs** to **node IDs**, represen
    class RandomStrategy(PlacementStrategy):
        def place(self, infrastructure, application, placements, placement_view):
            import random
+           candidate_nodes = list(placement_view.residual.nodes)
            return {
-               service.id: random.choice(list(infrastructure.nodes))
-               for service in application.services
+               service_id: random.choice(candidate_nodes)
+               for service_id in application.nodes
            }
 
        # Optionally override feasibility check
@@ -61,7 +63,7 @@ This method must return a mapping from **service IDs** to **node IDs**, represen
 
 .. important::
 
-   The `infrastructure` parameter passed to the
+   The ``infrastructure`` parameter passed to the
    :py:meth:`~eclypse.placement.strategies.PlacementStrategy.place`
    method is **already filtered** to include only the available portion of the
    infrastructure.
@@ -76,7 +78,9 @@ This method must return a mapping from **service IDs** to **node IDs**, represen
 Default strategies
 ------------------
 
-ECLYPSE provides a collection of predefined placement strategies that can be used out of the box. These strategies implement common policies and heuristics for mapping application services onto available nodes.
+ECLYPSE provides a collection of predefined placement strategies that can be
+used out of the box. These strategies implement common policies and heuristics
+for mapping application services onto available nodes.
 
 The available default strategies are:
 
@@ -94,7 +98,8 @@ simulation default or for a specific application registration.
 
 There are two ways to attach a strategy:
 
-- **Via ``SimulationConfig.default_strategy``:**
+- **Via
+  :attr:`~eclypse.simulation.config.SimulationConfig.default_strategy`:**
   Use this when most applications should share the same placement policy:
 
   .. code-block:: python
@@ -107,7 +112,9 @@ There are two ways to attach a strategy:
      sim.register(application)
 
 - **Via the application registration:**
-  You can associate a strategy when registering the application with the simulation using the :py:meth:`~eclypse.simulation.simulation.Simulation.register` method:
+  You can associate a strategy when registering the application with the
+  simulation using the
+  :py:meth:`~eclypse.simulation.simulation.Simulation.register` method:
 
   .. code-block:: python
 
@@ -119,8 +126,11 @@ There are two ways to attach a strategy:
 
 .. important::
 
-   If no strategy is provided through ``SimulationConfig.default_strategy`` or
-   ``Simulation.register(...)``, the simulation raises an error.
+   If no strategy is provided through
+   :attr:`~eclypse.simulation.config.SimulationConfig.default_strategy` or
+   :py:meth:`~eclypse.simulation.simulation.Simulation.register`, the
+   simulation raises an error.
 
-   If both are provided, the strategy passed to ``register`` takes precedence
-   for that application.
+   If both are provided, the strategy passed to
+   :py:meth:`~eclypse.simulation.simulation.Simulation.register` takes
+   precedence for that application.

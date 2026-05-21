@@ -34,7 +34,7 @@ The tables below compares all available trigger types:
     - - ``trigger_every_ms: float``
   * - :class:`~eclypse.workflow.trigger.trigger.ScheduledTrigger`
     - Fires at predefined wall-clock offsets.
-    - - `scheduled_timedelta: timedelta | List[timedelta]`
+    - - ``scheduled_timedelta: timedelta | List[timedelta]``
   * - :class:`~eclypse.workflow.trigger.trigger.RandomTrigger`
     - Fires randomly with given probability at each evaluation.
     - - ``probability: float``
