@@ -11,6 +11,7 @@ from eclypse.policies._filters import (
     iter_selected_keys,
     iter_selected_nodes,
 )
+from eclypse.policies._helpers import validate_missing_behaviour
 from tests.unit.policies._helpers import build_graph
 
 
@@ -31,6 +32,11 @@ def test_normalize_update_policies_and_filter_helpers_cover_edge_cases():
         graph,
         edge_filter=lambda source, target, _: (source, target) == ("a", "b"),
     ) == [("a", "b", graph.edges["a", "b"])]
+    assert iter_selected_edges(graph, edge_ids=[("missing", "edge")]) == []
+    assert iter_selected_edges(
+        graph,
+        edge_filter=lambda _source, _target, _data: False,
+    ) == []
     assert iter_selected_keys(graph.nodes["a"], ["cpu", "missing"]) == ["cpu"]
 
     with pytest.raises(TypeError):
@@ -41,3 +47,6 @@ def test_normalize_update_policies_and_filter_helpers_cover_edge_cases():
 
     assert clamp(5, upper=3) == 3
     assert coerce_numeric_like(True, 1.5) == 1.5
+
+    with pytest.raises(ValueError, match="missing"):
+        validate_missing_behaviour("skip")

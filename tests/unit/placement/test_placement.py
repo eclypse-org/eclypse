@@ -31,6 +31,8 @@ def test_placement_maps_services_nodes_links_and_flags(
     }
     assert mapped_placement.is_partial == []
     assert "gateway -> edge-a" in str(mapped_placement)
+    assert repr(mapped_placement) == str(mapped_placement)
+    assert mapped_placement._path_crosses_link(None, "edge-a", "edge-b") is False
 
     placement.clear_reset()
     placement.mark_undeployed()

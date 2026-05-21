@@ -9,6 +9,7 @@ def test_placement_view_tracks_residual_resources_and_resets(mapped_placement):
     view._update_view(mapped_placement)
 
     assert view.nodes_used_by["edge-a"] == {"shop"}
+    assert view.get_node_view("edge-a")["cpu"] == 1
     assert view.residual.nodes["edge-a"]["cpu"] == 3
     assert view.get_edge_view("edge-a", "edge-b")["latency"] == 6
 
