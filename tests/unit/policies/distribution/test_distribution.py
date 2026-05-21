@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import math
+import random
 
 import pytest
 
 from eclypse import policies
+from eclypse.policies.distribution.poisson import _sample_poisson
+from eclypse.policies.distribution.truncated_normal import _sample_truncated_normal
 from tests.unit.policies._helpers import build_graph
 
 
@@ -323,6 +326,11 @@ def test_categorical_distribution_validates_inputs():
 
     with pytest.raises(ValueError):
         policies.distribution.categorical(node_asset_weights={"cpu": [1.0]})
+    with pytest.raises(ValueError):
+        policies.distribution.categorical(
+            node_asset_distributions={"ram": [1.0]},
+            node_asset_weights={"cpu": [1.0]},
+        )
 
 
 def test_new_distribution_policies_apply_numeric_multipliers():
@@ -385,3 +393,17 @@ def test_new_distribution_policies_validate_and_use_seeded_rng():
         second_policy(second_graph)
 
     assert first_graph.nodes["a"]["cpu"] == second_graph.nodes["a"]["cpu"]
+    assert _sample_poisson(random.Random(1), 0) == 0
+    assert _sample_poisson(random.Random(1), 31) >= 0
+
+    class AlwaysOutOfBoundsRandom:
+        def gauss(self, *_args):
+            return 10.0
+
+    assert _sample_truncated_normal(
+        AlwaysOutOfBoundsRandom(),
+        (10.0, 0.0),
+        lower=0.0,
+        upper=1.0,
+        max_attempts=1,
+    ) == 1.0

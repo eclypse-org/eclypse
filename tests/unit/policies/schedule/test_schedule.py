@@ -63,6 +63,8 @@ def test_schedule_wrapper_validation_errors():
 
     with pytest.raises(ValueError):
         policies.at([], noop)
+    with pytest.raises(ValueError):
+        policies.at([-1], noop)
 
     with pytest.raises(ValueError):
         policies.until(-1, noop)
@@ -75,6 +77,10 @@ def test_schedule_wrapper_validation_errors():
 
     with pytest.raises(ValueError):
         policies.jittered_every(0, noop)
+    with pytest.raises(ValueError):
+        policies.jittered_every(1, noop, jitter=-1)
+    with pytest.raises(ValueError):
+        policies.jittered_every(1, noop, start=-1)
 
     with pytest.raises(ValueError):
         policies.cooldown(-1, noop)

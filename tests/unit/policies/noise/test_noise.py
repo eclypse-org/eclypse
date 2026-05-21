@@ -136,9 +136,13 @@ def test_additional_noise_policies_apply_expected_changes():
 
     policies.noise.additive_jitter(node_ranges={"cpu": (5, 5)})(graph)
     assert graph.nodes["a"]["cpu"] == 85
+    policies.noise.additive_jitter(edge_ranges={"latency": (1, 1)})(graph)
+    assert graph.edges["a", "b"]["latency"] == 11
 
     policies.noise.gaussian_jitter(edge_parameters={"latency": (5, 0)})(graph)
-    assert graph.edges["a", "b"]["latency"] == 15
+    assert graph.edges["a", "b"]["latency"] == 16
+    policies.noise.gaussian_jitter(node_parameters={"ram": (2, 0)})(graph)
+    assert graph.nodes["a"]["ram"] == 34
 
     policies.noise.multiplicative_jitter(
         node_assets="cpu",
@@ -151,7 +155,7 @@ def test_additional_noise_policies_apply_expected_changes():
         delta_range=(1, 1),
     )(graph)
     assert graph.nodes["a"]["cpu"] == 171
-    assert graph.nodes["a"]["ram"] == 33
+    assert graph.nodes["a"]["ram"] == 35
 
     policies.noise.dropout(node_assets="cpu", probability=1.0, value=0)(graph)
     assert graph.nodes["a"]["cpu"] == 0
@@ -172,10 +176,16 @@ def test_seasonal_noise_and_validation_paths():
     with pytest.raises(ValueError):
         policies.noise.additive_jitter()
     with pytest.raises(ValueError):
+        policies.noise.additive_jitter(node_ranges={"cpu": (2, 1)})
+    with pytest.raises(ValueError):
+        policies.noise.gaussian_jitter()
+    with pytest.raises(ValueError):
         policies.noise.gaussian_jitter(node_parameters={"cpu": (0, -1)})
     with pytest.raises(ValueError):
         policies.noise.correlated_noise(delta_range=(2, 1), node_assets="cpu")
     with pytest.raises(ValueError):
         policies.noise.seasonal_noise(amplitude=1, period=0, node_assets="cpu")
+    with pytest.raises(ValueError):
+        policies.noise.seasonal_noise(amplitude=1, period=1)
     with pytest.raises(ValueError):
         policies.noise.dropout()

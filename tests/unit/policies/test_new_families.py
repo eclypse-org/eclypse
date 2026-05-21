@@ -19,8 +19,12 @@ def test_compose_family_combines_policies():
     assert graph.nodes["a"]["cpu"] == 81
     assert graph.nodes["a"]["ram"] == 33
 
+    policies.compose.all_of(add_cpu, add_ram)(graph)
+    assert graph.nodes["a"]["cpu"] == 81
     policies.compose.conditional(lambda _: True, add_cpu)(graph)
     assert graph.nodes["a"]["cpu"] == 81
+    policies.compose.conditional(lambda _: False, add_ram)(graph)
+    assert graph.nodes["a"]["ram"] == 33
 
     policies.compose.one_of(add_cpu)(graph)
     policies.compose.weighted_choice([add_ram], [1.0])(graph)
@@ -28,6 +32,10 @@ def test_compose_family_combines_policies():
 
     with pytest.raises(ValueError):
         policies.compose.one_of()
+    with pytest.raises(ValueError):
+        policies.compose.weighted_choice([add_cpu], [1.0, 2.0])
+    with pytest.raises(ValueError):
+        policies.compose.weighted_choice([add_cpu], [-1.0])
     with pytest.raises(ValueError):
         policies.compose.weighted_choice([add_cpu], [0.0])
 
@@ -42,6 +50,10 @@ def test_workload_family_updates_load_values():
 
     policies.workload.traffic_matrix({("a", "b"): 12})(graph)
     assert graph.edges["a", "b"]["traffic"] == 12
+    policies.workload.traffic_matrix({("a", "b"): 3}, additive=True)(graph)
+    assert graph.edges["a", "b"]["traffic"] == 15
+    policies.workload.traffic_matrix({("missing", "edge"): 99})(graph)
+    assert graph.edges["a", "b"]["traffic"] == 15
 
     policy = policies.workload.diurnal_load(
         amplitude=1,
@@ -54,6 +66,12 @@ def test_workload_family_updates_load_values():
 
     with pytest.raises(ValueError):
         policies.workload.arrival_process(-1, node_assets="users")
+    with pytest.raises(ValueError):
+        policies.workload.arrival_process(1)
+    with pytest.raises(ValueError):
+        policies.workload.diurnal_load(amplitude=1, period=0, node_assets="cpu")
+    with pytest.raises(ValueError):
+        policies.workload.diurnal_load(amplitude=1, period=1)
 
 
 def test_topology_family_mutates_graph_structure():
@@ -73,9 +91,18 @@ def test_topology_family_mutates_graph_structure():
         candidate_nodes={"d": {"cpu": 1, "ram": 1, "availability": 1.0}},
     )(graph)
     assert graph.has_node("d")
+    policies.topology.churn(remove_probability=1.0)(graph)
+    assert list(graph.nodes) == []
 
     policies.topology.remove_node("d")(graph)
     assert not graph.has_node("d")
+    with pytest.raises(KeyError):
+        policies.topology.remove_node("d", missing="error")(graph)
+
+    tiny_graph = build_graph()
+    tiny_graph.remove_node("b")
+    policies.topology.rewire([("a", "b")])(tiny_graph)
+    assert list(tiny_graph.nodes) == ["a"]
 
 
 def test_constraints_family_enforces_numeric_invariants():
