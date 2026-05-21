@@ -18,7 +18,7 @@ def main() -> None:
         step_every_ms=500,
         log_to_file=True,
         path=get_default_sim_path() / "EchoApp",
-        # remote=True,
+        remote=True,
         # log_level="TRACE",
         include_default_metrics=True,
     )

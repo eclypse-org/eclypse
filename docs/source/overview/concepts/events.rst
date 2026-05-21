@@ -24,15 +24,15 @@ Every :class:`~eclypse.workflow.event.event.EclypseEvent` has an
 
    * - Role
      - Meaning
-   * - ``EventRole.EVENT``
+   * - :attr:`~eclypse.workflow.event.role.EventRole.EVENT`
      - The default role for regular workflow logic. These events are triggered directly
        by the simulation or by other triggers, and their payload can be consumed by
        downstream callbacks and metrics.
-   * - ``EventRole.CALLBACK``
+   * - :attr:`~eclypse.workflow.event.role.EventRole.CALLBACK`
      - A post-event hook. It runs immediately after the event that activated it and has
        access to that triggering event through ``triggering_event`` and ``**event_data``.
        Callbacks are primarily useful for chaining logic or reacting to another event.
-   * - ``EventRole.METRIC``
+   * - :attr:`~eclypse.workflow.event.role.EventRole.METRIC`
      - A reportable post-event hook. Metrics share the same execution model as
        callbacks, but they are intended to produce rows that reporters can persist and
        that :class:`~eclypse.report.report.Report` can load afterwards.
@@ -49,8 +49,8 @@ Defining an Event
 
 An event can be defined by:
 
-- decorating a function or a class with a `__call__` method
-- subclassing :class:`~eclypse.workflow.event.event.EclypseEvent` and overriding the `__call__` method
+- decorating a function or a class with a ``__call__`` method
+- subclassing :class:`~eclypse.workflow.event.event.EclypseEvent` and overriding the ``__call__`` method
 
 .. seealso::
 
@@ -68,17 +68,18 @@ Event Parameters
 Here are the most relevant parameters to control event behaviour:
 
 - ``name`` *(str)*: The event name.
-- ``event_type``: The context where the event executes, (e.g., *"node"*, *"service"*, ...). It can be also None.
+- ``event_type``: The context where the event executes, such as ``"node"`` or
+  ``"service"``. It can also be ``None``.
 - ``triggers``: A list of :class:`~eclypse.workflow.trigger.trigger.Trigger`
   objects, modelling the conditions that can activate the event.
 - ``activates_on``: A more compact way to specify triggers, using a list of strings and tuples
 - ``trigger_condition``: Whether all triggers must activate or just one (*"all"* or *"any"*).
 - ``role``: The workflow role of the event, chosen from
   :class:`~eclypse.workflow.event.role.EventRole`.
-- ``remote``: If `True`, the event is executed on remote infrastructure nodes or services.
-- ``report``: Types of reports to generate for this event (e.g., *"csv"*, *"json"*, ...).
+- ``remote``: If ``True``, the event is executed on remote infrastructure nodes or services.
+- ``report``: Types of reports to generate for this event, such as ``"csv"`` or ``"json"``.
   In practice, this is mainly relevant for metrics.
-- ``verbose``: If `True`, log detailed event triggering and firing info.
+- ``verbose``: If ``True``, log detailed event triggering and firing info.
 
 The event **type** determines the arguments passed to its logic function.
 The role does not change the signature; it changes *when* the event runs and *how*
@@ -260,13 +261,13 @@ node). Under the hood they are post-event events with the
 recommended public API is the set of convenience decorators in
 :mod:`eclypse.report.metrics`.
 
-To define a metric, you can use one of the convenience decorators under the :py:mod:`~eclypse.report.metrics.metric` module.
-For full documentation on how to define, register, and export metrics, refer to the :doc:`../advanced/reporting` page.
-
 Compared with callbacks, metrics differ mainly in their intent:
 
 - callbacks are primarily workflow hooks,
 - metrics are reporting hooks and are meant to produce persistable output.
+
+For the practical metric API, built-in report types, custom reporters, and
+report loading, see :doc:`../advanced/reporting`.
 
 .. seealso::
 

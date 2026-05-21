@@ -103,11 +103,13 @@ When defining an asset, you must specify **how its initial value is generated** 
 
 This can be done in three ways:
 
-- by providing a **fixed value** (e.g., `2.0`)
-- by passing a **callable** with no arguments (e.g., `lambda: random.choice(...)`)
-- by using an :class:`~eclypse.graph.assets.space.AssetSpace` (e.g., `Uniform`, `Choice`, etc.)
+- by providing a **fixed value** (e.g., ``2.0``)
+- by passing a **callable** with no arguments (e.g., ``lambda: random.choice(...)``)
+- by using an :class:`~eclypse.graph.assets.space.AssetSpace` (e.g.,
+  :class:`~eclypse.graph.assets.space.Uniform`,
+  :class:`~eclypse.graph.assets.space.Choice`, etc.)
 
-.. dropdown:: Example: Using an `AssetSpace`
+.. dropdown:: Example: Using an :class:`~eclypse.graph.assets.space.AssetSpace`
 
     .. code-block:: python
 
@@ -137,7 +139,7 @@ An :class:`~eclypse.graph.assets.space.AssetSpace` defines the domain from which
 - :class:`~eclypse.graph.assets.space.IntUniform`: pick an integer from a uniform range, with optional step.
 - :class:`~eclypse.graph.assets.space.Sample`: pick a sample (list of values) from a population.
 
-.. dropdown:: Example: Using a `Choice`
+.. dropdown:: Example: Using a :class:`~eclypse.graph.assets.space.Choice`
 
     .. code-block:: python
 
@@ -151,7 +153,8 @@ An :class:`~eclypse.graph.assets.space.AssetSpace` defines the domain from which
             init_fn_or_value=storage_class,
         )
 
-These classes all implement the ``__call__`` interface and expect a `random.Random` generator, provided automatically by the simulation engine.
+These classes all implement the ``__call__`` interface and expect a
+``random.Random`` generator, provided automatically by the simulation engine.
 
 .. note::
 

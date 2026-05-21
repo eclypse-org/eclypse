@@ -64,3 +64,16 @@ infrastructure with a built-in placement strategy and runs it locally.
 
     .. literalinclude:: ../../../../examples/off_the_shelf/main.py
         :language: python
+
+What to inspect
+---------------
+
+This example is the quickest template for a local experiment built from
+existing components. Inspect placement changes and application-level metrics as
+the infrastructure policies make resources less stable.
+
+Related concepts:
+
+- :doc:`../concepts/builders`
+- :doc:`../concepts/update-policy`
+- :doc:`../concepts/placement-strategy`

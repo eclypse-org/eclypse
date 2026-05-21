@@ -21,22 +21,30 @@
 =====================
 ECLYPSE documentation
 =====================
-**ECLYPSE** (Edge-CLoud pYthon Platform for Simulated runtime Environments) stands as a groundbreaking simulation library, crafted entirely in Python.
-It offers a practical interface for experimenting with deployment strategies across different infrastructure settings.
+**ECLYPSE** (Edge-CLoud pYthon Platform for Simulated runtime Environments)
+is a Python framework for modelling service-based applications on cloud-edge
+infrastructures.
 
-One of its key strengths lies in its ability to simulate the deployment of service-based applications in environments that closely mimic real-world conditions, with or without actual application implementation.
-This flexibility allows users to explore various deployment strategies comprehensively, testing placement and deployment scenarios with precision.
+It represents infrastructures and applications as resource-aware graphs, then
+uses placement strategies, update policies, events, and metrics to study how a
+deployment behaves over time.
 
-ECLYPSE empowers developers and researchers to gain valuable insights into the nuances of deployment in diverse infrastructure scenarios, fostering informed decision-making and driving advancements in Cloud and Edge computing.
+You can use ECLYPSE in two modes:
+
+- **local simulation**, where services can remain abstract graph nodes and runs
+  focus on placement, resource evolution, and reporting;
+- **remote emulation**, where services are implemented as concrete runtime
+  objects and executed through Ray with MPI-style or REST-style communication.
 
 Key features include:
 
-- **Entirely written in Python:** Accessible and adaptable for a wide range of users.
-- **Easy to use:** Intuitive interface for seamless experimentation and analysis.
-- **Actual implementation of services:** Simulate real-world scenarios with precise deployment strategies.
-- **User-defined placement strategies and application/infrastructure update policies:** Tailor simulations to specific research or development needs, allowing for comprehensive testing and analysis.
-- **Reporting of key metrics:** Provides insights into application, infrastructure, and simulation performance through various formats, aiding in comprehensive analysis and decision-making.
-- **Logging capabilities:** Allows for detailed tracking and analysis of simulation activities, facilitating troubleshooting and optimization efforts.
+- graph-based infrastructures and applications,
+- built-in and custom placement strategies,
+- dynamic update policies for resources, failures, workload, and topology,
+- event, callback, and metric workflows,
+- report storage through CSV, JSON, and Parquet, plus TensorBoard-compatible
+  metric sinks,
+- optional remote service emulation with explicit communication interfaces.
 
 .. button-ref:: source/overview/index
    :ref-type: myst

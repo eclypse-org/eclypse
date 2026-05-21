@@ -19,7 +19,7 @@ Function Signature
    def my_policy(graph: AssetGraph):
        ...
 
-The graph exposes the standard `networkx` views through ``graph.nodes`` and
+The graph exposes the standard NetworkX views through ``graph.nodes`` and
 ``graph.edges``. Each node or edge has an associated data dictionary containing
 its current asset values.
 
@@ -43,11 +43,22 @@ families:
   decay, clamping, restoring, and ramping of selected assets
 - **replay**: replay of node, edge, graph, and event values from records,
   dataframes, CSV files, or parquet files, with optional cyclic replay
-- **schedule**: wrappers such as ``every()``, ``after()``, ``between()``,
-  ``once_at()``, ``at()``, ``until()``, ``repeat()``, ``with_probability()``,
-  ``jittered_every()``, and ``cooldown()``
-- **compose**: reusable policy composition with ``chain()``, ``all_of()``,
-  ``one_of()``, ``weighted_choice()``, and ``conditional()``
+- **schedule**: wrappers such as :func:`~eclypse.policies.schedule.every`,
+  :func:`~eclypse.policies.schedule.after`,
+  :func:`~eclypse.policies.schedule.between`,
+  :func:`~eclypse.policies.schedule.once_at`,
+  :func:`~eclypse.policies.schedule.at`,
+  :func:`~eclypse.policies.schedule.until`,
+  :func:`~eclypse.policies.schedule.repeat`,
+  :func:`~eclypse.policies.schedule.with_probability`,
+  :func:`~eclypse.policies.schedule.jittered_every`, and
+  :func:`~eclypse.policies.schedule.cooldown`
+- **compose**: reusable policy composition with
+  :func:`~eclypse.policies.compose.chain`,
+  :func:`~eclypse.policies.compose.all_of`,
+  :func:`~eclypse.policies.compose.one_of`,
+  :func:`~eclypse.policies.compose.weighted_choice`, and
+  :func:`~eclypse.policies.compose.conditional`
 - **workload**: arrival processes, traffic matrices, and diurnal load
 - **topology**: graph mutation policies for adding, removing, rewiring, and
   churn

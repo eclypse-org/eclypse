@@ -44,3 +44,15 @@ Metrics
 
     .. literalinclude:: ../../../../examples/image_prediction/metrics.py
         :language: python
+
+What to inspect
+---------------
+
+This example is useful when the application behaviour matters, not only the
+placement. Inspect the custom metrics together with the service implementations
+to see how emulated runtime state becomes reportable simulation data.
+
+Related concepts:
+
+- :doc:`../advanced/emulation/emulation`
+- :doc:`../advanced/reporting`

@@ -79,3 +79,15 @@ FrontendService (REST version)
 In this example, the REST interface uses endpoint-oriented methods such as
 ``get`` and ``post``. This style is a better fit when you want to model
 request/response interactions explicitly.
+
+What to inspect
+---------------
+
+Use Sock Shop to compare the same abstract application under two communication
+interfaces. The MPI variant is useful for explicit message-passing workflows;
+the REST variant is useful for endpoint-oriented microservice interactions.
+
+Related concepts:
+
+- :doc:`../advanced/emulation/messaging`
+- :doc:`../getting-started/remote-emulation`
