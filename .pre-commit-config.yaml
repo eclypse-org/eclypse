@@ -29,7 +29,7 @@ repos:
         args: [eclypse]
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.15.0
+    rev: v4.16.3
     hooks:
       - id: commitizen
       - id: commitizen-branch
@@ -37,7 +37,7 @@ repos:
           - pre-push
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.15.12
+    rev: v0.15.15
     hooks:
       - id: ruff-check
         args: [--fix, --select, "F401"]
@@ -50,7 +50,7 @@ repos:
         args: [eclypse]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.20.2
+    rev: v2.1.0
     hooks:
       - id: mypy
         pass_filenames: false
