@@ -1,0 +1,63 @@
+{
+  "eclypse_schema": "1.0",
+  "kind": "application",
+  "id": "vision-application-json",
+  "graph": {
+    "scenario": "io-round-trip",
+    "source_format": "eclypse-json"
+  },
+  "nodes": [
+    {
+      "id": "camera-gateway",
+      "attrs": {
+        "cpu": 1,
+        "ram": 1,
+        "image": "ghcr.io/eclypse/camera-gateway:latest"
+      }
+    },
+    {
+      "id": "inference",
+      "attrs": {
+        "cpu": 4,
+        "ram": 6,
+        "image": "ghcr.io/eclypse/inference:latest"
+      }
+    },
+    {
+      "id": "dashboard",
+      "attrs": {
+        "cpu": 1,
+        "ram": 1,
+        "build": "./dashboard"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "camera-gateway",
+      "target": "inference",
+      "attrs": {
+        "latency": 8,
+        "bandwidth": 80
+      }
+    },
+    {
+      "source": "inference",
+      "target": "dashboard",
+      "attrs": {
+        "latency": 5,
+        "bandwidth": 40
+      }
+    }
+  ],
+  "extras": {
+    "requirement_init": "min",
+    "flows": [
+      [
+        "camera-gateway",
+        "inference",
+        "dashboard"
+      ]
+    ]
+  }
+}

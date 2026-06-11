@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns">
+  <key id="scenario" for="graph" attr.name="scenario" attr.type="string"/>
+  <key id="source_format" for="graph" attr.name="source_format" attr.type="string"/>
+  <key id="cpu" for="node" attr.name="cpu" attr.type="double"/>
+  <key id="ram" for="node" attr.name="ram" attr.type="double"/>
+  <key id="storage" for="node" attr.name="storage" attr.type="double"/>
+  <key id="availability" for="node" attr.name="availability" attr.type="double"/>
+  <key id="tier" for="node" attr.name="tier" attr.type="string"/>
+  <key id="latency" for="edge" attr.name="latency" attr.type="double"/>
+  <key id="bandwidth" for="edge" attr.name="bandwidth" attr.type="double"/>
+  <key id="link_type" for="edge" attr.name="link_type" attr.type="string"/>
+  <graph id="cloud-edge-graphml" edgedefault="directed">
+    <data key="scenario">io-round-trip</data>
+    <data key="source_format">graphml</data>
+    <node id="cloud">
+      <data key="cpu">64</data>
+      <data key="ram">128</data>
+      <data key="storage">2048</data>
+      <data key="availability">0.999</data>
+      <data key="tier">cloud</data>
+    </node>
+    <node id="edge-a">
+      <data key="cpu">16</data>
+      <data key="ram">32</data>
+      <data key="storage">512</data>
+      <data key="availability">0.995</data>
+      <data key="tier">edge</data>
+    </node>
+    <node id="edge-b">
+      <data key="cpu">12</data>
+      <data key="ram">24</data>
+      <data key="storage">256</data>
+      <data key="availability">0.99</data>
+      <data key="tier">edge</data>
+    </node>
+    <edge source="edge-a" target="cloud">
+      <data key="latency">18</data>
+      <data key="bandwidth">500</data>
+      <data key="link_type">wan</data>
+    </edge>
+    <edge source="edge-b" target="cloud">
+      <data key="latency">22</data>
+      <data key="bandwidth">450</data>
+      <data key="link_type">wan</data>
+    </edge>
+    <edge source="edge-a" target="edge-b">
+      <data key="latency">4</data>
+      <data key="bandwidth">1000</data>
+      <data key="link_type">lan</data>
+    </edge>
+  </graph>
+</graphml>

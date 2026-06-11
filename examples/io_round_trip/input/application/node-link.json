@@ -1,0 +1,43 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {
+    "id": "vision-application-node-link",
+    "scenario": "io-round-trip",
+    "source_format": "node-link-json"
+  },
+  "nodes": [
+    {
+      "id": "camera-gateway",
+      "cpu": 1,
+      "ram": 1,
+      "image": "ghcr.io/eclypse/camera-gateway:latest"
+    },
+    {
+      "id": "inference",
+      "cpu": 4,
+      "ram": 6,
+      "image": "ghcr.io/eclypse/inference:latest"
+    },
+    {
+      "id": "dashboard",
+      "cpu": 1,
+      "ram": 1,
+      "build": "./dashboard"
+    }
+  ],
+  "edges": [
+    {
+      "source": "camera-gateway",
+      "target": "inference",
+      "latency": 8,
+      "bandwidth": 80
+    },
+    {
+      "source": "inference",
+      "target": "dashboard",
+      "latency": 5,
+      "bandwidth": 40
+    }
+  ]
+}
