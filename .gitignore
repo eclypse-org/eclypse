@@ -167,3 +167,6 @@ graphify-out/
 
 # codegraph
 .codegraph/
+
+# Examples
+examples/io_round_trip/output/

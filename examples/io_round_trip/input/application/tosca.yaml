@@ -1,0 +1,53 @@
+tosca_definitions_version: tosca_simple_yaml_1_3
+metadata:
+  template_name: vision-application-tosca
+
+topology_template:
+  node_templates:
+    camera-gateway:
+      type: tosca.nodes.SoftwareComponent
+    inference:
+      type: tosca.nodes.SoftwareComponent
+      requirements:
+        - dependency:
+            node: camera-gateway
+            relationship: tosca.relationships.DependsOn
+    dashboard:
+      type: tosca.nodes.SoftwareComponent
+      requirements:
+        - dependency:
+            node: inference
+            relationship: tosca.relationships.DependsOn
+
+x-eclypse:
+  kind: application
+  id: vision-application-tosca
+  graph:
+    scenario: io-round-trip
+    source_format: tosca
+  nodes:
+    camera-gateway:
+      cpu: 1
+      ram: 1
+      image: ghcr.io/eclypse/camera-gateway:latest
+    inference:
+      cpu: 4
+      ram: 6
+      image: ghcr.io/eclypse/inference:latest
+    dashboard:
+      cpu: 1
+      ram: 1
+      build: ./dashboard
+  edges:
+    - source: camera-gateway
+      target: inference
+      attrs:
+        latency: 8
+        bandwidth: 80
+    - source: inference
+      target: dashboard
+      attrs:
+        latency: 5
+        bandwidth: 40
+  flows:
+    - [camera-gateway, inference, dashboard]
