@@ -9,6 +9,7 @@ Examples
    echo
    grid_analysis
    image_prediction
+   io_round_trip
    off_the_shelf
    sock_shop
    user_distribution
@@ -60,6 +61,16 @@ subdirectory of the repository.
 
          A Ray Tune sweep over infrastructure topologies, update policies, and
          placement strategies.
+
+
+   .. grid-item::
+
+      .. card:: :octicon:`iterations;1em;info` **IO round trip**
+         :link-type: doc
+         :link: io_round_trip
+
+         An import/export matrix that loads graph files through the default
+         IO importers and writes them back through every compatible exporter.
 
 
    .. grid-item::
