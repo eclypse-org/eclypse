@@ -18,6 +18,10 @@ from typing import (
 )
 
 import networkx as nx
+from networkx.classes.coreviews import (
+    FilterAdjacency,
+    FilterAtlas,
+)
 from networkx.classes.filters import no_filter
 
 from eclypse.graph import AssetGraph
@@ -59,7 +63,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         update_policies: UpdatePolicies = None,
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
-        include_default_assets: bool = True,
+        include_default_assets: bool = False,
         path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None,
         path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
         resource_init: InitPolicy = "min",
@@ -74,7 +78,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             node_assets (dict[str, Asset] | None): The assets of the nodes.
             edge_assets (dict[str, Asset] | None): The assets of the edges.
             include_default_assets (bool): Whether to include the default assets. \
-                Defaults to True.
+                Defaults to False.
             path_assets_aggregators (dict[str, Callable[[list[Any]], Any]] | None): \
                 The aggregators to use for the path assets.
             path_algorithm (Callable[[nx.Graph, str, str], list[str]] | None): \
@@ -363,22 +367,51 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         return [(s, t, self.edges[s, t]) for s, t in nx.utils.pairwise(path)]
 
     @property
-    def available(self) -> nx.DiGraph:
-        """Return a filtered view containing only the available nodes.
-
-        Uses nx.subgraph_view to avoid creating a full Infrastructure instance.
-        The view is dynamic: it reflects the current state of the graph at all
-        times, filtering out nodes where availability <= 0.
+    def available(self) -> Infrastructure:
+        # pylint: disable=invalid-name,protected-access,attribute-defined-outside-init
+        """Return the subgraph with only the available nodes.
 
         Returns:
-            nx.DiGraph: A subgraph view with only the available nodes.
+            nx.DiGraph: A subgraph with only the available nodes, named "av-{id}".
         """
         if self._available is None:
-            self._available = nx.subgraph_view(
-                self,
-                filter_node=self.is_available,
-                filter_edge=no_filter,
+            self._available = nx.freeze(
+                self.__class__(
+                    infrastructure_id=f"av-{self.id}",
+                    update_policies=self.update_policies,
+                    node_assets=self.node_assets,
+                    edge_assets=self.edge_assets,
+                    path_assets_aggregators=self.path_assets_aggregators,
+                    path_algorithm=self._path_algorithm,
+                    resource_init=self.attr_init,
+                    seed=self.seed,
+                )
             )
+            filter_node = self.is_available
+            filter_edge = no_filter
+            self._available._NODE_OK = filter_node
+            self._available._EDGE_OK = filter_edge
+
+            # create view by assigning attributes from G
+            self._available._graph = self
+            self._available.graph = self.graph
+            self._available._node = FilterAtlas(self._node, filter_node)
+
+            def reverse_edge(u, v):
+                return filter_edge(v, u)
+
+            if self.is_directed():
+                self._available._succ = FilterAdjacency(
+                    self._succ, filter_node, filter_edge
+                )
+                self._available._pred = FilterAdjacency(
+                    self._pred, filter_node, reverse_edge
+                )
+
+            else:
+                self._available._adj = FilterAdjacency(
+                    self._adj, filter_node, filter_edge
+                )
         return self._available
 
     def is_available(self, n: str):
