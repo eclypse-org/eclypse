@@ -61,7 +61,7 @@ class InfrastructureContext(IOContext):
             :class:`~eclypse.graph.infrastructure.Infrastructure`.
         include_default_assets (bool): Whether the imported infrastructure should
             include default assets when the format does not carry asset definitions.
-            Defaults to ``True``, matching
+            Defaults to ``False``, matching
             :class:`~eclypse.graph.infrastructure.Infrastructure`.
         resource_init (InitPolicy): Resource initialisation policy used when a format
             does not carry one. Defaults to ``"min"``, matching
@@ -73,7 +73,7 @@ class InfrastructureContext(IOContext):
     """
 
     strict: bool = False
-    include_default_assets: bool = True
+    include_default_assets: bool = False
     resource_init: InitPolicy = "min"
     path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None
 
@@ -119,7 +119,7 @@ class ApplicationContext(IOContext):
             :class:`~eclypse.graph.asset_graph.AssetGraph`.
         include_default_assets (bool): Whether the imported application should include
             default assets when the format does not carry asset definitions. Defaults
-            to ``True``, matching :class:`~eclypse.graph.application.Application`.
+            to ``False``, matching :class:`~eclypse.graph.application.Application`.
         requirement_init (InitPolicy): Requirement initialisation policy used when a
             format does not carry one. Defaults to ``"min"``, matching
             :class:`~eclypse.graph.application.Application`.
@@ -128,7 +128,7 @@ class ApplicationContext(IOContext):
     """
 
     strict: bool = True
-    include_default_assets: bool = True
+    include_default_assets: bool = False
     requirement_init: InitPolicy = "min"
     services: dict[str, type[Service]] = field(default_factory=dict)
 

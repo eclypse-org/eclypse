@@ -24,14 +24,25 @@ from eclypse.io import (
 from eclypse.io.defaults.json import JSONImporter
 
 
+def _infrastructure_context(
+    infrastructure: Infrastructure | None = None,
+) -> InfrastructureContext:
+    return InfrastructureContext(
+        node_assets=infrastructure.node_assets if infrastructure is not None else None,
+        edge_assets=infrastructure.edge_assets if infrastructure is not None else None,
+        path_assets_aggregators=get_default_path_aggregators(),
+    )
+
+
 def test_json_infrastructure_round_trip(
     tmp_path: Path,
     sample_infrastructure: Infrastructure,
 ):
     path = tmp_path / "infra.json"
+    context = _infrastructure_context(sample_infrastructure)
 
-    dump_infrastructure(sample_infrastructure, path)
-    loaded = load_infrastructure(path)
+    dump_infrastructure(sample_infrastructure, path, infrastructure_context=context)
+    loaded = load_infrastructure(path, infrastructure_context=context)
 
     assert loaded.id == "infra"
     assert loaded.graph["owner"] == "unit"
@@ -64,9 +75,10 @@ def test_dump_graph_and_load_graph_use_kind_resolution(
     sample_infrastructure: Infrastructure,
 ):
     path = tmp_path / "infra.json"
+    context = _infrastructure_context(sample_infrastructure)
 
-    dump_graph(sample_infrastructure, path)
-    loaded = load_graph(path, "infrastructure")
+    dump_graph(sample_infrastructure, path, context=context)
+    loaded = load_graph(path, "infrastructure", context=context)
 
     assert isinstance(loaded, Infrastructure)
 
@@ -93,13 +105,14 @@ def test_unknown_path_aggregator_and_service_fail_on_import(
     sample_application_with_service: Application,
 ):
     path = tmp_path / "infra.json"
-    dump_infrastructure(sample_infrastructure, path)
+    context = _infrastructure_context(sample_infrastructure)
+    dump_infrastructure(sample_infrastructure, path, infrastructure_context=context)
     data = json.loads(path.read_text(encoding="utf-8"))
     data["extras"]["path_assets_aggregators"]["latency"] = "unknown"
     path.write_text(json.dumps(data), encoding="utf-8")
 
     with pytest.raises(ValueError):
-        load_infrastructure(path)
+        load_infrastructure(path, infrastructure_context=context)
 
     app_path = tmp_path / "app.json"
     dump_application(sample_application_with_service, app_path)
@@ -164,7 +177,12 @@ def test_wrong_context_type_for_canonical_graphs(
 ):
     infra_path = tmp_path / "infra.json"
     app_path = tmp_path / "app.json"
-    dump_infrastructure(sample_infrastructure, infra_path)
+    context = _infrastructure_context(sample_infrastructure)
+    dump_infrastructure(
+        sample_infrastructure,
+        infra_path,
+        infrastructure_context=context,
+    )
     dump_application(sample_application, app_path)
 
     with pytest.raises(TypeError):

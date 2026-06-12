@@ -15,11 +15,18 @@ from eclypse.io import (
 def test_context_defaults_follow_include_default_assets():
     infrastructure_context = InfrastructureContext()
     application_context = ApplicationContext()
+    default_infrastructure_context = InfrastructureContext(include_default_assets=True)
+    default_application_context = ApplicationContext(include_default_assets=True)
     custom_node_assets = {"cpu": Additive(0, 1)}
     custom_edge_assets = {"latency": Additive(0, 1)}
     custom_aggregators = {"latency": min}
 
-    assert sorted(infrastructure_context.node_assets or {}) == [
+    assert infrastructure_context.node_assets is None
+    assert infrastructure_context.edge_assets is None
+    assert infrastructure_context.path_assets_aggregators is None
+    assert application_context.node_assets is None
+    assert application_context.edge_assets is None
+    assert sorted(default_infrastructure_context.node_assets or {}) == [
         "availability",
         "cpu",
         "gpu",
@@ -27,15 +34,15 @@ def test_context_defaults_follow_include_default_assets():
         "ram",
         "storage",
     ]
-    assert sorted(infrastructure_context.edge_assets or {}) == [
+    assert sorted(default_infrastructure_context.edge_assets or {}) == [
         "bandwidth",
         "latency",
     ]
-    assert sorted(infrastructure_context.path_assets_aggregators or {}) == [
+    assert sorted(default_infrastructure_context.path_assets_aggregators or {}) == [
         "bandwidth",
         "latency",
     ]
-    assert sorted(application_context.node_assets or {}) == [
+    assert sorted(default_application_context.node_assets or {}) == [
         "availability",
         "cpu",
         "gpu",
@@ -43,7 +50,7 @@ def test_context_defaults_follow_include_default_assets():
         "ram",
         "storage",
     ]
-    assert sorted(application_context.edge_assets or {}) == [
+    assert sorted(default_application_context.edge_assets or {}) == [
         "bandwidth",
         "latency",
     ]
