@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import networkx as nx
 import pytest
 
 from eclypse.graph.asset_graph import AssetGraph
@@ -33,6 +34,48 @@ def test_infrastructure_path_resources_and_cache_behaviour(sample_infrastructure
 
     sample_infrastructure.remove_edge("edge-a", "edge-b")
     assert sample_infrastructure.path("edge-a", "edge-b") is None
+
+
+def test_infrastructure_default_assets_are_explicit_opt_in():
+    infrastructure = Infrastructure()
+    defaulted = Infrastructure(include_default_assets=True)
+
+    assert infrastructure.node_assets == {}
+    assert "gpu" in defaulted.node_assets
+
+
+def test_infrastructure_available_returns_filtered_infrastructure_view():
+    infrastructure = Infrastructure(
+        "edge-cloud",
+        node_assets={
+            "cpu": Additive(0, 100),
+            "ram": Additive(0, 100),
+            "storage": Additive(0, 100),
+        },
+        edge_assets={"latency": Additive(0, 100)},
+        include_default_assets=False,
+        path_assets_aggregators={"latency": min},
+        resource_init="max",
+        seed=11,
+    )
+    infrastructure.add_node("edge-a", cpu=8, ram=16, storage=32)
+    infrastructure.add_node("edge-b", cpu=4, ram=8, storage=16, availability=0)
+
+    available = infrastructure.available
+
+    assert isinstance(available, Infrastructure)
+    assert available.id == "av-edge-cloud"
+    assert nx.is_frozen(available)
+    assert list(available.node_assets) == ["cpu", "ram", "storage"]
+    assert "gpu" not in available.node_assets
+    assert available.attr_init == "max"
+    assert available.seed == 11
+    assert "edge-a" in available
+    assert "edge-b" not in available
+
+    infrastructure.nodes["edge-b"]["availability"] = 1
+
+    assert "edge-b" in available
 
 
 def test_infrastructure_path_custom_cost_attr_controls_cache_refresh(

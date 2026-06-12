@@ -64,6 +64,7 @@ class AssetGraph(nx.DiGraph):
             seed (int | None, optional): The seed for the random number generator.
                 Defaults to None.
         """
+        self.seed = seed
         self.rnd = rnd.Random(seed)
 
         self.id = graph_id
@@ -82,10 +83,11 @@ class AssetGraph(nx.DiGraph):
             self.node_assets = self.node_assets.flip()
             self.edge_assets = self.edge_assets.flip()
 
-        if attr_init == "min":
+        self.attr_init = attr_init
+        if self.attr_init == "min":
             node_attr_init = self._get_node_lower_bound
             link_attr_init = self._get_edge_lower_bound
-        elif attr_init == "max":
+        elif self.attr_init == "max":
             node_attr_init = self._get_node_upper_bound
             link_attr_init = self._get_edge_upper_bound
         else:
