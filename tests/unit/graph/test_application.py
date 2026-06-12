@@ -15,6 +15,13 @@ def test_application_has_default_id():
     app = Application()
 
     assert app.id == "Application"
+    assert app.node_assets == {}
+
+
+def test_application_default_assets_are_explicit_opt_in():
+    app = Application(include_default_assets=True)
+
+    assert "gpu" in app.node_assets
 
 
 def test_application_add_service_and_set_flows():
