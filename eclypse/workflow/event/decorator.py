@@ -201,7 +201,7 @@ def after(
     name: str | None = None,
     event_type: EventType | None = None,
     activates_on: ActivatesOnType | None = None,
-    max_triggers: int | None = 1,
+    max_triggers: int | None = int(MAX_FLOAT),
     triggers: Trigger | list[Trigger] | None = None,
     trigger_condition: TriggerCondition | None = "any",
     role: EventRole = EventRole.EVENT,
