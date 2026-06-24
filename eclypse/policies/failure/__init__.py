@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from .availability_flap import availability_flap
-from .brownout import brownout
 from .correlated_failure import correlated_failure
 from .edge_availability_flap import edge_availability_flap
 from .kill_edges import kill_edges
@@ -16,7 +15,6 @@ from .revive_nodes import revive_nodes
 
 __all__ = [
     "availability_flap",
-    "brownout",
     "correlated_failure",
     "edge_availability_flap",
     "kill_edges",

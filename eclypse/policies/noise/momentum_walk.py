@@ -23,7 +23,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 StateKeyT = TypeVar("StateKeyT", tuple[str, str], tuple[str, str, str])
@@ -40,6 +43,7 @@ def momentum_walk(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply additive random walks with directional persistence.
 
@@ -57,6 +61,9 @@ def momentum_walk(
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of target
             edges.
         edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
+        basis (NumericBasis):
+            ``"current"`` walks from the current value. ``"initial"`` walks from
+            the first value seen by this policy.
 
     Returns:
         UpdatePolicy: A graph update policy applying momentum random walks.
@@ -68,6 +75,7 @@ def momentum_walk(
 
     previous_node_deltas: dict[tuple[str, str], float] = {}
     previous_edge_deltas: dict[tuple[str, str, str], float] = {}
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
         for node_id, data in iter_selected_nodes(
@@ -86,6 +94,9 @@ def momentum_walk(
                     momentum=momentum,
                     random=graph.rnd,
                 ),
+                basis=basis,
+                baselines=baselines if basis == "initial" else None,
+                state_prefix=("node", node_id),
             )
 
         for source, target, data in iter_selected_edges(
@@ -106,6 +117,9 @@ def momentum_walk(
                         random=graph.rnd,
                     )
                 ),
+                basis=basis,
+                baselines=baselines if basis == "initial" else None,
+                state_prefix=("edge", source, target),
             )
 
         graph.logger.trace("Applied momentum_walk policy.")

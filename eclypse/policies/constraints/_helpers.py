@@ -4,12 +4,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from eclypse.policies._filters import apply_numeric_transform
+from eclypse.policies._helpers import build_numeric_transform_policy
 
 if TYPE_CHECKING:
     from collections.abc import Callable
 
-    from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
@@ -45,22 +44,15 @@ def build_numeric_constraint_policy(
     Returns:
         Policy that mutates selected numeric assets.
     """
-    if node_assets is None and edge_assets is None:
-        raise ValueError("At least one of node_assets or edge_assets must be provided.")
-
-    def policy(graph: AssetGraph):
-        apply_numeric_transform(
-            graph,
-            node_assets=node_assets,
-            edge_assets=edge_assets,
-            node_ids=node_ids,
-            node_filter=node_filter,
-            edge_ids=edge_ids,
-            edge_filter=edge_filter,
-            transform=transform,
-        )
-
-    return policy
+    return build_numeric_transform_policy(
+        transform=transform,
+        node_assets=node_assets,
+        edge_assets=edge_assets,
+        node_ids=node_ids,
+        node_filter=node_filter,
+        edge_ids=edge_ids,
+        edge_filter=edge_filter,
+    )
 
 
 __all__ = ["build_numeric_constraint_policy"]

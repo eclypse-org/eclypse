@@ -16,7 +16,10 @@ from eclypse.utils.constants import MIN_LATENCY
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
     from eclypse.policies._filters import EdgeFilter
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def latency_spike(
@@ -28,6 +31,7 @@ def latency_spike(
     latency_key: str = "latency",
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Inject random latency spikes on selected edges.
 
@@ -42,6 +46,9 @@ def latency_spike(
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of target
             edges.
         edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
+        basis (NumericBasis):
+            ``"current"`` compounds spikes. ``"initial"`` spikes from the first
+            value seen by this policy.
 
     Returns:
         UpdatePolicy: A graph update policy implementing latency spikes.
@@ -56,20 +63,35 @@ def latency_spike(
     if spike_ceiling < min_increase:
         raise ValueError("max_increase must be greater than or equal to min_increase.")
 
+    baselines: dict[tuple[str, ...], float] = {}
+
     def policy(graph: AssetGraph):
-        for _, _, data in iter_selected_edges(
+        if basis not in {"current", "initial"}:
+            raise ValueError('basis must be either "current" or "initial".')
+
+        for source, target, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
+            current = ensure_numeric_value(latency_key, data[latency_key])
+            source_value = (
+                current
+                if basis == "current"
+                else baselines.setdefault(
+                    ("edge", source, target, latency_key), current
+                )
+            )
             if graph.rnd.random() >= probability:
                 continue
 
-            current = ensure_numeric_value(latency_key, data[latency_key])
             if factor is not None:
-                new_value = current * factor
+                new_value = source_value * factor
             else:
-                new_value = current + graph.rnd.uniform(min_increase, spike_ceiling)
+                new_value = source_value + graph.rnd.uniform(
+                    min_increase,
+                    spike_ceiling,
+                )
 
             data[latency_key] = coerce_numeric_like(
                 data[latency_key],

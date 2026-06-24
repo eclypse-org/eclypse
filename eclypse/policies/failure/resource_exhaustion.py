@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import (
+    NO_CHANGE,
     apply_numeric_transform,
     clamp,
 )
@@ -15,8 +16,12 @@ if TYPE_CHECKING:
     from eclypse.policies._filters import (
         EdgeFilter,
         NodeFilter,
+        NumericTransformResult,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def resource_exhaustion(
@@ -30,6 +35,7 @@ def resource_exhaustion(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Reduce selected capacity-like assets according to ``factor``.
 
@@ -46,6 +52,9 @@ def resource_exhaustion(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` compounds reductions. ``"initial"`` reduces the first
+            value seen by this policy.
 
     Returns:
         Policy that reduces selected numeric assets.
@@ -56,10 +65,12 @@ def resource_exhaustion(
     if node_assets is None and edge_assets is None:
         raise ValueError("At least one of node_assets or edge_assets must be provided.")
 
+    baselines: dict[tuple[str, ...], float] = {}
+
     def policy(graph: AssetGraph):
-        def transform(_key: str, current: float) -> float:
+        def transform(_key: str, current: float) -> NumericTransformResult:
             if graph.rnd.random() >= probability:
-                return current
+                return NO_CHANGE
             return clamp(current * factor, lower=minimum)
 
         apply_numeric_transform(
@@ -71,6 +82,8 @@ def resource_exhaustion(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
             transform=transform,
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
 
         graph.logger.trace("Applied resource_exhaustion policy.")

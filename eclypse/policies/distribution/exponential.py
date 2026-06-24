@@ -17,7 +17,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def exponential(
@@ -33,6 +36,7 @@ def exponential(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Sample exponential multiplicative factors from ``lambda`` rates.
 
@@ -55,6 +59,9 @@ def exponential(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` multiplies the current value. ``"initial"`` multiplies
+            the first value seen by this policy.
 
     Returns:
         Policy that multiplies selected numeric assets by exponential samples.
@@ -88,5 +95,6 @@ def exponential(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
         sampler=lambda rnd, distribution: rnd.expovariate(distribution),
     )

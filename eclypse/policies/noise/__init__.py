@@ -10,7 +10,6 @@ from .dropout import dropout
 from .gaussian_jitter import gaussian_jitter
 from .impulse import impulse
 from .momentum_walk import momentum_walk
-from .multiplicative_jitter import multiplicative_jitter
 from .seasonal_noise import seasonal_noise
 
 __all__ = [
@@ -21,6 +20,5 @@ __all__ = [
     "gaussian_jitter",
     "impulse",
     "momentum_walk",
-    "multiplicative_jitter",
     "seasonal_noise",
 ]

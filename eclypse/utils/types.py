@@ -97,6 +97,9 @@ ReportBackend: TypeAlias = Literal["pandas", "polars", "polars_lazy"]
 ValueAdjustmentDirection: TypeAlias = Literal["increase", "reduce"]
 """Type alias for the supported degradation adjustment directions."""
 
+NumericBasis: TypeAlias = Literal["current", "initial"]
+"""Type alias for numeric policy update reference values."""
+
 
 class ValueAdjustmentOverride(TypedDict, total=False):
     """Per-asset override for value-adjustment policies."""

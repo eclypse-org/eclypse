@@ -27,6 +27,7 @@ if TYPE_CHECKING:
     )
     from eclypse.utils.types import (
         Distribution,
+        NumericBasis,
         UpdatePolicy,
     )
 
@@ -91,6 +92,7 @@ def build_distribution_policy(
     node_filter: NodeFilter | None,
     edge_ids: list[tuple[str, str]] | None,
     edge_filter: EdgeFilter | None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Build a distribution-based multiplicative update policy.
 
@@ -114,6 +116,7 @@ def build_distribution_policy(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis): Value used as multiplier input.
 
     Returns:
         Policy that multiplies selected numeric assets by sampled values.
@@ -157,6 +160,7 @@ def build_distribution_policy(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
         sampler=lambda rnd, distribution: _sample_distribution(rnd, kind, distribution),
     )
 
@@ -176,6 +180,7 @@ def build_sampled_distribution_policy(
     edge_ids: list[tuple[str, str]] | None,
     edge_filter: EdgeFilter | None,
     sampler: Any,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Build a multiplicative update policy from a custom distribution sampler.
 
@@ -197,6 +202,9 @@ def build_sampled_distribution_policy(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` multiplies the current value. ``"initial"`` multiplies
+            the first value seen by this policy.
         sampler (Any): Callable receiving ``(random, distribution)``.
 
     Returns:
@@ -218,9 +226,13 @@ def build_sampled_distribution_policy(
         node_asset_distributions=node_asset_distributions,
         edge_asset_distributions=edge_asset_distributions,
     )
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
-        for _, data in iter_selected_nodes(
+        if basis not in {"current", "initial"}:
+            raise ValueError('basis must be either "current" or "initial".')
+
+        for node_id, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
             node_filter=node_filter,
@@ -232,13 +244,18 @@ def build_sampled_distribution_policy(
                     else node_distribution
                 )
                 current = ensure_numeric_value(key, data[key])
-                new_value = current * sampler(graph.rnd, distribution)
+                source = (
+                    current
+                    if basis == "current"
+                    else baselines.setdefault(("node", node_id, key), current)
+                )
+                new_value = source * sampler(graph.rnd, distribution)
                 data[key] = coerce_numeric_like(
                     data[key],
                     clamp(new_value, lower=minimum),
                 )
 
-        for _, _, data in iter_selected_edges(
+        for source_node, target_node, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,
             edge_filter=edge_filter,
@@ -250,7 +267,15 @@ def build_sampled_distribution_policy(
                     else edge_distribution
                 )
                 current = ensure_numeric_value(key, data[key])
-                new_value = current * sampler(graph.rnd, distribution)
+                source = (
+                    current
+                    if basis == "current"
+                    else baselines.setdefault(
+                        ("edge", source_node, target_node, key),
+                        current,
+                    )
+                )
+                new_value = source * sampler(graph.rnd, distribution)
                 data[key] = coerce_numeric_like(
                     data[key],
                     clamp(new_value, lower=minimum),

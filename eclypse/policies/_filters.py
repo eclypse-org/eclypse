@@ -12,9 +12,18 @@ from typing import (
 
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
+    from eclypse.utils.types import NumericBasis
 
 NodeFilter = Callable[[str, dict[str, Any]], bool]
 EdgeFilter = Callable[[str, str, dict[str, Any]], bool]
+
+
+class _NoChange:
+    pass
+
+
+NO_CHANGE = _NoChange()
+NumericTransformResult = float | _NoChange
 
 
 def iter_selected_nodes(
@@ -209,7 +218,9 @@ def apply_numeric_transform(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
-    transform: Callable[[str, float], float],
+    transform: Callable[[str, float], NumericTransformResult],
+    basis: NumericBasis = "current",
+    baselines: dict[tuple[str, ...], float] | None = None,
 ) -> None:
     """Apply a numeric transform to selected node and edge assets.
 
@@ -224,34 +235,59 @@ def apply_numeric_transform(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
-        transform (Callable[[str, float], float]):
-            Callable receiving ``(asset_key, current_value)``.
+        transform (Callable[[str, float], NumericTransformResult]):
+            Callable receiving ``(asset_key, basis_value)``. Return ``NO_CHANGE``
+            to keep the current asset value.
+        basis (NumericBasis):
+            Value used as transform input. ``"initial"`` captures the first
+            value seen by this policy for each selected asset.
+        baselines (dict[tuple[str, ...], float] | None):
+            Per-policy storage used when ``basis`` is ``"initial"``.
 
     Returns:
         None.
     """
+    _validate_basis(basis, baselines)
+
     if node_assets is not None:
-        for _, data in iter_selected_nodes(
+        for node_id, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
             node_filter=node_filter,
         ):
-            apply_numeric_transform_to_values(data, node_assets, transform=transform)
+            apply_numeric_transform_to_values(
+                data,
+                node_assets,
+                transform=transform,
+                basis=basis,
+                baselines=baselines,
+                state_prefix=("node", node_id),
+            )
 
     if edge_assets is not None:
-        for _, _, data in iter_selected_edges(
+        for source, target, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,
             edge_filter=edge_filter,
         ):
-            apply_numeric_transform_to_values(data, edge_assets, transform=transform)
+            apply_numeric_transform_to_values(
+                data,
+                edge_assets,
+                transform=transform,
+                basis=basis,
+                baselines=baselines,
+                state_prefix=("edge", source, target),
+            )
 
 
 def apply_numeric_transform_to_values(
     data: dict[str, Any],
     assets: str | list[str] | None,
     *,
-    transform: Callable[[str, float], float],
+    transform: Callable[[str, float], NumericTransformResult],
+    basis: NumericBasis = "current",
+    baselines: dict[tuple[str, ...], float] | None = None,
+    state_prefix: tuple[str, ...] = (),
 ) -> None:
     """Apply a numeric transform to selected keys in one asset mapping.
 
@@ -259,20 +295,59 @@ def apply_numeric_transform_to_values(
         data (dict[str, Any]): Asset mapping to mutate.
         assets (str | list[str] | None):
             Asset key selector. ``None`` selects all existing keys.
-        transform (Callable[[str, float], float]):
-            Callable receiving ``(asset_key, current_value)``.
+        transform (Callable[[str, float], NumericTransformResult]):
+            Callable receiving ``(asset_key, basis_value)``. Return ``NO_CHANGE``
+            to keep the current asset value.
+        basis (NumericBasis): Value used as transform input.
+        baselines (dict[tuple[str, ...], float] | None):
+            Per-policy storage used when ``basis`` is ``"initial"``.
+        state_prefix (tuple[str, ...]): Stable identity for the asset owner.
 
     Returns:
         None.
     """
+    _validate_basis(basis, baselines)
     for key in iter_selected_keys(data, assets):
         current = ensure_numeric_value(key, data[key])
-        data[key] = coerce_numeric_like(data[key], transform(key, current))
+        source = _basis_value(
+            basis,
+            current,
+            (*state_prefix, key),
+            baselines,
+        )
+        new_value = transform(key, source)
+        if isinstance(new_value, _NoChange):
+            continue
+        data[key] = coerce_numeric_like(data[key], new_value)
+
+
+def _validate_basis(
+    basis: NumericBasis,
+    baselines: dict[tuple[str, ...], float] | None,
+) -> None:
+    if basis not in {"current", "initial"}:
+        raise ValueError('basis must be either "current" or "initial".')
+    if basis == "initial" and baselines is None:
+        raise ValueError('baselines must be provided when basis is "initial".')
+
+
+def _basis_value(
+    basis: NumericBasis,
+    current: float,
+    state_key: tuple[str, ...],
+    baselines: dict[tuple[str, ...], float] | None,
+) -> float:
+    if basis == "current":
+        return current
+    assert baselines is not None
+    return baselines.setdefault(state_key, current)
 
 
 __all__ = [
+    "NO_CHANGE",
     "EdgeFilter",
     "NodeFilter",
+    "NumericTransformResult",
     "apply_numeric_transform",
     "apply_numeric_transform_to_values",
     "clamp",

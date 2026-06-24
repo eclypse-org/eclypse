@@ -11,7 +11,6 @@ from typing import (
 )
 
 from eclypse.policies._filters import (
-    apply_numeric_transform,
     coerce_numeric_like,
     effective_assets,
     ensure_numeric_value,
@@ -20,6 +19,7 @@ from eclypse.policies._filters import (
     iter_selected_nodes,
     normalize_selected_keys,
 )
+from eclypse.policies._helpers import build_numeric_transform_policy
 
 if TYPE_CHECKING:
     from eclypse.graph.asset_graph import AssetGraph
@@ -28,6 +28,7 @@ if TYPE_CHECKING:
         NodeFilter,
     )
     from eclypse.utils.types import (
+        NumericBasis,
         UpdatePolicy,
         ValueAdjustmentDirection,
         ValueAdjustmentOverride,
@@ -49,6 +50,7 @@ class _ValueAdjustmentPolicy:
     node_filter: NodeFilter | None = None
     edge_ids: list[tuple[str, str]] | None = None
     edge_filter: EdgeFilter | None = None
+    basis: NumericBasis = "current"
     step: int = 0
     initial_values: dict[tuple[str, ...], float] = field(default_factory=dict)
 
@@ -112,6 +114,7 @@ def _build_value_adjustment_policy(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Build a stateful value-adjustment policy.
 
@@ -130,6 +133,8 @@ def _build_value_adjustment_policy(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            Value used for factor adjustments.
 
     Returns:
         Stateful value-adjustment policy.
@@ -148,6 +153,7 @@ def _build_value_adjustment_policy(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
     )
 
 
@@ -165,6 +171,7 @@ def build_configured_value_adjustment_policy(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Build a value-adjustment policy with defaults and per-asset overrides.
 
@@ -187,6 +194,8 @@ def build_configured_value_adjustment_policy(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            Value used for factor adjustments.
 
     Returns:
         Policy that applies one child adjustment per selected asset.
@@ -228,6 +237,7 @@ def build_configured_value_adjustment_policy(
                 node_assets=asset,
                 node_ids=node_ids,
                 node_filter=node_filter,
+                basis=basis,
             )
         )
 
@@ -249,6 +259,7 @@ def build_configured_value_adjustment_policy(
                 edge_assets=asset,
                 edge_ids=edge_ids,
                 edge_filter=edge_filter,
+                basis=basis,
             )
         )
 
@@ -407,6 +418,13 @@ def _adjust_value(
 ) -> int | float:
     if policy.factor is not None:
         step_factor = policy.factor ** (1 / policy.epochs)
+        if policy.basis == "initial":
+            initial_value = policy.initial_values.setdefault(state_key, current)
+            progress = min(policy.step + 1, policy.epochs) / policy.epochs
+            return coerce_numeric_like(
+                original,
+                initial_value * (policy.factor**progress),
+            )
         return coerce_numeric_like(original, current * step_factor)
 
     target_value = policy.target
@@ -461,6 +479,7 @@ def build_asset_transform_policy(
     edge_filter: EdgeFilter | None = None,
     transform,
     label: str,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Build a stateless value-transform policy for selected assets.
 
@@ -476,25 +495,19 @@ def build_asset_transform_policy(
             Optional predicate receiving ``(source, target, data)``.
         transform (Any): Callable receiving ``(asset_key, current_value)``.
         label (str): Trace-log label for the generated policy.
+        basis (NumericBasis): Value used as transform input.
 
     Returns:
         Policy that mutates selected numeric assets.
     """
-    if node_assets is None and edge_assets is None:
-        raise ValueError("At least one of node_assets or edge_assets must be provided.")
-
-    def policy(graph: AssetGraph):
-        apply_numeric_transform(
-            graph,
-            node_assets=node_assets,
-            edge_assets=edge_assets,
-            node_ids=node_ids,
-            node_filter=node_filter,
-            edge_ids=edge_ids,
-            edge_filter=edge_filter,
-            transform=transform,
-        )
-
-        graph.logger.trace(f"Applied {label} value policy.")
-
-    return policy
+    return build_numeric_transform_policy(
+        node_assets=node_assets,
+        edge_assets=edge_assets,
+        node_ids=node_ids,
+        node_filter=node_filter,
+        edge_ids=edge_ids,
+        edge_filter=edge_filter,
+        transform=transform,
+        basis=basis,
+        label=label,
+    )

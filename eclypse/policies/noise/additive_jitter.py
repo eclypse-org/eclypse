@@ -15,7 +15,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def additive_jitter(
@@ -28,6 +31,7 @@ def additive_jitter(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Add uniformly sampled deltas to selected assets.
 
@@ -45,11 +49,15 @@ def additive_jitter(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` adds jitter to the current value. ``"initial"`` adds
+            jitter to the first value seen by this policy.
 
     Returns:
         Policy that adds independent uniform jitter to selected assets.
     """
     _validate_ranges(node_ranges, edge_ranges)
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
         def node_transform(key: str, current: float) -> float:
@@ -66,6 +74,8 @@ def additive_jitter(
             node_ids=node_ids,
             node_filter=node_filter,
             transform=node_transform,
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
         apply_numeric_transform(
             graph,
@@ -73,6 +83,8 @@ def additive_jitter(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
             transform=edge_transform,
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
 
         graph.logger.trace("Applied additive_jitter policy.")

@@ -23,7 +23,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def impulse(
@@ -38,6 +41,7 @@ def impulse(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply rare multiplicative shocks to selected node and edge assets.
 
@@ -55,6 +59,9 @@ def impulse(
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of target
             edges.
         edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
+        basis (NumericBasis):
+            ``"current"`` applies shocks to the current value. ``"initial"``
+            applies shocks to the first value seen by this policy.
 
     Returns:
         UpdatePolicy: A graph update policy applying rare multiplicative shocks.
@@ -69,9 +76,13 @@ def impulse(
         node_factor_range if edge_factor_range is None else edge_factor_range
     )
     _validate_factor_range("edge_factor_range", effective_edge_factor_range)
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
-        for _, data in iter_selected_nodes(
+        if basis not in {"current", "initial"}:
+            raise ValueError('basis must be either "current" or "initial".')
+
+        for node_id, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
             node_filter=node_filter,
@@ -83,9 +94,12 @@ def impulse(
                 factor_range=node_factor_range,
                 minimum=minimum,
                 random=graph.rnd,
+                basis=basis,
+                baselines=baselines,
+                state_prefix=("node", node_id),
             )
 
-        for _, _, data in iter_selected_edges(
+        for source, target, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,
             edge_filter=edge_filter,
@@ -97,6 +111,9 @@ def impulse(
                 factor_range=effective_edge_factor_range,
                 minimum=minimum,
                 random=graph.rnd,
+                basis=basis,
+                baselines=baselines,
+                state_prefix=("edge", source, target),
             )
 
         graph.logger.trace("Applied impulse policy.")
@@ -120,16 +137,24 @@ def _apply_impulses(
     factor_range: tuple[float, float],
     minimum: float,
     random: Random,
+    basis: NumericBasis,
+    baselines: dict[tuple[str, ...], float],
+    state_prefix: tuple[str, ...],
 ) -> None:
     lower_factor, upper_factor = factor_range
 
     for key in iter_selected_keys(values, assets):
+        current = ensure_numeric_value(key, values[key])
+        source = (
+            current
+            if basis == "current"
+            else baselines.setdefault((*state_prefix, key), current)
+        )
         if random.random() >= probability:
             continue
 
-        current = ensure_numeric_value(key, values[key])
         factor = random.uniform(lower_factor, upper_factor)
         values[key] = coerce_numeric_like(
             values[key],
-            clamp(current * factor, lower=minimum),
+            clamp(source * factor, lower=minimum),
         )

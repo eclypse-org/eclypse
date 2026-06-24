@@ -46,6 +46,9 @@ def apply_additive_walk(
     bounds: dict[str, tuple[float | None, float | None]] | None,
     *,
     delta_sampler: Any,
+    basis: str = "current",
+    baselines: dict[tuple[str, ...], float] | None = None,
+    state_prefix: tuple[str, ...] = (),
 ) -> None:
     """Apply additive updates sampled independently per configured asset.
 
@@ -55,20 +58,35 @@ def apply_additive_walk(
         bounds (dict[str, tuple[float | None, float | None]] | None):
             Optional mapping from asset name to ``(lower, upper)`` bounds.
         delta_sampler (Any): Callable receiving ``(asset_key, step)``.
+        basis (str): ``"current"`` or ``"initial"`` reference value.
+        baselines (dict[tuple[str, ...], float] | None):
+            Per-policy storage used when ``basis`` is ``"initial"``.
+        state_prefix (tuple[str, ...]): Stable identity for the asset owner.
 
     Returns:
         None.
     """
+    if basis not in {"current", "initial"}:
+        raise ValueError('basis must be either "current" or "initial".')
+    if basis == "initial" and baselines is None:
+        raise ValueError('baselines must be provided when basis is "initial".')
+    baseline_store = baselines if baselines is not None else {}
+
     for key, step in steps.items():
         if key not in values:
             continue
 
         current = ensure_numeric_value(key, values[key])
+        source = (
+            current
+            if basis == "current"
+            else baseline_store.setdefault((*state_prefix, key), current)
+        )
         lower, upper = (bounds or {}).get(key, (MIN_FLOAT, None))
         delta = delta_sampler(key, step)
         values[key] = coerce_numeric_like(
             values[key],
-            clamp(current + delta, lower=lower, upper=upper),
+            clamp(source + delta, lower=lower, upper=upper),
         )
 
 

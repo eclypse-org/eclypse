@@ -15,7 +15,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def correlated_noise(
@@ -29,6 +32,7 @@ def correlated_noise(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply one shared additive delta to all selected assets.
 
@@ -46,6 +50,9 @@ def correlated_noise(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` adds noise to the current value. ``"initial"`` adds
+            noise to the first value seen by this policy.
 
     Returns:
         Policy that adds a shared random delta to selected assets.
@@ -55,6 +62,8 @@ def correlated_noise(
         raise ValueError("delta_range must be ordered as (low, high).")
     if node_assets is None and edge_assets is None:
         raise ValueError("At least one of node_assets or edge_assets must be provided.")
+
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
         delta = graph.rnd.uniform(low, high)
@@ -67,6 +76,8 @@ def correlated_noise(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
             transform=lambda _key, current: clamp(current + delta, lower, upper),
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
 
         graph.logger.trace("Applied correlated_noise policy.")

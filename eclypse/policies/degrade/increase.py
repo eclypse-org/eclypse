@@ -14,6 +14,7 @@ if TYPE_CHECKING:
         NodeFilter,
     )
     from eclypse.utils.types import (
+        NumericBasis,
         UpdatePolicy,
         ValueAdjustmentOverrides,
     )
@@ -32,6 +33,7 @@ def increase(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Increase selected asset values over a fixed number of epochs.
 
@@ -68,6 +70,9 @@ def increase(
             Optional subset of edge identifiers to update.
         edge_filter (EdgeFilter | None):
             Optional predicate used to select edges dynamically.
+        basis (NumericBasis):
+            ``"current"`` compounds factor adjustments. ``"initial"`` applies
+            factor progress from the first value seen by this policy.
 
     Returns:
         A graph update policy that increases the selected asset values.
@@ -85,4 +90,5 @@ def increase(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
     )

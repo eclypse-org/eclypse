@@ -26,10 +26,6 @@ from .jittered_every import (
     JitteredEveryPolicy,
     jittered_every,
 )
-from .once_at import (
-    OnceAtPolicy,
-    once_at,
-)
 from .repeat import (
     RepeatPolicy,
     repeat,
@@ -50,7 +46,6 @@ __all__ = [
     "CooldownPolicy",
     "EveryPolicy",
     "JitteredEveryPolicy",
-    "OnceAtPolicy",
     "RepeatPolicy",
     "UntilPolicy",
     "WithProbabilityPolicy",
@@ -60,7 +55,6 @@ __all__ = [
     "cooldown",
     "every",
     "jittered_every",
-    "once_at",
     "repeat",
     "until",
     "with_probability",

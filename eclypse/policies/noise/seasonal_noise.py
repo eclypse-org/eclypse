@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import (
+    dataclass,
+    field,
+)
 from typing import TYPE_CHECKING
 
 from eclypse.policies._filters import (
@@ -17,7 +20,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 @dataclass(slots=True)
@@ -35,7 +41,9 @@ class SeasonalNoisePolicy:
     node_filter: NodeFilter | None = None
     edge_ids: list[tuple[str, str]] | None = None
     edge_filter: EdgeFilter | None = None
+    basis: NumericBasis = "current"
     step: int = 0
+    baselines: dict[tuple[str, ...], float] = field(default_factory=dict)
 
     def __post_init__(self):
         """Validate the seasonal noise configuration."""
@@ -64,6 +72,8 @@ class SeasonalNoisePolicy:
                 self.lower,
                 self.upper,
             ),
+            basis=self.basis,
+            baselines=self.baselines if self.basis == "initial" else None,
         )
         self.step += 1
         graph.logger.trace("Applied seasonal_noise policy.")
@@ -82,6 +92,7 @@ def seasonal_noise(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply sinusoidal additive noise to selected assets.
 
@@ -100,6 +111,9 @@ def seasonal_noise(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` adds the seasonal delta to the current value.
+            ``"initial"`` adds it to the first value seen by this policy.
 
     Returns:
         Stateful policy that applies seasonal additive noise.
@@ -116,4 +130,5 @@ def seasonal_noise(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
     )

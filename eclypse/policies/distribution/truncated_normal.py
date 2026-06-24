@@ -17,7 +17,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def truncated_normal(
@@ -36,6 +39,7 @@ def truncated_normal(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply multiplicative truncated-normal noise to selected assets.
 
@@ -59,6 +63,9 @@ def truncated_normal(
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of target
             edges.
         edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
+        basis (NumericBasis):
+            ``"current"`` multiplies the current value. ``"initial"`` multiplies
+            the first value seen by this policy.
 
     Returns:
         UpdatePolicy: A graph update policy applying truncated-normal
@@ -113,6 +120,7 @@ def truncated_normal(
         node_filter=node_filter,
         edge_ids=edge_ids,
         edge_filter=edge_filter,
+        basis=basis,
         sampler=lambda rnd, distribution: _sample_truncated_normal(
             rnd,
             distribution,

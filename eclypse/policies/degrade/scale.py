@@ -11,7 +11,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def scale(
@@ -23,6 +26,7 @@ def scale(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Multiply selected asset values by ``factor`` immediately.
 
@@ -37,6 +41,9 @@ def scale(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` compounds repeated calls. ``"initial"`` scales the
+            first value seen by this policy.
 
     Returns:
         Policy that scales selected numeric assets.
@@ -49,5 +56,6 @@ def scale(
         edge_ids=edge_ids,
         edge_filter=edge_filter,
         transform=lambda _key, current: current * factor,
+        basis=basis,
         label="scale",
     )

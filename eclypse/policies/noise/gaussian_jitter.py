@@ -15,7 +15,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def gaussian_jitter(
@@ -28,6 +31,7 @@ def gaussian_jitter(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Add Gaussian sampled deltas to selected assets.
 
@@ -45,11 +49,15 @@ def gaussian_jitter(
             Optional explicit edge identifiers to mutate.
         edge_filter (EdgeFilter | None):
             Optional predicate receiving ``(source, target, data)``.
+        basis (NumericBasis):
+            ``"current"`` adds jitter to the current value. ``"initial"`` adds
+            jitter to the first value seen by this policy.
 
     Returns:
         Policy that adds independent Gaussian jitter to selected assets.
     """
     _validate_parameters(node_parameters, edge_parameters)
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
         def node_transform(key: str, current: float) -> float:
@@ -66,6 +74,8 @@ def gaussian_jitter(
             node_ids=node_ids,
             node_filter=node_filter,
             transform=node_transform,
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
         apply_numeric_transform(
             graph,
@@ -73,6 +83,8 @@ def gaussian_jitter(
             edge_ids=edge_ids,
             edge_filter=edge_filter,
             transform=edge_transform,
+            basis=basis,
+            baselines=baselines if basis == "initial" else None,
         )
 
         graph.logger.trace("Applied gaussian_jitter policy.")

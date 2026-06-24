@@ -19,7 +19,10 @@ if TYPE_CHECKING:
         EdgeFilter,
         NodeFilter,
     )
-    from eclypse.utils.types import UpdatePolicy
+    from eclypse.utils.types import (
+        NumericBasis,
+        UpdatePolicy,
+    )
 
 
 def bounded_random_walk(
@@ -32,6 +35,7 @@ def bounded_random_walk(
     node_filter: NodeFilter | None = None,
     edge_ids: list[tuple[str, str]] | None = None,
     edge_filter: EdgeFilter | None = None,
+    basis: NumericBasis = "current",
 ) -> UpdatePolicy:
     """Apply additive random walks while clamping values within bounds.
 
@@ -47,14 +51,18 @@ def bounded_random_walk(
         edge_ids (list[tuple[str, str]] | None): Optional explicit list of target
             edges.
         edge_filter (EdgeFilter | None): Optional predicate to filter target edges.
+        basis (NumericBasis):
+            ``"current"`` walks from the current value. ``"initial"`` walks from
+            the first value seen by this policy.
 
     Returns:
         UpdatePolicy: A graph update policy applying bounded random walks.
     """
     validate_steps(node_steps=node_steps, edge_steps=edge_steps)
+    baselines: dict[tuple[str, ...], float] = {}
 
     def policy(graph: AssetGraph):
-        for _, data in iter_selected_nodes(
+        for node_id, data in iter_selected_nodes(
             graph,
             node_ids=node_ids,
             node_filter=node_filter,
@@ -64,9 +72,12 @@ def bounded_random_walk(
                 node_steps or {},
                 node_bounds,
                 delta_sampler=lambda _, step: graph.rnd.uniform(-step, step),
+                basis=basis,
+                baselines=baselines if basis == "initial" else None,
+                state_prefix=("node", node_id),
             )
 
-        for _, _, data in iter_selected_edges(
+        for source, target, data in iter_selected_edges(
             graph,
             edge_ids=edge_ids,
             edge_filter=edge_filter,
@@ -76,6 +87,9 @@ def bounded_random_walk(
                 edge_steps or {},
                 edge_bounds,
                 delta_sampler=lambda _, step: graph.rnd.uniform(-step, step),
+                basis=basis,
+                baselines=baselines if basis == "initial" else None,
+                state_prefix=("edge", source, target),
             )
 
         graph.logger.trace("Applied bounded_random_walk policy.")
