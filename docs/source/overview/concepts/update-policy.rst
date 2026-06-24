@@ -31,7 +31,7 @@ ECLYPSE also provides a catalogue of off-the-shelf policies in
 families:
 
 - **failure**: node and edge failures, availability flapping, correlated
-  failures, partitions, brownouts, resource exhaustion, and latency spikes
+  failures, partitions, resource exhaustion, and latency spikes
 - **noise**: bounded and momentum random walks, additive or multiplicative
   jitter, Gaussian jitter, correlated noise, seasonal noise, dropout, and
   impulse shocks
@@ -40,13 +40,12 @@ families:
   Weibull, Pareto, empirical, and weighted discrete multiplicative
   perturbations
 - **degrade**: progressive increase or reduction, direct assignment, scaling,
-  decay, clamping, restoring, and ramping of selected assets
+  and ramping of selected assets
 - **replay**: replay of node, edge, graph, and event values from records,
   dataframes, CSV files, or parquet files, with optional cyclic replay
 - **schedule**: wrappers such as :func:`~eclypse.policies.schedule.every`,
   :func:`~eclypse.policies.schedule.after`,
   :func:`~eclypse.policies.schedule.between`,
-  :func:`~eclypse.policies.schedule.once_at`,
   :func:`~eclypse.policies.schedule.at`,
   :func:`~eclypse.policies.schedule.until`,
   :func:`~eclypse.policies.schedule.repeat`,
@@ -55,7 +54,6 @@ families:
   :func:`~eclypse.policies.schedule.cooldown`
 - **compose**: reusable policy composition with
   :func:`~eclypse.policies.compose.chain`,
-  :func:`~eclypse.policies.compose.all_of`,
   :func:`~eclypse.policies.compose.one_of`,
   :func:`~eclypse.policies.compose.weighted_choice`, and
   :func:`~eclypse.policies.compose.conditional`
@@ -63,7 +61,7 @@ families:
 - **topology**: graph mutation policies for adding, removing, rewiring, and
   churn
 - **constraints**: invariant-enforcing policies such as clamping,
-  normalisation, rounding, and capacity floors
+  normalisation, and rounding
 
 For most simulations, the easiest workflow is to compose a few built-in
 policies and only fall back to a custom callable when the behaviour is
@@ -156,7 +154,7 @@ Scheduling wrappers let you activate a policy only during part of the run.
         ),
         policies.with_probability(
             0.2,
-            policies.failure.brownout(
+            policies.failure.resource_exhaustion(
                 factor=0.75,
                 node_assets=["cpu", "ram"],
             ),
@@ -232,8 +230,8 @@ must be combined.
             {("edge-1", "cloud"): 120.0},
             asset="traffic",
         ),
-        policies.constraints.ensure_capacity_floor(
-            1.0,
+        policies.constraints.clamp_values(
+            lower=1.0,
             edge_assets="bandwidth",
         ),
         policies.topology.churn(
@@ -243,6 +241,27 @@ must be combined.
             },
         ),
     )
+
+Current vs Initial Basis
+------------------------
+
+Numeric policies that can compound over repeated calls accept ``basis``:
+
+- ``basis="current"`` uses the value at each call. This preserves cumulative
+  drift and is the default.
+- ``basis="initial"`` uses the first value seen by that policy for each selected
+  asset. ECLYPSE stores only those touched asset values, not a copy of the graph.
+
+Use ``basis="initial"`` for oscillations or shocks around a nominal value:
+
+.. code-block:: python
+
+   stable_latency_noise = policies.noise.seasonal_noise(
+       amplitude=2.0,
+       period=24,
+       edge_assets="latency",
+       basis="initial",
+   )
 
 Writing Custom Policies
 -----------------------
