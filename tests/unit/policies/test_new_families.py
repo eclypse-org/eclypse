@@ -19,8 +19,6 @@ def test_compose_family_combines_policies():
     assert graph.nodes["a"]["cpu"] == 81
     assert graph.nodes["a"]["ram"] == 33
 
-    policies.compose.all_of(add_cpu, add_ram)(graph)
-    assert graph.nodes["a"]["cpu"] == 81
     policies.compose.conditional(lambda _: True, add_cpu)(graph)
     assert graph.nodes["a"]["cpu"] == 81
     policies.compose.conditional(lambda _: False, add_ram)(graph)
@@ -74,6 +72,23 @@ def test_workload_family_updates_load_values():
         policies.workload.diurnal_load(amplitude=1, period=1)
 
 
+def test_diurnal_load_basis_initial_uses_first_seen_value():
+    graph = build_graph()
+
+    policy = policies.workload.diurnal_load(
+        amplitude=1,
+        period=4,
+        node_assets="cpu",
+        basis="initial",
+    )
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 80
+
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 160
+
+
 def test_topology_family_mutates_graph_structure():
     graph = build_graph()
 
@@ -114,7 +129,7 @@ def test_constraints_family_enforces_numeric_invariants():
     policies.constraints.round_int(node_assets="availability")(graph)
     assert graph.nodes["a"]["availability"] == 1
 
-    policies.constraints.ensure_capacity_floor(70, edge_assets="bandwidth")(graph)
+    policies.constraints.clamp_values(lower=70, edge_assets="bandwidth")(graph)
     assert graph.edges["a", "b"]["bandwidth"] == 100
 
     policies.constraints.normalise(100, node_assets="cpu")(graph)

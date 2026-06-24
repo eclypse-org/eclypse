@@ -88,7 +88,7 @@ def test_edge_and_correlated_failure_policies():
     assert graph.nodes["b"]["availability"] == 0.0
 
 
-def test_partition_brownout_and_resource_exhaustion_policies():
+def test_partition_and_resource_exhaustion_policies():
     graph = build_graph()
     graph.add_node("c", cpu=20, ram=8, availability=1.0)
     graph.add_edge("b", "c", latency=30, bandwidth=50, availability=1.0)
@@ -107,7 +107,9 @@ def test_partition_brownout_and_resource_exhaustion_policies():
     policies.failure.resource_exhaustion(0.0, factor=0.5, node_assets="cpu")(graph)
     assert graph.nodes["a"]["cpu"] == 40
 
-    policies.failure.brownout(1.0, factor=0.5, edge_assets="bandwidth")(graph)
+    policies.failure.resource_exhaustion(1.0, factor=0.5, edge_assets="bandwidth")(
+        graph
+    )
     assert graph.edges["a", "b"]["bandwidth"] == 50
 
     with pytest.raises(ValueError):
@@ -116,3 +118,48 @@ def test_partition_brownout_and_resource_exhaustion_policies():
         policies.failure.resource_exhaustion(factor=-1, node_assets="cpu")
     with pytest.raises(ValueError):
         policies.failure.resource_exhaustion()
+
+
+def test_failure_basis_initial_uses_first_seen_value():
+    graph = build_graph()
+
+    policy = policies.failure.resource_exhaustion(
+        1.0,
+        factor=0.5,
+        node_assets="cpu",
+        basis="initial",
+    )
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    latency = policies.failure.latency_spike(
+        1.0,
+        factor=2.0,
+        basis="initial",
+    )
+    latency(graph)
+    assert graph.edges["a", "b"]["latency"] == 20
+    graph.edges["a", "b"]["latency"] = 100
+    latency(graph)
+    assert graph.edges["a", "b"]["latency"] == 20
+
+
+def test_resource_exhaustion_basis_initial_probability_skip_keeps_current_value():
+    graph = build_graph()
+    policy = policies.failure.resource_exhaustion(
+        0.0,
+        factor=0.5,
+        node_assets="cpu",
+        basis="initial",
+    )
+
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 80
+
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 200

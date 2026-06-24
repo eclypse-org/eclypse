@@ -150,10 +150,10 @@ def test_additional_degrade_policies_transform_values():
     policies.degrade.scale(2, node_assets="cpu")(graph)
     assert graph.nodes["a"]["cpu"] == 20
 
-    policies.degrade.decay(0.5, edge_assets="bandwidth")(graph)
+    policies.degrade.scale(0.5, edge_assets="bandwidth")(graph)
     assert graph.edges["a", "b"]["bandwidth"] == 20
 
-    policies.degrade.clamp_values(upper=15, node_assets="cpu")(graph)
+    policies.constraints.clamp_values(upper=15, node_assets="cpu")(graph)
     assert graph.nodes["a"]["cpu"] == 15
 
     ramp = policies.degrade.ramp_to(60, epochs=2, node_assets="cpu")
@@ -161,25 +161,35 @@ def test_additional_degrade_policies_transform_values():
     ramp(graph)
     assert graph.nodes["a"]["cpu"] == 60
 
-    graph.nodes["a"]["cpu"] = 10
-    restore = policies.degrade.restore(
-        epochs=2,
-        node_assets="cpu",
-        node_values={"cpu": 80},
-    )
-    restore(graph)
-    restore(graph)
-    assert graph.nodes["a"]["cpu"] == 80
-
 
 def test_additional_degrade_policies_validate_inputs():
     with pytest.raises(ValueError):
         policies.degrade.scale(1.0)
     with pytest.raises(ValueError):
-        policies.degrade.decay(1.5, node_assets="cpu")
-    with pytest.raises(ValueError):
-        policies.degrade.clamp_values(lower=2, upper=1, node_assets="cpu")
+        policies.constraints.clamp_values(lower=2, upper=1, node_assets="cpu")
     with pytest.raises(ValueError):
         policies.degrade.ramp_to(1, epochs=0, node_assets="cpu")
-    with pytest.raises(ValueError):
-        policies.degrade.restore(epochs=0, node_assets="cpu")
+
+
+def test_degrade_basis_initial_uses_first_seen_value():
+    graph = build_graph()
+
+    policy = policies.degrade.scale(0.5, node_assets="cpu", basis="initial")
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    reduce_policy = policies.degrade.reduce(
+        factor=0.25,
+        epochs=2,
+        node_assets="cpu",
+        basis="initial",
+    )
+    graph.nodes["a"]["cpu"] = 80
+    reduce_policy(graph)
+    graph.nodes["a"]["cpu"] = 1000
+    reduce_policy(graph)
+    assert graph.nodes["a"]["cpu"] == 20

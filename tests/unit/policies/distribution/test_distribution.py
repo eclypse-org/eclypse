@@ -407,3 +407,19 @@ def test_new_distribution_policies_validate_and_use_seeded_rng():
         upper=1.0,
         max_attempts=1,
     ) == 1.0
+
+
+def test_distribution_basis_initial_uses_first_seen_value():
+    graph = build_graph()
+
+    policy = policies.distribution.constant(
+        node_assets="cpu",
+        node_distribution=0.5,
+        basis="initial",
+    )
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40
+
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 40

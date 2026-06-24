@@ -25,7 +25,7 @@ def test_schedule_wrappers_control_policy_timing():
                 2,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
-            policies.once_at(
+            policies.at(
                 2,
                 lambda graph: graph.nodes["a"].update(cpu=graph.nodes["a"]["cpu"] + 1),
             ),
@@ -57,9 +57,6 @@ def test_schedule_wrapper_validation_errors():
 
     with pytest.raises(ValueError):
         policies.every(1, noop, start=-1)
-
-    with pytest.raises(ValueError):
-        policies.once_at(-1, noop)
 
     with pytest.raises(ValueError):
         policies.at([], noop)

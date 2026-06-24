@@ -144,8 +144,9 @@ def test_additional_noise_policies_apply_expected_changes():
     policies.noise.gaussian_jitter(node_parameters={"ram": (2, 0)})(graph)
     assert graph.nodes["a"]["ram"] == 34
 
-    policies.noise.multiplicative_jitter(
+    policies.noise.impulse(
         node_assets="cpu",
+        probability=1.0,
         node_factor_range=(2, 2),
     )(graph)
     assert graph.nodes["a"]["cpu"] == 170
@@ -189,3 +190,29 @@ def test_seasonal_noise_and_validation_paths():
         policies.noise.seasonal_noise(amplitude=1, period=1)
     with pytest.raises(ValueError):
         policies.noise.dropout()
+
+
+def test_noise_basis_initial_uses_first_seen_value():
+    graph = build_graph()
+
+    additive = policies.noise.additive_jitter(
+        node_ranges={"cpu": (5, 5)},
+        basis="initial",
+    )
+    additive(graph)
+    assert graph.nodes["a"]["cpu"] == 85
+    graph.nodes["a"]["cpu"] = 200
+    additive(graph)
+    assert graph.nodes["a"]["cpu"] == 85
+
+    impulse = policies.noise.impulse(
+        node_assets="cpu",
+        probability=1.0,
+        node_factor_range=(0.5, 0.5),
+        basis="initial",
+    )
+    impulse(graph)
+    assert graph.nodes["a"]["cpu"] == 42
+    graph.nodes["a"]["cpu"] = 200
+    impulse(graph)
+    assert graph.nodes["a"]["cpu"] == 42
