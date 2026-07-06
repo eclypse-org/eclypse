@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import networkx as nx
 import pytest
+from ray import cloudpickle
 
 from eclypse.graph.asset_graph import AssetGraph
 from eclypse.graph.assets import Additive
@@ -84,18 +85,12 @@ def test_infrastructure_path_custom_cost_attr_controls_cache_refresh(
 ):
     sample_infrastructure.path("edge-a", "edge-b")
     sample_infrastructure.edges["edge-a", "edge-b"]["routing_cost"] = 50
-    sample_infrastructure._costs["edge-a"]["edge-b"] = [  # pylint: disable=protected-access
-        (
-            "edge-a",
-            "edge-b",
-            {
-                **sample_infrastructure.edges["edge-a", "edge-b"],
-                "routing_cost": 1,
-            },
-        )
-    ]
+    assert sample_infrastructure._costs == {}  # pylint: disable=protected-access
+
     calls = []
-    original_compute_path = sample_infrastructure._compute_path  # pylint: disable=protected-access
+    original_compute_path = (
+        sample_infrastructure._compute_path
+    )  # pylint: disable=protected-access
 
     def recompute_spy(source: str, target: str):
         calls.append((source, target))
@@ -103,11 +98,77 @@ def test_infrastructure_path_custom_cost_attr_controls_cache_refresh(
 
     monkeypatch.setattr(sample_infrastructure, "_compute_path", recompute_spy)
 
-    sample_infrastructure.path("edge-a", "edge-b")
-    assert calls == []
-
     sample_infrastructure.path("edge-a", "edge-b", cost_attr="routing_cost")
     assert calls == [("edge-a", "edge-b")]
+
+
+def test_infrastructure_direct_edge_attr_updates_invalidate_cached_path_resources(
+    sample_infrastructure,
+):
+    assert sample_infrastructure.path_resources("edge-a", "edge-b")["bandwidth"] == 10
+    assert sample_infrastructure._paths != {}  # pylint: disable=protected-access
+    assert sample_infrastructure._costs != {}  # pylint: disable=protected-access
+
+    sample_infrastructure.edges["edge-a", "edge-b"]["bandwidth"] = 5
+
+    assert sample_infrastructure._paths != {}  # pylint: disable=protected-access
+    assert sample_infrastructure._costs != {}  # pylint: disable=protected-access
+    assert (
+        sample_infrastructure._path_resources == {}  # pylint: disable=protected-access
+    )
+    assert sample_infrastructure.path_resources("edge-a", "edge-b")["bandwidth"] == 5
+
+
+def test_infrastructure_direct_node_path_attr_updates_invalidate_cached_processing_time(
+    sample_infrastructure,
+):
+    assert sample_infrastructure.processing_time("edge-a", "edge-b") == 5
+    assert sample_infrastructure._paths != {}  # pylint: disable=protected-access
+
+    sample_infrastructure.nodes["edge-b"].update(processing_time=8)
+
+    assert sample_infrastructure._paths != {}  # pylint: disable=protected-access
+    assert (
+        sample_infrastructure._processing_times
+        == {}  # pylint: disable=protected-access
+    )
+    assert sample_infrastructure.processing_time("edge-a", "edge-b") == 10
+
+
+def test_infrastructure_direct_latency_updates_invalidate_cached_paths(
+    sample_infrastructure,
+):
+    sample_infrastructure.path("edge-a", "edge-b")
+
+    sample_infrastructure.edges["edge-a", "edge-b"]["latency"] = 4
+
+    assert sample_infrastructure._paths == {}  # pylint: disable=protected-access
+    assert sample_infrastructure.path("edge-a", "edge-b") == [
+        ("edge-a", "edge-b", sample_infrastructure.edges["edge-a", "edge-b"])
+    ]
+
+
+def test_infrastructure_direct_non_path_node_attr_updates_keep_path_cache(
+    sample_infrastructure,
+):
+    sample_infrastructure.path("edge-a", "edge-b")
+
+    sample_infrastructure.nodes["edge-b"]["cpu"] = 99
+
+    assert sample_infrastructure._paths != {}  # pylint: disable=protected-access
+
+
+def test_infrastructure_invalidating_attrs_survive_pickle_roundtrip(
+    sample_infrastructure,
+):
+    restored = cloudpickle.loads(cloudpickle.dumps(sample_infrastructure))
+    restored.path("edge-a", "edge-b")
+
+    restored.edges["edge-a", "edge-b"]["bandwidth"] = 5
+
+    assert restored._paths != {}  # pylint: disable=protected-access
+    assert restored._path_resources == {}  # pylint: disable=protected-access
+    assert restored.path_resources("edge-a", "edge-b")["bandwidth"] == 5
 
 
 def test_infrastructure_evolve_invalidates_cached_path_resources(sample_infrastructure):

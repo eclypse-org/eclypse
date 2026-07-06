@@ -25,6 +25,7 @@ from networkx.classes.coreviews import (
 from networkx.classes.filters import no_filter
 
 from eclypse.graph import AssetGraph
+from eclypse.graph.invalidating_dict import InvalidatingDict
 from eclypse.utils._logging import (
     format_log_kv,
     log_placement_violations,
@@ -136,6 +137,30 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._costs: dict[str, dict[str, list[tuple[str, str, Any]]]] = {}
         self._path_resources: dict[str, dict[str, dict[str, Any]]] = {}
         self._processing_times: dict[str, dict[str, float]] = {}
+        self._path_node_attrs = {"availability", "processing_time"}
+        self._path_edge_resource_attrs = set(self.path_assets_aggregators)
+
+        self.node_attr_dict_factory = self._make_node_attr_dict
+        self.edge_attr_dict_factory = self._make_edge_attr_dict
+
+    def _make_node_attr_dict(self) -> InvalidatingDict:
+        """Create a node attribute dictionary that invalidates path caches."""
+        return InvalidatingDict(
+            self._get_node_lower_bound()
+            if self.attr_init == "min"
+            else self._get_node_upper_bound(),
+            on_change=self._invalidate_node_attrs,
+            watched_keys=self._path_node_attrs,
+        )
+
+    def _make_edge_attr_dict(self) -> InvalidatingDict:
+        """Create an edge attribute dictionary that invalidates path caches."""
+        return InvalidatingDict(
+            self._get_edge_lower_bound()
+            if self.attr_init == "min"
+            else self._get_edge_upper_bound(),
+            on_change=self._invalidate_edge_attrs,
+        )
 
     def evolve(self):
         """Update the infrastructure and invalidate derived path caches."""
@@ -297,6 +322,11 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         """
         if source == target or self.path(source, target) is None:
             return 0.0
+        if (
+            source not in self._processing_times
+            or target not in self._processing_times[source]
+        ):
+            self._cache_processing_time(source, target)
         return self._processing_times[source][target]
 
     def path_resources(self, source: str, target: str) -> dict[str, Any]:
@@ -320,6 +350,11 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         if path is None:
             return self.edge_assets.lower_bound
 
+        if (
+            source not in self._path_resources
+            or target not in self._path_resources[source]
+        ):
+            self._cache_path_resources(source, target)
         return self._path_resources[source][target]
 
     def _invalidate_cache(self):
@@ -328,11 +363,42 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         Must be called whenever the graph topology changes (node or edge
         addition/removal), so that stale paths are not returned.
         """
+        self._invalidate_paths()
+        self._available = None
+
+    def _invalidate_paths(self):
+        """Invalidate cached paths and path-derived values."""
         self._paths.clear()
         self._costs.clear()
         self._path_resources.clear()
         self._processing_times.clear()
-        self._available = None
+
+    def _invalidate_processing_times(self):
+        """Invalidate cached processing times only."""
+        self._processing_times.clear()
+
+    def _invalidate_path_resources(self):
+        """Invalidate cached path resources only."""
+        self._path_resources.clear()
+
+    def _invalidate_node_attrs(self, keys: tuple[Any, ...]):
+        """Invalidate caches affected by node attribute changes."""
+        changed = set(keys)
+        if "availability" in changed:
+            self._invalidate_paths()
+        elif "processing_time" in changed:
+            self._invalidate_processing_times()
+
+    def _invalidate_edge_attrs(self, keys: tuple[Any, ...]):
+        """Invalidate caches affected by edge attribute changes."""
+        changed = set(keys)
+        if (
+            DEFAULT_COST_ATTR in changed
+            or not changed <= self._path_edge_resource_attrs
+        ):
+            self._invalidate_paths()
+        elif changed & self._path_edge_resource_attrs:
+            self._invalidate_path_resources()
 
     def _compute_path(self, source: str, target: str):
         """Compute the path between two nodes using the given algorithm, and cache it.
@@ -346,10 +412,20 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
 
         self._paths.setdefault(source, {})[target] = path_nodes
         self._costs.setdefault(source, {})[target] = path_costs
+        self._cache_path_resources(source, target)
+        self._cache_processing_time(source, target)
+
+    def _cache_path_resources(self, source: str, target: str):
+        """Cache aggregated edge resources for an existing path."""
+        path_costs = self._costs[source][target]
         self._path_resources.setdefault(source, {})[target] = {
             k: aggr([c[k] for _, _, c in path_costs])
             for k, aggr in self.path_assets_aggregators.items()
         }
+
+    def _cache_processing_time(self, source: str, target: str):
+        """Cache total node processing time for an existing path."""
+        path_nodes = self._paths[source][target]
         self._processing_times.setdefault(source, {})[target] = sum(
             self.nodes[n].get("processing_time", MIN_FLOAT) for n in path_nodes
         )
