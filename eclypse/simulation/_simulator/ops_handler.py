@@ -20,7 +20,7 @@ from eclypse.remote.utils import (
 
 if TYPE_CHECKING:
     from eclypse.placement import Placement
-    from eclypse.remote._node import RemoteNode
+    from eclypse.remote.node import RemoteNode
     from eclypse.remote.service import Service
     from eclypse.remote.utils import RemoteOpResult
 

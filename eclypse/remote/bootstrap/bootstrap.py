@@ -22,7 +22,7 @@ from .options_factory import RayOptionsFactory
 
 if TYPE_CHECKING:
     from eclypse.graph.infrastructure import Infrastructure
-    from eclypse.remote._node import RemoteNode
+    from eclypse.remote.node import RemoteNode
     from eclypse.simulation._simulator.remote import RemoteSimulator
     from eclypse.simulation.config import SimulationConfig
 
@@ -122,4 +122,4 @@ def _get_default_remote_simulator_class() -> type[Any]:
 
 def _get_default_remote_node_class() -> type[Any]:
     """Return the default remote node class."""
-    return import_module("eclypse.remote._node").RemoteNode
+    return import_module("eclypse.remote.node").RemoteNode

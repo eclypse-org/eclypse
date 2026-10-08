@@ -160,6 +160,11 @@ class RemoteNode:
         raise ValueError(f"Invalid communication interface: {communication_interface}.")
 
     def __repr__(self) -> str:
+        """Return the string representation of the node.
+
+        Returns:
+            str: The identifier of the node.
+        """
         return f"{self.id}"
 
     @property

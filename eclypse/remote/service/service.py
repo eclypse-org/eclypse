@@ -49,8 +49,8 @@ if TYPE_CHECKING:
         Callable,
     )
 
-    from eclypse.remote._node import RemoteNode
     from eclypse.remote.communication import EclypseCommunicationInterface
+    from eclypse.remote.node import RemoteNode
     from eclypse.utils._logging import Logger
     from eclypse.utils.types import CommunicationInterface
 

@@ -7,8 +7,8 @@ from typing import Any
 
 import pytest
 
-from eclypse.remote._node.node import RemoteNode
-from eclypse.remote._node.ops_thread import RemoteOpsThread
+from eclypse.remote.node.node import RemoteNode
+from eclypse.remote.node.ops_thread import RemoteOpsThread
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.remote.utils import (
@@ -70,17 +70,17 @@ async def test_remote_node_build_entrypoints_and_actor_cache(monkeypatch, dummy_
     actor_calls: list[str] = []
 
     monkeypatch.setattr(
-        "eclypse.remote._node.node.asyncio.get_event_loop", lambda: loop
+        "eclypse.remote.node.node.asyncio.get_event_loop", lambda: loop
     )
-    monkeypatch.setattr("eclypse.remote._node.node.RemoteOpsThread", FakeOpsThread)
+    monkeypatch.setattr("eclypse.remote.node.node.RemoteOpsThread", FakeOpsThread)
     monkeypatch.setattr(
-        "eclypse.remote._node.node.ThreadPoolExecutor",
+        "eclypse.remote.node.node.ThreadPoolExecutor",
         FakeThreadPoolExecutor,
     )
-    monkeypatch.setattr("eclypse.remote._node.node.config_logger", lambda: None)
-    monkeypatch.setattr("eclypse.remote._node.node.logger", dummy_logger)
+    monkeypatch.setattr("eclypse.remote.node.node.config_logger", lambda: None)
+    monkeypatch.setattr("eclypse.remote.node.node.logger", dummy_logger)
     monkeypatch.setattr(
-        "eclypse.remote._node.node.ray_backend.get_actor",
+        "eclypse.remote.node.node.ray_backend.get_actor",
         lambda actor_name: actor_calls.append(actor_name) or {"actor": actor_name},
     )
 
@@ -224,7 +224,7 @@ async def test_remote_ops_thread_run_and_set_future_result(monkeypatch):
         raise StopIteration
 
     monkeypatch.setattr(
-        "eclypse.remote._node.ops_thread.asyncio.run_coroutine_threadsafe",
+        "eclypse.remote.node.ops_thread.asyncio.run_coroutine_threadsafe",
         fake_run_coroutine_threadsafe,
     )
 

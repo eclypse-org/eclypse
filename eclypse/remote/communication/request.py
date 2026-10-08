@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
     from ray import ObjectRef
 
-    from eclypse.remote._node import RemoteNode
+    from eclypse.remote.node import RemoteNode
 
     from .interface import EclypseCommunicationInterface
     from .route import Route
