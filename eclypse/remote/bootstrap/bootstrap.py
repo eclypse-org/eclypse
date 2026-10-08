@@ -75,6 +75,7 @@ class RemoteBootstrap:
                 self.ray_options_factory,
                 node,
                 infrastructure.id,
+                **self.node_args,
             )
             for node in infrastructure.nodes
         ]

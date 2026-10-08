@@ -86,5 +86,7 @@ def test_create_remote_bootstrap_build_and_default_classes(
     assert len(create_calls) == len(sample_infrastructure.nodes) + 1
     assert create_calls[-1][0] == "edge-cloud/manager"
     assert "remotes" in create_calls[-1][2]
+    assert all(call[2].get("label") == "node" for call in create_calls[:-1])
+    assert "label" not in create_calls[-1][2]
     assert _get_default_remote_simulator_class().__name__ == "RemoteSimulator"
     assert _get_default_remote_node_class().__name__ == "RemoteNode"
