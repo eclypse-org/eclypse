@@ -8,12 +8,12 @@ license-files = ["LICENSE"]
 
 authors = [
     { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
-    { name = "Valerio De Caro", email = "valerio.decaro@di.unipi.it" },
+    { name = "Valerio De Caro", email = "valerio@valeriodecaro.com" },
 ]
 
 maintainers = [
     { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
-    { name = "Valerio De Caro", email = "valerio.decaro@di.unipi.it" },
+    { name = "Valerio De Caro", email = "valerio@valeriodecaro.com" },
 ]
 
 dependencies = [

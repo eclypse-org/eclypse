@@ -64,4 +64,4 @@ ECLYPSE is maintained by [Jacopo Massa](https://github.com/jacopo-massa) and
 
 ## Contact Us
 
-If you want to get in touch with us, [drop us an e-mail](mailto:jacopo.massa@di.unipi.it,valerio.decaro@di.unipi.it?subject=[ECLYPSE]%20Request%20for%20information)!
+If you want to get in touch with us, [drop us an e-mail](mailto:jacopo.massa@di.unipi.it,valerio@valeriodecaro.com?subject=[ECLYPSE]%20Request%20for%20information)!
