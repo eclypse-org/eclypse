@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from eclypse.graph.assets.defaults import get_default_path_aggregators
 from eclypse.io import (
     ApplicationContext,
     DockerComposeContext,
@@ -99,5 +100,13 @@ def context_for(kind: GraphKind, format: str, *, direction: str):
         return ApplicationContext(strict=False, seed=SEED)
 
     if format == "tosca":
-        return TOSCAInfrastructureContext(strict=False, seed=SEED)
-    return InfrastructureContext(strict=False, seed=SEED)
+        return TOSCAInfrastructureContext(
+            strict=False,
+            seed=SEED,
+            path_assets_aggregators=get_default_path_aggregators(),
+        )
+    return InfrastructureContext(
+        strict=False,
+        seed=SEED,
+        path_assets_aggregators=get_default_path_aggregators(),
+    )
