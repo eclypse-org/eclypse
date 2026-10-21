@@ -65,6 +65,21 @@ class RayInterface:
         """
         return self.backend.put(obj)
 
+    def get_size(self, refs: list[ObjectRef]) -> int:
+        """Get the total size of objects stored in the Ray object store.
+
+        The size is the one of the serialized objects, i.e., what is actually
+        transferred between Ray actors.
+
+        Args:
+            refs (list[ObjectRef]): The references to the objects.
+
+        Returns:
+            int: The total size of the objects in bytes.
+        """
+        locations = self.backend.experimental.get_object_locations(refs)
+        return sum(location["object_size"] for location in locations.values())
+
     def get_actor(self, name: str) -> ActorHandle:
         """Get a Ray actor by its name.
 

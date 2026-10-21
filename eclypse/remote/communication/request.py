@@ -72,7 +72,12 @@ class EclypseRequest:
             asyncio.wrap_future(
                 asyncio.run_coroutine_threadsafe(
                     _process_request(
-                        self.data, self._ref_args, route, recipient_id, _comm
+                        self.data,
+                        self._ref_args,
+                        self._size,
+                        route,
+                        recipient_id,
+                        _comm,
                     ),
                     loop=_comm.service.node.engine_loop,
                 )
@@ -163,10 +168,15 @@ class EclypseRequest:
     def _ref_args(self) -> dict[str, ObjectRef]:
         return {k: ray_backend.put(v) for k, v in self.data.items()}
 
+    @cached_property
+    def _size(self) -> int:
+        return ray_backend.get_size(list(self._ref_args.values()))
+
 
 async def _process_request(
     args: dict[str, Any],
     args_ref: dict[str, ObjectRef],
+    msg_size: int,
     route: Future[Route],
     recipient_id: str,
     _comm: EclypseCommunicationInterface,
@@ -185,7 +195,7 @@ async def _process_request(
         infrastructure_id = _comm.service.infrastructure_id
         actor_name = f"{infrastructure_id}/{_route.recipient_node_id}"
         handle: RemoteNode = _comm.service.node.get_actor(actor_name)
-        await asyncio.sleep(_route.cost(args))
+        await asyncio.sleep(_route.cost_of_size(msg_size))
         future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
             _route,
             _comm.__class__,
