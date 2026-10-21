@@ -293,7 +293,6 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     comm = SimpleNamespace(service=service)
 
     processed = await _process_request(
-        {"payload": "value"},
         {"payload": "ref-value"},
         1000,
         route_future,
@@ -320,19 +319,21 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 
     comm.service.node.service_comm_entrypoint = local_entrypoint
 
+    stored_payload: asyncio.Future[str] = loop.create_future()
+    stored_payload.set_result("stored")
+
     same_node_result = await _process_request(
-        {"payload": "direct"},
-        {"payload": "unused"},
+        {"payload": stored_payload},
         0,
         same_node_future,
         "gateway",
         comm,
     )
 
-    assert same_node_result["future"] == "direct"
+    assert same_node_result["future"] == "stored"
 
     with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
-        await _process_request({}, {}, 0, missing_route_future, "worker", comm)
+        await _process_request({}, 0, missing_route_future, "worker", comm)
 
     service_stub = SimpleNamespace(
         node=SimpleNamespace(manager_actor_name="edge-cloud/manager"),
