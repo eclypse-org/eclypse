@@ -25,22 +25,10 @@ from eclypse.remote.communication.rest.interface import (
     register_endpoint,
 )
 from eclypse.remote.communication.rest.methods import HTTPMethod
-from eclypse.remote.communication.route import (
-    Route,
-    _get_bytes_size,
-)
+from eclypse.remote.communication.route import Route
 from eclypse.remote.service.rest import RESTService
 from eclypse.remote.service.service import Service
 from eclypse.remote.utils import ResponseCode
-
-
-class ExampleObject:
-    def __init__(self):
-        self.payload = {"items": [1, 2, 3], "name": "demo"}
-
-
-class SlottedObject:
-    __slots__ = ()
 
 
 class DummyInterface(EclypseCommunicationInterface):
@@ -165,12 +153,18 @@ def test_route_response_and_http_request_helpers(monkeypatch):
         pending_request.body
 
 
-def test_route_size_helper_handles_objects_and_nested_structures():
-    obj = ExampleObject()
-
-    assert _get_bytes_size({"nested": [1, 2, {"x": 3}]}) > 0
-    assert _get_bytes_size(obj) == _get_bytes_size(obj.__dict__)
-    assert _get_bytes_size(SlottedObject()) > 0
+def test_route_cost():
+    route = Route(
+        sender_id="gateway",
+        sender_node_id="edge-a",
+        recipient_id="worker",
+        recipient_node_id="edge-b",
+        processing_time=10,
+        hops=[("edge-a", "edge-b", {"latency": 5, "bandwidth": 8})],
+    )
+    # 10 ms processing + 1 MB over 8 Mbps + 5 ms latency
+    assert route.cost(1_000_000) == pytest.approx(0.01 + 1 + 0.005)
+    assert route.network_cost == route.cost(0)
 
 
 @pytest.mark.asyncio
@@ -197,6 +191,10 @@ async def test_request_initialisation_and_rest_request_wrappers(monkeypatch):
     monkeypatch.setattr(
         "eclypse.remote.communication.request.ray_backend.put",
         lambda value: f"ref:{value}",
+    )
+    monkeypatch.setattr(
+        "eclypse.remote.communication.request.ray_backend.get_size",
+        lambda refs: 100 * len(refs),
     )
 
     def fake_run_coroutine_threadsafe(coro, loop=None):
@@ -230,6 +228,7 @@ async def test_request_initialisation_and_rest_request_wrappers(monkeypatch):
     assert request.responses == ["worker-a", "worker-b"]
     assert request.elapsed_times == [datetime(2026, 1, 1, 0, 0, 5) - timestamp] * 2
     assert request._ref_args == {"payload": "ref:3"}  # noqa: SLF001
+    assert request._size == 100  # noqa: SLF001
 
     awaited_request = object.__new__(HTTPRequest)
 
@@ -284,15 +283,15 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     comm = SimpleNamespace(service=service)
 
     processed = await _process_request(
-        {"payload": "value"},
         {"payload": "ref-value"},
+        1000,
         route_future,
         "worker",
         comm,
     )
 
     assert processed["future"] == "ref-value"
-    assert sleep_calls
+    assert sleep_calls == [route.cost(1000)]
 
     same_node_route = Route(
         sender_id="gateway",
@@ -310,18 +309,21 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 
     comm.service.node.service_comm_entrypoint = local_entrypoint
 
+    stored_payload: asyncio.Future[str] = loop.create_future()
+    stored_payload.set_result("stored")
+
     same_node_result = await _process_request(
-        {"payload": "direct"},
-        {"payload": "unused"},
+        {"payload": stored_payload},
+        0,
         same_node_future,
         "gateway",
         comm,
     )
 
-    assert same_node_result["future"] == "direct"
+    assert same_node_result["future"] == "stored"
 
     with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
-        await _process_request({}, {}, missing_route_future, "worker", comm)
+        await _process_request({}, 0, missing_route_future, "worker", comm)
 
     service_stub = SimpleNamespace(
         node=SimpleNamespace(manager_actor_name="edge-cloud/manager"),

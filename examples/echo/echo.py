@@ -1,6 +1,7 @@
 import asyncio
 import time
 
+from eclypse.remote import ray_backend
 from eclypse.remote.service import Service
 
 
@@ -11,13 +12,16 @@ class EchoService(Service):
 
     async def step(self):
         message = {"message": f"Hello from {self.id}!"}
+        message_size = ray_backend.get_size(
+            [ray_backend.put(v) for v in message.values()]
+        )
 
         neigh = await self.mpi.get_neighbors()
         expected_wait_unicast = 0
         t_init_unicast = time.time()
         for n in neigh:
             req = await self.mpi.send(n, message)
-            expected_wait_unicast += req.route.cost(message) if req.route else 0
+            expected_wait_unicast += req.route.cost(message_size) if req.route else 0
         t_final_unicast = time.time()
         t_unicast = t_final_unicast - t_init_unicast
         self.logger.info(
@@ -26,7 +30,7 @@ class EchoService(Service):
         t_init_broadcast = time.time()
         req = await self.mpi.send(neigh, message)
         expected_wait_broadcast = max(
-            [r.cost(message) for r in req.routes if r], default=0
+            [r.cost(message_size) for r in req.routes if r], default=0
         )
         t_final_broadcast = time.time()
         t_broadcast = t_final_broadcast - t_init_broadcast

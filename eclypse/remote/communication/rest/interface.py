@@ -16,6 +16,7 @@ from typing import (
     Any,
 )
 
+from eclypse.remote import ray_backend
 from eclypse.remote.communication.interface import (
     EclypseCommunicationInterface,
 )
@@ -191,7 +192,8 @@ class EclypseREST(EclypseCommunicationInterface):
             http_code = HTTPStatusCode(http_code)
 
         if not route.no_hop:
-            await asyncio.sleep(route.cost((http_code, result)))
+            response_ref = ray_backend.put((http_code, result))
+            await asyncio.sleep(route.cost(ray_backend.get_size([response_ref])))
 
         return http_code, result
 
