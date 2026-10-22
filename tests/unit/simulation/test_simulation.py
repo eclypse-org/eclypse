@@ -198,9 +198,8 @@ def test_simulation_run_helpers_and_context_cleanup(
         raise RuntimeError("boom")
 
     monkeypatch.setattr(simulation, "stop", fail_stop)
-    with pytest.raises(RuntimeError, match="boom"):
-        with simulation:
-            pass
+    with pytest.raises(RuntimeError, match="boom"), simulation:
+        pass
     assert calls[-1] == "failed-stop"
 
 

@@ -5,10 +5,6 @@ from pathlib import Path
 import networkx as nx
 import pytest
 
-from eclypse.graph import (
-    Application,
-    Infrastructure,
-)
 from eclypse.graph.assets import Additive
 from eclypse.io import (
     InfrastructureContext,
@@ -19,6 +15,13 @@ from eclypse.io import (
 )
 from eclypse.io.defaults.networkx import NetworkXImporter
 from eclypse.io.graphs import graph_from_networkx
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from eclypse.graph import (
+        Application,
+        Infrastructure,
+    )
 
 
 class DummyNetworkXImporter(NetworkXImporter):

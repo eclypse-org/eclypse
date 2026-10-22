@@ -42,9 +42,12 @@ def test_asset_and_space_serialisation_branches():
     assert value_asset._init(Infrastructure().rnd) == 3  # pylint: disable=protected-access
     assert dump_init(None) == {"type": "none"}
     assert load_init({"type": "none"}) is None
-    assert load_space(
-        {"type": "sample", "population": ["a", "b"], "k": 1, "counts": None}
-    ).k == 1
+    assert (
+        load_space(
+            {"type": "sample", "population": ["a", "b"], "k": 1, "counts": None}
+        ).k
+        == 1
+    )
 
     with pytest.raises(ValueError):
         load_asset({"type": "missing", "lower_bound": 0, "upper_bound": 1})
@@ -62,10 +65,10 @@ class UnknownAsset(Asset):
     def aggregate(self, *assets):
         return assets
 
-    def satisfies(self, asset, constraint):
+    def satisfies(self, _asset, _constraint):
         return True
 
-    def is_consistent(self, asset):
+    def is_consistent(self, _asset):
         return True
 
 

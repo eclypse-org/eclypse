@@ -6,7 +6,6 @@ from pathlib import Path
 import pytest
 
 from eclypse.graph import (
-    Application,
     Infrastructure,
 )
 from eclypse.graph.assets.defaults import get_default_path_aggregators
@@ -22,6 +21,12 @@ from eclypse.io import (
     load_infrastructure,
 )
 from eclypse.io.defaults.json import JSONImporter
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from eclypse.graph import (
+        Application,
+    )
 
 
 def _infrastructure_context(

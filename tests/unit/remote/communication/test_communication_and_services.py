@@ -437,7 +437,10 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     ) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
         {
-            "message": "Invalid return type for handler: status code must be a valid HTTP code."
+            "message": (
+                "Invalid return type for handler: "
+                "status code must be a valid HTTP code."
+            )
         },
     )
     assert (

@@ -74,6 +74,7 @@ def test_default_metrics_compute_expected_values(mapped_placement, placement_vie
         == 10
     )
 
+
 def test_simulation_metric_helpers_and_default_metric_list(
     monkeypatch,
     service_with_results,

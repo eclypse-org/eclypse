@@ -69,9 +69,7 @@ async def test_remote_node_build_entrypoints_and_actor_cache(monkeypatch, dummy_
     loop = asyncio.get_running_loop()
     actor_calls: list[str] = []
 
-    monkeypatch.setattr(
-        "eclypse.remote.node.node.asyncio.get_event_loop", lambda: loop
-    )
+    monkeypatch.setattr("eclypse.remote.node.node.asyncio.get_event_loop", lambda: loop)
     monkeypatch.setattr("eclypse.remote.node.node.RemoteOpsThread", FakeOpsThread)
     monkeypatch.setattr(
         "eclypse.remote.node.node.ThreadPoolExecutor",

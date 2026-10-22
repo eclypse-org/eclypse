@@ -400,13 +400,16 @@ def test_new_distribution_policies_validate_and_use_seeded_rng():
         def gauss(self, *_args):
             return 10.0
 
-    assert _sample_truncated_normal(
-        AlwaysOutOfBoundsRandom(),
-        (10.0, 0.0),
-        lower=0.0,
-        upper=1.0,
-        max_attempts=1,
-    ) == 1.0
+    assert (
+        _sample_truncated_normal(
+            AlwaysOutOfBoundsRandom(),
+            (10.0, 0.0),
+            lower=0.0,
+            upper=1.0,
+            max_attempts=1,
+        )
+        == 1.0
+    )
 
 
 def test_distribution_basis_initial_uses_first_seen_value():

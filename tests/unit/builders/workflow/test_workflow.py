@@ -345,7 +345,8 @@ def test_get_workflow_requires_wfcommons(monkeypatch: pytest.MonkeyPatch):
         "eclypse.builders.workflow._helpers._require_module",
         lambda *args, **kwargs: (_ for _ in ()).throw(
             ImportError(
-                "wfcommons is not installed. Please install it with 'pip install wfcommons'."
+                "wfcommons is not installed. "
+                "Please install it with 'pip install wfcommons'."
             )
         ),
     )

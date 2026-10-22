@@ -43,15 +43,37 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
                 return self.step_count
 
 
-        infrastructure = Infrastructure("edge-cloud", include_default_assets=True, seed=7)
-        infrastructure.add_node("edge-a", availability=1, cpu=4, ram=8, storage=16, gpu=0, processing_time=2)
-        infrastructure.add_node("edge-b", availability=1, cpu=8, ram=16, storage=32, gpu=1, processing_time=3)
+        infrastructure = Infrastructure(
+            "edge-cloud", include_default_assets=True, seed=7
+        )
+        infrastructure.add_node(
+            "edge-a",
+            availability=1,
+            cpu=4,
+            ram=8,
+            storage=16,
+            gpu=0,
+            processing_time=2,
+        )
+        infrastructure.add_node(
+            "edge-b",
+            availability=1,
+            cpu=8,
+            ram=16,
+            storage=32,
+            gpu=1,
+            processing_time=3,
+        )
         infrastructure.add_edge("edge-a", "edge-b", latency=5, bandwidth=10)
         infrastructure.add_edge("edge-b", "edge-a", latency=7, bandwidth=12)
 
         application = Application("shop", include_default_assets=True, seed=7)
-        application.add_service(CounterService("gateway"), cpu=1, ram=2, storage=2, gpu=0)
-        application.add_service(CounterService("worker"), cpu=2, ram=2, storage=4, gpu=0)
+        application.add_service(
+            CounterService("gateway"), cpu=1, ram=2, storage=2, gpu=0
+        )
+        application.add_service(
+            CounterService("worker"), cpu=2, ram=2, storage=4, gpu=0
+        )
         application.add_edge("gateway", "worker", latency=6, bandwidth=4)
         application.flows = [["gateway", "worker"]]
 
@@ -70,7 +92,10 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
             max_steps=3,
         )
         simulation = Simulation(infrastructure, config)
-        simulation.register(application, StaticStrategy({{"gateway": "edge-a", "worker": "edge-b"}}))
+        simulation.register(
+            application,
+            StaticStrategy({{"gateway": "edge-a", "worker": "edge-b"}}),
+        )
         simulation.start()
         simulation.wait(timeout=15)
 
@@ -80,7 +105,9 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
             "status": str(simulation.status),
             "path_exists": simulation.path.exists(),
             "csv_service_exists": (simulation.path / "csv" / "service.csv").exists(),
-            "step_result_callbacks": sum(callback_id == "step_result" for callback_id in callback_ids),
+            "step_result_callbacks": sum(
+                callback_id == "step_result" for callback_id in callback_ids
+            ),
             "service_count": len(service_rows),
         }}
         print(json.dumps(payload))

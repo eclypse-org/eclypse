@@ -179,7 +179,8 @@ def test_get_sndlib_requires_topohub(monkeypatch: pytest.MonkeyPatch):
         "eclypse.builders.infrastructure.references.topohub._helpers._require_module",
         lambda *args, **kwargs: (_ for _ in ()).throw(
             ImportError(
-                "topohub is not installed. Please install it with 'pip install topohub'."
+                "topohub is not installed. "
+                "Please install it with 'pip install topohub'."
             )
         ),
     )

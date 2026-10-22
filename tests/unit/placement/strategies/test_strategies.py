@@ -54,12 +54,15 @@ def test_first_and_best_fit_strategies_choose_feasible_nodes(
 
     for node in sample_infrastructure.nodes:
         sample_infrastructure.nodes[node]["availability"] = 0
-    assert FirstFitStrategy(sort_fn=lambda item: item[0]).place(
-        sample_infrastructure,
-        sample_application,
-        {},
-        view,
-    ) == {}
+    assert (
+        FirstFitStrategy(sort_fn=lambda item: item[0]).place(
+            sample_infrastructure,
+            sample_application,
+            {},
+            view,
+        )
+        == {}
+    )
 
 
 def test_random_round_robin_and_static_strategies(

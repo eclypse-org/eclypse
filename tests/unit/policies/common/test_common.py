@@ -33,10 +33,13 @@ def test_normalize_update_policies_and_filter_helpers_cover_edge_cases():
         edge_filter=lambda source, target, _: (source, target) == ("a", "b"),
     ) == [("a", "b", graph.edges["a", "b"])]
     assert iter_selected_edges(graph, edge_ids=[("missing", "edge")]) == []
-    assert iter_selected_edges(
-        graph,
-        edge_filter=lambda _source, _target, _data: False,
-    ) == []
+    assert (
+        iter_selected_edges(
+            graph,
+            edge_filter=lambda _source, _target, _data: False,
+        )
+        == []
+    )
     assert iter_selected_keys(graph.nodes["a"], ["cpu", "missing"]) == ["cpu"]
 
     with pytest.raises(TypeError):

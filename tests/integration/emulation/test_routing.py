@@ -40,15 +40,37 @@ def test_ray_emulation_runtime_resolves_routes_and_neighbors(tmp_path: Path):
                 return self.step_count
 
 
-        infrastructure = Infrastructure("edge-cloud", include_default_assets=True, seed=7)
-        infrastructure.add_node("edge-a", availability=1, cpu=4, ram=8, storage=16, gpu=0, processing_time=2)
-        infrastructure.add_node("edge-b", availability=1, cpu=8, ram=16, storage=32, gpu=1, processing_time=3)
+        infrastructure = Infrastructure(
+            "edge-cloud", include_default_assets=True, seed=7
+        )
+        infrastructure.add_node(
+            "edge-a",
+            availability=1,
+            cpu=4,
+            ram=8,
+            storage=16,
+            gpu=0,
+            processing_time=2,
+        )
+        infrastructure.add_node(
+            "edge-b",
+            availability=1,
+            cpu=8,
+            ram=16,
+            storage=32,
+            gpu=1,
+            processing_time=3,
+        )
         infrastructure.add_edge("edge-a", "edge-b", latency=5, bandwidth=10)
         infrastructure.add_edge("edge-b", "edge-a", latency=7, bandwidth=12)
 
         application = Application("shop", include_default_assets=True, seed=7)
-        application.add_service(CounterService("gateway"), cpu=1, ram=2, storage=2, gpu=0)
-        application.add_service(CounterService("worker"), cpu=2, ram=2, storage=4, gpu=0)
+        application.add_service(
+            CounterService("gateway"), cpu=1, ram=2, storage=2, gpu=0
+        )
+        application.add_service(
+            CounterService("worker"), cpu=2, ram=2, storage=4, gpu=0
+        )
         application.add_edge("gateway", "worker", latency=6, bandwidth=4)
         application.flows = [["gateway", "worker"]]
 
@@ -64,17 +86,26 @@ def test_ray_emulation_runtime_resolves_routes_and_neighbors(tmp_path: Path):
             remote=True,
         )
         simulation = Simulation(infrastructure, config)
-        simulation.register(application, StaticStrategy({{"gateway": "edge-a", "worker": "edge-b"}}))
+        simulation.register(
+            application,
+            StaticStrategy({{"gateway": "edge-a", "worker": "edge-b"}}),
+        )
         ray.get(simulation.simulator.audit.remote())
         ray.get(simulation.simulator.enact.remote())
-        route = ray.get(simulation.simulator.route.remote("shop", "gateway", "worker"))
-        neighbors = ray.get(simulation.simulator.get_neighbors.remote("shop", "gateway"))
+        route = ray.get(
+            simulation.simulator.route.remote("shop", "gateway", "worker")
+        )
+        neighbors = ray.get(
+            simulation.simulator.get_neighbors.remote("shop", "gateway")
+        )
         ray.get(simulation.simulator.cleanup.remote())
 
         payload = {{
             "neighbors": neighbors,
             "route_sender_node": route.sender_node_id if route is not None else None,
-            "route_recipient_node": route.recipient_node_id if route is not None else None,
+            "route_recipient_node": (
+                route.recipient_node_id if route is not None else None
+            ),
             "route_hops": route.hops if route is not None else None,
         }}
         print(json.dumps(payload))

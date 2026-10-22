@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 import pytest
 
@@ -11,10 +11,14 @@ from eclypse.graph.assets import Asset
 from eclypse.io import (
     GraphExporter,
     GraphImporter,
-    IOContext,
     dump_infrastructure,
     load_infrastructure,
 )
+
+if TYPE_CHECKING:
+    from eclypse.io import (
+        IOContext,
+    )
 
 
 def test_asset_is_enforced_as_abstract_base_class():
@@ -56,7 +60,9 @@ def test_custom_exporter_and_importer_can_be_passed_directly(
 
     dump_infrastructure(sample_infrastructure, tmp_path / "unused.mem", exporter)
     loaded_from_class = load_infrastructure(tmp_path / "unused.mem", MemoryImporter)
-    loaded_from_instance = load_infrastructure(tmp_path / "unused.mem", MemoryImporter())
+    loaded_from_instance = load_infrastructure(
+        tmp_path / "unused.mem", MemoryImporter()
+    )
 
     assert exporter.seen == {"id": "infra", "nodes": ["n1", "n2"]}
     assert loaded_from_class.id == "memory"
