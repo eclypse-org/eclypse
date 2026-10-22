@@ -40,7 +40,7 @@ The two classes share many structural similarities, but differ in purpose and in
       - ``update_policies``: list of :doc:`update policies <update-policy>` for infrastructure resources
       - ``node_assets`` / ``edge_assets``: available capabilities (:doc:`asset <assets>` values) of nodes and links
       - ``include_default_assets``: include the built-in CPU, RAM, storage, availability, latency, and bandwidth assets
-      - ``resource_init``: initialisation of resources (*min* or *max*)
+      - ``resource_init``: initialisation of resources not given explicitly (*min*, *max* or *asset_init*, see :doc:`assets <assets>`)
       - ``seed``: random seed for reproducibility
       - ``path_assets_aggregators``: aggregators for *each link asset* evaluation across paths
 
@@ -85,7 +85,7 @@ The two classes share many structural similarities, but differ in purpose and in
       - ``update_policies``: list of :doc:`update policies <update-policy>` for application requirements
       - ``node_assets`` / ``edge_assets``: resource requirements (:doc:`asset <assets>` values) of services and links
       - ``include_default_assets``: include the built-in requirement assets
-      - ``requirement_init``: initialisation of resources (*min* or *max*)
+      - ``requirement_init``: initialisation of requirements not given explicitly (*min*, *max* or *asset_init*, see :doc:`assets <assets>`)
       - ``seed``: random seed for reproducibility
       - ``flows``: list of service chains or communication flows
 
@@ -117,8 +117,10 @@ These methods allow you to associate assets and automatically validate their val
 
         infra = Infrastructure(
             infrastructure_id="my-infra",
-            node_assets={"cpu": cpu, "ram": ram},
-            edge_assets={"latency": latency, "bandwidth": bandwidth},
+            node_assets={"cpu": cpu(), "ram": ram()},
+            edge_assets={"latency": latency(), "bandwidth": bandwidth()},
+            path_assets_aggregators={"latency": sum, "bandwidth": min},
+            resource_init="min",  # these assets have no initialiser
         )
 
         # Add two compute node
@@ -146,8 +148,9 @@ These methods allow you to associate assets and automatically validate their val
 
         app = Application(
             application_id="my-app",
-            node_assets={"cpu": cpu, "ram": ram},
-            edge_assets={"latency": latency, "bandwidth": bandwidth},
+            node_assets={"cpu": cpu(), "ram": ram()},
+            edge_assets={"latency": latency(), "bandwidth": bandwidth()},
+            requirement_init="min",  # these assets have no initialiser
         )
 
         # Add a service with specific resource requirements

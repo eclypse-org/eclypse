@@ -67,7 +67,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         include_default_assets: bool = False,
         path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None,
         path_algorithm: Callable[[nx.Graph, str, str], list[str]] | None = None,
-        resource_init: InitPolicy = "min",
+        resource_init: InitPolicy = "asset_init",
         seed: int | None = None,
     ):
         """Create a new Infrastructure.
@@ -140,15 +140,16 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
         self._path_node_attrs = {"availability", "processing_time"}
         self._path_edge_resource_attrs = set(self.path_assets_aggregators)
 
+        # Wrap the attr_init defaults chosen by AssetGraph
+        self._node_defaults = self.node_attr_dict_factory
+        self._edge_defaults = self.edge_attr_dict_factory
         self.node_attr_dict_factory = self._make_node_attr_dict
         self.edge_attr_dict_factory = self._make_edge_attr_dict
 
     def _make_node_attr_dict(self) -> InvalidatingDict:
         """Create a node attribute dictionary that invalidates path caches."""
         return InvalidatingDict(
-            self._get_node_lower_bound()
-            if self.attr_init == "min"
-            else self._get_node_upper_bound(),
+            self._node_defaults(),
             on_change=self._invalidate_node_attrs,
             watched_keys=self._path_node_attrs,
         )
@@ -156,9 +157,7 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     def _make_edge_attr_dict(self) -> InvalidatingDict:
         """Create an edge attribute dictionary that invalidates path caches."""
         return InvalidatingDict(
-            self._get_edge_lower_bound()
-            if self.attr_init == "min"
-            else self._get_edge_upper_bound(),
+            self._edge_defaults(),
             on_change=self._invalidate_edge_attrs,
         )
 

@@ -56,6 +56,7 @@ def test_graph_only_import_can_take_asset_schema_from_context():
         node_assets={"temperature": Additive(0, 100)},
         edge_assets={},
         include_default_assets=False,
+        resource_init="min",
     )
     loaded = graph_from_networkx(
         data,

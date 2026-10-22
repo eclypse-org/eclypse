@@ -16,6 +16,9 @@ from eclypse.utils.defaults import DEFAULT_RAY_RUNTIME_ENV_VARS
 
 def test_build_and_apply_runtime_env(monkeypatch, tmp_path):
     calls: list[str] = []
+    # apply_runtime_env never overrides, so drop values left by earlier tests
+    for key in (RND_SEED, LOG_LEVEL, LOG_FILE):
+        monkeypatch.delenv(key, raising=False)
 
     monkeypatch.setattr(
         "eclypse.simulation.runtime.config_logger", lambda: calls.append("configured")

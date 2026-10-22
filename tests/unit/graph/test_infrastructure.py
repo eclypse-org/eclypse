@@ -188,6 +188,7 @@ def test_infrastructure_requires_path_aggregators_for_custom_edge_assets():
         Infrastructure(
             edge_assets={"bandwidth": Additive(0, 10)},
             include_default_assets=False,
+            resource_init="min",
         )
 
     class PretendingAggregators(dict):
@@ -198,6 +199,7 @@ def test_infrastructure_requires_path_aggregators_for_custom_edge_assets():
         Infrastructure(
             edge_assets={"bandwidth": Additive(0, 10)},
             include_default_assets=False,
+            resource_init="min",
             path_assets_aggregators=PretendingAggregators(),
         )
 

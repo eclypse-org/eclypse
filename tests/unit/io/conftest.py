@@ -20,8 +20,10 @@ def build_infrastructure() -> Infrastructure:
         include_default_assets=True,
         seed=7,
     )
-    infrastructure.add_node("n1", cpu=4, ram=8, strict=False, tier="edge")
-    infrastructure.add_node("n2", cpu=8, ram=16, strict=False)
+    infrastructure.add_node(
+        "n1", cpu=4, ram=8, availability=1, strict=False, tier="edge"
+    )
+    infrastructure.add_node("n2", cpu=8, ram=16, availability=1, strict=False)
     infrastructure.add_edge("n1", "n2", latency=5, bandwidth=20, strict=False)
     infrastructure.graph["owner"] = "unit"
     return infrastructure

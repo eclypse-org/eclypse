@@ -10,6 +10,7 @@ from eclypse.graph.assets import Additive
 def test_schedule_wrappers_control_policy_timing():
     graph = AssetGraph(
         "scheduled",
+        attr_init="min",
         node_assets={"cpu": Additive(0, 100)},
         update_policies=[
             policies.every(
@@ -84,7 +85,9 @@ def test_schedule_wrapper_validation_errors():
 
 
 def test_additional_schedule_wrappers_control_policy_timing():
-    graph = AssetGraph("scheduled", node_assets={"cpu": Additive(0, 100)})
+    graph = AssetGraph(
+        "scheduled", node_assets={"cpu": Additive(0, 100)}, attr_init="min"
+    )
     graph.add_node("a", cpu=0)
 
     def increment(target_graph):
