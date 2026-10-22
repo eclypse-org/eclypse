@@ -451,13 +451,14 @@ class SimulationTime:
 
 @metric.service(remote=True)
 def step_result(service: Service) -> Any | None:
-    """Return the result of the step executed by the service.
+    """Return the oldest step result stored by the service, removing it.
 
     Args:
         service (Service): The service.
 
     Returns:
-        Any | None: The result of the step executed by the service.
+        Any | None: The oldest result in the service's step buffer, \
+            or None if the buffer is empty.
     """
     return service._step_queue.popleft() if service._step_queue else None
 
