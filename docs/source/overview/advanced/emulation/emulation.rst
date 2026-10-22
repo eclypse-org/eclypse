@@ -116,6 +116,14 @@ In both cases, services may communicate with each other by sending structured me
 Reporting emulation results
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The default metric ``step_result`` collects the latest stored value returned by
-the service's :py:meth:`~eclypse.remote.service.service.Service.step` method.
-This is useful for monitoring application-level behaviour over time.
+The default metric ``step_result`` reports the values returned by the service's
+:py:meth:`~eclypse.remote.service.service.Service.step` method, in the order
+they were produced. This is useful for monitoring application-level behaviour
+over time.
+
+The step buffer is a FIFO queue: each time ``step_result`` is triggered (by
+default, once per ``enact``), it removes and reports the **oldest** stored
+value. If ``step`` runs more often than the metric is triggered, values
+accumulate and the report lags behind the service. The buffer holds up to
+``DEFAULT_STEP_QUEUE_SIZE`` (1024) values; when it is full, the oldest ones are
+dropped.

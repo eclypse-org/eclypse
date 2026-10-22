@@ -65,7 +65,7 @@ Custom metric recipe
 ~~~~~~~~~~~~~~~~~~~~
 
 Use the metric decorator that matches the object you want to inspect, choose
-when it activates, and return either a scalar or a mapping.
+when it activates, and return a single scalar value.
 
 .. code-block:: python
    :caption: Custom service metric
@@ -74,14 +74,18 @@ when it activates, and return either a scalar or a mapping.
 
    @metric.service(activates_on="step", report=["csv"])
    def requested_cpu(service_id, requirements, placement, infrastructure):
-       return {
-           "service": service_id,
-           "value": requirements["cpu"],
-       }
+       return requirements["cpu"]
 
-The reporting pipeline records the event metadata and stores the returned
-``value``. For multi-field mappings, keep a stable ``value`` key for the main
-measurement and use the other keys as context.
+The reporting pipeline fills the identifier columns of the report itself (for a
+service metric, ``application_id`` and ``service_id``), records the event
+metadata, and stores the returned value in the ``value`` column. Returning
+``None`` skips the row.
+
+.. warning::
+
+   Every report has a single ``value`` column, so a metric must not return a
+   mapping or a tuple: their items would become extra fields that do not fit
+   the report schema. To report several quantities, define one metric for each.
 
 Metric and callback types
 ~~~~~~~~~~~~~~~~~~~~~~~~~
