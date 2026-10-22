@@ -39,7 +39,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
         include_default_assets: bool = False,
-        requirement_init: InitPolicy = "min",
+        requirement_init: InitPolicy = "asset_init",
         flows: list[list[str]] | None = None,
         seed: int | None = None,
     ):

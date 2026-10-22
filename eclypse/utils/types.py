@@ -63,7 +63,7 @@ EventType: TypeAlias = Literal[
 ]
 """Type alias for the supported event target scopes."""
 
-InitPolicy: TypeAlias = Literal["min", "max"]
+InitPolicy: TypeAlias = Literal["min", "max", "asset_init"]
 """Type alias for resource and requirement initialisation policies."""
 
 UpdatePolicy: TypeAlias = Callable[["AssetGraph"], None]

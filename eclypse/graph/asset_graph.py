@@ -42,7 +42,7 @@ class AssetGraph(nx.DiGraph):
         node_assets: dict[str, Asset] | None = None,
         edge_assets: dict[str, Asset] | None = None,
         update_policies: UpdatePolicies = None,
-        attr_init: InitPolicy = "min",
+        attr_init: InitPolicy = "asset_init",
         flip_assets: bool = False,
         seed: int | None = None,
     ):
@@ -58,8 +58,10 @@ class AssetGraph(nx.DiGraph):
                 The graph update policies to execute during ``evolve()``.
                 Defaults to None.
             attr_init (InitPolicy, optional):
-                The initialization policy for the assets. Defaults to
-                "min".
+                The initialization policy for the assets not given explicitly
+                to ``add_node``/``add_edge``: their lower bound ("min"), their
+                upper bound ("max"), or their own initialiser ("asset_init",
+                which requires every asset to have one). Defaults to "asset_init".
             flip_assets (bool, optional): Whether to flip the assets. Defaults to False.
             seed (int | None, optional): The seed for the random number generator.
                 Defaults to None.
@@ -90,8 +92,22 @@ class AssetGraph(nx.DiGraph):
         elif self.attr_init == "max":
             node_attr_init = self._get_node_upper_bound
             link_attr_init = self._get_edge_upper_bound
+        elif self.attr_init == "asset_init":
+            missing = [
+                k
+                for bucket in (self.node_assets, self.edge_assets)
+                for k, v in bucket.items()
+                if v.init_fn is None
+            ]
+            if missing:
+                raise ValueError(
+                    "attr_init 'asset_init' requires an initialiser for every "
+                    f"asset, missing for: {', '.join(missing)}"
+                )
+            # add_node/add_edge draw every asset from its initialiser
+            node_attr_init = link_attr_init = dict
         else:
-            raise ValueError("attr_init can be 'min' or 'max'")
+            raise ValueError("attr_init can be 'min', 'max' or 'asset_init'")
 
         self.node_attr_dict_factory = node_attr_init
         self.edge_attr_dict_factory = link_attr_init
@@ -113,6 +129,9 @@ class AssetGraph(nx.DiGraph):
         Raises:
             ValueError: If the assets are inconsistent and `strict` is True.
         """
+        if self.attr_init == "asset_init":
+            assets = {**self.node_assets._init(random=self.rnd), **assets}  # pylint: disable=protected-access
+
         violations = self.node_assets.is_consistent(assets, violations=True)
         if isinstance(violations, dict) and violations:
             msg = f"{node_for_adding} has inconsistent assets | " + format_log_kv(
@@ -123,7 +142,7 @@ class AssetGraph(nx.DiGraph):
             self.logger.warning(msg)
             log_assets_violations(self.logger, self.node_assets, violations)  # type: ignore[arg-type]
 
-        # Assets not given explicitly come from the attr_init bounds (attr dict factory)
+        # With "min"/"max", assets not given come from the attr dict factory
         super().add_node(node_for_adding, **assets)
 
     def add_edge(
@@ -157,6 +176,9 @@ class AssetGraph(nx.DiGraph):
 
         if not self.has_node(v_of_edge):
             raise ValueError(f"Node {v_of_edge} not found in the graph.")
+
+        if self.attr_init == "asset_init":
+            assets = {**self.edge_assets._init(random=self.rnd), **assets}  # pylint: disable=protected-access
 
         violations = self.edge_assets.is_consistent(assets, violations=True)
         if isinstance(violations, dict) and violations:

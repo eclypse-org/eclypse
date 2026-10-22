@@ -122,11 +122,11 @@ This can be done in three ways:
             init_fn_or_value=Uniform(2.0, 8.0),
         )
 
-Asset initialisation is evaluated when the simulation is initialised, ensuring consistent sampling across scenarios.
+Initialisers are used when the graph's initialisation policy (``resource_init`` or ``requirement_init``) is ``"asset_init"``, the default. They are evaluated when a node or edge is added, using the graph's seeded random generator, so sampling is reproducible across runs.
 
 .. tip::
 
-   If no initialiser is provided, the asset value defaults to its lower bound.
+   Values given explicitly to ``add_node``/``add_edge`` always take precedence. Any other asset takes its initialiser's value (``"asset_init"``, which requires every asset to have one), its lower bound (``"min"``) or its upper bound (``"max"``).
 
 
 Asset Spaces

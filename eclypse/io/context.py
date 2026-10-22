@@ -64,7 +64,7 @@ class InfrastructureContext(IOContext):
             Defaults to ``False``, matching
             :class:`~eclypse.graph.infrastructure.Infrastructure`.
         resource_init (InitPolicy): Resource initialisation policy used when a format
-            does not carry one. Defaults to ``"min"``, matching
+            does not carry one. Defaults to ``"asset_init"``, matching
             :class:`~eclypse.graph.infrastructure.Infrastructure`.
         path_assets_aggregators (dict[str, Callable[[list[Any]], Any]] | None):
             Named path aggregators used to reconstruct infrastructure path-resource
@@ -74,7 +74,7 @@ class InfrastructureContext(IOContext):
 
     strict: bool = False
     include_default_assets: bool = False
-    resource_init: InitPolicy = "min"
+    resource_init: InitPolicy = "asset_init"
     path_assets_aggregators: dict[str, Callable[[list[Any]], Any]] | None = None
 
     def __post_init__(self):
@@ -121,7 +121,7 @@ class ApplicationContext(IOContext):
             default assets when the format does not carry asset definitions. Defaults
             to ``False``, matching :class:`~eclypse.graph.application.Application`.
         requirement_init (InitPolicy): Requirement initialisation policy used when a
-            format does not carry one. Defaults to ``"min"``, matching
+            format does not carry one. Defaults to ``"asset_init"``, matching
             :class:`~eclypse.graph.application.Application`.
         services (dict[str, type[Service]]): Service classes used when an
             application importer needs to instantiate service implementations.
@@ -129,7 +129,7 @@ class ApplicationContext(IOContext):
 
     strict: bool = True
     include_default_assets: bool = False
-    requirement_init: InitPolicy = "min"
+    requirement_init: InitPolicy = "asset_init"
     services: dict[str, type[Service]] = field(default_factory=dict)
 
     def __post_init__(self):

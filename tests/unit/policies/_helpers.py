@@ -24,6 +24,7 @@ class IterRowsFrame:
 def build_graph(seed: int = 7) -> AssetGraph:
     graph = AssetGraph(
         "dynamic",
+        attr_init="min",
         seed=seed,
         node_assets={
             "cpu": Additive(0, 1000),
