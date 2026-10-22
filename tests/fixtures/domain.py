@@ -104,8 +104,8 @@ def sample_application() -> Application:
     application = Application("shop", include_default_assets=True, seed=7)
     gateway = BasicService("gateway")
     worker = BasicService("worker")
-    application.add_service(gateway, cpu=1, ram=2, storage=2, gpu=0)
-    application.add_service(worker, cpu=2, ram=2, storage=4, gpu=0)
+    application.add_service(gateway, cpu=1, ram=2, storage=2, gpu=0, processing_time=10)
+    application.add_service(worker, cpu=2, ram=2, storage=4, gpu=0, processing_time=15)
     application.add_edge("gateway", "worker", latency=6, bandwidth=4)
     application.flows = [["gateway", "worker"]]
     return application

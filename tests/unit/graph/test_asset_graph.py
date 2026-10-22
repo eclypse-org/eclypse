@@ -3,6 +3,10 @@ from __future__ import annotations
 import pytest
 
 import eclypse.graph.asset_graph as asset_graph_module
+from eclypse.graph import (
+    Application,
+    Infrastructure,
+)
 from eclypse.graph.asset_graph import AssetGraph
 from eclypse.graph.assets import Additive
 
@@ -124,3 +128,40 @@ def test_asset_graph_evolve_runs_registered_policies():
     assert graph.nodes["a"]["cpu"] == 2
     assert graph.edges["a", "b"]["bandwidth"] == 3
     assert graph.is_dynamic
+
+
+@pytest.mark.parametrize("attr_init", ["min", "max"])
+@pytest.mark.parametrize(
+    ("graph_cls", "policy_arg"),
+    [(Application, "requirement_init"), (Infrastructure, "resource_init")],
+)
+def test_init_policy_sets_assets_not_given_explicitly(graph_cls, policy_arg, attr_init):
+    graphs = [
+        graph_cls(
+            "graph", include_default_assets=True, seed=seed, **{policy_arg: attr_init}
+        )
+        for seed in (1, 2)
+    ]
+    for graph in graphs:
+        graph.add_node("a")
+        graph.add_node("b", cpu=2)
+        graph.add_edge("a", "b", symmetric=True)
+
+    graph = graphs[0]
+    if attr_init == "min":
+        node_bound, edge_bound = (
+            graph._get_node_lower_bound(),
+            graph._get_edge_lower_bound(),
+        )
+    else:
+        node_bound, edge_bound = (
+            graph._get_node_upper_bound(),
+            graph._get_edge_upper_bound(),
+        )
+
+    assert dict(graph.nodes["a"]) == node_bound
+    assert dict(graph.nodes["b"]) == {**node_bound, "cpu": 2}
+    assert dict(graph.edges["a", "b"]) == dict(graph.edges["b", "a"]) == edge_bound
+    assert graph.nodes["a"]["availability"] == (0 if attr_init == "min" else 1)
+    # values come from the policy, not from the seeded random draws
+    assert dict(graphs[1].nodes["a"]) == node_bound

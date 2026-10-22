@@ -113,12 +113,7 @@ class AssetGraph(nx.DiGraph):
         Raises:
             ValueError: If the assets are inconsistent and `strict` is True.
         """
-        _assets = self.node_assets._init(  # pylint: disable=protected-access
-            random=self.rnd
-        )
-        _assets.update(assets)
-
-        violations = self.node_assets.is_consistent(_assets, violations=True)
+        violations = self.node_assets.is_consistent(assets, violations=True)
         if isinstance(violations, dict) and violations:
             msg = f"{node_for_adding} has inconsistent assets | " + format_log_kv(
                 assets=",".join(sorted(violations))
@@ -128,7 +123,8 @@ class AssetGraph(nx.DiGraph):
             self.logger.warning(msg)
             log_assets_violations(self.logger, self.node_assets, violations)  # type: ignore[arg-type]
 
-        super().add_node(node_for_adding, **_assets)
+        # Assets not given explicitly come from the attr_init bounds (attr dict factory)
+        super().add_node(node_for_adding, **assets)
 
     def add_edge(
         self,
@@ -162,12 +158,7 @@ class AssetGraph(nx.DiGraph):
         if not self.has_node(v_of_edge):
             raise ValueError(f"Node {v_of_edge} not found in the graph.")
 
-        _assets = self.edge_assets._init(  # pylint: disable=protected-access
-            random=self.rnd
-        )
-        _assets.update(assets)
-
-        violations = self.edge_assets.is_consistent(_assets, violations=True)
+        violations = self.edge_assets.is_consistent(assets, violations=True)
         if isinstance(violations, dict) and violations:
             msg = (
                 f"({u_of_edge} -> {v_of_edge}) has inconsistent assets | "
@@ -178,10 +169,10 @@ class AssetGraph(nx.DiGraph):
             self.logger.warning(msg)
             log_assets_violations(self.logger, self.edge_assets, violations)  # type: ignore[arg-type]
 
-        super().add_edge(u_of_edge, v_of_edge, **_assets)
+        super().add_edge(u_of_edge, v_of_edge, **assets)
 
         if symmetric:
-            super().add_edge(v_of_edge, u_of_edge, **_assets)
+            super().add_edge(v_of_edge, u_of_edge, **assets)
 
     def evolve(self):
         """Updates the graph according to its update policies."""
