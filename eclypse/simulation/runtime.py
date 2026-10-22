@@ -40,7 +40,16 @@ def build_runtime_env(
 
 
 def apply_runtime_env(env_vars: dict[str, str]):
-    """Apply runtime environment variables and refresh logging configuration."""
+    """Apply runtime environment variables and refresh logging configuration.
+
+    The simulation's own variables replace those left by a previous simulation,
+    while the default Ray variables can still be overridden from outside.
+    """
     for key, value in env_vars.items():
-        os.environ.setdefault(key, value)
+        if key in DEFAULT_RAY_RUNTIME_ENV_VARS:
+            os.environ.setdefault(key, value)
+        else:
+            os.environ[key] = value
+    if LOG_FILE not in env_vars:
+        os.environ.pop(LOG_FILE, None)
     config_logger()
