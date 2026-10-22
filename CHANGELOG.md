@@ -1,3 +1,38 @@
+## 0.9.1 (2026-10-22)
+
+### Feat
+
+- Add asset_init policy and make it the default (#26)
+- Add IO round trip example
+- Add graph import and export package
+- Add cost_attr in infrastructure path search
+- Make scheduled event decorators step based
+- Replace poetry command with uv ones
+
+### Fix
+
+- Let each simulation set its own runtime variables (#29)
+- Attribute remote service results to the service that produced them (#28)
+- Apply graph init policies to added nodes and edges (#26)
+- Deliver same-node messages through the Ray object store (#25)
+- Measure message size from the Ray object store (#25)
+- Add default aggregators to io_round_trip example
+- Forward node args to remote nodes
+- Invalidate infrastructure caches on direct updates
+- Correct max_triggers default value for 'after' decorator
+- Preserve infrastructure metadata in available view
+- Make IO asset defaults explicit
+- Make application asset defaults explicit
+- Report missing optional replay dependencies clearly
+- Preserve Ray runtime environment defaults
+
+### Refactor
+
+- Keep size-based cost as the only Route cost (#25)
+- Rename the remote _node package to node
+- Simplify policy catalogue
+- Remove GML reporter support
+
 ## 0.9.0 (2026-04-28)
 
 ### Breaking changes
