@@ -153,7 +153,7 @@ def test_route_response_and_http_request_helpers(monkeypatch):
         pending_request.body
 
 
-def test_route_cost_uses_the_stored_object_size(monkeypatch):
+def test_route_cost():
     route = Route(
         sender_id="gateway",
         sender_node_id="edge-a",
@@ -162,19 +162,9 @@ def test_route_cost_uses_the_stored_object_size(monkeypatch):
         processing_time=10,
         hops=[("edge-a", "edge-b", {"latency": 5, "bandwidth": 8})],
     )
-    monkeypatch.setattr(
-        "eclypse.remote.communication.route.ray_backend.put",
-        lambda value: f"ref:{value}",
-    )
-    monkeypatch.setattr(
-        "eclypse.remote.communication.route.ray_backend.get_size",
-        lambda refs: 1_000_000 if refs == ["ref:payload"] else 0,
-    )
-
     # 10 ms processing + 1 MB over 8 Mbps + 5 ms latency
-    assert route.cost_of_size(1_000_000) == pytest.approx(0.01 + 1 + 0.005)
-    assert route.cost("payload") == route.cost_of_size(1_000_000)
-    assert route.network_cost == route.cost_of_size(0)
+    assert route.cost(1_000_000) == pytest.approx(0.01 + 1 + 0.005)
+    assert route.network_cost == route.cost(0)
 
 
 @pytest.mark.asyncio
@@ -301,7 +291,7 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     )
 
     assert processed["future"] == "ref-value"
-    assert sleep_calls == [route.cost_of_size(1000)]
+    assert sleep_calls == [route.cost(1000)]
 
     same_node_route = Route(
         sender_id="gateway",

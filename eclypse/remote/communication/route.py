@@ -14,7 +14,6 @@ from typing import (
     Any,
 )
 
-from eclypse.remote import ray_backend
 from eclypse.utils.constants import MIN_LATENCY
 
 MILLISECONDS_PER_SECOND = 1000
@@ -59,21 +58,7 @@ class Route:
         """
         return len(self.hops)
 
-    def cost(self, msg: Any) -> float:
-        """Returns the cost of the route for a given object.
-
-        The object is sized as it is stored in the Ray object store, i.e., as it is
-        actually transferred between nodes.
-
-        Args:
-            msg (Any): The object for which to compute the cost (e.g., a message).
-
-        Returns:
-            float: The cost of the route, in seconds.
-        """
-        return self.cost_of_size(ray_backend.get_size([ray_backend.put(msg)]))
-
-    def cost_of_size(self, msg_size: int) -> float:
+    def cost(self, msg_size: int) -> float:
         """Returns the cost of the route for a message of a given size.
 
         Args:
@@ -97,7 +82,7 @@ class Route:
         Returns:
             float: The network cost.
         """
-        return self.cost_of_size(0)
+        return self.cost(0)
 
     @property
     def no_hop(self) -> bool:

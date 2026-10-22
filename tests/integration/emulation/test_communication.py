@@ -54,7 +54,7 @@ def test_ray_route_cost_measures_what_is_transferred():
             "dataclass": size({"r": Record((1, 0), {"w": w, "b": b})}),
             "small_view": size({"p": buf[:10]}),
             "float_list": size({"p": [0.5] * 1000}),
-            "view_cost": route.cost({"p": w}),
+            "view_cost": route.cost(size({"p": w})),
         }))
 
         ray.shutdown()

@@ -195,7 +195,7 @@ async def _process_request(
         infrastructure_id = _comm.service.infrastructure_id
         actor_name = f"{infrastructure_id}/{_route.recipient_node_id}"
         handle: RemoteNode = _comm.service.node.get_actor(actor_name)
-        await asyncio.sleep(_route.cost_of_size(msg_size))
+        await asyncio.sleep(_route.cost(msg_size))
         future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
             _route,
             _comm.__class__,
