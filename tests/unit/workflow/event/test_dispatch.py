@@ -168,17 +168,12 @@ def test_remote_service_helper_fire_and_wrapper_validation(
     assert no_mapping_result == {}
 
     monkeypatch.setattr(event_module.ray_backend, "get_actor", lambda _actor_name: None)
-    monkeypatch.setattr(
-        event_module.ray_backend,
-        "get",
-        lambda _remotes: ["fallback-gateway", "fallback-worker"],
-    )
 
     assert _remote_service_fn(
         lambda *_args, **_kwargs: None,
         placements,
         infrastructure,
-    ) == {"shop": {"gateway": "fallback-gateway", "worker": "fallback-worker"}}
+    ) == {"shop": {}}
 
     monkeypatch.setattr(
         event_module.ray_backend,
@@ -368,3 +363,39 @@ def test_scheduled_decorator_wraps_callable_classes():
 
     assert wrapped.name == "custom_callable"
     assert wrapped() == {"ok": True}
+
+
+@pytest.mark.parametrize("flatten", [False, True])
+def test_remote_service_results_skip_services_without_actor(
+    monkeypatch,
+    mapped_placement,
+    flatten,
+):
+    event_module = import_module("eclypse.workflow.event.event")
+    # gateway runs on edge-a, whose actor is missing; worker runs on edge-b
+    monkeypatch.setattr(
+        event_module.ray_backend,
+        "get_actor",
+        lambda actor_name: (
+            None
+            if actor_name.endswith("/edge-a")
+            else SimpleNamespace(
+                entrypoint=SimpleNamespace(
+                    remote=lambda service_id, _fn, **_kwargs: f"{service_id}-result"
+                )
+            )
+        ),
+    )
+    monkeypatch.setattr(event_module.ray_backend, "get", lambda remotes: remotes)
+
+    result = _remote_service_fn(
+        lambda *_args, **_kwargs: None,
+        {mapped_placement.application.id: mapped_placement},
+        mapped_placement.infrastructure,
+        flatten=flatten,
+    )
+
+    if flatten:
+        assert result == (("shop", "worker", "worker-result"),)
+    else:
+        assert result == {"shop": {"worker": "worker-result"}}

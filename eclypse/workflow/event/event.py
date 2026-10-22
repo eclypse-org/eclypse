@@ -426,7 +426,9 @@ def _remote_service_fn(
     **event_data,
 ) -> Any:
     engines: dict[str, ActorHandle | None] = defaultdict(lambda: None)
-    remotes = []
+    # services without an actor are skipped, so keep each call with its ids
+    keys: list[tuple[str, str]] = []
+    remotes: list[Any] = []
     for pl in placements.values():
         if pl.mapping:
             for s in pl.application.nodes:
@@ -439,28 +441,25 @@ def _remote_service_fn(
                 if actor is None:
                     continue
 
+                keys.append((pl.application.id, s))
                 remotes.append(  # type: ignore[attr-defined]
                     actor.entrypoint.remote(s, fn, **event_data)
                 )
 
     results = ray_backend.get(remotes)  # type: ignore[arg-type]
-    results_iter = iter(results)
-    result = {
-        pl.application.id: {s: next(results_iter) for s in pl.application.nodes}
-        for pl in placements.values()
-        if pl.mapping
-    }
-    if not flatten:
-        return result
+    if flatten:
+        return tuple(
+            (app_id, service_id, *flat_value)
+            for (app_id, service_id), value in zip(keys, results, strict=True)
+            for flat_value in _flatten_value(value)
+        )
 
-    report_iter = iter(results)
-    return tuple(
-        (pl.application.id, service_id, *flat_value)
-        for pl in placements.values()
-        if pl.mapping
-        for service_id in pl.application.nodes
-        for flat_value in _flatten_value(next(report_iter))
-    )
+    result: dict[str, dict[str, Any]] = {
+        pl.application.id: {} for pl in placements.values() if pl.mapping
+    }
+    for (app_id, service_id), value in zip(keys, results, strict=True):
+        result[app_id][service_id] = value
+    return result
 
 
 def _interaction_fn(
