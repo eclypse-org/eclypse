@@ -687,3 +687,50 @@
   .ec-home .strategies { offset-distance:33.333%; }
   .ec-home .metrics { offset-distance:66.667%; }
 }
+
+/* The fixed atmosphere never intercepts links or changes content layout. */
+.ec-home { isolation:isolate; }
+.ec-home .ambient {
+  --cloud-x:0px;
+  --cloud-y:0px;
+  --pointer-x:70%;
+  --pointer-y:35%;
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  overflow:hidden;
+  pointer-events:none;
+  mask-image:linear-gradient(#000b,#0005 70%,#0002);
+}
+.ec-home .ambient-cloud {
+  position:absolute;
+  inset:-80px;
+  filter:blur(38px);
+  transition:transform 1.2s cubic-bezier(.2,.65,.3,1);
+  will-change:transform;
+}
+.ec-home .ambient-cloud-far {
+  background:radial-gradient(ellipse at 78% 26%,#668b9b30,transparent 38%),radial-gradient(ellipse at 10% 65%,#84979d1a,transparent 35%);
+  transform:translate(calc(var(--cloud-x) * -.6),calc(var(--cloud-y) * -.6));
+}
+.ec-home .ambient-cloud-near {
+  background:radial-gradient(ellipse at 68% 45%,#ff9e471c,transparent 32%),radial-gradient(ellipse at 34% 15%,#899ba51c,transparent 30%);
+  transform:translate(var(--cloud-x),var(--cloud-y));
+}
+.ec-home .ambient-network {
+  position:absolute;
+  width:100%;
+  height:100%;
+}
+.ec-home .ambient-light {
+  position:absolute;
+  inset:0;
+  background:radial-gradient(320px circle at var(--pointer-x) var(--pointer-y),#ff9e4710,transparent);
+  opacity:0;
+  transition:opacity .6s ease;
+}
+.ec-home .ambient.is-active .ambient-light { opacity:1; }
+@media(prefers-reduced-motion:reduce), (hover:none), (pointer:coarse) {
+  .ec-home .ambient-cloud { transform:none; will-change:auto; }
+  .ec-home .ambient-light { display:none; }
+}

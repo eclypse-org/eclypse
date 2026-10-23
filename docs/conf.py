@@ -87,11 +87,15 @@ autodoc_default_options = {"undoc-members": True}
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
 html_theme = "pydata_sphinx_theme"
-html_logo = "_static/images/light.png"
+html_logo = "_static/landing/logo.png"
 
 html_static_path = ["_static"]
 html_extra_path = ["_static/landing"]
-html_css_files = ["css/custom.css", "css/home.css"]
+html_css_files = [
+    "https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap",
+    "css/custom.css",
+    "css/home.css",
+]
 
 html_context = {
     "github_url": "https://github.com",
@@ -175,8 +179,8 @@ html_theme_options = {
     "logo": {
         "text": "ECLYPSE",
         "alt_text": "ECLYPSE - Home",
-        "image_dark": "_static/images/dark.png",
-        "image_light": "_static/images/light.png",
+        "image_dark": "_static/landing/logo.png",
+        "image_light": "_static/landing/logo.png",
     },
 }
 source_suffix = [".rst", ".pyi"]
