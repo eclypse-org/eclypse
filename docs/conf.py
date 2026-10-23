@@ -101,7 +101,16 @@ html_context = {
     "doc_path": "docs",
 }
 
-html_additional_pages = {"index": "index.html"}
+def landing_page_template(app, pagename, templatename, context, doctree):
+    """Use the landing template whenever Sphinx rebuilds the root document."""
+    if pagename == "index":
+        return "index.html"
+    return None
+
+
+def setup(app):
+    app.connect("html-page-context", landing_page_template)
+
 
 favicons = [
     {
