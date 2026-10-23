@@ -5,6 +5,8 @@
   --ec-ember-dark: #d87824;
   --ec-paper: #fbf8f3;
   --ec-sand: #efe6d9;
+  --pst-font-family-base: "Montserrat", ui-sans-serif, system-ui, sans-serif;
+  --pst-font-family-heading: var(--pst-font-family-base);
 }
 
 html[data-theme="light"] {
@@ -30,9 +32,9 @@ html[data-theme="dark"] {
   --pst-color-link-hover: #ffd2a6;
   --pst-color-accent: var(--ec-ember);
   --pst-color-inline-code: #ffbf82;
-  --pst-color-background: #0e0e0e;
+  --pst-color-background: #111111;
   --pst-color-on-background: #161616;
-  --pst-color-surface: #1b1b1b;
+  --pst-color-surface: #191919;
   --pst-color-border: #2d2d2d;
   --pst-color-text-base: #ece6de;
   --pst-color-text-muted: #c2b9ad;
@@ -44,20 +46,24 @@ html[data-theme="dark"] {
   border-bottom: 1px solid color-mix(in srgb, var(--pst-color-border) 75%, transparent);
 }
 
+.bd-page-width {
+  max-width: none;
+}
+
 .bd-main .bd-content .bd-article-container {
-  max-width: 72rem;
+  max-width: none;
 }
 
 .bd-content .sd-card,
 .bd-content .sd-tab-set,
 .bd-content .admonition,
 .bd-content div.literal-block-wrapper {
-  border-radius: 1rem;
+  border-radius: 0.65rem;
 }
 
 .bd-content .sd-card {
   border-color: color-mix(in srgb, var(--pst-color-border) 80%, transparent);
-  box-shadow: 0 10px 30px color-mix(in srgb, var(--pst-color-primary) 10%, transparent);
+  box-shadow: none;
 }
 
 .bd-content .sd-card:hover {
@@ -66,7 +72,7 @@ html[data-theme="dark"] {
 
 .bd-content .highlight,
 .bd-content pre {
-  border-radius: 0.9rem;
+  border-radius: 0.5rem;
 }
 
 .bd-content h1,
@@ -124,4 +130,164 @@ html[data-theme="dark"] {
 
 .bd-footer {
   border-top: 1px solid color-mix(in srgb, var(--pst-color-border) 75%, transparent);
+}
+
+/* Shared identity with the landing page; article surfaces remain quiet. */
+body {
+  font-size: 0.9375rem;
+  line-height: 1.8;
+}
+.bd-header {
+  background: var(--pst-color-background);
+  box-shadow: none;
+}
+.navbar-brand {
+  gap: 0.6rem;
+}
+.navbar-brand img {
+  max-height: 3rem;
+  width: 3rem;
+  object-fit: contain;
+}
+.navbar-brand .logo__title {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+.navbar-nav .nav-link {
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.search-button-field {
+  border: 1px solid var(--pst-color-border);
+  border-radius: 0.5rem;
+  background: var(--pst-color-surface);
+  box-shadow: none;
+  font-size: 0.8rem;
+}
+/* Local variables keep the navigation legible in both colour modes. */
+.bd-sidebar-primary {
+  --pst-color-background: #111111;
+  --pst-color-on-background: #191919;
+  --pst-color-surface: #191919;
+  --pst-color-border: #303030;
+  --pst-color-text-base: #bfc0c0;
+  --pst-color-text-muted: #a5a5a5;
+  --pst-color-heading: #f3f0eb;
+  --pst-color-primary: #ff9e47;
+  --pst-color-link: #bfc0c0;
+  --pst-color-link-hover: #ffbf82;
+  background: #111111;
+  color: #bfc0c0;
+  border-right: 1px solid #2a2a2a;
+}
+.bd-sidebar-primary .sidebar-primary-items__start {
+  padding-top: 1.5rem;
+}
+.bd-sidebar-primary .sidebar-header-items {
+  color: #bfc0c0;
+}
+.bd-sidebar-primary .nav-link,
+.bd-sidebar-primary .bd-sidenav a {
+  border-radius: 0.4rem;
+  padding-block: 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.bd-sidebar-primary .bd-sidenav a:hover,
+.bd-sidebar-primary .bd-sidenav a:focus-visible,
+.bd-sidebar-primary .bd-sidenav a.current,
+.bd-sidebar-primary .nav-link:hover,
+.bd-sidebar-primary .nav-link:focus-visible,
+.bd-sidebar-primary li.current > .nav-link,
+.bd-sidebar-primary .nav-link.active {
+  color: #ffbf82;
+  background: #ff9e4712;
+}
+.bd-sidebar-primary .caption-text {
+  color: #999;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.bd-sidebar-secondary {
+  background: var(--pst-color-background);
+  font-size: 0.75rem;
+}
+.bd-article {
+  padding-top: 1.75rem;
+}
+.bd-article h1 {
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
+  margin-bottom: 1.75rem;
+}
+.bd-article h2 {
+  font-size: 1.7rem;
+  font-weight: 600;
+  margin-top: 2.5rem;
+}
+.bd-article h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.bd-article .highlight {
+  border: 1px solid var(--pst-color-border);
+  background: var(--pst-color-surface);
+}
+.bd-article pre {
+  padding: 1.2rem;
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+.bd-article .sig {
+  border-radius: 0.4rem;
+  border-left: 3px solid var(--pst-color-primary);
+}
+.bd-content .sd-card {
+  background: var(--pst-color-surface);
+  transition: border-color 0.2s ease;
+}
+.bd-content .admonition {
+  box-shadow: none;
+  border: 1px solid var(--pst-color-border);
+}
+.bd-content table {
+  font-size: 0.85rem;
+  border-color: var(--pst-color-border);
+}
+.bd-content table thead {
+  background: var(--pst-color-surface);
+}
+.bd-content .sd-btn {
+  border-radius: 0.45rem;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.prev-next-area a {
+  border: 1px solid var(--pst-color-border);
+  border-radius: 0.6rem;
+  padding: 1rem;
+}
+.prev-next-area a:hover {
+  border-color: var(--pst-color-primary);
+}
+.bd-footer {
+  font-size: 0.72rem;
+  color: var(--pst-color-text-muted);
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--pst-color-primary);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .bd-article { padding-top: 1rem; }
+  .bd-article h2 { font-size: 1.4rem; }
+  .prev-next-area a { padding: 0.65rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bd-content .sd-card { transition: none; }
 }
