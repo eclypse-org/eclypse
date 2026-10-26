@@ -1,12 +1,12 @@
 (() => {
-  const scene = document.querySelector('.scene');
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
-  function reveal() {
-    scene.classList.add('is-ready');
+  const logo = document.querySelector('.first-run-logo');
+  function revealLogo() {
+    if (!reduced.matches) logo.parentElement.classList.add('is-ready');
   }
-  if (document.readyState === 'complete') reveal();
-  else window.addEventListener('load', reveal, { once: true });
+  if (logo.complete && logo.naturalWidth) revealLogo();
+  else logo.addEventListener('load', revealLogo, {once:true});
   const ambient = document.querySelector('.ambient');
   let pointerFrame = 0;
   function resetAtmosphere() {
