@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Model services, test deployment strategies, and measure cloud experiments with ECLYPSE." />
-    <title>ECLYPSE — Illuminate your cloud experiments</title>
+      content="Configure Cloud–Edge infrastructures, service graphs and placement strategies in Python. Run a local simulation and inspect its report." />
+    <title>ECLYPSE | Cloud-Edge scenarios in Python</title>
     <link rel="icon" href="_static/favicon/favicon.ico" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -14,16 +14,6 @@
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
       rel="stylesheet" />
     <link rel="stylesheet" href="_static/css/home.css" />
-    <noscript
-      ><style>
-        .ec-home .hero-logo {
-          opacity: 1;
-        }
-        .ec-home .sun {
-          display: none;
-        }
-      </style></noscript
-    >
   </head>
   <body class="ec-home">
     <div class="ambient" aria-hidden="true">
@@ -32,157 +22,215 @@
       <canvas class="ambient-network"></canvas>
       <div class="ambient-light"></div>
     </div>
-    <a class="skip" href="#main">Skip to content</a>
-    <header class="wrap header">
-      <a class="brand" href="index.html">
-        <img src="_static/landing/logo.png" width="48" height="48" alt="" />
-        <span>ECLYPSE<small>DOCUMENTATION</small> </span>
-      </a>
-      <nav aria-label="Main navigation">
-        <a href="source/overview/getting-started/index.html">Get started</a>
-        <a href="source/overview/examples/index.html">Examples</a>
-        <a href="source/api/index.html">API reference</a>
-      </nav>
-      <a class="source" href="https://github.com/eclypse-org/eclypse">GitHub ↗</a>
-    </header>
-    <main id="main" class="wrap">
-      <section class="hero" aria-labelledby="title">
-        <div class="copy">
-          <p class="eyebrow">● &nbsp; A PYTHON FRAMEWORK FOR CLOUD EXPERIMENTS</p>
-          <h1 id="title">
-            Explore the cloud.<br />
-            <span>Illuminate<br />what matters.</span>
-          </h1>
-          <p class="intro">
-            Model services. Put deployment strategies to the test. Turn distributed systems
-            experiments into measurable insight.
+      <a class="skip" href="#main">Skip to content</a>
+      <header class="wrap header">
+        <a class="brand" href="index.html">
+          <img src="_static/landing/logo.png" width="48" height="48" alt="" />
+          <span>ECLYPSE<small>DOCUMENTATION</small> </span>
+        </a>
+        <nav aria-label="Main navigation">
+          <a href="source/overview/getting-started/index.html">Get started</a>
+          <a href="source/overview/examples/index.html">Examples</a>
+          <a href="source/api/index.html">API reference</a>
+        </nav>
+        <a class="source" href="https://github.com/eclypse-org/eclypse">GitHub ↗</a>
+      </header>
+      <main id="main" class="wrap" tabindex="-1">
+        <section class="hero" aria-labelledby="title">
+          <div class="copy">
+            <p class="eyebrow">ECLYPSE / DOCUMENTATION</p>
+            <h1 id="title">Set up Cloud–Edge scenarios <span>in Python.</span></h1>
+            <p class="intro">
+              Define an infrastructure, describe your services, and choose a placement strategy. Run
+              the scenario locally and inspect the report before moving to remote emulation.
+            </p>
+            <div class="actions">
+              <a
+                class="button primary"
+                href="source/overview/getting-started/minimal-local-run.html"
+                >Run your first scenario <span aria-hidden="true">→</span></a
+              >
+              <a class="button" href="source/overview/install.html">Installation</a>
+            </div>
+            <section class="first-run" aria-labelledby="first-run-title">
+              <div>
+                <h2 id="first-run-title">Your first run</h2>
+                <ol>
+                  <li><a href="source/overview/install.html">Install ECLYPSE <span aria-hidden="true">→</span></a></li>
+                  <li><a href="source/overview/getting-started/minimal-local-run.html#build-the-scenario">Create your scenario <span aria-hidden="true">→</span></a></li>
+                  <li><a href="source/overview/getting-started/inspect-results.html">Run and inspect the report <span aria-hidden="true">→</span></a></li>
+                </ol>
+              </div>
+              <div class="logo-eclipse">
+                <div class="eclipse-sun" aria-hidden="true"></div>
+                <img class="first-run-logo" src="_static/landing/logo.png" alt="ECLYPSE" width="1920" height="1920" fetchpriority="high">
+              </div>
+              <p>Start locally: no service implementation required.</p>
+            </section>
+          </div>
+          <section class="configuration" aria-labelledby="configure-title">
+            <p class="eyebrow">WHAT YOU CONFIGURE</p>
+            <h2 id="configure-title">Start with three building blocks.</h2>
+            <div class="cards">
+              <a class="card" href="source/overview/concepts/topology.html"
+                ><span class="card-number">01 / INFRASTRUCTURE</span>
+                <h3>Nodes, links and resources</h3>
+                <p>
+                  Use a topology builder or add nodes and links yourself. Set CPU, RAM, storage,
+                  availability, latency and bandwidth through assets.
+                </p>
+                <span class="card-link">Define a topology →</span></a
+              >
+              <a class="card" href="source/overview/concepts/topology.html#define-topology"
+                ><span class="card-number">02 / APPLICATION</span>
+                <h3>Services and requirements</h3>
+                <p>
+                  Describe services as a graph with resource requirements and communication links.
+                  Start from a reference application or create your own.
+                </p>
+                <span class="card-link">Describe your services →</span></a
+              >
+              <a class="card" href="source/overview/concepts/simulation-configuration.html"
+                ><span class="card-number">03 / EXPERIMENT</span>
+                <h3>Placement and evolution</h3>
+                <p>
+                  Choose a placement strategy, a seed and a run length. Add update policies and
+                  events when your scenario needs changes over time.
+                </p>
+                <span class="card-link">Configure a run →</span></a
+              >
+            </div>
+          </section>
+        </section>
+
+        <section class="section" aria-labelledby="cases-title">
+          <p class="eyebrow">SCENARIO IDEAS</p>
+          <h2 id="cases-title">What would you like to investigate?</h2>
+          <p class="section-intro">
+            Illustrative modelling questions, not preconfigured benchmarks or measured results. Each
+            requires its own topology, resource assumptions and metrics.
           </p>
-          <div class="actions">
-            <a class="button primary" href="source/overview/getting-started/index.html"
-              >Start experimenting <span aria-hidden="true">↗</span>
-            </a>
-            <a class="button" href="source/overview/install.html"
-              >Installation <span aria-hidden="true">→</span>
-            </a>
+          <div class="cards use-cases">
+            <article class="card">
+              <span class="card-number">VIDEO ANALYTICS</span>
+              <h3>Processing near the cameras</h3>
+              <p>
+                Model preprocessing and inference as services. How does placement change when edge
+                capacity or link latency changes?
+              </p>
+              <dl>
+                <dt>Vary</dt>
+                <dd>Service requirements, edge resources and link assets.</dd>
+                <dt>Inspect</dt>
+                <dd>Service placement and the resource and interaction metrics you enable.</dd>
+              </dl>
+              <a class="card-link" href="source/overview/concepts/assets.html">Model resources →</a>
+            </article>
+            <article class="card">
+              <span class="card-number">INDUSTRIAL SENSING</span>
+              <h3>An edge node becomes unavailable</h3>
+              <p>
+                Represent sensor processing and alerting as a service graph. What happens to
+                deployment when an infrastructure node fails?
+              </p>
+              <dl>
+                <dt>Vary</dt>
+                <dd>Node availability and the timing of failure events.</dd>
+                <dt>Inspect</dt>
+                <dd>Deployment changes across simulation steps.</dd>
+              </dl>
+              <a class="card-link" href="source/overview/concepts/update-policy.html"
+                >Explore update policies →</a
+              >
+            </article>
+            <article class="card">
+              <span class="card-number">VARIABLE DEMAND</span>
+              <h3>Resource requirements grow</h3>
+              <p>
+                Represent a demand increase through changing service requirements. How do different
+                placement strategies respond?
+              </p>
+              <dl>
+                <dt>Vary</dt>
+                <dd>CPU and RAM requirements, available capacity and strategy.</dd>
+                <dt>Inspect</dt>
+                <dd>Placement and resource metrics across comparable runs.</dd>
+              </dl>
+              <a class="card-link" href="source/overview/advanced/index.html"
+                >Explore strategies and policies →</a
+              >
+            </article>
           </div>
-          <p class="meta">
-            Python native <span>/</span> Composable workflows <span>/</span> Measurable results
-          </p>
-        </div>
-        <div class="scene" aria-label="An eclipse surrounded by connected cloud services">
-          <div class="dots" aria-hidden="true"></div>
-          <div class="cloud back" aria-hidden="true"></div>
-          <svg class="orbits" viewBox="0 0 600 600" fill="none" aria-hidden="true">
-            <ellipse cx="300" cy="300" rx="275" ry="140" transform="rotate(-30 300 300)" />
-            <ellipse cx="300" cy="300" rx="260" ry="210" transform="rotate(35 300 300)" />
-            <path d="M90 158 300 300 498 157M300 300 470 449M300 300 105 426" />
-          </svg>
-          <div class="sun" aria-hidden="true"></div>
-          <div class="eclipse">
-            <img
-              class="hero-logo"
-              src="_static/landing/logo.png"
-              alt="ECLYPSE"
-              width="1920"
-              height="1920"
-              fetchpriority="high" />
-          </div>
-          <div class="cloud front" aria-hidden="true"></div>
-          <div class="satellites">
-            <a class="node services" href="source/overview/concepts/index.html">
-              <b aria-hidden="true">◇</b>
-              <span> <small>01 / MODEL</small>Services</span>
-              <i aria-hidden="true">↗</i>
-            </a>
-            <a class="node strategies" href="source/overview/advanced/index.html">
-              <b aria-hidden="true">⌘</b>
-              <span> <small>02 / DEPLOY</small>Strategies</span>
-              <i aria-hidden="true">↗</i>
-            </a>
-            <a class="node metrics" href="source/overview/getting-started/inspect-results.html">
-              <b aria-hidden="true">▥</b>
-              <span> <small>03 / MEASURE</small>Metrics</span>
-              <i aria-hidden="true">↗</i>
-            </a>
-          </div>
-          <p class="caption" aria-hidden="true">● &nbsp; ONE WORKFLOW. A CONNECTED SYSTEM.</p>
-        </div>
-      </section>
-      <section class="paths" aria-labelledby="paths-title">
-        <p class="eyebrow">YOUR NEXT ORBIT</p>
-        <h2 id="paths-title">Less setup. More discovery.</h2>
-        <p class="sub">Find your starting point and take the next step.</p>
-        <div class="cards">
-          <a class="card" href="source/overview/getting-started/index.html">
-            <div class="card-top">
-              <span>01</span>
-              <span aria-hidden="true">↗</span>
-            </div>
-            <h3>Your first experiment</h3>
-            <p>Go from installation to your first scenario with a guided workflow.</p>
-            <span class="card-link">Get started →</span>
-          </a>
-          <a class="card" href="source/overview/examples/index.html">
-            <div class="card-top">
-              <span>02</span>
-              <span aria-hidden="true">↗</span>
-            </div>
-            <h3>Explore the possibilities</h3>
-            <p>Discover examples and scenarios to build your next experiment on.</p>
-            <span class="card-link">Browse examples →</span>
-          </a>
-          <a class="card" href="source/api/index.html">
-            <div class="card-top">
-              <span>03</span>
-              <span aria-hidden="true">↗</span>
-            </div>
-            <h3>Go beneath the surface</h3>
-            <p>Explore the Python API and the building blocks behind your workflow.</p>
-            <span class="card-link">Read the API →</span>
-          </a>
-        </div>
-      </section>
-      <section class="workflow" aria-labelledby="workflow-title">
-        <div>
-          <p class="eyebrow">FROM IDEA TO INSIGHT</p>
-          <h2 id="workflow-title">One experiment.<br />The whole picture.</h2>
-          <a class="text-link" href="source/overview/concepts/index.html"
-            >Explore core concepts →</a
+          <a class="text-link" href="source/overview/examples/index.html"
+            >Looking for runnable examples? Browse the example guides →</a
           >
+        </section>
+        <section class="section results" aria-labelledby="results-title">
+          <div>
+            <p class="eyebrow">AFTER A RUN</p>
+            <h2 id="results-title">Inspect the report.<br />Change one assumption.</h2>
+            <p class="section-intro">
+              Query application, service and interaction frames. Keep the seed and configuration
+              explicit when comparing scenarios.
+            </p>
+            <a class="text-link" href="source/overview/getting-started/inspect-results.html"
+              >Read and query results →</a
+            >
+          </div>
+          <div class="report-example">
+            <pre><code>report = sim.report
+services = report.service()
+applications = report.application()
+interactions = report.frame("interaction")</code></pre>
+            <p>
+              Choose CSV, JSON or Parquet for storage, and a pandas or Polars report backend.
+              Available columns depend on the metrics configured for your run.
+            </p>
+          </div>
+        </section>
+        <section class="section" aria-labelledby="modes-title">
+          <p class="eyebrow">CHOOSE HOW TO RUN</p>
+          <h2 id="modes-title">Model first. Implement services when needed.</h2>
+          <div class="mode-grid">
+            <article class="card">
+              <span class="card-number">LOCAL SIMULATION</span>
+              <h3>Work with service graphs</h3>
+              <p>
+                Explore resource-aware deployment using abstract services, placement strategies and
+                update policies. No service implementation is needed.
+              </p>
+              <a class="card-link" href="source/overview/getting-started/minimal-local-run.html"
+                >Start locally →</a
+              >
+            </article>
+            <article class="card">
+              <span class="card-number">REMOTE EMULATION</span>
+              <h3>Run implemented services</h3>
+              <p>
+                Provide service logic and execute it through Ray with MPI-style or REST-style
+                communication. This requires additional runtime setup.
+              </p>
+              <a class="card-link" href="source/overview/getting-started/remote-emulation.html"
+                >Set up remote emulation →</a
+              >
+            </article>
+          </div>
+        </section>
+        <nav class="doc-paths" aria-label="Documentation paths">
+          <a href="source/overview/getting-started/index.html">Getting started →</a
+          ><a href="source/overview/concepts/index.html">Core concepts →</a
+          ><a href="source/overview/examples/index.html">Runnable examples →</a
+          ><a href="source/api/index.html">API reference →</a>
+        </nav>
+      </main>
+      <footer class="wrap footer">
+        <span>ECLYPSE <span class="muted">/ Cloud–Edge experimentation in Python</span></span>
+        <div>
+          <a href="source/overview/install.html">Install</a
+          ><a href="https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md">Changelog</a
+          ><a href="https://github.com/eclypse-org/eclypse">Source code ↗</a>
         </div>
-        <ol>
-          <li>
-            <span>01</span>
-            <div>
-              <h3>Model your system</h3>
-              <p>Define services and infrastructure for your scenario.</p>
-            </div>
-          </li>
-          <li>
-            <span>02</span>
-            <div>
-              <h3>Deploy your strategy</h3>
-              <p>Apply placement strategies and update policies.</p>
-            </div>
-          </li>
-          <li>
-            <span>03</span>
-            <div>
-              <h3>Measure the outcome</h3>
-              <p>Inspect metrics, compare results, and refine your approach.</p>
-            </div>
-          </li>
-        </ol>
-      </section>
-    </main>
-    <footer class="wrap footer">
-      <span>ECLYPSE <span class="muted">/ Built for exploration.</span> </span>
-      <div>
-        <a href="source/overview/install.html">Install</a>
-        <a href="https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md">Changelog</a>
-        <a href="https://github.com/eclypse-org/eclypse">Source code ↗</a>
-      </div>
-    </footer>
+      </footer>
     <script src="_static/js/home.js"></script>
   </body>
 </html>
