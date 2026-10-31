@@ -4,7 +4,17 @@ version = "0.9.1"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
+license = "MIT"
 license-files = ["LICENSE"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
 
 authors = [
     { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
@@ -28,6 +38,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/eclypse-org/eclypse"
 Repository = "https://github.com/eclypse-org/eclypse"
+Documentation = "https://eclypse.readthedocs.io/en/latest/"
+Changelog = "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md"
 
 
 # Dependency Groups
