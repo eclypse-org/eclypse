@@ -11,6 +11,7 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 - [Code Formatting](#code-formatting)
 - [Linting](#linting)
 - [Testing](#testing)
+- [Documentation](#documentation)
 - [Pre-commit Hooks](#pre-commit-hooks)
 
 ## Dev Containers
@@ -114,6 +115,20 @@ Useful command:
 
 ```bash
 uv run pytest
+```
+
+## Documentation
+
+The documentation is built with Sphinx, treating warnings as errors:
+
+```bash
+make docs
+```
+
+The pages are written to `docs/_build/html`. To find classes missing from the documentation, run:
+
+```bash
+uv run --group docs make -C docs coverage
 ```
 
 ## Pre-commit Hooks
