@@ -19,13 +19,7 @@ livehtml:
 open:
 	open "$(BUILDDIR)"/html/index.html
 
-check:
-	ruff check --select D,E501 ../eclypse
-
-format:
-	docformatter --in-place --recursive --wrap-summaries 88 --wrap-descriptions 88 ../eclypse
-
-.PHONY: help clean livehtml open check format Makefile
+.PHONY: help clean livehtml open Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using make mode.
 # $(O) is meant as a shortcut for extra Sphinx options.

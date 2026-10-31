@@ -1,9 +1,11 @@
 ---
 ci:
-  autofix_commit_msg: "fix: Apply pre-commit.ci auto fixes"
+  autofix_commit_msg: "style: Apply pre-commit.ci auto fixes"
   autoupdate_commit_msg: "chore: Update pre-commit hooks"
-  autoupdate_schedule: monthly
+  autoupdate_schedule: weekly
   submodules: false
+
+default_install_hook_types: [pre-commit, commit-msg, pre-push]
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -18,7 +20,6 @@ repos:
       - id: debug-statements
       - id: detect-private-key
       - id: end-of-file-fixer
-      - id: requirements-txt-fixer
       - id: trailing-whitespace
 
   - repo: https://github.com/pycqa/isort

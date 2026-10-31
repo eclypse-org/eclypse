@@ -4,7 +4,17 @@ version = "0.9.1"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"
+license = "MIT"
 license-files = ["LICENSE"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
 
 authors = [
     { name = "Jacopo Massa", email = "jacopo.massa@di.unipi.it" },
@@ -28,6 +38,8 @@ dependencies = [
 [project.urls]
 Homepage = "https://github.com/eclypse-org/eclypse"
 Repository = "https://github.com/eclypse-org/eclypse"
+Documentation = "https://eclypse.readthedocs.io/en/latest/"
+Changelog = "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md"
 
 
 # Dependency Groups
@@ -39,8 +51,6 @@ dev = [
     "pre-commit>=4.7.0",
     "ruff>=0.17.2",
 ]
-
-deploy = ["twine>=7.0.0"]
 
 test = [
     "polars>=2.1.0",
@@ -54,7 +64,6 @@ test = [
 ]
 
 docs = [
-    "docformatter[tomli]>=1.7.8",
     "jinja2>=3.1.6",
     "myst-parser>=5.1.0",
     "pydata-sphinx-theme>=0.23.0",
@@ -77,11 +86,8 @@ build-backend = "uv_build"
 module-root = "."
 module-name = "eclypse"
 
-[[tool.uv.index]]
-name = "testpypi"
-url = "https://test.pypi.org/simple/"
-publish-url = "https://test.pypi.org/legacy/"
-explicit = true
+[tool.uv]
+required-version = ">=0.13"
 
 
 # -------------------------
@@ -92,12 +98,75 @@ explicit = true
 name = "cz_conventional_commits"
 version_provider = "uv"
 tag_format = "$version"
+bump_message = "chore(release): bump version $current_version → $new_version"
+update_changelog_on_bump = true
 version_files = [
     "pyproject.toml:^version",
     "eclypse/__init__.py:__version__",
     "CITATION.cff:version",
 ]
 
+
+[tool.ruff]
+include = ["eclypse/**/*.py", "tests/**/*.py"]
+extend-exclude = ["docs", "examples"]
+
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "W",
+    # "I", # isort works better so far
+    "B",
+    "UP",
+    "SIM",
+    "C90",
+    "RUF",
+    "TCH",
+    "PL",
+    "ARG",
+    "D",
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 20
+max-locals = 30
+max-branches = 15
+max-positional-args = 20
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 100
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.flake8-type-checking]
+strict = true
+
+[tool.ruff.lint.flake8-tidy-imports]
+banned-module-level-imports = ["ray", "tensorboardX"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "D",
+    "ARG005",
+    "B018",
+    "C901",
+    "PLR0915",
+    "PLR1711",
+    "PLR2004",
+    "PLW0108",
+    "RUF012",
+    "RUF100",
+    "TC003",
+    "UP037",
+]
 
 [tool.isort]
 profile = "black"
@@ -136,7 +205,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=eclypse --cov-report=xml --cov-report=term-missing -n auto"
+addopts = "--cov --cov-report=xml --cov-report=term-missing -n auto"
 asyncio_mode = "auto"
 filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
 markers = [

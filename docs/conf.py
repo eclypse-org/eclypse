@@ -51,7 +51,6 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    "README.md",
     "source/api/reference/graph/application/Application/"
     "eclypse.graph.application.Application.has_logic.rst",
     "source/api/reference/graph/infrastructure/Infrastructure/"

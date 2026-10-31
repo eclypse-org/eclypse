@@ -1,33 +1,32 @@
 .DEFAULT_GOAL := check
 
-check:
-	pre-commit run -a
+setup:
+	uv sync --locked --all-groups
 
-changelog:
-	cz bump --changelog
+check:
+	uv run pre-commit run -a
+
+bump:
+	uv run cz bump
 
 patch:
-	cz bump --changelog --increment patch
-
-setup-build:
-	uv sync --group dev --group deploy --no-install-project
-
-setup-test:
-	uv sync --group test --no-install-project
+	uv run cz bump --increment patch
 
 format:
-	isort eclypse
-	ruff check
-	ruff format
+	uv run isort eclypse tests
+	uv run ruff check
+	uv run ruff format
+
+docs:
+	uv run --group docs $(MAKE) -C docs html
 
 verify:
-	twine check --strict dist/*
+	uvx twine check --strict dist/*
 
-build: format
+build:
 	uv build --wheel --clear --no-create-gitignore
-
-publish-test: build verify
-	UV_PUBLISH_TOKEN="$$UV_TEST_PYPI_ECLYPSE" uv publish --index testpypi -v
 
 publish: build verify
 	uv publish -v
+
+.PHONY: setup check bump patch format docs verify build publish

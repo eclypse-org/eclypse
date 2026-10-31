@@ -1,0 +1,31 @@
+name: Run docs tests
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/_static/js/**"
+      - "tests/docs/**"
+      - ".github/workflows/docs_tests.yaml"
+  pull_request:
+    paths:
+      - "docs/_static/js/**"
+      - "tests/docs/**"
+      - ".github/workflows/docs_tests.yaml"
+
+concurrency:
+  group: docs-tests-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v6
+
+      - name: Run tests
+        run: |
+          node --test tests/docs/*.test.cjs
