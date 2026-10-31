@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -10,7 +11,6 @@ from eclypse.io import (
     load_application,
 )
 from eclypse.io.defaults.docker_compose import DockerComposeImporter
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.graph import Application

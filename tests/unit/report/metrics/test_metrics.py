@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pytest
 
+from eclypse.report.metrics import metric
 from eclypse.report.metrics.defaults import (
     SimulationTime,
     StepNumber,
@@ -24,7 +25,6 @@ from eclypse.report.metrics.defaults import (
     seed,
     step_result,
 )
-from eclypse.report.metrics import metric
 from eclypse.utils.constants import (
     DRIVING_EVENT,
     RND_SEED,

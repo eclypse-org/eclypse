@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pytest
 
-from eclypse.builders.infrastructure._helpers import connect_round_robin
 from eclypse.builders.infrastructure import (
     get_b_cube,
     get_fat_tree,
@@ -12,6 +11,7 @@ from eclypse.builders.infrastructure import (
     get_small_world,
     get_star,
 )
+from eclypse.builders.infrastructure._helpers import connect_round_robin
 from eclypse.builders.infrastructure.generators.hierarchical import (
     _get_connectivity_functions,
     _uniform_level_connectivity,

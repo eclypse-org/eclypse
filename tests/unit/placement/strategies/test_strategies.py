@@ -5,10 +5,10 @@ import pytest
 from eclypse.placement.strategies import (
     BestFitStrategy,
     FirstFitStrategy,
+    PlacementStrategy,
     RandomStrategy,
     RoundRobinStrategy,
     StaticStrategy,
-    PlacementStrategy,
 )
 from eclypse.placement.view import PlacementView
 from eclypse.utils.constants import RND_SEED

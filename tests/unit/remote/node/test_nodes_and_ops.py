@@ -7,10 +7,10 @@ from typing import Any
 
 import pytest
 
-from eclypse.remote.node.node import RemoteNode
-from eclypse.remote.node.ops_thread import RemoteOpsThread
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.rest import EclypseREST
+from eclypse.remote.node.node import RemoteNode
+from eclypse.remote.node.ops_thread import RemoteOpsThread
 from eclypse.remote.utils import (
     RemoteOps,
     ResponseCode,
