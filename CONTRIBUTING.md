@@ -91,7 +91,7 @@ Linting in this project is handled entirely by [Ruff](https://github.com/astral-
 
 Ruff is an extremely fast Python linter and formatter that replaces multiple traditional tools (such as flake8, pycodestyle, pyflakes, pydocstyle, and others) with a single, unified command-line interface.
 
-Before submitting your pull request, ensure that your code passes all linting checks defined in the `.ruff.toml` file, by running:
+Before submitting your pull request, ensure that your code passes all linting checks defined in the `[tool.ruff]` section of `pyproject.toml`, by running:
 
 ```bash
 uv run ruff check
