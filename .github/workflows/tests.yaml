@@ -9,14 +9,14 @@ on:
       - "tests/**"
       - "pyproject.toml"
       - "uv.lock"
-      - ".github/workflows/upload_coverage.yaml"
+      - ".github/workflows/tests.yaml"
   pull_request:
     paths:
       - "eclypse/**"
       - "tests/**"
       - "pyproject.toml"
       - "uv.lock"
-      - ".github/workflows/upload_coverage.yaml"
+      - ".github/workflows/tests.yaml"
   workflow_call:
 
 concurrency:
