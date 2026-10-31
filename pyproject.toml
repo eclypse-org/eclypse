@@ -77,16 +77,6 @@ build-backend = "uv_build"
 module-root = "."
 module-name = "eclypse"
 
-[project.scripts]
-echo = "examples.echo.main:main"
-grid-analysis = "examples.grid_analysis.main:main"
-image-prediction = "examples.image_prediction.main:main"
-io-round-trip = "examples.io_round_trip.main:main"
-off-the-shelf = "examples.off_the_shelf.main:main"
-sock-shop-mpi = "examples.sock_shop.mpi:main"
-sock-shop-rest = "examples.sock_shop.rest:main"
-user-distribution = "examples.user_distribution.main:main"
-
 [[tool.uv.index]]
 name = "testpypi"
 url = "https://test.pypi.org/simple/"
