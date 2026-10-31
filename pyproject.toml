@@ -205,7 +205,7 @@ ignore_missing_imports = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "--cov=eclypse --cov-report=xml --cov-report=term-missing -n auto"
+addopts = "--cov --cov-report=xml --cov-report=term-missing -n auto"
 asyncio_mode = "auto"
 filterwarnings = ["ignore::DeprecationWarning", "ignore::FutureWarning"]
 markers = [

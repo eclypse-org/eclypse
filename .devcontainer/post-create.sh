@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-uv sync --locked --group dev --group test --group docs
+make setup
 uv run --no-sync pre-commit install
 
 mkdir -p "$HOME/.local/share/zsh/site-functions"
