@@ -52,8 +52,6 @@ dev = [
     "ruff>=0.17.2",
 ]
 
-deploy = ["twine>=7.0.0"]
-
 test = [
     "polars>=2.1.0",
     "pytest>=9.1.1",
@@ -66,7 +64,6 @@ test = [
 ]
 
 docs = [
-    "docformatter[tomli]>=1.7.8",
     "jinja2>=3.1.6",
     "myst-parser>=5.1.0",
     "pydata-sphinx-theme>=0.23.0",
@@ -89,11 +86,8 @@ build-backend = "uv_build"
 module-root = "."
 module-name = "eclypse"
 
-[[tool.uv.index]]
-name = "testpypi"
-url = "https://test.pypi.org/simple/"
-publish-url = "https://test.pypi.org/legacy/"
-explicit = true
+[tool.uv]
+required-version = ">=0.13"
 
 
 # -------------------------
@@ -104,6 +98,8 @@ explicit = true
 name = "cz_conventional_commits"
 version_provider = "uv"
 tag_format = "$version"
+bump_message = "chore(release): bump version $current_version → $new_version"
+update_changelog_on_bump = true
 version_files = [
     "pyproject.toml:^version",
     "eclypse/__init__.py:__version__",
