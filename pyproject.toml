@@ -90,7 +90,7 @@ explicit = true
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "0.9.1"
+version_provider = "uv"
 tag_format = "$version"
 version_files = [
     "pyproject.toml:^version",
