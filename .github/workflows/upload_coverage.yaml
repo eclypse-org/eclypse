@@ -17,6 +17,12 @@ on:
       - "pyproject.toml"
       - "uv.lock"
       - ".github/workflows/upload_coverage.yaml"
+  workflow_call:
+
+concurrency:
+  # not github.workflow: in a called workflow it is the caller's name
+  group: tests-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   test:
@@ -32,14 +38,10 @@ jobs:
       - name: Checkout Source Code
         uses: actions/checkout@v6
 
-      - name: Set up Python
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Install uv
+      - name: Install uv and Python
         uses: astral-sh/setup-uv@v7
         with:
+          python-version: ${{ matrix.python-version }}
           enable-cache: true
 
       - name: Install dependencies
