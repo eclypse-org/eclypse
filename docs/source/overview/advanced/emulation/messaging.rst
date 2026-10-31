@@ -40,6 +40,9 @@ The send and broadcast requests must be awaited explicitly.
    # Receive next message
    message = await self.mpi.recv()
 
+   # Wait at most 5 seconds; raises TimeoutError if nothing arrives
+   message = await self.mpi.recv(timeout=5.0)
+
 @exchange() decorator
 ~~~~~~~~~~~~~~~~~~~~~
 

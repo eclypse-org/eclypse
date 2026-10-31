@@ -559,6 +559,12 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     assert isinstance(response, Response)
     assert await mpi.recv() == {"payload": 1, "sender_id": "gateway"}
 
+    with pytest.raises(TimeoutError):
+        await mpi.recv(timeout=0.01)
+    # a message arriving after the timeout is not lost
+    await mpi._execute_request(message_route, payload=2)
+    assert await mpi.recv(timeout=1) == {"payload": 2, "sender_id": "gateway"}
+
     with pytest.raises(ValueError, match="cannot send and broadcast"):
         exchange(send=True, broadcast=True)
 

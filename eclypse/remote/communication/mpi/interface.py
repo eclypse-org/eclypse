@@ -6,7 +6,10 @@ It implements the MPI communication protocol among services in the same applicat
 from __future__ import annotations
 
 import inspect
-from asyncio import Queue
+from asyncio import (
+    Queue,
+    wait_for,
+)
 from datetime import datetime
 from typing import (
     TYPE_CHECKING,
@@ -116,15 +119,23 @@ class EclypseMPI(EclypseCommunicationInterface):
 
         return BroadcastRequest(body=body, _mpi=self, timestamp=timestamp)
 
-    def recv(self) -> Coroutine[Any, Any, dict[str, Any]]:
+    def recv(self, timeout: float | None = None) -> Coroutine[Any, Any, dict[str, Any]]:
         """Receive a message in the input queue.
 
         The result of this method **must be awaited**.
 
+        Args:
+            timeout (float | None, optional): The maximum time to wait for a message,
+                in seconds. If None, waits until a message arrives. Defaults to None.
+
         Returns:
             Task[Any]: The message in the input queue.
+
+        Raises:
+            TimeoutError: If no message arrives within the timeout. The message
+                arriving later stays in the queue for the next call.
         """
-        return self._input_queue.get()
+        return wait_for(self._input_queue.get(), timeout)
 
     async def _not_connected_response(self) -> Any:
         return Response(ResponseCode.ERROR)
