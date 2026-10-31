@@ -24,8 +24,8 @@ from eclypse.io.defaults.tosca import (
     NETWORK_TYPE,
     PORT_TYPE,
     SOFTWARE_COMPONENT_TYPE,
-    TOSCAImporter,
     TOSCA_VERSION,
+    TOSCAImporter,
 )
 
 

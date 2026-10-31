@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import networkx as nx
 import pytest
@@ -15,7 +16,6 @@ from eclypse.io import (
 )
 from eclypse.io.defaults.networkx import NetworkXImporter
 from eclypse.io.graphs import graph_from_networkx
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.graph import (

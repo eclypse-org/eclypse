@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -21,7 +22,6 @@ from eclypse.io import (
     load_infrastructure,
 )
 from eclypse.io.defaults.json import JSONImporter
-from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from eclypse.graph import (

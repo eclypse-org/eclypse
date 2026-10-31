@@ -30,7 +30,7 @@ jobs:
 
       - name: Check formatting and linting
         run: |
-          uv run --no-sync isort --check-only eclypse
+          uv run --no-sync isort --check-only eclypse tests
           uv run --no-sync ruff check
           uv run --no-sync ruff format --check
 
