@@ -5,6 +5,7 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 ## Table of Contents
 
 - [Dev Containers](#dev-containers)
+- [Setup](#setup)
 - [Pull Requests](#pull-requests)
 - [Conventional Commits](#conventional-commits)
 - [Code Formatting](#code-formatting)
@@ -20,6 +21,16 @@ configuration.
 
 If you use VS Code Dev Containers or GitHub Codespaces, you can rely on that
 setup for a reproducible contributor environment.
+
+## Setup
+
+The project is managed with [uv](https://docs.astral.sh/uv/). Install it, then run from the repository root:
+
+```bash
+make setup
+```
+
+This installs the package and all the development, test and docs dependencies in `.venv`, at the versions pinned in `uv.lock`.
 
 ## Pull Requests
 
@@ -71,9 +82,7 @@ Please make sure that your code adheres to these formatting standards before sub
 You can check and format your code automatically with:
 
 ```bash
-isort eclypse
-ruff check
-ruff format
+make format
 ```
 
 ## Linting
@@ -85,13 +94,13 @@ Ruff is an extremely fast Python linter and formatter that replaces multiple tra
 Before submitting your pull request, ensure that your code passes all linting checks defined in the `.ruff.toml` file, by running:
 
 ```bash
-ruff check
+uv run ruff check
 ```
 
 If you want Ruff to automatically fix all fixable issues, you can run:
 
 ```bash
-ruff check --fix
+uv run ruff check --fix
 ```
 
 Ruff will detect and correct most common style, import, and docstring issues automatically.
@@ -104,32 +113,22 @@ We use `pytest` for the test suite.
 Useful command:
 
 ```bash
-pytest
+uv run pytest
 ```
 
 ## Pre-commit Hooks
 
 We provide pre-commit hooks to automate formatting and linting checks. Follow the steps below to install and run them:
 
-1. **Install pre-commit:**
+1. **Install the hooks** (pre-commit is installed by `make setup`):
 
     ```bash
-    pip install pre-commit
+    uv run pre-commit install
     ```
 
-2. **Install the hooks:**
+    This also installs the hooks that check commit messages and, before pushing, the commits on your branch.
 
-    ```bash
-    pre-commit install
-    ```
-
-3. **Run pre-commit checks manually (optional):**
-
-    ```bash
-    pre-commit run -a
-    ```
-
-    Alternatively, you can use the Makefile rule:
+2. **Run pre-commit checks manually (optional):**
 
     ```bash
     make check

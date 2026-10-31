@@ -2,13 +2,13 @@
 
 Documentation is built with sphinx.
 
-Build the documentation (it must be executed in the `docs` folder):
+Build the documentation from the repository root:
 ```
-sphinx-build . _build
+make docs
 ```
 
 ## Doc coverage
-it is possible to check the class coverage to find classes that are missing from the documentation using the command:
+it is possible to check the class coverage to find classes that are missing from the documentation using the command (from the repository root):
 ```
-sphinx-build -b coverage . _build
+uv run --group docs make -C docs coverage
 ```
