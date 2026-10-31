@@ -28,4 +28,4 @@ jobs:
 
       - name: Run tests
         run: |
-          node --test tests/docs/
+          node --test tests/docs/*.test.cjs
