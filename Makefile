@@ -6,7 +6,7 @@ setup:
 check:
 	uv run pre-commit run -a
 
-changelog:
+bump:
 	uv run cz bump
 
 patch:
@@ -29,4 +29,4 @@ build:
 publish: build verify
 	uv publish -v
 
-.PHONY: setup check changelog patch format docs verify build publish
+.PHONY: setup check bump patch format docs verify build publish
