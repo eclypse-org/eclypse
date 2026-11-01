@@ -13,6 +13,7 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Pre-commit Hooks](#pre-commit-hooks)
+- [Releasing](#releasing)
 
 ## Dev Containers
 
@@ -152,3 +153,25 @@ We provide pre-commit hooks to automate formatting and linting checks. Follow th
 This will execute all pre-commit hooks (formatting and linting) across your repository. Any issues found will be reported, and you'll need to address them before committing your changes.
 
 By following these steps, you ensure that your contributions maintain consistency and quality across the codebase. If you encounter any issues or have questions about the setup, feel free to reach out for assistance.
+
+## Releasing
+
+Releases are made by maintainers, who can push to `main` and create tags.
+
+1. On an up-to-date `main`, run:
+
+    ```bash
+    make bump
+    ```
+
+    Commitizen picks the next version from the commits since the last tag (`fix` → patch, `feat` → minor, breaking change → major; `make patch` forces a patch), updates the version in `pyproject.toml`, `uv.lock`, `eclypse/__init__.py` and `CITATION.cff`, adds the release to `CHANGELOG.md`, commits it as `chore(release): bump version X → Y` and creates the tag.
+
+2. Push the commit and the tag:
+
+    ```bash
+    git push --follow-tags
+    ```
+
+3. The tag starts the `Build and Deploy to PyPI` workflow. It builds and checks the wheel, runs the pre-commit hooks, the tests and the quick examples, then publishes to PyPI through trusted publishing (`pypi` environment) and creates the GitHub Release with the changelog and the wheel.
+
+If the workflow fails before publishing, fix the problem on `main` and release the next patch version. A version published to PyPI can never be replaced: a broken release is fixed by a new patch release, and can be yanked on PyPI so that it is no longer installed by default.
