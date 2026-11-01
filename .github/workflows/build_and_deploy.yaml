@@ -19,7 +19,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@v10.3.3
@@ -53,7 +53,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Install uv and Python
         uses: astral-sh/setup-uv@v10.3.3
@@ -80,7 +80,7 @@ jobs:
 
     steps:
       - name: Checkout Source Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Download distribution
         uses: actions/download-artifact@v8
