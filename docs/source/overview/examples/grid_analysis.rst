@@ -18,7 +18,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run grid-analysis
+   uv run --with-requirements examples/grid_analysis/requirements.txt python -m examples.grid_analysis.main
 
 Simulation sweep
 ----------------

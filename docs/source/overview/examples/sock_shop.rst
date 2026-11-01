@@ -28,8 +28,8 @@ Run either variant from the repository root with:
 
 .. code-block:: bash
 
-   uv run sock-shop-mpi
-   uv run sock-shop-rest
+   uv run python -m examples.sock_shop.mpi
+   uv run python -m examples.sock_shop.rest
 
 .. warning::
 

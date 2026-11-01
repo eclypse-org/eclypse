@@ -18,7 +18,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run echo
+   uv run python -m examples.echo.main
 
 Application
 -----------

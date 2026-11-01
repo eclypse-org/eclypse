@@ -20,7 +20,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run off-the-shelf
+   uv run python -m examples.off_the_shelf.main
 
 Application
 -----------

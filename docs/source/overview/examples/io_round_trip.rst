@@ -18,7 +18,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run io-round-trip
+   uv run python -m examples.io_round_trip.main
 
 What it shows
 -------------
