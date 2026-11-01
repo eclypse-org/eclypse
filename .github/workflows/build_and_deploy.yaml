@@ -77,6 +77,7 @@ jobs:
     environment: pypi
     permissions:
       contents: write
+      id-token: write
 
     steps:
       - name: Checkout Source Code
@@ -92,10 +93,8 @@ jobs:
         uses: astral-sh/setup-uv@v10.3.3
 
       - name: Upload to PyPI
-        env:
-          UV_PUBLISH_TOKEN: ${{ secrets.PYPI_TOKEN_PUBLIC }}
         run: |
-          uv publish -v
+          uv publish -v --trusted-publishing always
 
       - name: Create GitHub Release
         env:
