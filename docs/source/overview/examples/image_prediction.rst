@@ -19,7 +19,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run image-prediction
+   uv run --with-requirements examples/image_prediction/requirements.txt python -m examples.image_prediction.main
 
 Application
 -----------

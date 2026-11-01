@@ -19,7 +19,7 @@ Run it from the repository root with:
 
 .. code-block:: bash
 
-   uv run user-distribution
+   uv run --with-requirements examples/user_distribution/requirements.txt python -m examples.user_distribution.main
 
 Infrastructure
 --------------
