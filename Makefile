@@ -12,11 +12,6 @@ bump:
 patch:
 	uv run cz bump --increment patch
 
-format:
-	uv run isort eclypse tests
-	uv run ruff check
-	uv run ruff format
-
 docs:
 	uv run --group docs $(MAKE) -C docs html
 
@@ -29,4 +24,4 @@ build:
 publish: build verify
 	uv publish -v
 
-.PHONY: setup check bump patch format docs verify build publish
+.PHONY: setup check bump patch docs verify build publish

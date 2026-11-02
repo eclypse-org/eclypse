@@ -8,8 +8,6 @@ We're glad you're considering contributing to ECLYPSE. Before you proceed, pleas
 - [Setup](#setup)
 - [Pull Requests](#pull-requests)
 - [Conventional Commits](#conventional-commits)
-- [Code Formatting](#code-formatting)
-- [Linting](#linting)
 - [Testing](#testing)
 - [Documentation](#documentation)
 - [Pre-commit Hooks](#pre-commit-hooks)
@@ -73,41 +71,6 @@ To contribute to this project, follow these steps:
 
 We enforce the usage of conventional commits in this repository. Please ensure that your commit messages follow the conventional commits format. You can find more information about conventional commits [here](https://www.conventionalcommits.org/en/v1.0.0/).
 
-## Code Formatting
-
-We use the following tools for code formatting:
-
-- [Ruff](https://github.com/astral-sh/ruff): for linting and formatting Python code.
-- [isort](https://github.com/PyCQA/isort): for sorting and organizing Python imports (*Ruff could also handle this, but we use some standards that are not already ported to Ruff*).
-
-Please make sure that your code adheres to these formatting standards before submitting a pull request.
-You can check and format your code automatically with:
-
-```bash
-make format
-```
-
-## Linting
-
-Linting in this project is handled entirely by [Ruff](https://github.com/astral-sh/ruff).
-
-Ruff is an extremely fast Python linter and formatter that replaces multiple traditional tools (such as flake8, pycodestyle, pyflakes, pydocstyle, and others) with a single, unified command-line interface.
-
-Before submitting your pull request, ensure that your code passes all linting checks defined in the `[tool.ruff]` section of `pyproject.toml`, by running:
-
-```bash
-uv run ruff check
-```
-
-If you want Ruff to automatically fix all fixable issues, you can run:
-
-```bash
-uv run ruff check --fix
-```
-
-Ruff will detect and correct most common style, import, and docstring issues automatically.
-Please make sure that all warnings and errors are resolved before committing your changes.
-
 ## Testing
 
 We use `pytest` for the test suite.
@@ -134,7 +97,13 @@ uv run --group docs make -C docs coverage
 
 ## Pre-commit Hooks
 
-We provide pre-commit hooks to automate formatting and linting checks. Follow the steps below to install and run them:
+Formatting and linting run as pre-commit hooks, the same ones pre-commit.ci runs on every pull request:
+
+- [Ruff](https://github.com/astral-sh/ruff): linting (rules in the `[tool.ruff]` section of `pyproject.toml`) and formatting.
+- [isort](https://github.com/PyCQA/isort): import sorting (*Ruff could also handle this, but we use some standards that are not already ported to Ruff*).
+- [mypy](https://mypy-lang.org/): type checking of the `eclypse` package.
+
+Follow the steps below to install and run them:
 
 1. **Install the hooks** (pre-commit is installed by `make setup`):
 

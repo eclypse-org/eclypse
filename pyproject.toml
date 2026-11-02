@@ -201,8 +201,6 @@ ignore_missing_imports = true
 # Pytest and Coverage settings
 # --------------------------
 
-#
-
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "--cov --cov-report=xml --cov-report=term-missing -n auto"

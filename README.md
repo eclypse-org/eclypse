@@ -13,7 +13,6 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![Import sorted with isort](https://img.shields.io/badge/isort-checked-brightgreen)](https://pycqa.github.io/isort/)
-[![Doc style: docformatter](https://img.shields.io/badge/doc%20style-docformatter-blue)](https://github.com/PyCQA/docformatter)
 
 **ECLYPSE** (**E**dge-**CL**oud p**Y**thon **P**latform for **S**imulated runtime **E**nvironments) is the first simulation library entirely written in Python, for experimenting with deployment strategies in varying infrastructure conditions. It provides an interface to simulate deployments of service-based applications onto life-like infrastructures, without and with an actual application implementation to be deployed.
 
