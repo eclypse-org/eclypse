@@ -1,6 +1,6 @@
 [project]
 name = "eclypse"
-version = "0.9.1"
+version = "0.10.0"
 description = "an Edge-CLoud pYthon Platform for Simulated runtime Environments"
 readme = "README.md"
 requires-python = ">=3.11,<3.15"

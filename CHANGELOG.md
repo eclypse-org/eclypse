@@ -1,3 +1,18 @@
+## 0.10.0 (2026-11-02)
+
+### Feat
+
+- Add an optional timeout to EclypseMPI.recv (#27)
+- Refocus homepage on Cloud-Edge scenarios
+- Add interactive cloud network background
+- Redesign documentation landing page
+
+### Fix
+
+- Lint the tests in pre-commit as in CI (#37)
+- Keep uv.lock in sync on version bumps (#37)
+- Remove the example console scripts from the package (#37)
+
 ## 0.9.1 (2026-10-22)
 
 ### Feat
