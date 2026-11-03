@@ -4,6 +4,14 @@ build:
   os: "ubuntu-22.04"
   tools:
     python: "3.11"
+  jobs:
+    build:
+      html:
+        - >-
+          uv run --no-sync --no-dev
+          make -C docs html
+          BUILDDIR="$READTHEDOCS_OUTPUT"
+          O="-T --keep-going -D language=en"
 
 python:
   install:
