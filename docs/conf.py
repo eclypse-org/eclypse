@@ -51,24 +51,8 @@ exclude_patterns = [
     "_build",
     "Thumbs.db",
     ".DS_Store",
-    "source/api/reference/graph/application/Application/"
-    "eclypse.graph.application.Application.has_logic.rst",
-    "source/api/reference/graph/infrastructure/Infrastructure/"
-    "eclypse.graph.infrastructure.Infrastructure.contains.rst",
-    "source/api/reference/graph/infrastructure/Infrastructure/"
-    "eclypse.graph.infrastructure.Infrastructure.has_strategy.rst",
-    "source/api/reference/workflow/trigger/bucket/TriggerBucket/"
-    "eclypse.workflow.trigger.bucket.TriggerBucket.init.rst",
-    "source/api/reference/workflow/trigger/cascade/RandomCascadeTrigger/"
-    "eclypse.workflow.trigger.cascade.RandomCascadeTrigger.init.rst",
-    "source/api/reference/workflow/trigger/trigger/RandomTrigger/"
-    "eclypse.workflow.trigger.trigger.RandomTrigger.init.rst",
-    "source/api/reference/workflow/trigger/trigger/ScheduledTrigger/"
-    "eclypse.workflow.trigger.trigger.ScheduledTrigger.init.rst",
-    "source/api/reference/workflow/trigger/trigger/Trigger/"
-    "eclypse.workflow.trigger.trigger.Trigger.init.rst",
-    "source/api/reference/workflow/event/decorator/"
-    "eclypse.workflow.event.decorator.event.rst",
+    "images/*.tiff",
+    "images/legacy",
 ]
 suppress_warnings = ["toc.not_included"]
 
