@@ -9,11 +9,13 @@ from eclypse.workflow.event import (
     EclypseEvent,
     EventRole,
     after,
+)
+from eclypse.workflow.event import decorator as decorator_module
+from eclypse.workflow.event import (
     every,
     get_default_events,
     once_at,
 )
-from eclypse.workflow.event import decorator as decorator_module
 from eclypse.workflow.event.event import _application_fn
 from eclypse.workflow.event.wrapper import EventWrapper
 from eclypse.workflow.trigger import (
