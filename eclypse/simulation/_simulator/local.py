@@ -250,8 +250,14 @@ class Simulator:
         Args:
             timeout (float | None, optional): The maximum time to wait for the
                 simulation to finish. Defaults to None, meaning indefinite wait.
+
+        Raises:
+            RuntimeError: Reporting failed and the completed report is incomplete.
         """
-        self._finished.wait(timeout=timeout)
+        if self._finished.wait(timeout=timeout) and self._reporter.error is not None:
+            raise RuntimeError(
+                f"Simulation report is incomplete: {self._reporter.error}"
+            )
 
     async def _finalize_shutdown(self):
         """Ensure background work is flushed and completion is signalled."""

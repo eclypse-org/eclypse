@@ -51,6 +51,7 @@ class SimulationReporter:
         }
         self._loop: asyncio.AbstractEventLoop | None = None
         self._running = False
+        self.error: str | None = None
 
     def add_reporter(self, rtype: str, reporter: type[Reporter]):
         """Add a new reporter type dynamically."""
@@ -164,8 +165,10 @@ class SimulationReporter:
                         await reporter.write(cb_type, buffer)
                         buffer.clear()
                 except Exception as e:
-                    self.logger.error(f"[{rtype}/{cb_type}] Error during write: {e}")
-                    return
+                    message = f"[{rtype}/{cb_type}] Error during write: {e}"
+                    self.error = self.error or message
+                    self.logger.error(message)
+                    buffer.clear()
                 finally:
                     queue.task_done()
                     # await asyncio.sleep(FLOAT_EPSILON)
@@ -180,7 +183,9 @@ class SimulationReporter:
             try:
                 await reporter.write(cb_type, buffer)
             except Exception as e:
-                self.logger.error(f"[{rtype}/{cb_type}] Error during final flush: {e}")
+                message = f"[{rtype}/{cb_type}] Error during final flush: {e}"
+                self.error = self.error or message
+                self.logger.error(message)
         self.logger.trace(f"[{rtype}/{cb_type}] Writer loop terminated.")
 
     @property

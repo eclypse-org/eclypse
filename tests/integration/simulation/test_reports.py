@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 
+import numpy as np
 import pytest
 
+from eclypse.report.metrics import metric
 from eclypse.report.report import Report
 from eclypse.simulation._simulator.local import SimulationState
 from eclypse.simulation.config import SimulationConfig
@@ -50,6 +53,51 @@ def test_manual_simulation_runtime_generates_reports_and_config(
     assert "required_cpu" in service_rows["callback_id"].tolist()
     assert "step_number" in simulation_rows["callback_id"].tolist()
     assert report.application().iloc[0]["application_id"] == sample_application.id
+
+
+@pytest.mark.integration
+@pytest.mark.parametrize("chunk_size", [1, 100])
+@pytest.mark.parametrize("invalid", [False, True])
+def test_json_metric_shutdown_after_write_or_final_flush(
+    tmp_path,
+    sample_infrastructure,
+    sample_application,
+    static_strategy,
+    chunk_size,
+    invalid,
+):
+    @metric.service(name="value", report="json")
+    def value(*_args, **_kwargs):
+        return object() if invalid else np.float32(0.5)
+
+    simulation = Simulation(
+        sample_infrastructure,
+        SimulationConfig(
+            path=tmp_path / "run",
+            events=[value],
+            max_steps=5,
+            report_chunk_size=chunk_size,
+        ),
+    )
+    simulation.register(sample_application, static_strategy)
+    simulation.start()
+    try:
+        if invalid:
+            with pytest.raises(RuntimeError, match="Simulation report is incomplete"):
+                simulation.wait(timeout=5)
+            assert not simulation._finished_logged
+        else:
+            simulation.wait(timeout=5)
+            rows = (simulation.path / "json" / "service.jsonl").read_text().splitlines()
+            assert len(rows) == 5
+            assert all(
+                all(value == 0.5 for _, _, value in json.loads(row)["data"])
+                for row in rows
+            )
+        assert simulation.status is SimulationState.IDLE
+        assert simulation.simulator._finished.is_set()
+    finally:
+        simulation.simulator.thread.join(timeout=2)
 
 
 @pytest.mark.integration

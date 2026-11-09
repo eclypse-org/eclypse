@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
 
 from eclypse.report.reporter import Reporter
+from eclypse.report.reporters.json import JSONReporter
 from eclypse.simulation._simulator.reporter import SimulationReporter
 
 
@@ -155,6 +157,35 @@ async def test_simulation_reporter_handles_writer_failures_and_cancellation(
     assert any("write boom" in message for message in error_messages)
     assert any("flush boom" in message for message in error_messages)
     assert any("cancelled" in message for message in trace_messages)
+    assert "write boom" in reporter.error
+    assert "flush boom" not in reporter.error
+
+
+@pytest.mark.asyncio
+async def test_failed_batch_does_not_block_later_rows_or_other_reporters(tmp_path):
+    reporter = SimulationReporter(
+        tmp_path, {"json": JSONReporter, "recording": RecordingReporter}, chunk_size=1
+    )
+    await reporter.start(asyncio.get_running_loop())
+    queue = reporter._ensure_queue("json", "service")
+    await queue.put([{"value": object()}])
+    await asyncio.wait_for(queue.join(), timeout=2)
+    assert not reporter.writer_tasks["json"]["service"].done()
+
+    await queue.put([{"value": 0.5}])
+    other_queue = reporter._ensure_queue("recording", "service")
+    await other_queue.put([["healthy"]])
+    await asyncio.wait_for(reporter.stop(), timeout=2)
+
+    assert "[json/service] Error during write" in reporter.error
+    assert reporter.buffers["json"]["service"] == []
+    assert json.loads((tmp_path / "json" / "service.jsonl").read_text()) == {
+        "value": 0.5
+    }
+    recording = reporter.reporters["recording"]
+    assert recording.writes == [("service", [["healthy"]])]
+    assert recording.closed
+    assert reporter.reporters["json"]._files == {}
 
 
 def test_simulation_reporter_requires_started_loop_and_skips_duplicates(
