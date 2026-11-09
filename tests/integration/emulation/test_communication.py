@@ -5,12 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from ._helpers import run_remote_probe
-
 
 @pytest.mark.integration
 @pytest.mark.emulation
-def test_ray_route_cost_measures_what_is_transferred():
+def test_ray_route_cost_measures_what_is_transferred(remote_probe):
     repo_root = Path(__file__).resolve().parents[3]
     script = textwrap.dedent(
         """
@@ -36,7 +34,10 @@ def test_ray_route_cost_measures_what_is_transferred():
 
 
         ray.shutdown()
-        ray.init(address="local", include_dashboard=False, ignore_reinit_error=True)
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
         ray_backend._backend = ray
 
         def size(msg):
@@ -61,7 +62,7 @@ def test_ray_route_cost_measures_what_is_transferred():
         """
     )
 
-    result = run_remote_probe(repo_root, script)
+    result = remote_probe(repo_root, script)
 
     nbytes = 4_000_000
     for key in ("owned", "view", "nested_views", "dataclass"):
@@ -74,7 +75,7 @@ def test_ray_route_cost_measures_what_is_transferred():
 
 @pytest.mark.integration
 @pytest.mark.emulation
-def test_ray_mpi_delivery_does_not_depend_on_placement(tmp_path: Path):
+def test_ray_mpi_delivery_does_not_depend_on_placement(tmp_path: Path, remote_probe):
     repo_root = Path(__file__).resolve().parents[3]
     output_dir = tmp_path / "ray-delivery"
     script = textwrap.dedent(
@@ -152,7 +153,10 @@ def test_ray_mpi_delivery_does_not_depend_on_placement(tmp_path: Path):
         application.add_edge("sender", "remote", latency=10, bandwidth=1)
 
         ray.shutdown()
-        ray.init(address="local", include_dashboard=False, ignore_reinit_error=True)
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
         ray_backend._backend = ray
         ray_backend.init = lambda runtime_env: None
 
@@ -197,7 +201,7 @@ def test_ray_mpi_delivery_does_not_depend_on_placement(tmp_path: Path):
         """
     )
 
-    result = run_remote_probe(repo_root, script, timeout=25)
+    result = remote_probe(repo_root, script, timeout=25)
 
     expected = {"writeable": False, "first": 0.0}
     assert result == {"local": expected, "remote": expected}

@@ -5,12 +5,12 @@ from pathlib import Path
 
 import pytest
 
-from ._helpers import run_remote_probe
-
 
 @pytest.mark.integration
 @pytest.mark.emulation
-def test_ray_emulation_runtime_resolves_routes_and_neighbors(tmp_path: Path):
+def test_ray_emulation_runtime_resolves_routes_and_neighbors(
+    tmp_path: Path, remote_probe
+):
     repo_root = Path(__file__).resolve().parents[3]
     output_dir = tmp_path / "ray-routing"
     script = textwrap.dedent(
@@ -75,7 +75,10 @@ def test_ray_emulation_runtime_resolves_routes_and_neighbors(tmp_path: Path):
         application.flows = [["gateway", "worker"]]
 
         ray.shutdown()
-        ray.init(address="local", include_dashboard=False, ignore_reinit_error=True)
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
         ray_backend._backend = ray
         ray_backend.init = lambda runtime_env: None
 
@@ -114,7 +117,7 @@ def test_ray_emulation_runtime_resolves_routes_and_neighbors(tmp_path: Path):
         """
     )
 
-    result = run_remote_probe(repo_root, script)
+    result = remote_probe(repo_root, script)
 
     assert result["neighbors"] == ["worker"]
     assert result["route_sender_node"] == "edge-a"

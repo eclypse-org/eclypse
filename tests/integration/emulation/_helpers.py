@@ -7,11 +7,9 @@ import subprocess
 import sys
 from pathlib import Path
 from typing import Any
+from uuid import uuid4
 
 import pytest
-
-_RAY_PROBE_STATE: dict[str, str | None] = {"blocked_reason": None}
-
 
 _ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-?]*[ -/]*[@-~]")
 
@@ -51,15 +49,14 @@ def run_remote_probe(
     repo_root: Path,
     script: str,
     timeout: int = 25,
+    *,
+    address: str,
 ) -> dict[str, Any]:
-    blocked_reason = _RAY_PROBE_STATE["blocked_reason"]
-
-    if blocked_reason is not None:
-        pytest.skip(blocked_reason)
-
     env = os.environ.copy()
     env["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
     env["PYTHONPATH"] = str(repo_root)
+    env["ECLYPSE_TEST_RAY_ADDRESS"] = address
+    env["ECLYPSE_TEST_RAY_NAMESPACE"] = uuid4().hex
 
     try:
         completed = subprocess.run(
@@ -72,22 +69,9 @@ def run_remote_probe(
             timeout=timeout,
         )
     except subprocess.TimeoutExpired as exc:
-        _RAY_PROBE_STATE["blocked_reason"] = f"Ray integration probe timed out: {exc}"
-        pytest.skip(_RAY_PROBE_STATE["blocked_reason"])
+        pytest.fail(f"Ray integration probe timed out: {exc}")
 
     if completed.returncode != 0:
-        combined_output = f"{completed.stdout}\n{completed.stderr}"
-        blocked_markers = (
-            "PermissionError",
-            "Operation not permitted",
-            "Timed out waiting for file",
-            "gcs_server_port_",
-        )
-        if any(marker in combined_output for marker in blocked_markers):
-            _RAY_PROBE_STATE["blocked_reason"] = (
-                f"Ray integration probe is not permitted here:\n{combined_output}"
-            )
-            pytest.skip(_RAY_PROBE_STATE["blocked_reason"])
         pytest.fail(
             "Ray integration probe failed.\n"
             f"stdout:\n{completed.stdout}\n"

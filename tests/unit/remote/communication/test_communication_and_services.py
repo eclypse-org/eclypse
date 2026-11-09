@@ -379,6 +379,13 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 @pytest.mark.asyncio
 async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     monkeypatch.setattr(
+        "eclypse.remote.communication.interface.ray_backend._backend",
+        SimpleNamespace(put=lambda value: value),
+    )
+    monkeypatch.setattr(
+        "eclypse.remote.communication.interface.ray_backend.get_size", lambda _: 64
+    )
+    monkeypatch.setattr(
         "eclypse.remote.communication.interface.ray_backend.get_actor",
         lambda name: SimpleNamespace(name=name),
     )

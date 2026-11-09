@@ -5,8 +5,6 @@ from pathlib import Path
 
 import pytest
 
-from ._helpers import run_remote_probe
-
 
 def _build_benchmark_probe_script(
     output_dir: Path,
@@ -63,7 +61,10 @@ def _build_benchmark_probe_script(
 
 
         ray.shutdown()
-        ray.init(address="local", include_dashboard=False, ignore_reinit_error=True)
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
         ray_backend._backend = ray
         ray_backend.init = lambda runtime_env: None
 
@@ -232,6 +233,7 @@ def _assert_benchmark_result(benchmark_name: str, result: dict) -> None:
 )
 def test_ray_benchmark_entrypoints(
     tmp_path: Path,
+    remote_probe,
     benchmark_name: str,
     builder_name: str,
     communication_interface: str,
@@ -247,6 +249,6 @@ def test_ray_benchmark_entrypoints(
         entry_service=entry_service,
     )
 
-    result = run_remote_probe(repo_root, script, timeout=25)
+    result = remote_probe(repo_root, script, timeout=25)
 
     _assert_benchmark_result(benchmark_name, result)
