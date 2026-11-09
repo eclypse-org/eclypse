@@ -56,6 +56,36 @@ def test_manual_simulation_runtime_generates_reports_and_config(
 
 
 @pytest.mark.integration
+def test_local_service_metric_runs_once_per_service_and_step(
+    tmp_path, sample_infrastructure, sample_application, static_strategy
+):
+    calls = []
+
+    @metric.service(name="value", report="json")
+    def value(service_id, *_args, **_kwargs):
+        calls.append(service_id)
+        return 1.0
+
+    simulation = Simulation(
+        sample_infrastructure,
+        SimulationConfig(path=tmp_path / "run", events=[value], max_steps=5),
+    )
+    simulation.register(sample_application, static_strategy)
+    simulation.start()
+    simulation.wait(timeout=5)
+    simulation.simulator.thread.join(timeout=2)
+
+    assert simulation.status is SimulationState.IDLE
+    rows = (simulation.path / "json" / "service.jsonl").read_text().splitlines()
+    assert len(rows) == 5
+    assert calls == ["gateway", "worker"] * 5
+    assert all(
+        json.loads(row)["data"] == [["shop", "gateway", 1.0], ["shop", "worker", 1.0]]
+        for row in rows
+    )
+
+
+@pytest.mark.integration
 @pytest.mark.parametrize("chunk_size", [1, 100])
 @pytest.mark.parametrize("invalid", [False, True])
 def test_json_metric_shutdown_after_write_or_final_flush(
