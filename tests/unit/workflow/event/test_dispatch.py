@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from importlib import import_module
 from types import SimpleNamespace
+from unittest.mock import Mock
 
 import pytest
 
@@ -38,6 +39,58 @@ class DispatchEvent(EclypseEvent):
 
     def __call__(self, *args, **kwargs):
         return self.handler(*args, **kwargs)
+
+
+@pytest.mark.parametrize("flatten", [False, True])
+@pytest.mark.parametrize(
+    ("event_type", "nested", "rows"),
+    [
+        ("application", {"shop": {"value": 1}}, (("shop", "value", 1),)),
+        (
+            "service",
+            {"shop": {"gateway": {"value": 1}, "worker": {"value": 2}}},
+            (("shop", "gateway", "value", 1), ("shop", "worker", "value", 2)),
+        ),
+        (
+            "interaction",
+            {"shop": {("gateway", "worker"): {"value": 1}}},
+            (("shop", "gateway", "worker", "value", 1),),
+        ),
+        (
+            "node",
+            {"edge-a": {"value": 1}, "edge-b": {"value": 2}},
+            (("edge-a", "value", 1), ("edge-b", "value", 2)),
+        ),
+        (
+            "link",
+            {("edge-a", "edge-b"): {"value": 1}, ("edge-b", "edge-a"): {"value": 2}},
+            (("edge-a", "edge-b", "value", 1), ("edge-b", "edge-a", "value", 2)),
+        ),
+    ],
+)
+def test_local_callback_runs_once_per_entity(
+    mapped_placement, placement_view, event_type, nested, rows, flatten
+):
+    handler = Mock(side_effect=[{"value": index} for index in range(1, len(rows) + 1)])
+    event = DispatchEvent(
+        "counter",
+        handler,
+        event_type=event_type,
+        role=EventRole.METRIC if flatten else EventRole.EVENT,
+    )
+    event.attach_simulator(
+        SimpleNamespace(
+            placements={mapped_placement.application.id: mapped_placement},
+            infrastructure=mapped_placement.infrastructure,
+            placement_view=placement_view,
+        )
+    )
+    trigger = PayloadEvent("trigger")
+    trigger._data = {"offset": 7}
+
+    assert event._call_by_type(trigger) == (rows if flatten else nested)
+    assert handler.call_count == len(rows)
+    assert all(call.kwargs == {"offset": 7} for call in handler.call_args_list)
 
 
 def test_event_helper_functions_cover_service_interaction_node_and_link(

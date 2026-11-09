@@ -379,12 +379,11 @@ def _application_fn(
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    result = {
-        pl.application.id: fn(pl.application, pl, infr, **event_data)
-        for pl in placements.values()
-    }
     if not flatten:
-        return result
+        return {
+            pl.application.id: fn(pl.application, pl, infr, **event_data)
+            for pl in placements.values()
+        }
 
     return tuple(
         (pl.application.id, *flat_value)
@@ -400,15 +399,14 @@ def _service_fn(
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    result = {
-        pl.application.id: {
-            s: fn(s, req, pl, infr, **event_data)
-            for s, req in pl.application.nodes(data=True)
-        }
-        for pl in placements.values()
-    }
     if not flatten:
-        return result
+        return {
+            pl.application.id: {
+                s: fn(s, req, pl, infr, **event_data)
+                for s, req in pl.application.nodes(data=True)
+            }
+            for pl in placements.values()
+        }
 
     return tuple(
         (pl.application.id, service_id, *flat_value)
@@ -469,15 +467,14 @@ def _interaction_fn(
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    result = {
-        pl.application.id: {
-            (source, target): fn(source, target, req, pl, infr, **event_data)
-            for source, target, req in pl.application.edges(data=True)
-        }
-        for pl in placements.values()
-    }
     if not flatten:
-        return result
+        return {
+            pl.application.id: {
+                (source, target): fn(source, target, req, pl, infr, **event_data)
+                for source, target, req in pl.application.edges(data=True)
+            }
+            for pl in placements.values()
+        }
 
     return tuple(
         (pl.application.id, source, target, *flat_value)
@@ -503,12 +500,11 @@ def _node_fn(
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    result = {
-        node: fn(node, res, placements, infr, placement_view, **event_data)
-        for node, res in infr.nodes(data=True)
-    }
     if not flatten:
-        return result
+        return {
+            node: fn(node, res, placements, infr, placement_view, **event_data)
+            for node, res in infr.nodes(data=True)
+        }
 
     return tuple(
         (node, *flat_value)
@@ -527,14 +523,13 @@ def _link_fn(
     flatten: bool = False,
     **event_data,
 ) -> Any:
-    result = {
-        (source, target): fn(
-            source, target, res, placements, infr, placement_view, **event_data
-        )
-        for source, target, res in infr.edges(data=True)
-    }
     if not flatten:
-        return result
+        return {
+            (source, target): fn(
+                source, target, res, placements, infr, placement_view, **event_data
+            )
+            for source, target, res in infr.edges(data=True)
+        }
 
     return tuple(
         (source, target, *flat_value)
