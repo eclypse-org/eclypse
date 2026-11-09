@@ -157,7 +157,7 @@ html_theme_options = {
     "footer_center": ["sphinx-version"],
     "footer_end": ["theme-version"],
     "show_nav_level": 1,
-    "navigation_depth": 4,
+    "navigation_depth": 2,
     "icon_links": icon_links,
     "header_links_before_dropdown": 4,
     "logo": {
