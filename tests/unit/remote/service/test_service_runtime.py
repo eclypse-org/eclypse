@@ -20,11 +20,14 @@ from eclypse.remote.communication.request import (
     EclypseRequest,
     RouteNotFoundError,
 )
+from eclypse.remote.node.ops_thread import RemoteOpsThread
 from eclypse.remote.service.rest import RESTService
 from eclypse.remote.service.service import (
     Service,
     _start_loop,
 )
+from eclypse.simulation._simulator.ops_handler import RemoteSimOpsHandler
+from eclypse.simulation._simulator.remote import RemoteSimulator
 
 
 class ScriptedService(Service):
@@ -331,6 +334,7 @@ def test_start_loop_handles_forever_cancelled_and_error_paths(monkeypatch):
     assert normal_loop.run_task == "task"
     assert normal_loop.closed is True
     assert normal_comm.disconnected is True
+    assert normal_service._running is False
 
     forever_loop = FakeLoop()
     forever_service = SimpleNamespace(
@@ -342,6 +346,7 @@ def test_start_loop_handles_forever_cancelled_and_error_paths(monkeypatch):
     _start_loop(forever_service)
     assert forever_loop.forever is True
     assert forever_loop.closed is True
+    assert forever_service._running is False
 
     cancelled_loop = FakeLoop()
     cancelled_loop.runtime_error = asyncio.CancelledError()
@@ -387,6 +392,140 @@ def test_start_loop_handles_forever_cancelled_and_error_paths(monkeypatch):
 
     assert len(set_loops) == 6
     assert printed == [("boom", "svc"), ("bad", "svc")]
+    assert all(
+        service._running is False
+        for service in (
+            cancelled_service,
+            stopped_service,
+            runtime_service,
+            generic_service,
+        )
+    )
+
+
+@pytest.mark.parametrize("crash", [False, True])
+def test_completed_service_can_be_stopped_and_undeployed(
+    monkeypatch, dummy_logger, crash
+):
+    class FinishingService(ScriptedService):
+        async def run(self):
+            if crash:
+                await super().run()
+
+    monkeypatch.setattr("eclypse.remote.service.service.EclypseMPI", FakeComm)
+    service = FinishingService("worker", [RuntimeError("step failed"), None])
+    service._deploy(_make_node(dummy_logger))
+    loop = service.event_loop
+    service._start()
+    service._thread.join(timeout=2)
+
+    assert not service._thread.is_alive()
+    assert loop.is_closed()
+    assert not service.running
+    service._stop()
+    service._stop()
+    service._undeploy()
+    assert service.undeploy_calls == 1
+    assert not service.deployed
+
+
+@pytest.mark.parametrize("failure", ["disconnect", "close"])
+def test_start_loop_clears_running_if_teardown_fails(monkeypatch, failure):
+    class FailingComm(FakeComm):
+        def disconnect(self):
+            if failure == "disconnect":
+                raise RuntimeError("disconnect failed")
+            super().disconnect()
+
+    loop = asyncio.new_event_loop()
+    if failure == "close":
+        original_close = loop.close
+
+        def failing_close():
+            original_close()
+            raise RuntimeError("close failed")
+
+        monkeypatch.setattr(loop, "close", failing_close)
+    service = SimpleNamespace(
+        id="worker",
+        event_loop=loop,
+        _run_task=loop.create_task(asyncio.sleep(0)),
+        _comm=FailingComm(None),
+        _running=True,
+    )
+    try:
+        with pytest.raises(RuntimeError, match=f"{failure} failed"):
+            _start_loop(service)
+        assert loop.is_closed()
+        assert not service._running
+    finally:
+        asyncio.set_event_loop(None)
+
+
+@pytest.mark.parametrize("reset", [False, True])
+def test_crashed_service_does_not_block_placement_undeploy(
+    monkeypatch,
+    dummy_logger,
+    sample_infrastructure,
+    sample_application,
+    simulation_config,
+    reset,
+):
+    class Worker(ScriptedService):
+        async def step(self):
+            if self.id == "gateway":
+                raise RuntimeError("step failed")
+            await asyncio.sleep(0.01)
+
+    monkeypatch.setattr("eclypse.remote.service.service.EclypseMPI", FakeComm)
+    workers = [Worker(service_id, []) for service_id in ("gateway", "worker")]
+    for worker in workers:
+        sample_application.add_service(worker, cpu=1, ram=2, storage=2, gpu=0)
+    simulator = RemoteSimulator(sample_infrastructure, simulation_config, remotes=[])
+    simulator.register(sample_application)
+    placement = simulator.placements[sample_application.id]
+    placement.mapping = {"gateway": "edge-a", "worker": "edge-b"}
+    placement.mark_deployed()
+    node = _make_node(dummy_logger)
+    node.id = "edge"
+    node.services = {worker.id: worker for worker in workers}
+    ops = RemoteOpsThread(node, simulator._event_loop)
+    node.ops_entrypoint = SimpleNamespace(
+        remote=lambda operation, **kwargs: getattr(ops, operation)(**kwargs)
+    )
+    monkeypatch.setattr(
+        RemoteSimOpsHandler,
+        "_get_remotes",
+        lambda _: [(node, worker) for worker in workers],
+    )
+    monkeypatch.setattr(
+        "eclypse.simulation._simulator.ops_handler.ray_backend.get", lambda value: value
+    )
+    threads = []
+    try:
+        for worker in workers:
+            worker._deploy(node)
+            worker._start()
+            threads.append(worker._thread)
+        threads[0].join(timeout=2)
+        assert not threads[0].is_alive()
+        assert workers[1].running
+        if reset:
+            placement.mark_for_reset()
+            simulator.enact()
+        else:
+            simulator.cleanup()
+        assert not placement.deployed
+        assert node.services == {}
+        assert all(worker.undeploy_calls == 1 for worker in workers)
+        assert all(not worker.running and not worker.deployed for worker in workers)
+    finally:
+        for worker in workers:
+            if worker.deployed:
+                worker._stop()
+        for thread in threads:
+            thread.join(timeout=2)
+        simulator._event_loop.close()
 
 
 def test_request_wrappers_and_properties(monkeypatch):
