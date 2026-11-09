@@ -15,6 +15,23 @@ from eclypse.utils.constants import (
 )
 
 
+def test_wait_reports_write_failure_only_after_shutdown(
+    simulation_config, sample_infrastructure
+):
+    simulator = Simulator(sample_infrastructure, simulation_config)
+    simulator._reporter.error = "[json/service] Error during write: write boom"
+    simulator._finished.clear()
+    try:
+        simulator.wait(timeout=0)
+        simulator._finished.set()
+        with pytest.raises(
+            RuntimeError, match=r"Simulation report is incomplete.*write boom"
+        ):
+            simulator.wait(timeout=0)
+    finally:
+        simulator._event_loop.close()
+
+
 @pytest.mark.asyncio
 async def test_local_simulator_fire_and_finalize(
     simulation_config, sample_infrastructure

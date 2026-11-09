@@ -154,7 +154,12 @@ class Simulation:
             self.wait()
 
     def wait(self, timeout: float | None = None):
-        """Wait for the simulation to finish, with graceful Ctrl+C handling."""
+        """Wait for the simulation to finish, with graceful Ctrl+C handling.
+
+        Raises:
+            RuntimeError: Reporting failed and the completed report is incomplete.
+                Remote simulations surface this error through Ray.
+        """
         interrupted = False
         while True:
             try:
