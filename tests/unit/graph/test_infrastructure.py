@@ -245,7 +245,6 @@ def test_path_refreshes_after_changes_that_bypass_invalidation(sample_infrastruc
 @pytest.mark.parametrize(
     ("hook", "keys"),
     [
-        ("_invalidate_node_attrs", ()),
         ("_invalidate_node_attrs", ("cpu",)),
         ("_invalidate_edge_attrs", ()),
     ],

@@ -19,14 +19,11 @@ from eclypse.io.context import (
     IOContext,
 )
 from eclypse.io.functions import (
+    dump_graph,
     dump_infrastructure,
     load_infrastructure,
 )
-from eclypse.io.graphs import (
-    _create_graph,
-    _dump_extras,
-    _strict,
-)
+from eclypse.io.graphs import _strict
 
 
 def test_graph_kind_resolves_supported_graphs():
@@ -68,14 +65,12 @@ def test_public_functions_report_inference_errors(
 
     with pytest.raises(ValueError):
         load_infrastructure(tmp_path / "infra.unknown")
+    with pytest.raises(TypeError, match="Unsupported graph type"):
+        dump_graph(AssetGraph("plain"), tmp_path / "plain.json")
 
 
-def test_canonical_helpers_validate_types_and_default_to_strict():
+def test_canonical_helpers_default_to_strict():
     assert _strict(IOContext()) is True
-    with pytest.raises(ValueError, match="Unsupported graph kind"):
-        _create_graph({"kind": "unknown"}, IOContext())
-    with pytest.raises(ValueError, match="Unsupported graph type"):
-        _dump_extras(AssetGraph("plain"), IOContext())
 
 
 def test_infrastructure_export_resolves_registered_aggregators(

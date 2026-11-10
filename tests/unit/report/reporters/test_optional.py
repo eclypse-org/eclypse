@@ -15,7 +15,6 @@ from eclypse.report.reporters import (
     TensorBoardReporter,
     get_default_reporters,
 )
-from eclypse.report.reporters.parquet import _write_parquet
 from eclypse.utils.defaults import (
     PARQUET_REPORT_DIR,
     TENSORBOARD_REPORT_DIR,
@@ -59,35 +58,10 @@ async def test_parquet_and_tensorboard_reporters_cover_runtime_paths(
     first_part = tmp_path / PARQUET_REPORT_DIR / "service" / "part-000000.parquet"
     second_part = tmp_path / PARQUET_REPORT_DIR / "service" / "part-000001.parquet"
 
-    assert first_part.exists()
-    assert second_part.exists()
-
-    direct_part = tmp_path / "direct.parquet"
-    _write_parquet(
-        pl,
-        [
-            {
-                "timestamp": "2026-01-01T00:00:00",
-                "event_id": "step",
-                "n_event": 1,
-                "callback_id": "metric",
-                "application_id": "shop",
-                "service_id": "gateway",
-                "value": 1.0,
-            }
-        ],
-        [
-            "timestamp",
-            "event_id",
-            "n_event",
-            "callback_id",
-            "application_id",
-            "service_id",
-            "value",
-        ],
-        direct_part,
-    )
-    assert direct_part.exists()
+    for part in (first_part, second_part):
+        frame = pl.read_parquet(part)
+        assert frame.columns == list(rows[0])
+        assert frame.to_dicts() == rows
 
     calls: list[tuple[str, dict[str, float], int]] = []
 
