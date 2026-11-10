@@ -30,6 +30,9 @@ async def test_parquet_and_tensorboard_reporters_cover_runtime_paths(
     tmp_path: Path, monkeypatch
 ):
     parquet_reporter = ParquetReporter(tmp_path)
+    await parquet_reporter.write("service", [])
+    assert parquet_reporter._partitions == {}
+    assert not parquet_reporter.report_path.exists()
 
     with pytest.raises(RuntimeError, match="not initialised"):
         await parquet_reporter.write("service", [{"value": 1}])
@@ -127,6 +130,9 @@ async def test_parquet_and_tensorboard_reporters_cover_runtime_paths(
     )
 
     assert list(tensorboard_reporter.report("step", 1, empty_callback)) == []
+    assert list(parquet_reporter.report("step", 1, empty_callback)) == []
+    empty_callback.type = "service"
+    assert list(tensorboard_reporter.report("step", 1, empty_callback)) == []
 
     metric_rows = list(tensorboard_reporter.report("step", 4, metric_callback))
     await tensorboard_reporter.write("service", metric_rows)
@@ -134,7 +140,10 @@ async def test_parquet_and_tensorboard_reporters_cover_runtime_paths(
     assert tensorboard_reporter.writer.log_dir == tmp_path / TENSORBOARD_REPORT_DIR
     assert calls == [("service/latency", {"shop/gateway": 2.5}, 4)]
 
+    writer = tensorboard_reporter.writer
     await tensorboard_reporter.close()
+    await tensorboard_reporter.close()
+    assert writer.closed
     with pytest.raises(RuntimeError, match="not initialised"):
         tensorboard_reporter.writer
 

@@ -18,6 +18,7 @@ def test_ray_options_factory_and_remote_creation(sample_infrastructure):
         "detached": True,
         "namespace": "eclypse",
     }
+    assert RayOptionsFactory()("worker") == {"name": "worker"}
 
 
 def test_create_remote_bootstrap_build_and_default_classes(

@@ -63,6 +63,7 @@ def test_first_and_best_fit_strategies_choose_feasible_nodes(
         )
         == {}
     )
+    assert best_fit.place(sample_infrastructure, sample_application, {}, view) == {}
 
 
 def test_random_round_robin_and_static_strategies(
@@ -91,6 +92,9 @@ def test_random_round_robin_and_static_strategies(
         {},
         view,
     )
+    assert RoundRobinStrategy().place(
+        sample_infrastructure, sample_application, {}, view
+    ) == {"gateway": "edge-a", "worker": "edge-b"}
     static_mapping = StaticStrategy({"gateway": "edge-a", "worker": "edge-b"}).place(
         sample_infrastructure,
         sample_application,
@@ -137,3 +141,15 @@ def test_static_strategy_validation_and_base_strategy_feasibility(
 
     with pytest.raises(ValueError, match="valid mapping"):
         StaticStrategy({})
+
+
+def test_first_fit_skips_exhausted_nodes_and_returns_partial_mapping(
+    sample_infrastructure, sample_application
+):
+    view = PlacementView(sample_infrastructure)
+    view.residual.nodes["edge-a"]["cpu"] = 0
+    view.residual.nodes["edge-b"]["cpu"] = 1
+    mapping = FirstFitStrategy(sort_fn=lambda item: item[0]).place(
+        sample_infrastructure, sample_application, {}, view
+    )
+    assert mapping == {"gateway": "edge-b"}

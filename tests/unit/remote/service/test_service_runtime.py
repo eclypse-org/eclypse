@@ -164,6 +164,9 @@ def test_service_guard_properties_and_basic_accessors(dummy_logger):
         assert service.step_count == 0
         assert service.logger is dummy_logger
         assert service.mpi.name == "mpi"
+        with pytest.raises(RuntimeError, match="not rest"):
+            service.rest
+        assert Service.on_undeploy(service) is None
     finally:
         service.event_loop.close()
 
@@ -173,6 +176,8 @@ def test_service_guard_properties_and_basic_accessors(dummy_logger):
     assert rest_service.rest.name == "rest"
     with pytest.raises(RuntimeError, match="not mpi"):
         rest_service.mpi
+    with pytest.raises(RuntimeError, match="not mpi"):
+        Service.mpi.fget(rest_service)
     assert asyncio.run(rest_service.step()) is None
     rest_service.detach_node()
 
@@ -307,6 +312,7 @@ def test_rest_service_specific_lifecycle(monkeypatch, dummy_logger):
     assert service.running is False
     assert fake_loop.stopped is True
     assert fake_thread.joined is True
+    service._stop()
 
 
 def test_start_loop_handles_forever_cancelled_and_error_paths(monkeypatch):

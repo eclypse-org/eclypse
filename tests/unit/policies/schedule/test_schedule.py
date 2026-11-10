@@ -107,3 +107,28 @@ def test_additional_schedule_wrappers_control_policy_timing():
             wrapper(graph)
 
     assert graph.nodes["a"]["cpu"] == 14
+
+
+@pytest.mark.parametrize(("offset", "expected"), [(-2, [0, 1, 2, 3, 4]), (2, [0, 3])])
+def test_jittered_schedule_clamps_intervals_and_respects_positive_jitter(
+    monkeypatch, offset, expected
+):
+    graph = AssetGraph("jittered")
+    calls = []
+
+    def sample(low, high):
+        assert (low, high) == (-2, 2)
+        return offset
+
+    monkeypatch.setattr(graph.rnd, "randint", sample)
+    policy = policies.jittered_every(1, lambda _: calls.append(step), jitter=2)
+    for step in range(5):
+        assert policy.step == step
+        policy(graph)
+    assert calls == expected
+
+
+def test_probability_zero_never_calls_policy():
+    calls = []
+    policies.with_probability(0, lambda _: calls.append(True))(AssetGraph("skip"))
+    assert calls == []

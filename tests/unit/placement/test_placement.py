@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import pytest
+
 from eclypse.placement import Placement
+from eclypse.placement.view import PlacementView
 
 
 def test_placement_maps_services_nodes_links_and_flags(
@@ -12,6 +15,9 @@ def test_placement_maps_services_nodes_links_and_flags(
 
     assert placement.reset_requested is False
     assert placement.deployed is False
+
+    with pytest.raises(ValueError, match="No placement strategy"):
+        placement._generate_mapping({}, PlacementView(sample_infrastructure))
 
     placement.mark_for_reset()
     placement.mark_deployed()
@@ -39,3 +45,23 @@ def test_placement_maps_services_nodes_links_and_flags(
 
     assert placement.reset_requested is False
     assert placement.deployed is False
+
+
+@pytest.mark.parametrize("node", ["edge-a", "edge-b"])
+def test_colocated_interactions_do_not_consume_links(mapped_placement, node):
+    mapped_placement.mapping = {"gateway": node, "worker": node}
+    assert mapped_placement.interactions_on_link("edge-a", "edge-b") == []
+    assert (
+        mapped_placement._path_crosses_link([("other", "link", {})], "edge-a", "edge-b")
+        is False
+    )
+
+
+def test_interactions_skip_unused_direct_link_and_reuse_route_cache(mapped_placement):
+    infrastructure = mapped_placement.infrastructure
+    infrastructure.add_node("relay", availability=1)
+    infrastructure.add_edge("edge-a", "relay", latency=1, bandwidth=10)
+    infrastructure.add_edge("relay", "edge-b", latency=1, bandwidth=10)
+    mapped_placement.application.add_edge("worker", "gateway", latency=6, bandwidth=4)
+
+    assert mapped_placement.interactions_on_link("edge-a", "edge-b") == []

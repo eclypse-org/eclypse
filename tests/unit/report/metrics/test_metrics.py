@@ -74,6 +74,9 @@ def test_default_metrics_compute_expected_values(mapped_placement, placement_vie
         == 10
     )
 
+    mapped_placement.mapping.clear()
+    assert response_time(app, mapped_placement, infr) == float("inf")
+
 
 def test_simulation_metric_helpers_and_default_metric_list(
     monkeypatch,

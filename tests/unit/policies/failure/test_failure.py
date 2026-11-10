@@ -163,3 +163,15 @@ def test_resource_exhaustion_basis_initial_probability_skip_keeps_current_value(
     graph.nodes["a"]["cpu"] = 200
     policy(graph)
     assert graph.nodes["a"]["cpu"] == 200
+
+
+def test_failure_and_revival_skip_when_probability_is_zero_or_nodes_are_alive():
+    graph = build_graph()
+    graph.nodes["a"]["zone"] = "z1"
+    policies.failure.correlated_failure(0, group_key="zone")(graph)
+    policies.failure.kill_nodes(0, revive_probability=1)(graph)
+    policies.failure.revive_nodes(1)(graph)
+    assert all(data["availability"] == 1 for _, data in graph.nodes.data())
+    graph.nodes["a"]["availability"] = 0
+    policies.failure.revive_nodes(0)(graph)
+    assert graph.nodes["a"]["availability"] == 0

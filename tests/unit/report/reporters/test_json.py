@@ -23,6 +23,8 @@ def test_json_normalisers_support_nested_payloads_and_non_scalar_keys():
     assert sorted(normalized["[1,2]"]["values"]) == [1, 3]
     assert _normalize_key_for_json(None) is None
     assert _SafeJSONEncoder().default(timestamp) == "2026-01-01T00:00:00"
+    assert sorted(json.loads(json.dumps({1, 3}, cls=_SafeJSONEncoder))) == [1, 3]
+    assert _normalize_for_json([timestamp, (1, 2)]) == ["2026-01-01T00:00:00", [1, 2]]
 
 
 def test_json_encoder_supports_numpy_values_and_keys():

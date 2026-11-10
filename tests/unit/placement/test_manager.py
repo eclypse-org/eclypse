@@ -79,6 +79,8 @@ def test_manager_audit_marks_violating_apps_and_get_raises(
     manager.audit()
 
     assert placement.reset_requested is True
+    manager.audit()
+    assert placement.reset_requested is True
 
     with pytest.raises(KeyError, match="Application missing not found"):
         manager.get("missing")

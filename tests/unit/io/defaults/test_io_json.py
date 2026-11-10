@@ -22,6 +22,7 @@ from eclypse.io import (
     load_infrastructure,
 )
 from eclypse.io.defaults.json import JSONImporter
+from eclypse.remote.service import RESTService
 
 if TYPE_CHECKING:
     from eclypse.graph import (
@@ -63,7 +64,9 @@ def test_json_application_round_trip_graph_only_and_services(
     demo_service_cls,
 ):
     path = tmp_path / "app.json"
-    context = ApplicationContext(services={"demo": demo_service_cls})
+    context = ApplicationContext(
+        services={"rest": RESTService, "demo": demo_service_cls}
+    )
 
     dump_application(sample_application_with_service, path, application_context=context)
     loaded = load_application(path, application_context=context)
