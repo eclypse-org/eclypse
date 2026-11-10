@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import importlib.util
+import textwrap
+from pathlib import Path
 from types import SimpleNamespace
 from typing import (
     TYPE_CHECKING,
@@ -9,7 +11,6 @@ from typing import (
 
 import pytest
 
-from eclypse.remote.utils.ray_interface import RayInterface
 from eclypse.report.reporters import (
     ParquetReporter,
     TensorBoardReporter,
@@ -17,8 +18,6 @@ from eclypse.report.reporters import (
 from eclypse.utils.defaults import PARQUET_REPORT_DIR
 
 if TYPE_CHECKING:
-    from pathlib import Path
-
     from eclypse.workflow.event.event import EclypseEvent
 
 
@@ -74,21 +73,27 @@ async def test_optional_reporters_initialise_with_real_dependencies(tmp_path: Pa
 
 
 @pytest.mark.optional
-def test_ray_interface_smoke_round_trip():
-    _require_installed("ray")
+@pytest.mark.emulation
+def test_ray_interface_smoke_round_trip(remote_probe):
+    script = textwrap.dedent(
+        """
+        import json
+        import os
 
-    interface = RayInterface()
-    interface._backend = None
-    backend = interface.backend
+        from eclypse.remote.utils.ray_interface import RayInterface
 
-    try:
-        backend.shutdown()
-        backend.init(address="local", include_dashboard=False, ignore_reinit_error=True)
-    except Exception as exc:  # pragma: no cover - environment-dependent skip path
-        pytest.skip(f"Ray local runtime is not available here: {exc}")
+        interface = RayInterface()
+        backend = interface.backend
+        backend.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
+        try:
+            reference = interface.put({"value": 3})
+            print(json.dumps(interface.get(reference)))
+        finally:
+            backend.shutdown()
+        """
+    )
 
-    try:
-        reference = interface.put({"value": 3})
-        assert interface.get(reference) == {"value": 3}
-    finally:
-        backend.shutdown()
+    assert remote_probe(Path(__file__).resolve().parents[2], script) == {"value": 3}

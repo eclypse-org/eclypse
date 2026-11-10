@@ -5,7 +5,7 @@ from types import SimpleNamespace
 from eclypse.remote.utils.ray_interface import RayInterface
 
 
-def test_ray_interface_delegates_to_backend():
+def test_ray_interface_delegates_to_backend(monkeypatch):
     calls: list[tuple[str, object]] = []
     backend = SimpleNamespace(
         init=lambda runtime_env: calls.append(("init", runtime_env)),
@@ -20,7 +20,14 @@ def test_ray_interface_delegates_to_backend():
         ),
     )
     interface = RayInterface()
-    interface._backend = backend
+    imports = []
+    monkeypatch.setattr(
+        "eclypse.remote.utils.ray_interface.import_module",
+        lambda name: imports.append(name) or backend,
+    )
+    assert interface.backend is backend
+    assert interface.backend is backend
+    assert imports == ["ray"]
 
     interface.init({"env_vars": {"X": "1"}})
     assert interface.get("value") == "value"

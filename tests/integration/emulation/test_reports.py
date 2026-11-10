@@ -5,12 +5,10 @@ from pathlib import Path
 
 import pytest
 
-from ._helpers import run_remote_probe
-
 
 @pytest.mark.integration
 @pytest.mark.emulation
-def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
+def test_ray_emulation_runtime_generates_reports(tmp_path: Path, remote_probe):
     repo_root = Path(__file__).resolve().parents[3]
     output_dir = tmp_path / "ray-simulation"
     script = textwrap.dedent(f"""
@@ -78,7 +76,10 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
         application.flows = [["gateway", "worker"]]
 
         ray.shutdown()
-        ray.init(address="local", include_dashboard=False, ignore_reinit_error=True)
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
         ray_backend._backend = ray
         ray_backend.init = lambda runtime_env: None
 
@@ -115,7 +116,7 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path):
         ray.shutdown()
         """)
 
-    result = run_remote_probe(repo_root, script)
+    result = remote_probe(repo_root, script)
 
     assert result["path_exists"] is True
     assert result["csv_service_exists"] is True

@@ -19,12 +19,16 @@ def test_compose_family_combines_policies():
     assert graph.nodes["a"]["cpu"] == 81
     assert graph.nodes["a"]["ram"] == 33
 
+    graph.nodes["a"]["cpu"] = 0
     policies.compose.conditional(lambda _: True, add_cpu)(graph)
     assert graph.nodes["a"]["cpu"] == 81
+    graph.nodes["a"]["ram"] = 0
     policies.compose.conditional(lambda _: False, add_ram)(graph)
-    assert graph.nodes["a"]["ram"] == 33
+    assert graph.nodes["a"]["ram"] == 0
 
+    graph.nodes["a"]["cpu"] = 0
     policies.compose.one_of(add_cpu)(graph)
+    assert graph.nodes["a"]["cpu"] == 81
     policies.compose.weighted_choice([add_ram], [1.0])(graph)
     assert graph.nodes["a"]["ram"] == 33
 
