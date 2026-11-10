@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve ECLYPSE
-title: "[BUG] <Short depscription>"
+title: "<Replace with a short, descriptive summary of the bug>"
 labels: bug
 assignees: ''
 
@@ -11,13 +11,12 @@ assignees: ''
 A clear and concise description of what the bug is.
 
 ## Environment
-- OS: Ubuntu/MacOS
-- Python version:  3.10/3.11/3.12
+- OS and version:
+- Python version:
 - ECLYPSE version:
-- ECLYPSE-core version:
 
 ## To Reproduce
-**Numbered** steps to reproduce the behaviour.
+Numbered steps and a minimal runnable example to reproduce the behaviour. Include the full traceback or relevant logs.
 
 ## Expected behaviour
 A clear and concise description of what you expected to happen.

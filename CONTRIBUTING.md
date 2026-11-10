@@ -1,17 +1,15 @@
 # Contributing Guidelines
 
-We're glad you're considering contributing to ECLYPSE. Before you proceed, please take a moment to review the guidelines below to ensure a smooth contribution process.
+Contributions, bug reports, and feature requests are welcome.
 
-## Table of Contents
+## Reporting bugs and requesting features
 
-- [Dev Containers](#dev-containers)
-- [Setup](#setup)
-- [Pull Requests](#pull-requests)
-- [Conventional Commits](#conventional-commits)
-- [Testing](#testing)
-- [Documentation](#documentation)
-- [Pre-commit Hooks](#pre-commit-hooks)
-- [Releasing](#releasing)
+Check [existing issues](https://github.com/eclypse-org/eclypse/issues) before opening a new one. Use the appropriate template:
+
+- [Report a bug](https://github.com/eclypse-org/eclypse/issues/new?template=bug-report.md) ([template source](.github/ISSUE_TEMPLATE/bug-report.md)): include your environment, ECLYPSE version, a minimal reproducer, expected behaviour, and error output.
+- [Request a feature](https://github.com/eclypse-org/eclypse/issues/new?template=feature-request.md) ([template source](.github/ISSUE_TEMPLATE/feature-request.md)): describe the problem, proposed behaviour, and alternatives considered.
+
+For substantial changes, discuss the approach in an issue before implementing it.
 
 ## Dev Containers
 
@@ -24,48 +22,24 @@ setup for a reproducible contributor environment.
 
 ## Setup
 
-The project is managed with [uv](https://docs.astral.sh/uv/). Install it, then run from the repository root:
+The project requires **Python `>=3.11,<3.15`** and uses [uv](https://docs.astral.sh/uv/). Fork and clone the repository, then run from the checkout:
 
 ```bash
+cd eclypse
 make setup
+uv run pre-commit install
 ```
 
-This installs the package and all the development, test and docs dependencies in `.venv`, at the versions pinned in `uv.lock`.
+`make setup` installs the package and all development, test, and documentation dependencies in `.venv`, using `uv.lock`. Installing pre-commit enables the configured `pre-commit`, `commit-msg`, and `pre-push` hooks. The Dev Container setup runs both commands automatically.
 
 ## Pull Requests
 
-To contribute to this project, follow these steps:
+1. Create a branch for your change.
+2. Make the change and add or update tests for changed behaviour. Update documentation and examples when public behaviour changes.
+3. Run the relevant tests and `make check`; run `make docs` when changing documentation or public API docstrings.
+4. Commit your changes, push your branch, and open a pull request against `main`.
 
-1. **Fork the repository:** Click the "Fork" button on the top right corner of this page. This will create a copy of the repository in your GitHub account.
-
-2. **Clone the repository:** Clone your forked repository to your local machine. Replace `<your-username>` with your GitHub username.
-
-    ```bash
-    git clone https://github.com/<your-username>/eclypse.git
-    ```
-
-3. **Create a new branch:** Create a new branch for your changes. Use a descriptive name that reflects the nature of your work.
-
-    ```bash
-    git checkout -b feat/my-feature
-    ```
-
-4. **Make your changes:** Implement your changes and ensure they adhere to the guidelines outlined below.
-
-5. **Commit your changes:** Commit your changes following the [conventional commits format](https://www.conventionalcommits.org/en/v1.0.0/).
-
-    ```bash
-    git add .
-    git commit -m "feat: New feature short description"
-    ```
-
-6. **Push your changes:** Push your changes to your forked repository.
-
-    ```bash
-    git push origin feat/my-feature
-    ```
-
-7. **Submit a pull request:** Go to the GitHub page of your forked repository. You should see a "Compare & pull request" button. Click on it to open a pull request. Fill in the necessary information and submit the pull request.
+Explain the problem, resulting behaviour, and checks performed in the pull request. Link related issues, using `Closes #123` when the change resolves one.
 
 ## Conventional Commits
 
@@ -75,10 +49,16 @@ We enforce the usage of conventional commits in this repository. Please ensure t
 
 We use `pytest` for the test suite.
 
-Useful command:
+Run the full suite:
 
 ```bash
 uv run pytest
+```
+
+For a focused check, pass a test path, for example:
+
+```bash
+uv run pytest tests/unit/simulation/test_config.py
 ```
 
 ## Documentation
@@ -97,33 +77,21 @@ uv run --group docs make -C docs coverage
 
 ## Pre-commit Hooks
 
-Formatting and linting run as pre-commit hooks, the same ones pre-commit.ci runs on every pull request:
+The configured pre-commit hooks check formatting, linting, types, and basic file hygiene:
 
 - [Ruff](https://github.com/astral-sh/ruff): linting (rules in the `[tool.ruff]` section of `pyproject.toml`) and formatting.
-- [isort](https://github.com/PyCQA/isort): import sorting (*Ruff could also handle this, but we use some standards that are not already ported to Ruff*).
+- [isort](https://github.com/PyCQA/isort): import sorting.
 - [mypy](https://mypy-lang.org/): type checking of the `eclypse` package.
 
-Follow the steps below to install and run them:
+After installing the hooks during setup, run all file checks with:
 
-1. **Install the hooks** (pre-commit is installed by `make setup`):
+```bash
+make check
+```
 
-    ```bash
-    uv run pre-commit install
-    ```
+Some hooks modify files automatically. Review those changes and rerun the checks. Commit-message checks run at commit time, and the branch commit check runs before pushing.
 
-    This also installs the hooks that check commit messages and, before pushing, the commits on your branch.
-
-2. **Run pre-commit checks manually (optional):**
-
-    ```bash
-    make check
-    ```
-
-This will execute all pre-commit hooks (formatting and linting) across your repository. Any issues found will be reported, and you'll need to address them before committing your changes.
-
-By following these steps, you ensure that your contributions maintain consistency and quality across the codebase. If you encounter any issues or have questions about the setup, feel free to reach out for assistance.
-
-## Releasing
+## Releasing (maintainers only)
 
 Releases are made by maintainers, who can push to `main` and create tags.
 

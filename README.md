@@ -10,27 +10,125 @@
 [![codecov](https://codecov.io/github/eclypse-org/eclypse/graph/badge.svg?token=cxoy6qx1tF)](https://codecov.io/github/eclypse-org/eclypse)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/eclypse-org/eclypse/main.svg)](https://results.pre-commit.ci/latest/github/eclypse-org/eclypse/main)
 
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
-[![Checked with mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
-[![Import sorted with isort](https://img.shields.io/badge/isort-checked-brightgreen)](https://pycqa.github.io/isort/)
+**ECLYPSE** (**E**dge-**CL**oud p**Y**thon **P**latform for **S**imulated runtime **E**nvironments) is a Python framework for experimenting with deployment strategies in the cloud–edge continuum. Model service-based applications and infrastructures, decide where services run, and study how deployments behave as resources and conditions change.
 
-**ECLYPSE** (**E**dge-**CL**oud p**Y**thon **P**latform for **S**imulated runtime **E**nvironments) is the first simulation library entirely written in Python, for experimenting with deployment strategies in varying infrastructure conditions. It provides an interface to simulate deployments of service-based applications onto life-like infrastructures, without and with an actual application implementation to be deployed.
+ECLYPSE is designed for researchers and developers evaluating placement strategies and distributed application scenarios.
+
+## Key features
+
+- **Build scenarios:** represent infrastructures and applications as resource-aware graphs, starting from [built-in builders](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/builders.html) or custom topologies.
+- **Control placement:** use built-in or custom [placement strategies](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/placement-strategy.html) to map services onto infrastructure nodes.
+- **Model change:** define [update policies](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/update-policy.html) and [events](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/events.html) for evolving resources, failures, workloads, and topology.
+- **Inspect results:** collect built-in or custom metrics and query [reports](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/inspect-results.html) as dataframes.
+- **Run implemented services:** move from abstract scenarios to [remote emulation](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/remote-emulation.html).
+
+## Simulation and emulation
+
+**Local simulation** models services as application graph nodes, without requiring service implementations. Use it to study placement, resource evolution, and deployment behaviour.
+
+**Remote emulation** executes implemented services through Ray, with MPI-style message passing or REST-style communication. It requires Ray, remote-capable services, and remote execution configuration. See the [emulation guide](https://eclypse.readthedocs.io/en/latest/source/overview/advanced/emulation/index.html) for setup and communication details.
 
 ## Installation
 
-To install ECLYPSE and all its dependencies, you can run the following commands:
+ECLYPSE is available on [PyPI](https://pypi.org/project/eclypse/) and requires **Python `>=3.11,<3.15`**. Install it with pip:
 
 ```bash
-
 pip install eclypse
-
 ```
 
-**N.B.** We **strongly** suggest the installation of ECLYPSE in a virtual environment.
+Or add it to a uv project:
+
+```bash
+uv add eclypse
+```
+
+See the [installation guide](https://eclypse.readthedocs.io/en/latest/source/overview/install.html) for environment setup. The quickstart uses only the base package; remote emulation and other optional features may need additional dependencies.
+
+## Quickstart
+
+Save this as `quickstart.py`. It builds a 20-node infrastructure and a Sock Shop application, runs 20 simulation steps with random placement and a built-in CPU degradation policy, then reads the collected metrics.
+
+```python
+from pathlib import Path
+
+from eclypse import policies
+from eclypse.builders.application import get_sock_shop
+from eclypse.builders.infrastructure import get_hierarchical
+from eclypse.placement.strategies import RandomStrategy
+from eclypse.simulation import Simulation, SimulationConfig
+
+seed = 22
+infrastructure = get_hierarchical(
+    n=20,
+    include_default_assets=True,
+    update_policies=policies.degrade.reduce(
+        factor=0.95,
+        epochs=20,
+        node_assets=["cpu"],
+    ),
+    seed=seed,
+)
+application = get_sock_shop(include_default_assets=True, seed=seed)
+
+config = SimulationConfig(
+    seed=seed,
+    max_steps=20,
+    include_default_metrics=True,
+    default_strategy=RandomStrategy(seed=seed),
+    path=Path.home() / "quickstart-results",
+)
+
+simulation = Simulation(infrastructure, simulation_config=config)
+simulation.register(application)
+simulation.run()
+
+application_frame = simulation.report.application()
+service_frame = simulation.report.service()
+print("Application report empty:", application_frame.empty)
+print("Service report empty:", service_frame.empty)
+print(application_frame.head())
+```
+
+The built-in `policies.degrade.reduce` policy gradually reduces node CPU values by 5% over 20 evolution steps. This models infrastructure degradation without writing a custom policy.
+
+Run it:
+
+```bash
+python quickstart.py
+```
+
+After the runtime logs, the first two lines confirm that metrics were collected:
+
+```text
+Application report empty: False
+Service report empty: False
+```
+
+The application dataframe preview follows. `RandomStrategy` is a baseline, not a guarantee of feasible placement: this scenario can log `Path not found` and `Resetting placement` warnings. Non-empty reports confirm metric collection, not successful deployment; inspect the metric values when comparing strategies. Reports are written under `~/quickstart-results` in your home directory; if that directory already exists, ECLYPSE chooses a timestamped path instead. The default report backend returns pandas dataframes.
+
+To adapt this experiment, replace `RandomStrategy` with your placement strategy, change the infrastructure builder, or add update policies. Continue with [running a local simulation](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/minimal-local-run.html) and [inspecting results](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/inspect-results.html).
+
+## Examples
+
+Follow these examples in order, or choose the scenario closest to your experiment:
+
+- [Off-the-shelf](https://eclypse.readthedocs.io/en/latest/source/overview/examples/off_the_shelf.html): compose a local simulation from built-in builders, policies, and placement logic.
+- [User distribution](https://eclypse.readthedocs.io/en/latest/source/overview/examples/user_distribution.html): add a custom metric and update policy driven by changing user distributions.
+- [Grid analysis](https://eclypse.readthedocs.io/en/latest/source/overview/examples/grid_analysis.html): compare topologies, policies, and strategies with a Ray Tune sweep.
+- [Sock Shop](https://eclypse.readthedocs.io/en/latest/source/overview/examples/sock_shop.html): explore a microservices application with MPI and REST variants.
+
+Runnable source is available in [`examples/`](examples/). Individual examples may need additional dependencies or remote setup; check their guides before running them.
 
 ## Documentation
 
-The documentation for ECLYPSE can be found [here](https://eclypse.readthedocs.io/en/latest/).
+- [Getting started](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/index.html): installation, first run, results, and remote emulation.
+- [Core concepts](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/index.html): topology, assets, builders, placement, policies, and events.
+- [API reference](https://eclypse.readthedocs.io/en/latest/source/api/index.html): public modules and interfaces.
+- [Changelog](CHANGELOG.md): release history.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for issue templates, development setup, tests, documentation checks, and pull request guidelines.
 
 ## Publication
 
@@ -55,6 +153,10 @@ If you want to cite ECLYPSE in your work, you can use the following BibTeX entry
   doi       = {10.1002/smr.70081},
 }
 ```
+
+## License
+
+ECLYPSE is released under the [MIT License](LICENSE).
 
 ## Maintainers
 

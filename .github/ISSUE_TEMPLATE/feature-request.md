@@ -1,7 +1,7 @@
 ---
 name: Feature request
 about: Suggest an idea to extend ECLYPSE
-title: "[FEAT] <Short description>"
+title: "<Replace with a short, descriptive summary of the requested feature>"
 labels: enhancement
 assignees: ''
 

@@ -3,7 +3,7 @@ Install ECLYPSE
 ===============
 
 ECLYPSE can be installed from `PyPI <https://pypi.org/project/eclypse/>`_.
-It requires Python ``>=3.11,<3.14``.
+It requires Python ``>=3.11,<3.15``.
 
 .. note::
 
