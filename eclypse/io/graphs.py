@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import (
     TYPE_CHECKING,
     Any,
+    cast,
 )
 
 from eclypse.graph import (
@@ -196,7 +197,6 @@ def graph_to_networkx(graph: AssetGraph) -> nx.DiGraph:
         nx.DiGraph: A NetworkX graph carrying the same topology and attributes.
     """
     copied = graph.copy(as_view=False)
-    copied.graph.update(dict(graph.graph))
     copied.graph["id"] = graph.id
     return copied
 
@@ -211,8 +211,6 @@ def _create_graph(data: dict[str, Any], context: IOContext) -> AssetGraph:
     Returns:
         AssetGraph: The empty graph object.
 
-    Raises:
-        ValueError: If the graph kind is unsupported.
     """
     extras = data.get("extras", {})
     if data["kind"] == "infrastructure":
@@ -240,26 +238,24 @@ def _create_graph(data: dict[str, Any], context: IOContext) -> AssetGraph:
             },
             seed=context.seed,
         )
-    if data["kind"] == "application":
-        application_context = _application_context(context)
-        node_assets, edge_assets, include_default_assets = _load_asset_schema(
-            data,
-            application_context,
-        )
-        return Application(
-            application_id=data["id"],
-            update_policies=context.update_policies,
-            node_assets=node_assets,
-            edge_assets=edge_assets,
-            include_default_assets=include_default_assets,
-            requirement_init=extras.get(
-                "requirement_init",
-                application_context.requirement_init,
-            ),
-            flows=extras.get("flows", []),
-            seed=context.seed,
-        )
-    raise ValueError(f"Unsupported graph kind: {data['kind']}")
+    application_context = _application_context(context)
+    node_assets, edge_assets, include_default_assets = _load_asset_schema(
+        data,
+        application_context,
+    )
+    return Application(
+        application_id=data["id"],
+        update_policies=context.update_policies,
+        node_assets=node_assets,
+        edge_assets=edge_assets,
+        include_default_assets=include_default_assets,
+        requirement_init=extras.get(
+            "requirement_init",
+            application_context.requirement_init,
+        ),
+        flows=extras.get("flows", []),
+        seed=context.seed,
+    )
 
 
 def _load_asset_schema(
@@ -310,17 +306,16 @@ def _dump_extras(graph: AssetGraph, context: IOContext) -> dict[str, Any]:
                 infrastructure_context,
             ),
         }
-    if isinstance(graph, Application):
-        application_context = _application_context(context)
-        return {
-            "requirement_init": "min",
-            "flows": graph.flows,
-            "services": {
-                service_id: _dump_service_key(service, application_context)
-                for service_id, service in graph.services.items()
-            },
-        }
-    raise ValueError(f"Unsupported graph type: {type(graph).__name__}.")
+    application = cast("Application", graph)
+    application_context = _application_context(context)
+    return {
+        "requirement_init": "min",
+        "flows": application.flows,
+        "services": {
+            service_id: _dump_service_key(service, application_context)
+            for service_id, service in application.services.items()
+        },
+    }
 
 
 def _load_extras(graph: AssetGraph, data: dict[str, Any], context: IOContext) -> None:

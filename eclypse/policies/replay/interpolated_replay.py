@@ -104,6 +104,5 @@ def _interpolate_records(
                             (right[column] - left[column]) * progress
                         )
                 result.append(interpolated)
-        if ordered:
-            result.append(dict(ordered[-1]))
+        result.append(dict(ordered[-1]))
     return sorted(result, key=lambda record: int(record[time_column]))

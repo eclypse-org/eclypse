@@ -119,13 +119,7 @@ def _normalize_for_json(value: Any) -> Any:
             for key, item in value.items()
         }
 
-    if isinstance(value, list):
-        return [_normalize_for_json(item) for item in value]
-
-    if isinstance(value, tuple):
-        return [_normalize_for_json(item) for item in value]
-
-    if isinstance(value, set):
+    if isinstance(value, (list, tuple, set)):
         return [_normalize_for_json(item) for item in value]
 
     return value

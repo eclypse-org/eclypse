@@ -106,7 +106,7 @@ class EventWrapper(EclypseEvent):
                     triggers.append(PeriodicCascadeTrigger(e[0], e[1]))
                 elif isinstance(e[1], list):
                     triggers.append(ScheduledCascadeTrigger(e[0], e[1]))
-                elif isinstance(e[1], float):
+                else:  # float
                     triggers.append(RandomCascadeTrigger(e[0], e[1]))
             else:
                 raise ValueError(

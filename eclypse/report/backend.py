@@ -59,9 +59,7 @@ class FrameBackend(ABC):
             return self._read_csv(source)
         if report_format == "parquet":
             return self._read_parquet(source)
-        if report_format == "json":
-            return self._read_json(source, report_type)
-        raise ValueError(f"Unsupported report format: {report_format}")
+        return self._read_json(source, report_type)
 
     @abstractmethod
     def _read_csv(self, source: Path) -> Any:
