@@ -89,9 +89,13 @@ class EclypseMPI(EclypseCommunicationInterface):
             raise ValueError("body must be a dictionary")
 
         if isinstance(recipient_ids, str):
-            return UnicastRequest(recipient_ids, body=body, _mpi=self)
+            return UnicastRequest(
+                recipient_ids, body=body, _mpi=self, timestamp=timestamp
+            )
         if isinstance(recipient_ids, list):
-            return MulticastRequest(recipient_ids, body=body, _mpi=self)
+            return MulticastRequest(
+                recipient_ids, body=body, _mpi=self, timestamp=timestamp
+            )
 
         raise ValueError("recipient_ids must be a string or a list of strings")
 

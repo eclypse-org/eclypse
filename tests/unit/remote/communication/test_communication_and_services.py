@@ -548,13 +548,25 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
         lambda body, _mpi, timestamp=None: ("broadcast", body, timestamp),
     )
 
-    assert mpi.send("worker", {"x": 1})[:2] == ("unicast", "worker")
     timestamp = datetime(2026, 1, 1)
-    assert mpi.send("worker", {"x": 1}, timestamp=timestamp)[:2] == (
-        "unicast",
-        "worker",
+    default_timestamp = datetime(2026, 1, 2)
+    monkeypatch.setattr(
+        "eclypse.remote.communication.mpi.interface.datetime",
+        SimpleNamespace(now=lambda: default_timestamp),
     )
-    assert mpi.send(["a", "b"], {"x": 1})[:2] == ("multicast", ["a", "b"])
+    for recipients, request_type in (("worker", "unicast"), (["a", "b"], "multicast")):
+        assert mpi.send(recipients, {"x": 1}) == (
+            request_type,
+            recipients,
+            {"x": 1},
+            default_timestamp,
+        )
+        assert mpi.send(recipients, {"x": 1}, timestamp=timestamp) == (
+            request_type,
+            recipients,
+            {"x": 1},
+            timestamp,
+        )
     assert mpi.bcast({"x": 1})[:2] == ("broadcast", {"x": 1})
     assert (await mpi._not_connected_response()).code is ResponseCode.ERROR
 
