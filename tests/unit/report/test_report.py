@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from pathlib import Path
+from types import SimpleNamespace
 
+import numpy as np
 import pytest
 
 from eclypse.report.query import ReportQuery
 from eclypse.report.report import (
     REPORT_TYPES,
     Report,
+    _column_values,
+    _frame_row_count,
 )
 
 
@@ -111,10 +115,13 @@ def test_report_filter_ignores_unknown_columns(
     assert report.filter([], service_id=["gateway"]) == []
 
 
+@pytest.mark.parametrize("backend", ["list", "pandas", "polars", "polars_lazy"])
 def test_report_describe_summarises_available_frames(
-    csv_report_dir: Path, list_frame_backend
+    csv_report_dir: Path, list_frame_backend, backend
 ):
-    report = Report(csv_report_dir, backend=list_frame_backend)
+    report = Report(
+        csv_report_dir, backend=list_frame_backend if backend == "list" else backend
+    )
 
     description = report.describe()
 
@@ -123,6 +130,41 @@ def test_report_describe_summarises_available_frames(
     assert "application: 1 rows, 1 metrics" in description
     assert "service: 3 rows, 1 metrics" in description
     assert "simulation: 2 rows, 1 metrics" in description
+
+
+def test_report_describe_handles_missing_and_unloaded_frames(
+    csv_report_dir, list_frame_backend
+):
+    report = Report(csv_report_dir, backend=list_frame_backend)
+    report.stats = dict.fromkeys(REPORT_TYPES)
+
+    assert report.describe() == "0 rows x 0 steps x 0 metrics | 0 applications"
+
+
+def test_report_summary_helpers_handle_frames_without_length():
+    assert _frame_row_count(object()) == 0
+    assert _column_values(object(), "value") == []
+
+
+@pytest.mark.parametrize("series", [np.array([1, 2]), (1, 2)])
+def test_report_summary_accepts_array_and_iterable_columns(series):
+    class Frame:
+        columns = ["value"]
+
+        def __getitem__(self, column):
+            assert column == "value"
+            return series
+
+    assert _column_values(Frame(), "value") == [1, 2]
+    assert _column_values(Frame(), "missing") == []
+
+
+def test_report_summary_accepts_column_without_null_filter():
+    frame = SimpleNamespace(
+        columns=["value"],
+        get_column=lambda column: SimpleNamespace(to_list=lambda: [column]),
+    )
+    assert _column_values(frame, "value") == ["value"]
 
 
 def test_report_config_and_report_format_fallbacks(tmp_path: Path, list_frame_backend):

@@ -43,7 +43,9 @@ def test_gml_graphml_and_node_link_round_trips(
     dump_infrastructure(sample_infrastructure, graphml_path, "graphml")
     dump_application(sample_application, node_link_path, "node-link-json")
 
-    assert load_infrastructure(gml_path).has_edge("n1", "n2")
+    loaded_gml = load_infrastructure(gml_path)
+    assert loaded_gml.has_edge("n1", "n2")
+    assert loaded_gml.graph["owner"] == sample_infrastructure.graph["owner"]
     assert load_infrastructure(graphml_path).nodes["n1"]["tier"] == "edge"
     assert load_application(node_link_path, "node-link-json").has_edge(
         "frontend",

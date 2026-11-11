@@ -158,6 +158,59 @@ def test_replay_missing_error_is_explicit():
         policy(graph)
 
 
+def test_replay_infers_columns_and_skips_unselected_missing_records():
+    graph = build_graph()
+    policies.replay.replay_nodes(
+        [
+            {"time": 0, "node_id": "b", "cpu": 99},
+            {"time": 0, "node_id": "missing", "cpu": 99},
+            {"time": 0, "node_id": "a", "cpu": 7},
+        ],
+        node_ids=["a", "missing"],
+    )(graph)
+    assert graph.nodes["a"]["cpu"] == 7
+    assert graph.nodes["b"]["cpu"] != 99
+    assert not graph.has_node("missing")
+
+    policies.replay.replay_edges(
+        [
+            {"time": 0, "source": "b", "target": "a", "latency": 99},
+            {"time": 0, "source": "x", "target": "y", "latency": 99},
+            {"time": 0, "source": "a", "target": "b", "latency": 7},
+        ],
+        edge_ids=[("a", "b"), ("x", "y")],
+    )(graph)
+    assert graph.edges["a", "b"]["latency"] == 7
+    assert not graph.has_edge("x", "y")
+
+
+def test_interpolated_replay_preserves_assets_missing_from_sparse_records():
+    graph = build_graph()
+    policy = policies.replay.interpolated_replay(
+        [
+            {"time": 0, "node_id": "a", "cpu": 0},
+            {"time": 2, "node_id": "a", "cpu": 20, "ram": 64},
+        ],
+        target="nodes",
+        value_columns=["cpu", "ram"],
+    )
+    policy(graph)
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 10
+    assert graph.nodes["a"]["ram"] == 32
+    policy(graph)
+    assert graph.nodes["a"]["ram"] == 64
+
+    policies.replay.replay_edges(
+        [
+            {"time": 0, "source": "a", "target": "b", "latency": 5},
+        ],
+        value_columns=["latency", "missing"],
+    )(graph)
+    assert graph.edges["a", "b"]["latency"] == 5
+    assert "missing" not in graph.edges["a", "b"]
+
+
 def test_replay_filters_start_step_and_edge_missing_behaviour():
     graph = build_graph()
 

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import csv
 from pathlib import Path
 from types import SimpleNamespace
 from typing import (
@@ -30,6 +31,14 @@ class DummyReporter(Reporter):
         yield from self.callback_rows(callback)
 
 
+@pytest.mark.asyncio
+async def test_base_reporter_creates_directory_and_closes_without_resources(tmp_path):
+    reporter = DummyReporter(tmp_path / "reports")
+    await reporter.init()
+    assert reporter.report_path.is_dir()
+    assert await reporter.close() is None
+
+
 def test_reporter_helpers_flatten_nested_values(tmp_path: Path):
     reporter = DummyReporter(tmp_path)
     callback = cast(
@@ -50,6 +59,9 @@ def test_reporter_helpers_flatten_nested_values(tmp_path: Path):
         ),
     )
     assert list(reporter.callback_rows(tuple_callback)) == [["shop", "gateway", 2]]
+    assert list(reporter.dfs_data({("shop", "gateway"): (2, 3)})) == [
+        ["shop", "gateway", 2, 3]
+    ]
 
 
 @pytest.mark.asyncio
@@ -74,6 +86,10 @@ async def test_csv_and_json_reporters_write_expected_outputs(tmp_path: Path):
 
     await csv_reporter.write("service", csv_rows)
     await json_reporter.write("service", json_rows)
+    await csv_reporter.write("service", csv_rows)
+    await json_reporter.write("service", json_rows)
+    await csv_reporter.write("node", [])
+    await json_reporter.write("node", [])
     await csv_reporter.close()
     await json_reporter.close()
 
@@ -86,6 +102,24 @@ async def test_csv_and_json_reporters_write_expected_outputs(tmp_path: Path):
         csv_path.read_text(encoding="utf-8")
     )
     assert '"callback_name": "latency_metric"' in json_path.read_text(encoding="utf-8")
+    assert len(csv_path.read_text(encoding="utf-8").splitlines()) == 3
+    assert len(json_path.read_text(encoding="utf-8").splitlines()) == 2
+    assert not (tmp_path / "csv" / "node.csv").exists()
+    assert not (tmp_path / "json" / "node.jsonl").exists()
+    assert csv_reporter._files == json_reporter._files == {}
+
+    callback.data = (("shop", "gateway", None),)
+    assert list(csv_reporter.report("step", 2, callback)) == []
+    callback.data = ()
+    assert list(json_reporter.report("step", 2, callback)) == []
+
+    reopened = CSVReporter(tmp_path)
+    await reopened.write("service", csv_rows)
+    await reopened.close()
+    with csv_path.open(encoding="utf-8", newline="") as handle:
+        persisted = list(csv.DictReader(handle))
+    assert len(persisted) == 3
+    assert all(row["service_id"] == "gateway" for row in persisted)
 
 
 def test_get_default_reporters_filters_requested_types():

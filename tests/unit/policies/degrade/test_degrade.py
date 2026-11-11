@@ -3,6 +3,7 @@ from __future__ import annotations
 import pytest
 
 from eclypse import policies
+from eclypse.policies.degrade._helpers import _build_value_adjustment_policy
 from tests.unit.policies._helpers import build_graph
 
 
@@ -31,6 +32,11 @@ def test_degrade_policies_stop_at_the_requested_epoch():
     increase(graph)
     assert graph.nodes["a"]["cpu"] == 20
     assert graph.edges["a", "b"]["bandwidth"] == 25
+    assert graph.edges["a", "b"]["latency"] == 40
+
+    reduce(graph)
+    increase(graph)
+    assert graph.nodes["a"]["cpu"] == 20
     assert graph.edges["a", "b"]["latency"] == 40
 
 
@@ -169,6 +175,25 @@ def test_additional_degrade_policies_validate_inputs():
         policies.constraints.clamp_values(lower=2, upper=1, node_assets="cpu")
     with pytest.raises(ValueError):
         policies.degrade.ramp_to(1, epochs=0, node_assets="cpu")
+    with pytest.raises(ValueError, match="At least one"):
+        policies.degrade.ramp_to(1, epochs=2)
+
+
+def test_ramp_supports_edge_targets_and_stops_after_completion():
+    graph = build_graph()
+    ramp = policies.degrade.ramp_to(
+        0,
+        epochs=2,
+        edge_assets=["latency", "bandwidth"],
+        edge_targets={"bandwidth": 25},
+    )
+    ramp(graph)
+    assert graph.edges["a", "b"]["latency"] == 5
+    assert graph.edges["a", "b"]["bandwidth"] == 50
+    ramp(graph)
+    ramp(graph)
+    assert graph.edges["a", "b"]["latency"] == 0
+    assert graph.edges["a", "b"]["bandwidth"] == 25
 
 
 def test_degrade_basis_initial_uses_first_seen_value():
@@ -193,3 +218,39 @@ def test_degrade_basis_initial_uses_first_seen_value():
     graph.nodes["a"]["cpu"] = 1000
     reduce_policy(graph)
     assert graph.nodes["a"]["cpu"] == 20
+
+
+@pytest.mark.parametrize(
+    ("factory", "kwargs", "message"),
+    [
+        (policies.degrade.reduce, {"factor": 0.5}, "epochs must be provided"),
+        (policies.degrade.reduce, {"factor": 0.5, "epochs": 0}, "strictly positive"),
+        (policies.degrade.reduce, {"epochs": 2}, "Exactly one"),
+        (policies.degrade.increase, {"factor": 0.5, "epochs": 2}, "greater than"),
+        (policies.degrade.reduce, {"factor": 2, "epochs": 2}, "between 0 and 1"),
+        (policies.degrade.increase, {"target": -1, "epochs": 2}, "non-negative"),
+    ],
+)
+def test_degrade_validates_adjustment_with_selected_assets(factory, kwargs, message):
+    with pytest.raises(ValueError, match=message):
+        factory(node_assets="cpu", **kwargs)
+
+
+def test_adjustment_builder_rejects_missing_assets_and_invalid_direction():
+    with pytest.raises(ValueError, match="At least one"):
+        _build_value_adjustment_policy("reduce", factor=0.5, epochs=2)
+    with pytest.raises(ValueError, match="direction must"):
+        _build_value_adjustment_policy("invalid", factor=1, epochs=2, node_assets="cpu")
+    with pytest.raises(ValueError, match="unsupported fields: unknown"):
+        policies.degrade.reduce(
+            node_asset_overrides={"cpu": {"factor": 0.5, "epochs": 2, "unknown": 1}}
+        )
+
+
+def test_set_value_uses_node_overrides_and_default_for_other_assets():
+    graph = build_graph()
+    policies.degrade.set_value(10, node_assets=["cpu", "ram"], node_values={"cpu": 5})(
+        graph
+    )
+    assert graph.nodes["a"]["cpu"] == 5
+    assert graph.nodes["a"]["ram"] == 10

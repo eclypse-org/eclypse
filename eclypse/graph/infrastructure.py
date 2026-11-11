@@ -475,18 +475,12 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
             def reverse_edge(u, v):
                 return filter_edge(v, u)
 
-            if self.is_directed():
-                self._available._succ = FilterAdjacency(
-                    self._succ, filter_node, filter_edge
-                )
-                self._available._pred = FilterAdjacency(
-                    self._pred, filter_node, reverse_edge
-                )
-
-            else:
-                self._available._adj = FilterAdjacency(
-                    self._adj, filter_node, filter_edge
-                )
+            self._available._succ = FilterAdjacency(
+                self._succ, filter_node, filter_edge
+            )
+            self._available._pred = FilterAdjacency(
+                self._pred, filter_node, reverse_edge
+            )
         return self._available
 
     def is_available(self, n: str):

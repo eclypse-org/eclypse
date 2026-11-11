@@ -20,6 +20,13 @@ def test_backend_helpers_resolve_columns_and_sources(tmp_path):
     assert "service_id" in get_report_columns("service")
     assert get_report_source(stats_path, "service", "csv") == stats_path / "service.csv"
     assert get_report_source(stats_path, "node", "json") == stats_path / "node.jsonl"
+    assert get_report_source(stats_path, "node", "parquet") == stats_path / "node"
+    with pytest.raises(ValueError, match="Unsupported report format"):
+        get_report_source(stats_path, "node", "invalid")
+    with pytest.raises(FileNotFoundError, match="No parquet files"):
+        list_parquet_parts(tmp_path / "missing")
+    with pytest.raises(FileNotFoundError, match="No JSONL file"):
+        load_jsonl_rows(tmp_path / "missing.jsonl", "node")
 
 
 def test_list_parquet_parts_and_jsonl_loading(tmp_path):
@@ -41,7 +48,7 @@ def test_list_parquet_parts_and_jsonl_loading(tmp_path):
                 "data": [["shop", "gateway", "edge-a"]],
             }
         )
-        + "\n",
+        + "\n\n",
         encoding="utf-8",
     )
 
@@ -62,6 +69,8 @@ def test_list_parquet_parts_and_jsonl_loading(tmp_path):
 def test_iter_json_payload_rows_and_backend_factory_errors():
     assert list(_iter_json_payload_rows({"foo": "bar"})) == [[{"foo": "bar"}]]
     assert list(_iter_json_payload_rows((1, 2))) == [[(1, 2)]]
+    assert list(_iter_json_payload_rows([])) == []
+    assert list(_iter_json_payload_rows([1, 2])) == [[1, 2]]
 
     with pytest.raises(ValueError, match="Unknown backend"):
         get_backend("missing-backend")

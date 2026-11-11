@@ -66,6 +66,10 @@ async def test_remote_simulator_route_and_cleanup(
 
     route = await simulator.route("shop", "gateway", "worker")
     neighbors = await simulator.get_neighbors("shop", "gateway")
+    simulator.placements["shop"].mark_undeployed()
+    simulator.cleanup()
+    assert stop_calls == undeploy_calls == []
+    simulator.placements["shop"].mark_deployed()
     simulator.cleanup()
 
     assert simulator.remote is True

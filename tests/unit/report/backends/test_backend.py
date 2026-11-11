@@ -94,6 +94,10 @@ def test_named_backends_resolve_and_pandas_backend_filters(tmp_path: Path, monke
         1,
         3,
     ]
+    assert backend.filter_range_step(df, "n_event", 2, 3, 1)["n_event"].tolist() == [
+        2,
+        3,
+    ]
     assert backend.filter_eq(df, "service_id", "worker")["service_id"].tolist() == [
         "worker",
         "worker",
@@ -182,6 +186,9 @@ def test_polars_backends_read_filter_and_collect(tmp_path: Path):
     assert eager.filter_range_step(eager_csv, "n_event", 1, 3, 2)[
         "n_event"
     ].to_list() == [1, 3]
+    assert eager.filter_range_step(eager_csv, "n_event", 2, 3, 1)[
+        "n_event"
+    ].to_list() == [2, 3]
     assert eager.filter_eq(eager_csv, "service_id", "worker")[
         "service_id"
     ].to_list() == [
@@ -215,6 +222,9 @@ def test_polars_backends_read_filter_and_collect(tmp_path: Path):
         1,
         3,
     ]
+    assert lazy.filter_range_step(lazy_csv, "n_event", 2, 3, 1).collect()[
+        "n_event"
+    ].to_list() == [2, 3]
     assert lazy.filter_eq(lazy_csv, "service_id", "worker").collect()[
         "service_id"
     ].to_list() == [

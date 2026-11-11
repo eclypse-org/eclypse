@@ -77,6 +77,8 @@ def test_infrastructure_available_returns_filtered_infrastructure_view():
     infrastructure.nodes["edge-b"]["availability"] = 1
 
     assert "edge-b" in available
+    infrastructure.add_edge("edge-a", "edge-b", latency=1)
+    assert list(available.predecessors("edge-b")) == ["edge-a"]
 
 
 def test_infrastructure_path_custom_cost_attr_controls_cache_refresh(
@@ -224,3 +226,39 @@ def test_infrastructure_same_node_resources(sample_infrastructure):
         sample_infrastructure.edge_assets.upper_bound
     )
     assert sample_infrastructure.processing_time("edge-a", "edge-a") == 0.0
+
+
+def test_path_refreshes_after_changes_that_bypass_invalidation(sample_infrastructure):
+    graph = sample_infrastructure
+    graph.path("edge-a", "edge-b")
+    graph._costs["edge-a"]["edge-b"] = [
+        (source, target, dict(attrs))
+        for source, target, attrs in graph._costs["edge-a"]["edge-b"]
+    ]
+    # Bypass mutation hooks to exercise the stale-cache recovery contract.
+    dict.__setitem__(graph.edges["edge-a", "edge-b"], "latency", 50)
+    assert graph.path("edge-a", "edge-b")[0][2]["latency"] == 50
+    dict.__setitem__(graph.nodes["edge-b"], "availability", 0)
+    assert graph.path("edge-a", "edge-b") is None
+
+
+@pytest.mark.parametrize(
+    ("hook", "keys"),
+    [
+        ("_invalidate_node_attrs", ("cpu",)),
+        ("_invalidate_edge_attrs", ()),
+    ],
+)
+def test_invalidation_hooks_preserve_caches_for_irrelevant_notifications(
+    sample_infrastructure, hook, keys
+):
+    graph = sample_infrastructure
+    graph.path_resources("edge-a", "edge-b")
+    graph.processing_time("edge-a", "edge-b")
+    cache_names = ("_paths", "_costs", "_path_resources", "_processing_times")
+    snapshots = {name: dict(getattr(graph, name)) for name in cache_names}
+    assert all(snapshots.values())
+
+    getattr(graph, hook)(keys)
+
+    assert {name: getattr(graph, name) for name in cache_names} == snapshots

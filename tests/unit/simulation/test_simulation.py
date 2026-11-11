@@ -181,6 +181,10 @@ def test_simulation_run_helpers_and_context_cleanup(
     simulation.run(seconds=0.5)
     assert calls == ["start", ("wait", 0.5), "stop"]
 
+    calls.clear()
+    simulation.run()
+    assert calls == ["start", ("wait", None)]
+
     with pytest.raises(ValueError, match="Only one"):
         simulation.run(steps=1, seconds=1)
     with pytest.raises(ValueError, match="steps"):

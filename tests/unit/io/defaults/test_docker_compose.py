@@ -1,19 +1,19 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 import pytest
 
+from eclypse.graph import Application
 from eclypse.io import (
     DockerComposeContext,
     dump_application,
     load_application,
 )
-from eclypse.io.defaults.docker_compose import DockerComposeImporter
-
-if TYPE_CHECKING:
-    from eclypse.graph import Application
+from eclypse.io.defaults.docker_compose import (
+    DockerComposeExporter,
+    DockerComposeImporter,
+)
 
 
 def test_docker_compose_application_round_trip(
@@ -120,3 +120,10 @@ def test_docker_compose_importer_can_relax_image_or_build_requirement():
         context=DockerComposeContext(require_services=False),
     )
     assert list(loaded_without_services.nodes) == []
+
+
+def test_docker_compose_export_omits_empty_asset_extensions():
+    graph = Application("minimal")
+    graph.add_node("frontend", image="frontend:latest")
+    data = DockerComposeExporter().to_data(graph)
+    assert data["services"]["frontend"] == {"image": "frontend:latest"}

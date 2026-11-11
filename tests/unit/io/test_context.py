@@ -106,3 +106,22 @@ def test_standard_codec_context_defaults_are_strict():
     assert tosca_application_context.require_node_template_types is True
     assert tosca_infrastructure_context.require_definitions_version is True
     assert tosca_infrastructure_context.require_node_template_types is True
+
+
+@pytest.mark.parametrize("context_type", [ApplicationContext, InfrastructureContext])
+@pytest.mark.parametrize("provided", ["node_assets", "edge_assets"])
+def test_default_context_preserves_explicit_asset_schemas(context_type, provided):
+    assets = {"custom": Additive(0, 1)}
+    context = context_type(include_default_assets=True, **{provided: assets})
+    assert getattr(context, provided) is assets
+    other = "edge_assets" if provided == "node_assets" else "node_assets"
+    assert getattr(context, other)
+
+
+def test_infrastructure_context_preserves_explicit_aggregators():
+    aggregators = {"custom": sum}
+    context = InfrastructureContext(
+        include_default_assets=True, path_assets_aggregators=aggregators
+    )
+    assert context.path_assets_aggregators is aggregators
+    assert context.get_aggregator("custom") is sum

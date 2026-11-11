@@ -14,10 +14,16 @@ from eclypse.io._helpers import (
     infer_format,
     normalize_json_value,
 )
+from eclypse.io.context import (
+    InfrastructureContext,
+    IOContext,
+)
 from eclypse.io.functions import (
+    dump_graph,
     dump_infrastructure,
     load_infrastructure,
 )
+from eclypse.io.graphs import _strict
 
 
 def test_graph_kind_resolves_supported_graphs():
@@ -59,3 +65,29 @@ def test_public_functions_report_inference_errors(
 
     with pytest.raises(ValueError):
         load_infrastructure(tmp_path / "infra.unknown")
+    with pytest.raises(TypeError, match="Unsupported graph type"):
+        dump_graph(AssetGraph("plain"), tmp_path / "plain.json")
+
+
+def test_canonical_helpers_default_to_strict():
+    assert _strict(IOContext()) is True
+
+
+def test_infrastructure_export_resolves_registered_aggregators(
+    tmp_path, sample_infrastructure
+):
+    context = InfrastructureContext(path_assets_aggregators={})
+    with pytest.raises(ValueError, match="not registered"):
+        dump_infrastructure(
+            sample_infrastructure, tmp_path / "bad.json", infrastructure_context=context
+        )
+    aggregators = sample_infrastructure.path_assets_aggregators
+    context.path_assets_aggregators = {
+        f"registered_{key}": value for key, value in aggregators.items()
+    }
+    path = tmp_path / "registered.json"
+    dump_infrastructure(sample_infrastructure, path, infrastructure_context=context)
+    loaded = load_infrastructure(path, infrastructure_context=context)
+    assert loaded.path_resources("n1", "n2") == sample_infrastructure.path_resources(
+        "n1", "n2"
+    )

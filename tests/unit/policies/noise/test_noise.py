@@ -129,6 +129,8 @@ def test_impulse_validation():
 
     with pytest.raises(ValueError):
         policies.noise.impulse(node_assets="cpu", node_factor_range=(2.0, 1.0))
+    with pytest.raises(ValueError, match="edge_factor_range"):
+        policies.noise.impulse(edge_assets="latency", edge_factor_range=(2, 1))
 
 
 def test_additional_noise_policies_apply_expected_changes():
@@ -184,6 +186,8 @@ def test_seasonal_noise_and_validation_paths():
         policies.noise.gaussian_jitter(node_parameters={"cpu": (0, -1)})
     with pytest.raises(ValueError):
         policies.noise.correlated_noise(delta_range=(2, 1), node_assets="cpu")
+    with pytest.raises(ValueError, match="At least one"):
+        policies.noise.correlated_noise()
     with pytest.raises(ValueError):
         policies.noise.seasonal_noise(amplitude=1, period=0, node_assets="cpu")
     with pytest.raises(ValueError):
@@ -216,3 +220,22 @@ def test_noise_basis_initial_uses_first_seen_value():
     graph.nodes["a"]["cpu"] = 200
     impulse(graph)
     assert graph.nodes["a"]["cpu"] == 42
+
+
+@pytest.mark.parametrize(
+    "factory", [policies.noise.bounded_random_walk, policies.noise.momentum_walk]
+)
+def test_walk_initial_basis_reuses_baseline_and_ignores_missing_assets(factory):
+    graph = build_graph()
+    policy = factory(node_steps={"cpu": 0, "missing": 1}, basis="initial")
+    policy(graph)
+    graph.nodes["a"]["cpu"] = 200
+    policy(graph)
+    assert graph.nodes["a"]["cpu"] == 80
+    assert "missing" not in graph.nodes["a"]
+
+
+def test_dropout_zero_probability_preserves_selected_assets():
+    graph = build_graph()
+    policies.noise.dropout(node_assets="cpu", probability=0)(graph)
+    assert graph.nodes["a"]["cpu"] == 80

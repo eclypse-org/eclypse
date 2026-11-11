@@ -25,6 +25,7 @@ from eclypse.io.defaults.tosca import (
     PORT_TYPE,
     SOFTWARE_COMPONENT_TYPE,
     TOSCA_VERSION,
+    TOSCAExporter,
     TOSCAImporter,
 )
 
@@ -201,6 +202,66 @@ def test_tosca_importer_rejects_kind_conflicts():
     with pytest.raises(ValueError):
         TOSCAImporter().from_data(data, kind="infrastructure")
 
+    data["metadata"]["eclypse_kind"] = "unsupported"
+    with pytest.raises(ValueError, match="Unsupported graph kind"):
+        TOSCAImporter().from_data(data)
+
+
+@pytest.mark.parametrize(
+    ("topology", "message"),
+    [
+        ([], "'topology_template' must be a mapping"),
+        ({"node_templates": []}, "node_templates' must be a mapping"),
+        ({"node_templates": {"bad": []}}, "'bad' must be a mapping"),
+    ],
+)
+def test_tosca_importer_rejects_malformed_mappings(topology, message):
+    with pytest.raises(ValueError, match=message):
+        TOSCAImporter().from_data(
+            {
+                "tosca_definitions_version": TOSCA_VERSION,
+                "topology_template": topology,
+            }
+        )
+
+
+@pytest.mark.parametrize(
+    ("node_type", "graph_type"),
+    [(SOFTWARE_COMPONENT_TYPE, Application), (COMPUTE_TYPE, Infrastructure)],
+)
+def test_tosca_importer_infers_kind_without_metadata(node_type, graph_type):
+    loaded = TOSCAImporter().from_data(
+        {
+            "tosca_definitions_version": TOSCA_VERSION,
+            "topology_template": {
+                "node_templates": {"node": {"type": node_type}},
+            },
+        }
+    )
+
+    assert isinstance(loaded, graph_type)
+    assert list(loaded.nodes) == ["node"]
+
+
+@pytest.mark.parametrize("memory", [4, "4.5 GB", "unknown"])
+def test_tosca_importer_preserves_numeric_and_unrecognised_sizes(memory):
+    loaded = TOSCAImporter().from_data(
+        {
+            "tosca_definitions_version": TOSCA_VERSION,
+            "topology_template": {
+                "node_templates": {
+                    "node": {
+                        "type": COMPUTE_TYPE,
+                        "capabilities": {"host": {"properties": {"mem_size": memory}}},
+                    },
+                },
+            },
+        },
+        context=InfrastructureContext(include_default_assets=False),
+    )
+
+    assert loaded.nodes["node"]["ram"] == (4.5 if memory == "4.5 GB" else memory)
+
 
 def test_tosca_importer_requires_definitions_version():
     data = {
@@ -253,3 +314,42 @@ def test_tosca_importer_can_relax_required_fields():
 
     assert isinstance(loaded, Application)
     assert list(loaded.nodes) == ["frontend"]
+
+
+@pytest.mark.parametrize("attrs", [{}, {"ram": "8 GB"}, {"cpu": 2}])
+def test_tosca_exports_partial_host_capabilities(attrs):
+    graph = Infrastructure("partial")
+    graph.add_node("node", **attrs)
+    template = TOSCAExporter().to_data(graph)["topology_template"]["node_templates"][
+        "node"
+    ]
+    assert template["type"] == COMPUTE_TYPE
+    expected = {}
+    if "ram" in attrs:
+        expected["mem_size"] = attrs["ram"]
+    if "cpu" in attrs:
+        expected["num_cpus"] = attrs["cpu"]
+    if expected:
+        assert template["capabilities"]["host"]["properties"] == expected
+    else:
+        assert "capabilities" not in template
+
+
+def test_tosca_ignores_malformed_unresolved_and_incomplete_requirements():
+    data = {
+        "tosca_definitions_version": TOSCA_VERSION,
+        "topology_template": {
+            "node_templates": {
+                "frontend": {
+                    "type": SOFTWARE_COMPONENT_TYPE,
+                    "requirements": [None, {}, {"bad": 42}, {"external": "missing"}],
+                },
+                "port": {"type": PORT_TYPE, "requirements": [{"link": "network"}]},
+            }
+        },
+    }
+    application = TOSCAImporter().from_data(data, kind="application")
+    assert list(application.nodes) == ["frontend"]
+    assert list(application.edges) == []
+    infrastructure = TOSCAImporter().from_data(data, kind="infrastructure")
+    assert list(infrastructure.edges) == []

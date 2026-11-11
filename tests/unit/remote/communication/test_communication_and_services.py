@@ -549,6 +549,11 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     )
 
     assert mpi.send("worker", {"x": 1})[:2] == ("unicast", "worker")
+    timestamp = datetime(2026, 1, 1)
+    assert mpi.send("worker", {"x": 1}, timestamp=timestamp)[:2] == (
+        "unicast",
+        "worker",
+    )
     assert mpi.send(["a", "b"], {"x": 1})[:2] == ("multicast", ["a", "b"])
     assert mpi.bcast({"x": 1})[:2] == ("broadcast", {"x": 1})
     assert (await mpi._not_connected_response()).code is ResponseCode.ERROR
@@ -596,10 +601,15 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
         def fanout(self):
             return {"broadcast": True}
 
+        @exchange(receive=True)
+        def receive_only(self, sender_id, message):
+            return sender_id, message
+
     echo = EchoService()
 
     assert await echo.forward() == ("sent", ("origin", {"echo": 2}))
     assert await echo.fanout() == ("broadcast", {"broadcast": True})
+    assert await echo.receive_only() == ("origin", {"body": 2})
 
     service = DemoService("worker", store_step=True)
     node = SimpleNamespace(
