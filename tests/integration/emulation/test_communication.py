@@ -115,8 +115,9 @@ def test_ray_mpi_delivery_does_not_depend_on_placement(tmp_path: Path, remote_pr
             received = None
 
             async def step(self):
-                array = (await self.mpi.recv())["p"]
-                await self.mpi.recv()  # the sender has reused its buffer
+                array = (await self.mpi.recv(source="sender")).data["p"]
+                # The sender has reused its buffer before this message arrives.
+                await self.mpi.recv(source="sender")
                 self.received = {{
                     "writeable": bool(array.flags.writeable),
                     "first": float(array[0]),

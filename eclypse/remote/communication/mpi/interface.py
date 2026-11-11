@@ -6,10 +6,6 @@ It implements the MPI communication protocol among services in the same applicat
 from __future__ import annotations
 
 import inspect
-from asyncio import (
-    Queue,
-    wait_for,
-)
 from datetime import datetime
 from typing import (
     TYPE_CHECKING,
@@ -21,6 +17,7 @@ from eclypse.remote.communication.interface import (
 )
 from eclypse.remote.utils import ResponseCode
 
+from ._message_queue import MessageQueue
 from .requests import (
     BroadcastRequest,
     MulticastRequest,
@@ -33,6 +30,8 @@ if TYPE_CHECKING:
 
     from eclypse.remote.communication import Route
     from eclypse.remote.service import Service
+
+    from .message import Message
 
 
 class EclypseMPI(EclypseCommunicationInterface):
@@ -53,12 +52,12 @@ class EclypseMPI(EclypseCommunicationInterface):
             service (Service): The service that uses the MPI interface.
         """
         super().__init__(service)
-        self._input_queue: Queue = Queue()
+        self._input_queue = MessageQueue()
 
     def send(
         self,
         recipient_ids: str | list[str],
-        body: dict[str, Any],
+        data: dict[str, Any],
         timestamp: datetime | None = None,
     ) -> UnicastRequest | MulticastRequest:
         """Sends a message to a single recipient or multiple recipients.
@@ -75,7 +74,7 @@ class EclypseMPI(EclypseCommunicationInterface):
                 the message is sent to a single recipient. If a list of
                 ids is specified, the message is sent to multiple
                 recipients.
-            body (dict[str, Any]): The data to be sent. It must be a pickleable object.
+            data (dict[str, Any]): The data to be sent. It must be a pickleable object.
             timestamp (datetime.datetime | None, optional): The timestamp of the \
                 message. Defaults to datetime.datetime.now().
 
@@ -85,23 +84,23 @@ class EclypseMPI(EclypseCommunicationInterface):
         if not timestamp:
             timestamp = datetime.now()
 
-        if not isinstance(body, dict):
-            raise ValueError("body must be a dictionary")
+        if not isinstance(data, dict):
+            raise ValueError("data must be a dictionary")
 
         if isinstance(recipient_ids, str):
             return UnicastRequest(
-                recipient_ids, body=body, _mpi=self, timestamp=timestamp
+                recipient_ids, data=data, _mpi=self, timestamp=timestamp
             )
         if isinstance(recipient_ids, list):
             return MulticastRequest(
-                recipient_ids, body=body, _mpi=self, timestamp=timestamp
+                recipient_ids, data=data, _mpi=self, timestamp=timestamp
             )
 
         raise ValueError("recipient_ids must be a string or a list of strings")
 
     def bcast(
         self,
-        body: Any,
+        data: Any,
         timestamp: datetime | None = None,
     ) -> BroadcastRequest:
         """Broadcasts a message to all neighbor services.
@@ -111,19 +110,25 @@ class EclypseMPI(EclypseCommunicationInterface):
         method **must be awaited**.
 
         Args:
-            body (Any): The data to be sent. It must be a pickleable object.
+            data (Any): The data to be sent. It must be a pickleable object.
             timestamp (datetime.datetime | None, optional): The timestamp of the \
                 message. Defaults to datetime.datetime.now().
 
         Returns:
             BroadcastRequest: The Broadcast MPI request.
         """
-        if not isinstance(body, dict):
-            raise ValueError("body must be a dictionary")
+        if not isinstance(data, dict):
+            raise ValueError("data must be a dictionary")
 
-        return BroadcastRequest(body=body, _mpi=self, timestamp=timestamp)
+        return BroadcastRequest(data=data, _mpi=self, timestamp=timestamp)
 
-    def recv(self, timeout: float | None = None) -> Coroutine[Any, Any, dict[str, Any]]:
+    def recv(
+        self,
+        timeout: float | None = None,
+        *,
+        source: str | None = None,
+        block: bool = True,
+    ) -> Coroutine[Any, Any, Message]:
         """Receive a message in the input queue.
 
         The result of this method **must be awaited**.
@@ -131,24 +136,28 @@ class EclypseMPI(EclypseCommunicationInterface):
         Args:
             timeout (float | None, optional): The maximum time to wait for a message,
                 in seconds. If None, waits until a message arrives. Defaults to None.
+            source: Receive only from this sender, leaving other messages queued.
+                If None, receive the oldest message globally.
+            block: Wait for a matching message. If False, raise queue.Empty
+                immediately when unavailable and ignore timeout. Defaults to True.
 
         Returns:
-            Task[Any]: The message in the input queue.
+            Coroutine[Any, Any, Message]: The message in the input queue.
 
         Raises:
+            queue.Empty: If block=False and no matching message is available.
             TimeoutError: If no message arrives within the timeout. The message
                 arriving later stays in the queue for the next call.
         """
-        return wait_for(self._input_queue.get(), timeout)
+        return self._input_queue.pop(source, block, timeout)
 
     async def _not_connected_response(self) -> Any:
         return Response(ResponseCode.ERROR)
 
     async def _execute_request(  # pylint: disable=arguments-differ
-        self, route: Route, **body
+        self, route: Route, **data
     ) -> Response:
-        body["sender_id"] = route.sender_id
-        await self._input_queue.put(body)
+        self._input_queue.put(route.sender_id, data)
         return Response()
 
 
@@ -185,9 +194,7 @@ def exchange(
         async def wrapper(self: Service, *args, **kwargs):
             if receive:
                 message = await self.mpi.recv()
-                sender_id: str = message.pop("sender_id")
-                # add message to args
-                args = (sender_id, message, *args)
+                args = (message.source, message.data, *args)
 
             if inspect.iscoroutinefunction(func):
                 next_args = await func(self, *args, **kwargs)

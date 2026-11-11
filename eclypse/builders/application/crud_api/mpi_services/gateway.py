@@ -11,10 +11,10 @@ class GatewayService(Service):
     async def step(self):
         """Authenticate the client and create a demo item."""
         await self.auth_request()
-        auth_response = await self.mpi.recv()
+        auth_response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=auth_response))
         await self.item_request(auth_response["token"])
-        item_response = await self.mpi.recv()
+        item_response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=item_response))
         return item_response
 

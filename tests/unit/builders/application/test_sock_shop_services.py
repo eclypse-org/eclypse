@@ -50,6 +50,7 @@ from eclypse.builders.application.sock_shop.rest_services import (
 from eclypse.builders.application.sock_shop.rest_services import (
     UserService as RESTUserService,
 )
+from eclypse.remote.communication.mpi import Message
 from eclypse.remote.communication.rest.codes import HTTPStatusCode
 
 
@@ -105,7 +106,8 @@ class FakeMPIInterface:
         self.broadcasts: list[dict[str, object]] = []
 
     async def recv(self):
-        return self.messages.pop(0)
+        body = dict(self.messages.pop(0))
+        return Message(body.pop("sender_id", "sender"), body)
 
     def send(self, recipient_id: str, body: dict[str, object]):
         self.sent.append((recipient_id, body))

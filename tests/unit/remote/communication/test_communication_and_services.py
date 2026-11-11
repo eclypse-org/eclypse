@@ -8,6 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from eclypse.remote.communication.interface import EclypseCommunicationInterface
+from eclypse.remote.communication.mpi import Message
 from eclypse.remote.communication.mpi.interface import (
     EclypseMPI,
     exchange,
@@ -517,35 +518,35 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     )
     mpi = EclypseMPI(mpi_service)
 
-    with pytest.raises(ValueError, match="body must be a dictionary"):
+    with pytest.raises(ValueError, match="data must be a dictionary"):
         mpi.send("worker", "bad")  # type: ignore[arg-type]
 
-    with pytest.raises(ValueError, match="body must be a dictionary"):
+    with pytest.raises(ValueError, match="data must be a dictionary"):
         mpi.bcast("bad")  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="recipient_ids"):
         mpi.send(None, {"x": 1})  # type: ignore[arg-type]
 
     monkeypatch.setattr(
         "eclypse.remote.communication.mpi.interface.UnicastRequest",
-        lambda recipient_id, body, _mpi, timestamp=None: (
+        lambda recipient_id, data, _mpi, timestamp=None: (
             "unicast",
             recipient_id,
-            body,
+            data,
             timestamp,
         ),
     )
     monkeypatch.setattr(
         "eclypse.remote.communication.mpi.interface.MulticastRequest",
-        lambda recipient_ids, body, _mpi, timestamp=None: (
+        lambda recipient_ids, data, _mpi, timestamp=None: (
             "multicast",
             recipient_ids,
-            body,
+            data,
             timestamp,
         ),
     )
     monkeypatch.setattr(
         "eclypse.remote.communication.mpi.interface.BroadcastRequest",
-        lambda body, _mpi, timestamp=None: ("broadcast", body, timestamp),
+        lambda data, _mpi, timestamp=None: ("broadcast", data, timestamp),
     )
 
     timestamp = datetime(2026, 1, 1)
@@ -561,13 +562,13 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
             {"x": 1},
             default_timestamp,
         )
-        assert mpi.send(recipients, {"x": 1}, timestamp=timestamp) == (
+        assert mpi.send(recipients, data={"x": 1}, timestamp=timestamp) == (
             request_type,
             recipients,
             {"x": 1},
             timestamp,
         )
-    assert mpi.bcast({"x": 1})[:2] == ("broadcast", {"x": 1})
+    assert mpi.bcast(data={"x": 1})[:2] == ("broadcast", {"x": 1})
     assert (await mpi._not_connected_response()).code is ResponseCode.ERROR
 
     message_route = Route(
@@ -581,13 +582,13 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     response = await mpi._execute_request(message_route, payload=1)
 
     assert isinstance(response, Response)
-    assert await mpi.recv() == {"payload": 1, "sender_id": "gateway"}
+    assert await mpi.recv() == Message("gateway", {"payload": 1})
 
     with pytest.raises(TimeoutError):
         await mpi.recv(timeout=0.01)
     # a message arriving after the timeout is not lost
     await mpi._execute_request(message_route, payload=2)
-    assert await mpi.recv(timeout=1) == {"payload": 2, "sender_id": "gateway"}
+    assert await mpi.recv(timeout=1) == Message("gateway", {"payload": 2})
 
     with pytest.raises(ValueError, match="cannot send and broadcast"):
         exchange(send=True, broadcast=True)
@@ -598,9 +599,7 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     class EchoService:
         def __init__(self):
             self.mpi = SimpleNamespace(
-                recv=lambda: asyncio.sleep(
-                    0, result={"sender_id": "origin", "body": 2}
-                ),
+                recv=lambda: asyncio.sleep(0, result=Message("origin", {"body": 2})),
                 send=lambda *args: asyncio.sleep(0, result=("sent", args)),
                 bcast=lambda body: asyncio.sleep(0, result=("broadcast", body)),
             )

@@ -34,7 +34,7 @@ class UnicastRequest(MulticastRequest):
     def __init__(
         self,
         recipient_id: str,
-        body: dict[str, Any],
+        data: dict[str, Any],
         _mpi: EclypseMPI,
         timestamp: datetime | None = None,
     ):
@@ -42,14 +42,14 @@ class UnicastRequest(MulticastRequest):
 
         Args:
             recipient_id (str): The ID of the recipient node.
-            body (dict[str, Any]): The body of the request.
+            data (dict[str, Any]): The data of the request.
             _mpi (EclypseMPI): The MPI interface.
             timestamp (datetime | None, optional): The timestamp of the request.
                 Defaults to None.
         """
         super().__init__(
             recipient_ids=[recipient_id],
-            body=body,
+            data=data,
             _mpi=_mpi,
             timestamp=timestamp,
         )

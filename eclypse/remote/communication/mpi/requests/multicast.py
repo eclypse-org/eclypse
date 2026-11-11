@@ -27,7 +27,7 @@ class MulticastRequest(EclypseRequest):
     def __init__(
         self,
         recipient_ids: list[str],
-        body: dict[str, Any],
+        data: dict[str, Any],
         _mpi: EclypseMPI,
         timestamp: datetime | None = None,
     ):
@@ -35,14 +35,14 @@ class MulticastRequest(EclypseRequest):
 
         Args:
             recipient_ids (list[str]): The IDs of the recipient nodes.
-            body (dict[str, Any]): The body of the request.
+            data (dict[str, Any]): The data of the request.
             _mpi (EclypseMPI): The MPI interface.
             timestamp (datetime | None, optional): The timestamp of the request.
                 Defaults to None.
         """
         super().__init__(
             recipient_ids=recipient_ids,
-            data=body,
+            data=data,
             _comm=_mpi,
             timestamp=timestamp,
         )

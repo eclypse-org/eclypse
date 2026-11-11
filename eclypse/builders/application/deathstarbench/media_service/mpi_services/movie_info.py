@@ -16,13 +16,13 @@ class MovieInfoService(Service):
     async def step(self):
         """Start a movie-info request and aggregate all downstream replies."""
         await self.request_cast()  # pylint: disable=no-value-for-parameter
-        cast = await self.mpi.recv()
+        cast = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=cast))
         await self.request_plot()
-        plot = await self.mpi.recv()
+        plot = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=plot))
         await self.request_reviews()
-        reviews = await self.mpi.recv()
+        reviews = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=reviews))
         return {
             "movie_id": self.pending_request["movie_id"],

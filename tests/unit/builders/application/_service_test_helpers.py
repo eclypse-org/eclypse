@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
+from eclypse.remote.communication.mpi import Message
+
 
 class FakeRestResponse:
     def __init__(self, body):
@@ -44,7 +46,8 @@ class FakeMPIInterface:
         self.sent: list[tuple[str, dict[str, object]]] = []
 
     async def recv(self):
-        return self.messages.pop(0)
+        body = dict(self.messages.pop(0))
+        return Message(body.pop("sender_id", "sender"), body)
 
     def send(self, recipient_id: str, body: dict[str, object]):
         self.sent.append((recipient_id, body))

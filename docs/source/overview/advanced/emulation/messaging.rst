@@ -43,6 +43,23 @@ The send and broadcast requests must be awaited explicitly.
    # Wait at most 5 seconds; raises TimeoutError if nothing arrives
    message = await self.mpi.recv(timeout=5.0)
 
+   # Receive immediately; raises queue.Empty if no matching message is queued
+   message = await self.mpi.recv(source="service-B", block=False)
+
+   # Receive this sender's oldest message; other senders stay queued
+   message = await self.mpi.recv(timeout=5.0, source="service-B")
+
+``recv()`` returns the oldest queued message as a ``Message`` object.
+Its ``source`` attribute identifies the sending service, while ``data`` contains
+the application data unchanged, including any application-defined ``source`` key.
+For example, use ``message.source`` and ``message.data["msg"]``. Pass ``source`` to receive
+the oldest message from a specific service, leaving other messages queued.
+By default, reception waits until a matching message arrives;
+``timeout`` limits this wait in seconds and raises ``TimeoutError`` if it expires.
+Use ``block=False`` to receive immediately or raise ``queue.Empty`` if no matching
+message is available; in this mode, ``timeout`` is ignored. Cancelling or timing
+out a receive leaves later messages available for the next call.
+
 @exchange() decorator
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -69,9 +86,9 @@ You can decorate a method to:
    class EchoService(Service):
 
        @exchange(receive=True, send=True)
-       async def step(self, sender_id, message):
+       async def step(self, source, message):
            reply = {"msg": f"Echo: {message['msg']}"}
-           return sender_id, reply
+           return source, reply
 
 REST-style Messaging
 --------------------

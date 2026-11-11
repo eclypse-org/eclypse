@@ -40,7 +40,7 @@ class FrontendService(Service):
         await self.catalog_request()
 
         # Receive response from CatalogService
-        catalog_response = await self.mpi.recv()
+        catalog_response = (await self.mpi.recv()).data
 
         self.logger.info(
             "Received response | "
@@ -52,7 +52,7 @@ class FrontendService(Service):
         self.mpi.send("UserService", user_request)
 
         # Receive response from UserService
-        user_response = await self.mpi.recv()
+        user_response = (await self.mpi.recv()).data
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UserService", body=user_response)
@@ -63,7 +63,7 @@ class FrontendService(Service):
         self.mpi.send("CartService", cart_request)
 
         # Receive response from CartService
-        cart_response = await self.mpi.recv()
+        cart_response = (await self.mpi.recv()).data
         self.logger.info(
             "Received response | "
             + format_log_kv(source="CartService", body=cart_response)
@@ -95,7 +95,7 @@ class FrontendService(Service):
         self.mpi.send("OrderService", order_request)
 
         # Receive response from OrderService
-        order_response = await self.mpi.recv()
+        order_response = (await self.mpi.recv()).data
         self.logger.info(
             "Received response | "
             + format_log_kv(source="OrderService", body=order_response)
