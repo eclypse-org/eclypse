@@ -243,14 +243,17 @@ def test_service_deploy_start_stop_and_undeploy_flow(monkeypatch, dummy_logger):
     assert service.event_loop is fake_loop
     assert fake_loop.created[0][1] == "task-worker"
     assert service._thread is fake_thread
+    # Peers may send before this service starts, so it must accept them already.
+    assert isinstance(service._comm, FakeComm)
+    assert service._comm.connected is True
+    assert service.running is False
 
     with pytest.raises(RuntimeError, match="already deployed"):
         service._deploy(node)
 
     service._start()
 
-    assert isinstance(service._comm, FakeComm)
-    assert service._comm.connected is True
+    assert len(comms) == 1
     assert service.running is True
     assert fake_thread.started is True
 
@@ -303,9 +306,9 @@ def test_rest_service_specific_lifecycle(monkeypatch, dummy_logger):
 
     assert service._run_task is None
     assert service._thread is fake_thread
+    assert comms[0].connected is True
 
     service._start()
-    assert comms[0].connected is True
     assert service.running is True
 
     service._stop()
