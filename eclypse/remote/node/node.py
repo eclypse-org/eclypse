@@ -92,11 +92,11 @@ class RemoteNode:
 
         An example of build function can be the following:
 
-        .. code-block:: python
-
-            def build(self, dataset_name: str):
-                self._dataset_name = dataset_name
-                self._dataset = load_dataset(self._dataset_name)
+        ```python
+        def build(self, dataset_name: str):
+            self._dataset_name = dataset_name
+            self._dataset = load_dataset(self._dataset_name)
+        ```
         """
 
     async def ops_entrypoint(self, engine_op: RemoteOps, **op_args) -> Any:

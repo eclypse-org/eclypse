@@ -108,7 +108,7 @@ class SimulationConfig:
 
     report_backend: ReportBackend | FrameBackend | None = None
     """Backend used later to load generated reports through
-    :class:`~eclypse.report.report.Report`."""
+    [Report][eclypse.report.report.Report]."""
 
     remote: bool | RemoteBootstrap = False
     """Whether to run in remote emulation mode, or the bootstrap to use for it."""

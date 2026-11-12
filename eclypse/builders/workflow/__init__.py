@@ -1,4 +1,4 @@
-"""Workflow builders using `WfCommons <https://wfcommons.org/>`_ library.
+"""Workflow builders using [WfCommons](https://wfcommons.org/) library.
 
 The package groups *simulation-only* workflow builders that generate task DAGs
 and map their metadata onto ECLYPSE applications. These builders do not expose

@@ -7,9 +7,9 @@ metadata such as demand matrices and ECMP load statistics when present in
 TopoHub.
 
 Example:
-    .. code-block:: python
-
-        get_sndlib("polska", **kwargs)
+    ```python
+    get_sndlib("polska", **kwargs)
+    ```
 
 Source:
     SNDlib, https://sndlib.put.poznan.pl/
@@ -48,7 +48,7 @@ def get_sndlib(
     """Create a SNDlib-backed infrastructure from TopoHub.
 
     The ``topology`` value must be a valid topology name from
-    `TopoHub <https://www.topohub.org>`_'s ``sndlib`` family catalogue.
+    [TopoHub](https://www.topohub.org)'s ``sndlib`` family catalogue.
 
     Args:
         topology (str):

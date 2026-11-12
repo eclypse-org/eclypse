@@ -33,7 +33,7 @@ class IOContext:
     """Common customisation context for AssetGraph import and export.
 
     The context contains only options that map to the common
-    :class:`~eclypse.graph.asset_graph.AssetGraph` construction and population
+    [AssetGraph][eclypse.graph.asset_graph.AssetGraph] construction and population
     behaviour.
 
     Args:
@@ -58,14 +58,14 @@ class InfrastructureContext(IOContext):
     Args:
         strict (bool): Whether imported nodes and edges should be validated strictly.
             Defaults to ``False``, matching
-            :class:`~eclypse.graph.infrastructure.Infrastructure`.
+            [Infrastructure][eclypse.graph.infrastructure.Infrastructure].
         include_default_assets (bool): Whether the imported infrastructure should
             include default assets when the format does not carry asset definitions.
             Defaults to ``False``, matching
-            :class:`~eclypse.graph.infrastructure.Infrastructure`.
+            [Infrastructure][eclypse.graph.infrastructure.Infrastructure].
         resource_init (InitPolicy): Resource initialisation policy used when a format
             does not carry one. Defaults to ``"asset_init"``, matching
-            :class:`~eclypse.graph.infrastructure.Infrastructure`.
+            [Infrastructure][eclypse.graph.infrastructure.Infrastructure].
         path_assets_aggregators (dict[str, Callable[[list[Any]], Any]] | None):
             Named path aggregators used to reconstruct infrastructure path-resource
             aggregation. Defaults to ECLYPSE path aggregators only when
@@ -115,14 +115,14 @@ class ApplicationContext(IOContext):
     Args:
         strict (bool): Whether imported nodes and edges should be validated strictly.
             Defaults to ``True``, matching
-            :class:`~eclypse.graph.application.Application` through
-            :class:`~eclypse.graph.asset_graph.AssetGraph`.
+            [Application][eclypse.graph.application.Application] through
+            [AssetGraph][eclypse.graph.asset_graph.AssetGraph].
         include_default_assets (bool): Whether the imported application should include
             default assets when the format does not carry asset definitions. Defaults
-            to ``False``, matching :class:`~eclypse.graph.application.Application`.
+            to ``False``, matching [Application][eclypse.graph.application.Application].
         requirement_init (InitPolicy): Requirement initialisation policy used when a
             format does not carry one. Defaults to ``"asset_init"``, matching
-            :class:`~eclypse.graph.application.Application`.
+            [Application][eclypse.graph.application.Application].
         services (dict[str, type[Service]]): Service classes used when an
             application importer needs to instantiate service implementations.
     """

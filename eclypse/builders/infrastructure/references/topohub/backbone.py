@@ -6,9 +6,9 @@ distance rather than node compute heterogeneity, making them a good reference
 for routing, latency, and placement experiments over region-scale networks.
 
 Example:
-    .. code-block:: python
-
-        get_backbone("africa", **kwargs)
+    ```python
+    get_backbone("africa", **kwargs)
+    ```
 
 Source:
     TopoHub, https://www.topohub.org
@@ -47,7 +47,7 @@ def get_backbone(
     """Create a synthetic backbone infrastructure from TopoHub.
 
     The ``topology`` value must be a valid topology name from
-    `TopoHub <https://www.topohub.org>`_'s ``backbone`` family catalogue.
+    [TopoHub](https://www.topohub.org)'s ``backbone`` family catalogue.
 
     Args:
         topology (str):

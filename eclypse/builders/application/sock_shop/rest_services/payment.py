@@ -44,16 +44,16 @@ class PaymentService(RESTService):
             dict: The response body.
 
         Example:
-            .. code-block:: python
-
-                (
-                    200,
-                    {
-                        "order_id": 12345,
-                        "transaction_id": 54321,
-                        "status": "success",
-                    },
-                )
+            ```python
+            (
+                200,
+                {
+                    "order_id": 12345,
+                    "transaction_id": 54321,
+                    "status": "success",
+                },
+            )
+            ```
         """
         self.logger.info(
             "Received request | " + format_log_kv(order_id=order_id, amount=amount)

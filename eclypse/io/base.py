@@ -28,7 +28,8 @@ class GraphExporter(ABC, Generic[TGraph, TData]):
 
     Exporters convert an ECLYPSE graph object into an intermediate data representation,
     then write that representation to a destination. Subclasses normally implement
-    :meth:`to_data` and :meth:`write_data`.
+    [to_data][eclypse.io.base.GraphExporter.to_data] and
+    [write_data][eclypse.io.base.GraphExporter.write_data].
     """
 
     def dump(
@@ -53,7 +54,8 @@ class GraphExporter(ABC, Generic[TGraph, TData]):
             context (IOContext | None): Optional import/export customisation.
 
         Returns:
-            TData: The intermediate representation handled by :meth:`write_data`.
+            TData: The intermediate representation handled by
+                [write_data][eclypse.io.base.GraphExporter.write_data].
         """
 
     @abstractmethod
@@ -74,7 +76,8 @@ class GraphImporter(ABC, Generic[TGraph, TData]):
 
     Importers read a source into an intermediate data representation, then build an
     ECLYPSE graph object from that representation. Subclasses normally implement
-    :meth:`read_data` and :meth:`from_data`.
+    [read_data][eclypse.io.base.GraphImporter.read_data] and
+    [from_data][eclypse.io.base.GraphImporter.from_data].
     """
 
     def load(
@@ -108,7 +111,8 @@ class GraphImporter(ABC, Generic[TGraph, TData]):
             context (IOContext | None): Optional import/export customisation.
 
         Returns:
-            TData: The intermediate representation handled by :meth:`from_data`.
+            TData: The intermediate representation handled by
+                [from_data][eclypse.io.base.GraphImporter.from_data].
         """
 
     @abstractmethod
