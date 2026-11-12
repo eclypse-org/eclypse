@@ -14,6 +14,8 @@
 
 ECLYPSE is designed for researchers and developers evaluating placement strategies and distributed application scenarios.
 
+[![ECLYPSE: a Python framework to build cloud-edge scenarios, place services, simulate change, emulate with Ray, and inspect metrics. Open the quickstart.](docs/_static/images/eclypse-demo.gif)](#quickstart)
+
 ## Key features
 
 - **Build scenarios:** represent infrastructures and applications as resource-aware graphs, starting from [built-in builders](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/builders.html) or custom topologies.
