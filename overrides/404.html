@@ -1,0 +1,15 @@
+{% extends "main.html" %}
+
+{% block content %}
+  <h1>404 - Not found</h1>
+  <script>
+    // Sphinx-era URLs (.../source/overview/page.html, .../source/api/...) moved to clean URLs
+    (function () {
+      var path = location.pathname;
+      var page = path.match(/^(.*)\/source\/(overview(?:\/.+?)??)(?:\/index)?\.html$/);
+      var api = path.match(/^(.*)\/source\/api\//);
+      if (page) location.replace(page[1] + "/" + page[2] + "/" + location.hash);
+      else if (api) location.replace(api[1] + "/reference/eclypse/");
+    })();
+  </script>
+{% endblock %}

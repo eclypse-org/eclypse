@@ -1,4 +1,4 @@
-/* Scoped because Sphinx loads this stylesheet on article pages too. */
+/* Scoped to .ec-home; only the landing template (overrides/home.html) loads this file. */
 .ec-home {
   --ember:#ff9e47;
   --fog:#bfc0c0;

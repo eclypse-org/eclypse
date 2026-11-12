@@ -5,289 +5,158 @@
   --ec-ember-dark: #d87824;
   --ec-paper: #fbf8f3;
   --ec-sand: #efe6d9;
-  --pst-font-family-base: "Montserrat", ui-sans-serif, system-ui, sans-serif;
-  --pst-font-family-heading: var(--pst-font-family-base);
 }
 
-html[data-theme="light"] {
-  --pst-color-primary: var(--ec-ember-dark);
-  --pst-color-secondary: var(--ec-ember);
-  --pst-color-link: #bc6518;
-  --pst-color-link-hover: #8a4610;
-  --pst-color-accent: var(--ec-ember);
-  --pst-color-inline-code: #8a4610;
-  --pst-color-background: var(--ec-paper);
-  --pst-color-on-background: #ffffff;
-  --pst-color-surface: #fffdf9;
-  --pst-color-border: #e8dac5;
-  --pst-color-text-base: var(--ec-ink);
-  --pst-color-text-muted: #5e5c57;
-  --pst-color-heading: var(--ec-ink);
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color: var(--ec-ember-dark);
+  --md-primary-fg-color--light: var(--ec-ember);
+  --md-primary-fg-color--dark: #8a4610;
+  --md-accent-fg-color: #8a4610;
+  --md-accent-fg-color--transparent: #d878241a;
+  --md-default-bg-color: var(--ec-paper);
+  --md-default-bg-color--light: #fbf8f3b3;
+  --md-typeset-a-color: #bc6518;
+  --md-code-bg-color: #fffdf9;
+  --md-typeset-table-color: #e8dac5;
+  --ec-inline-code: #8a4610;
+  --ec-border: #e8dac5;
 }
 
-html[data-theme="dark"] {
-  --pst-color-primary: var(--ec-ember);
-  --pst-color-secondary: #ffc58a;
-  --pst-color-link: #ffbf82;
-  --pst-color-link-hover: #ffd2a6;
-  --pst-color-accent: var(--ec-ember);
-  --pst-color-inline-code: #ffbf82;
-  --pst-color-background: #111111;
-  --pst-color-on-background: #161616;
-  --pst-color-surface: #191919;
-  --pst-color-border: #2d2d2d;
-  --pst-color-text-base: #ece6de;
-  --pst-color-text-muted: #c2b9ad;
-  --pst-color-heading: #ffffff;
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color: var(--ec-ember);
+  --md-primary-fg-color--light: #ffc58a;
+  --md-primary-fg-color--dark: var(--ec-ember-dark);
+  --md-accent-fg-color: #ffd2a6;
+  --md-accent-fg-color--transparent: #ff9e471f;
+  --md-default-bg-color: var(--ec-ink);
+  --md-default-bg-color--light: #111111b3;
+  --md-default-fg-color: #ece6de;
+  --md-typeset-a-color: #ffbf82;
+  --md-code-bg-color: #191919;
+  --md-typeset-table-color: #2d2d2d;
+  --ec-inline-code: #ffbf82;
+  --ec-border: #2d2d2d;
 }
 
-.bd-header {
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid color-mix(in srgb, var(--pst-color-border) 75%, transparent);
-}
-
-.bd-page-width {
-  max-width: none;
-}
-
-.bd-main .bd-content .bd-article-container {
-  max-width: none;
-}
-
-.bd-content .sd-card,
-.bd-content .sd-tab-set,
-.bd-content .admonition,
-.bd-content div.literal-block-wrapper {
-  border-radius: 0.65rem;
-}
-
-.bd-content .sd-card {
-  border-color: color-mix(in srgb, var(--pst-color-border) 80%, transparent);
-  box-shadow: none;
-}
-
-.bd-content .sd-card:hover {
-  border-color: color-mix(in srgb, var(--pst-color-primary) 55%, var(--pst-color-border));
-}
-
-.bd-content .highlight,
-.bd-content pre {
-  border-radius: 0.5rem;
-}
-
-.bd-content h1,
-.bd-content h2,
-.bd-content h3,
-.bd-content h4 {
-  letter-spacing: -0.02em;
-}
-
-.bd-content a {
-  text-decoration-thickness: 0.08em;
-  text-decoration-color: color-mix(in srgb, var(--pst-color-link) 45%, transparent);
-}
-
-.bd-content a:hover,
-.bd-content a:focus {
-  text-decoration-color: var(--pst-color-link-hover);
-}
-
-.bd-content a code,
-.bd-content a .pre,
-.bd-content code.xref,
-.bd-content a.sig-name,
-.bd-content a.reference.internal code {
-  color: var(--pst-color-link);
-}
-
-.bd-content a:hover code,
-.bd-content a:hover .pre,
-.bd-content code.xref:hover,
-.bd-content a.sig-name:hover,
-.bd-content a.reference.internal:hover code,
-.bd-content a:focus code,
-.bd-content a:focus .pre,
-.bd-content a.sig-name:focus,
-.bd-content a.reference.internal:focus code {
-  color: var(--pst-color-link-hover);
-}
-
-.bd-content .admonition.tip,
-.bd-content .admonition.note,
-.bd-content .admonition.important {
-  border-left: 4px solid var(--pst-color-primary);
-}
-
-.bd-sidebar-primary,
-.bd-sidebar-secondary {
-  background: color-mix(in srgb, var(--pst-color-background) 85%, transparent);
-}
-
-.navbar-nav .nav-link:hover,
-.navbar-nav .nav-link:focus {
-  color: var(--pst-color-primary);
-}
-
-.bd-footer {
-  border-top: 1px solid color-mix(in srgb, var(--pst-color-border) 75%, transparent);
-}
-
-/* Shared identity with the landing page; article surfaces remain quiet. */
 body {
-  font-size: 1rem;
-  line-height: 1.8;
+  --md-text-font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 }
-.bd-header {
-  background: var(--pst-color-background);
+
+.md-header,
+.md-tabs {
+  border-bottom: 1px solid color-mix(in srgb, var(--ec-border) 75%, transparent);
   box-shadow: none;
 }
-.navbar-brand {
-  gap: 0.6rem;
-}
-.navbar-brand img {
-  max-height: 3rem;
-  width: 3rem;
-  object-fit: contain;
-}
-.navbar-brand .logo__title {
-  font-size: 1.0625rem;
+
+.md-header__topic:first-child {
   font-weight: 700;
   letter-spacing: 0.16em;
 }
-.navbar-nav .nav-link {
-  font-size: 0.8625rem;
-  font-weight: 500;
-}
-.search-button-field {
-  border: 1px solid var(--pst-color-border);
-  border-radius: 0.5rem;
-  background: var(--pst-color-surface);
-  box-shadow: none;
-  font-size: 0.8625rem;
-}
-/* Local variables keep the navigation legible in both colour modes. */
-.bd-sidebar-primary {
-  --pst-color-background: #111111;
-  --pst-color-on-background: #191919;
-  --pst-color-surface: #191919;
-  --pst-color-border: #303030;
-  --pst-color-text-base: #bfc0c0;
-  --pst-color-text-muted: #a5a5a5;
-  --pst-color-heading: #f3f0eb;
-  --pst-color-primary: #ff9e47;
-  --pst-color-link: #bfc0c0;
-  --pst-color-link-hover: #ffbf82;
-  background: #111111;
-  color: #bfc0c0;
-  border-right: 1px solid #2a2a2a;
-}
-.bd-sidebar-primary .sidebar-primary-items__start {
-  padding-top: 1.5rem;
-}
-.bd-sidebar-primary .sidebar-header-items {
-  color: #bfc0c0;
-}
-.bd-sidebar-primary .nav-link,
-.bd-sidebar-primary .bd-sidenav a {
-  border-radius: 0.4rem;
-  padding-block: 0.5rem;
-  font-size: 0.8425rem;
-  line-height: 1.6;
-}
-.bd-sidebar-primary .bd-sidenav a:hover,
-.bd-sidebar-primary .bd-sidenav a:focus-visible,
-.bd-sidebar-primary .bd-sidenav a.current,
-.bd-sidebar-primary .nav-link:hover,
-.bd-sidebar-primary .nav-link:focus-visible,
-.bd-sidebar-primary li.current > .nav-link,
-.bd-sidebar-primary .nav-link.active {
-  color: #ffbf82;
-  background: #ff9e4712;
-}
-.bd-sidebar-primary .caption-text {
-  color: #999;
-  font-size: 0.7125rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-.bd-sidebar-secondary {
-  background: var(--pst-color-background);
-  font-size: 0.8125rem;
-}
-.bd-article {
-  padding-top: 1.75rem;
-}
-.bd-article h1 {
-  font-size: clamp(2rem, 4vw, 2.8rem);
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4 {
   font-weight: 600;
-  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.md-typeset h1 {
   letter-spacing: -0.045em;
-  margin-bottom: 1.75rem;
 }
-.bd-article h2 {
-  font-size: 1.7rem;
-  font-weight: 600;
-  margin-top: 2.5rem;
+
+.md-typeset a {
+  text-decoration: underline;
+  text-decoration-thickness: 0.08em;
+  text-decoration-color: color-mix(in srgb, var(--md-typeset-a-color) 45%, transparent);
 }
-.bd-article h3 {
-  font-size: 1.25rem;
-  font-weight: 600;
+
+.md-typeset a:hover,
+.md-typeset a:focus {
+  text-decoration-color: var(--md-accent-fg-color);
 }
-.bd-article .highlight {
-  border: 1px solid var(--pst-color-border);
-  background: var(--pst-color-surface);
+
+.md-typeset .headerlink,
+.md-typeset .md-button,
+.md-typeset .grid.cards a {
+  text-decoration: none;
 }
-.bd-article pre {
-  padding: 1.2rem;
-  font-size: 0.8625rem;
-  line-height: 1.75;
+
+.md-typeset :not(pre) > code,
+.md-typeset a code {
+  color: var(--ec-inline-code);
 }
-.bd-article .sig {
-  border-radius: 0.4rem;
-  border-left: 3px solid var(--pst-color-primary);
+
+.md-typeset a:hover code,
+.md-typeset a:focus code {
+  color: var(--md-accent-fg-color);
 }
-.bd-content .sd-card {
-  background: var(--pst-color-surface);
-  transition: border-color 0.2s ease;
+
+.md-typeset .highlight,
+.md-typeset pre > code {
+  border-radius: 0.5rem;
 }
-.bd-content .admonition {
+
+.md-typeset .highlight {
+  border: 1px solid var(--ec-border);
+}
+
+.md-typeset .admonition,
+.md-typeset details {
   box-shadow: none;
-  border: 1px solid var(--pst-color-border);
+  border: 1px solid var(--ec-border);
 }
-.bd-content table {
-  font-size: 0.9125rem;
-  border-color: var(--pst-color-border);
+
+.md-typeset :is(.admonition, details):is(.note, .tip, .info, .example) {
+  border-left: 4px solid var(--md-primary-fg-color);
 }
-.bd-content table thead {
-  background: var(--pst-color-surface);
+
+/* Code dropdowns stay neutral, like the old sphinx-design ones. */
+.md-typeset details.example {
+  background-color: var(--md-code-bg-color);
 }
-.bd-content .sd-btn {
-  border-radius: 0.45rem;
-  font-weight: 600;
-  font-size: 0.8625rem;
+
+.md-typeset details.example > summary {
+  background-color: color-mix(in srgb, var(--md-primary-fg-color) 8%, transparent);
 }
-.prev-next-area a {
-  border: 1px solid var(--pst-color-border);
-  border-radius: 0.6rem;
-  padding: 1rem;
+
+.md-typeset details.example > summary::before {
+  background-color: var(--md-primary-fg-color);
 }
-.prev-next-area a:hover {
-  border-color: var(--pst-color-primary);
+
+.md-typeset details.example > summary::after {
+  color: var(--md-primary-fg-color);
 }
-.bd-footer {
-  font-size: 0.7825rem;
-  color: var(--pst-color-text-muted);
+
+.md-typeset .grid.cards > ul > li {
+  border-color: var(--ec-border);
+  background: var(--md-code-bg-color);
 }
+
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid.cards > ul > li:focus-within {
+  border-color: color-mix(in srgb, var(--md-primary-fg-color) 55%, var(--ec-border));
+  box-shadow: none;
+}
+
+.md-typeset table:not([class]) th {
+  background: var(--md-code-bg-color);
+}
+
+/* API signatures get the same ember rule as the old Sphinx pages. */
+.md-typeset .doc-signature {
+  border-left: 3px solid var(--md-primary-fg-color);
+  border-radius: 0.4rem;
+}
+
 a:focus-visible,
 button:focus-visible {
-  outline: 2px solid var(--pst-color-primary);
+  outline: 2px solid var(--md-primary-fg-color);
   outline-offset: 3px;
 }
-@media (max-width: 767px) {
-  .bd-article { padding-top: 1rem; }
-  .bd-article h2 { font-size: 1.4rem; }
-  .prev-next-area a { padding: 0.65rem; }
-}
+
 @media (prefers-reduced-motion: reduce) {
-  .bd-content .sd-card { transition: none; }
+  .md-typeset .grid.cards > ul > li {
+    transition: none;
+  }
 }

@@ -63,16 +63,16 @@ uv run pytest tests/unit/simulation/test_config.py
 
 ## Documentation
 
-The documentation is built with Sphinx, treating warnings as errors:
+The documentation is built with [Zensical](https://zensical.org/) in strict mode, so warnings such as broken links fail the build:
 
 ```bash
 make docs
 ```
 
-The pages are written to `docs/_build/html`. To find classes missing from the documentation, run:
+The pages are written to `site/`. Pages live in `docs/` as Markdown, and the API reference is generated from the docstrings, which use Google style with Markdown. To preview with live reload on port 8000, run:
 
 ```bash
-uv run --group docs make -C docs coverage
+uv run --group docs zensical serve
 ```
 
 ## Pre-commit Hooks

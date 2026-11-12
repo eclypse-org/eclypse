@@ -13,7 +13,7 @@ patch:
 	uv run cz bump --increment patch
 
 docs:
-	uv run --group docs $(MAKE) -C docs html
+	uv run --group docs zensical build --strict
 
 verify:
 	uvx twine check --strict dist/*
