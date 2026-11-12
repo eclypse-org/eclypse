@@ -28,18 +28,18 @@ class UserService(RESTService):
             dict: The response body.
 
         Example:
-            .. code-block:: python
-
-                (
-                    200,
-                    {
-                        "user_id": 12345,
-                        "name": "John Doe",
-                        "email": "john@example.com",
-                        "address": "123 Main St",
-                        "phone": "555-1234",
-                    },
-                )
+            ```python
+            (
+                200,
+                {
+                    "user_id": 12345,
+                    "name": "John Doe",
+                    "email": "john@example.com",
+                    "address": "123 Main St",
+                    "phone": "555-1234",
+                },
+            )
+            ```
         """
         self.logger.info("Received request | " + format_log_kv(user_id=user_id))
         return 200, {

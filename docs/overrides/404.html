@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+
+{% block content %}
+  <h1>404 - Not found</h1>
+  <script>
+    // Derive legacy API destinations from the generated navigation, keeping member anchors.
+    function legacyDestination(path, hash, apiPages) {
+      const guide = path.match(/^(.*)\/source\/(overview(?:\/.*?)?)\.html$/);
+      if (guide) return guide[1] + "/" + guide[2].replace(/\/index$/, "") + "/" + hash;
+      const api = path.match(/^(.*)\/source\/api\/(.*)\.html$/);
+      if (!api) return null;
+      const symbol = api[2].split("/").pop();
+      const target = apiPages
+        .filter(page => symbol === page.symbol || symbol.startsWith(page.symbol + "."))
+        .sort((a, b) => b.symbol.length - a.symbol.length)[0];
+      if (!target) return api[1] + "/reference/eclypse/";
+      return api[1] + "/" + target.url + (hash || "#" + symbol);
+    }
+    const apiPages = [
+      {% for item in nav.pages if "reference/" in item.url %}
+        { url: {{ item.url | tojson }}, symbol: {{ item.url | replace("reference/", "") | trim("/") | replace("/", ".") | tojson }} },
+      {% endfor %}
+    ];
+    const destination = legacyDestination(location.pathname, location.hash, apiPages);
+    if (destination) location.replace(destination);
+  </script>
+{% endblock %}

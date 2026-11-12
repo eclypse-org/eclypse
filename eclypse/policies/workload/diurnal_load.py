@@ -37,14 +37,7 @@ class DiurnalLoadPolicy:
     baselines: dict[tuple[str, ...], float] = field(default_factory=dict)
 
     def __post_init__(self):
-        """Validate the diurnal load configuration.
-
-        Args:
-            None.
-
-        Returns:
-            None.
-        """
+        """Validate the diurnal load configuration."""
         if self.period <= 0:
             raise ValueError("period must be strictly positive.")
         if self.node_assets is None and self.edge_assets is None:

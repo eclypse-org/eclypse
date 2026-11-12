@@ -1,0 +1,213 @@
+# Reporting
+
+ECLYPSE provides a reporting pipeline with three moving parts:
+
+1. **Define what to report** through metrics,
+2. **choose how to persist it** through report formats and reporters,
+3. **load and query the results** through [Report][eclypse.report.report.Report].
+
+## Defining Metrics
+
+Metrics are reportable events that collect and return structured data during the simulation.
+Technically, they are events with the
+[METRIC][eclypse.workflow.event.role.EventRole.METRIC] role, exposed through the
+`@metric.<type>` decorators provided in [eclypse.report.metrics][eclypse.report.metrics].
+
+Metrics, callbacks, and regular events all share the same event engine, but they serve
+different purposes:
+
+- regular events drive the workflow,
+- callbacks attach post-event logic without making reporting the primary goal,
+- metrics attach post-event logic whose output is intended to be written by reporters.
+
+This distinction matters because a metric is both:
+
+- a post-event hook, so it can access the triggering event payload,
+- a reporting primitive, so its return value is prepared for the reporting pipeline.
+
+By contrast, a plain callback can inspect the same context, but it is mainly meant for
+workflow composition or transient post-processing.
+
+There are 7 decorators corresponding to different metric types:
+
+- [simulation][eclypse.report.metrics.metric.simulation]
+- [infrastructure][eclypse.report.metrics.metric.infrastructure]
+- [node][eclypse.report.metrics.metric.node]
+- [link][eclypse.report.metrics.metric.link]
+- [application][eclypse.report.metrics.metric.application]
+- [service][eclypse.report.metrics.metric.service]
+- [interaction][eclypse.report.metrics.metric.interaction]
+
+See [Scheduled event decorators](../concepts/events.md#event-decorator) for details on scheduled event helpers. A metric lets
+you specify:
+
+- **What data to collect**
+- **How often to report** (using [triggers](triggers.md))
+- **How to report it** (via the `report` argument)
+
+Example:
+
+```python title="Example of an application metric returning the number of its services"
+from eclypse.report.metrics import metric
+
+@metric.application(activates_on=["step"], report=["csv", "json"])
+def my_metric(application, placement, infrastructure):
+    return len(application.nodes)
+```
+
+!!! note
+
+    Metrics are executed like events, and use the same underlying logic, including support for cascade triggers and trigger conditions.
+
+### Custom metric recipe
+
+Use the metric decorator that matches the object you want to inspect, choose
+when it activates, and return a single scalar value.
+
+```python title="Custom service metric"
+from eclypse.report.metrics import metric
+
+@metric.service(activates_on="step", report=["csv"])
+def requested_cpu(service_id, requirements, placement, infrastructure):
+    return requirements["cpu"]
+```
+
+The reporting pipeline fills the identifier columns of the report itself (for a
+service metric, `application_id` and `service_id`), records the event
+metadata, and stores the returned value in the `value` column. Returning
+`None` skips the row.
+
+!!! warning
+
+    Every report has a single `value` column, so a metric must not return a
+    mapping or a tuple: their items would become extra fields that do not fit
+    the report schema. To report several quantities, define one metric for each.
+
+### Metric and callback types
+
+The metric decorators mirror the same event types used by regular events. The event type
+still determines what your logic receives:
+
+- `simulation` metrics receive `triggering_event`,
+- `application` metrics receive `application`, `placement`, and `infrastructure`,
+- `service` metrics receive `service_id`, `requirements`, `placement`, and
+  `infrastructure`,
+- `service` metrics with `remote=True` receive a remote
+  [Service][eclypse.remote.service.service.Service] instance,
+- `interaction` metrics receive `source_id`, `target_id`, `requirements`,
+  `placement`, and `infrastructure`,
+- `infrastructure` metrics receive `infrastructure` and `placement_view`,
+- `node` metrics receive `node_id`, `resources`, `placements`,
+  `infrastructure`, and `placement_view`,
+- `link` metrics receive `source_id`, `target_id`, `resources`,
+  `placements`, `infrastructure`, and `placement_view`.
+
+Callbacks follow the same type-based signatures. The difference is therefore not the
+arguments they receive, but the role they play in the workflow and whether their output
+is meant to be reported.
+
+
+## Report storage formats and reporters
+
+ECLYPSE separates **storage formats** from **reporters**.
+
+The storage format is selected through
+[SimulationConfig][eclypse.simulation.config.SimulationConfig] and controls how report
+frames are written on disk:
+
+- `csv` for human-readable tabular files,
+- `json` for JSONL outputs,
+- `parquet` for analytical workloads and larger runs.
+
+The `report` argument on an event or metric selects one or more reporter
+types for that specific event. Built-in reporter types cover the common sinks:
+
+- `csv` for human-readable tabular files,
+- `json` for JSONL outputs,
+- `parquet` for analytical workloads and larger runs,
+- `tensorboard` for TensorBoard-compatible metrics.
+
+For CSV, JSON, and Parquet, the reporter type usually matches the configured
+storage format. TensorBoard is different: it is a reporter sink, not a dataframe
+storage format loaded later through [Report][eclypse.report.report.Report].
+
+You can also implement your own
+[Reporter][eclypse.report.reporter.Reporter] subclass if you want to persist data
+to a different sink such as a database or a live dashboard.
+
+## Default Reporters
+
+ECLYPSE includes a set of built-in reporters:
+
+- [Reporter][eclypse.report.reporter.Reporter]
+- [CSVReporter][eclypse.report.reporters.csv.CSVReporter]
+- [JSONReporter][eclypse.report.reporters.json.JSONReporter]
+- [ParquetReporter][eclypse.report.reporters.parquet.ParquetReporter]
+- [TensorBoardReporter][eclypse.report.reporters.tensorboard.TensorBoardReporter]
+
+In most cases you do not instantiate them manually. Instead, you select the
+desired reporter types through metric/event configuration and let the
+simulation resolve the built-in reporters automatically.
+
+!!! info "Important"
+
+    When implementing custom reporters that write to the filesystem, use
+    [aiofiles](https://github.com/Tinche/aiofiles) for asynchronous file
+    operations. This keeps reporting from blocking the simulation loop.
+
+    ```python title="Example: usage of aiofiles"
+    import aiofiles
+
+    async with aiofiles.open(self.report_path / "data.csv", "a") as f:
+        await f.write("some,data,to,write\n")
+    ```
+
+## Choosing a report backend
+
+The [Report][eclypse.report.report.Report] class can use multiple dataframe
+backends:
+
+- `pandas`
+- `polars`
+- `polars_lazy`
+
+Choose the backend through
+[SimulationConfig][eclypse.simulation.config.SimulationConfig] or directly when loading a
+report from disk.
+
+## Accessing reports
+
+After the simulation, you can access the results using the
+[Report][eclypse.report.report.Report] object.
+
+Example usage:
+
+```python title="Accessing reported data"
+from eclypse.report import Report
+
+report = Report("./output")
+df = report.service(application_ids="app1", service_ids="srv2")
+```
+
+For a quick run summary, call
+[describe][eclypse.report.report.Report.describe]:
+
+```python
+print(report.describe())
+# 84 rows x 10 steps x 12 metrics | 5 applications | ...
+```
+
+Each accessor method supports filtering by:
+
+- `report_range` (e.g., only events between 10 and 100)
+- `report_step` (e.g., one point every N events)
+- event IDs, application IDs, node/service/link IDs, etc.
+
+!!! tip
+
+    If you need a generic entry point, use
+    [frame][eclypse.report.report.Report.frame]:
+
+    ```python
+    report.frame("application")
+    ```

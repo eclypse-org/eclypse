@@ -1,4 +1,14 @@
 (() => {
+  const installCommand = document.querySelector('.install-command');
+  installCommand.querySelector('button').addEventListener('click', async () => {
+    const status = installCommand.querySelector('[aria-live]');
+    try {
+      await navigator.clipboard.writeText(installCommand.querySelector('code').textContent);
+      status.textContent = 'Copied!';
+    } catch {
+      status.textContent = 'Select command to copy';
+    }
+  });
   const reduced = matchMedia('(prefers-reduced-motion: reduce)');
   const fine = matchMedia('(hover: hover) and (pointer: fine)');
   const logo = document.querySelector('.first-run-logo');

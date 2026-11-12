@@ -18,17 +18,17 @@ ECLYPSE is designed for researchers and developers evaluating placement strategi
 
 ## Key features
 
-- **Build scenarios:** represent infrastructures and applications as resource-aware graphs, starting from [built-in builders](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/builders.html) or custom topologies.
-- **Control placement:** use built-in or custom [placement strategies](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/placement-strategy.html) to map services onto infrastructure nodes.
-- **Model change:** define [update policies](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/update-policy.html) and [events](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/events.html) for evolving resources, failures, workloads, and topology.
-- **Inspect results:** collect built-in or custom metrics and query [reports](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/inspect-results.html) as dataframes.
-- **Run implemented services:** move from abstract scenarios to [remote emulation](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/remote-emulation.html).
+- **Build scenarios:** represent infrastructures and applications as resource-aware graphs, starting from [built-in builders](https://eclypse.readthedocs.io/en/latest/overview/concepts/builders/) or custom topologies.
+- **Control placement:** use built-in or custom [placement strategies](https://eclypse.readthedocs.io/en/latest/overview/concepts/placement-strategy/) to map services onto infrastructure nodes.
+- **Model change:** define [update policies](https://eclypse.readthedocs.io/en/latest/overview/concepts/update-policy/) and [events](https://eclypse.readthedocs.io/en/latest/overview/concepts/events/) for evolving resources, failures, workloads, and topology.
+- **Inspect results:** collect built-in or custom metrics and query [reports](https://eclypse.readthedocs.io/en/latest/overview/getting-started/inspect-results/) as dataframes.
+- **Run implemented services:** move from abstract scenarios to [remote emulation](https://eclypse.readthedocs.io/en/latest/overview/getting-started/remote-emulation/).
 
 ## Simulation and emulation
 
 **Local simulation** models services as application graph nodes, without requiring service implementations. Use it to study placement, resource evolution, and deployment behaviour.
 
-**Remote emulation** executes implemented services through Ray, with MPI-style message passing or REST-style communication. It requires Ray, remote-capable services, and remote execution configuration. See the [emulation guide](https://eclypse.readthedocs.io/en/latest/source/overview/advanced/emulation/index.html) for setup and communication details.
+**Remote emulation** executes implemented services through Ray, with MPI-style message passing or REST-style communication. It requires Ray, remote-capable services, and remote execution configuration. See the [emulation guide](https://eclypse.readthedocs.io/en/latest/overview/advanced/emulation/) for setup and communication details.
 
 ## Installation
 
@@ -44,7 +44,7 @@ Or add it to a uv project:
 uv add eclypse
 ```
 
-See the [installation guide](https://eclypse.readthedocs.io/en/latest/source/overview/install.html) for environment setup. The quickstart uses only the base package; remote emulation and other optional features may need additional dependencies.
+See the [installation guide](https://eclypse.readthedocs.io/en/latest/overview/install/) for environment setup. The quickstart uses only the base package; remote emulation and other optional features may need additional dependencies.
 
 ## Quickstart
 
@@ -108,24 +108,24 @@ Service report empty: False
 
 The application dataframe preview follows. `RandomStrategy` is a baseline, not a guarantee of feasible placement: this scenario can log `Path not found` and `Resetting placement` warnings. Non-empty reports confirm metric collection, not successful deployment; inspect the metric values when comparing strategies. Reports are written under `~/quickstart-results` in your home directory; if that directory already exists, ECLYPSE chooses a timestamped path instead. The default report backend returns pandas dataframes.
 
-To adapt this experiment, replace `RandomStrategy` with your placement strategy, change the infrastructure builder, or add update policies. Continue with [running a local simulation](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/minimal-local-run.html) and [inspecting results](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/inspect-results.html).
+To adapt this experiment, replace `RandomStrategy` with your placement strategy, change the infrastructure builder, or add update policies. Continue with [running a local simulation](https://eclypse.readthedocs.io/en/latest/overview/getting-started/minimal-local-run/) and [inspecting results](https://eclypse.readthedocs.io/en/latest/overview/getting-started/inspect-results/).
 
 ## Examples
 
 Follow these examples in order, or choose the scenario closest to your experiment:
 
-- [Off-the-shelf](https://eclypse.readthedocs.io/en/latest/source/overview/examples/off_the_shelf.html): compose a local simulation from built-in builders, policies, and placement logic.
-- [User distribution](https://eclypse.readthedocs.io/en/latest/source/overview/examples/user_distribution.html): add a custom metric and update policy driven by changing user distributions.
-- [Grid analysis](https://eclypse.readthedocs.io/en/latest/source/overview/examples/grid_analysis.html): compare topologies, policies, and strategies with a Ray Tune sweep.
-- [Sock Shop](https://eclypse.readthedocs.io/en/latest/source/overview/examples/sock_shop.html): explore a microservices application with MPI and REST variants.
+- [Off-the-shelf](https://eclypse.readthedocs.io/en/latest/overview/examples/off_the_shelf/): compose a local simulation from built-in builders, policies, and placement logic.
+- [User distribution](https://eclypse.readthedocs.io/en/latest/overview/examples/user_distribution/): add a custom metric and update policy driven by changing user distributions.
+- [Grid analysis](https://eclypse.readthedocs.io/en/latest/overview/examples/grid_analysis/): compare topologies, policies, and strategies with a Ray Tune sweep.
+- [Sock Shop](https://eclypse.readthedocs.io/en/latest/overview/examples/sock_shop/): explore a microservices application with MPI and REST variants.
 
 Runnable source is available in [`examples/`](examples/). Individual examples may need additional dependencies or remote setup; check their guides before running them.
 
 ## Documentation
 
-- [Getting started](https://eclypse.readthedocs.io/en/latest/source/overview/getting-started/index.html): installation, first run, results, and remote emulation.
-- [Core concepts](https://eclypse.readthedocs.io/en/latest/source/overview/concepts/index.html): topology, assets, builders, placement, policies, and events.
-- [API reference](https://eclypse.readthedocs.io/en/latest/source/api/index.html): public modules and interfaces.
+- [Getting started](https://eclypse.readthedocs.io/en/latest/overview/getting-started/): installation, first run, results, and remote emulation.
+- [Core concepts](https://eclypse.readthedocs.io/en/latest/overview/concepts/): topology, assets, builders, placement, policies, and events.
+- [API reference](https://eclypse.readthedocs.io/en/latest/reference/eclypse/): public modules and interfaces.
 - [Changelog](CHANGELOG.md): release history.
 
 ## Contributing

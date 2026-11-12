@@ -67,9 +67,6 @@ instance/
 # Scrapy stuff:
 .scrapy
 
-# Sphinx documentation
-docs/_build/
-
 # PyBuilder
 .pybuilder/
 target/
@@ -128,7 +125,7 @@ venv.bak/
 .ropeproject
 
 # mkdocs documentation
-/site
+_site/
 
 # mypy
 .mypy_cache/
@@ -151,6 +148,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+# Documentation
+docs/_build/
+
 # VSCode
 .vscode/
 
@@ -159,7 +159,6 @@ cython_debug/
 
 # personal
 *.DS_Store
-docs/source/api/reference/*
 
 # graphify
 .graphifyignore

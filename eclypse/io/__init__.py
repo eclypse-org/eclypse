@@ -1,8 +1,8 @@
 """Package for importing and exporting ECLYPSE graph objects.
 
 The package exposes a small import/export API for
-:class:`~eclypse.graph.infrastructure.Infrastructure` and
-:class:`~eclypse.graph.application.Application` objects. Built-in formats are
+[Infrastructure][eclypse.graph.infrastructure.Infrastructure] and
+[Application][eclypse.graph.application.Application] objects. Built-in formats are
 resolved through the default registry, while custom importers and exporters can be
 passed directly to the public functions.
 """

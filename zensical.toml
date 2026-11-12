@@ -1,0 +1,149 @@
+[project]
+site_name = "ECLYPSE"
+site_description = "Edge-CLoud pYthon Platform for Simulated runtime Environments"
+site_author = "Jacopo Massa & Valerio De Caro"
+site_dir = "_site"
+# Read the Docs canonical URL; Zensical does not interpolate environment variables
+site_url = "https://eclypse.readthedocs.io/en/latest/"
+repo_url = "https://github.com/eclypse-org/eclypse"
+repo_name = "eclypse-org/eclypse"
+edit_uri = "edit/main/docs/"
+copyright = "Copyright &copy; Jacopo Massa & Valerio De Caro"
+extra_css = ["_static/css/custom.css"]
+# logo masters and legacy artwork are kept in the repo but not published
+exclude_docs = """
+*.tiff
+/_static/images/legacy/
+/_build/
+/source/
+/overrides/
+"""
+not_in_nav = "/index.md"
+nav = [
+  { "Overview" = [
+    "overview/index.md",
+    "overview/install.md",
+    { "Getting started" = [
+      "overview/getting-started/index.md",
+      "overview/getting-started/minimal-local-run.md",
+      "overview/getting-started/inspect-results.md",
+      "overview/getting-started/remote-emulation.md",
+    ] },
+    { "Concepts" = [
+      "overview/concepts/index.md",
+      "overview/concepts/topology.md",
+      "overview/concepts/assets.md",
+      "overview/concepts/builders.md",
+      "overview/concepts/import-export.md",
+      "overview/concepts/placement-strategy.md",
+      "overview/concepts/update-policy.md",
+      "overview/concepts/events.md",
+      "overview/concepts/simulation-configuration.md",
+    ] },
+    { "Advanced topics" = [
+      "overview/advanced/index.md",
+      "overview/advanced/triggers.md",
+      { "Emulation" = [
+        "overview/advanced/emulation/index.md",
+        "overview/advanced/emulation/emulation.md",
+        "overview/advanced/emulation/messaging.md",
+      ] },
+      "overview/advanced/reporting.md",
+    ] },
+    { "Examples" = [
+      "overview/examples/index.md",
+      "overview/examples/echo.md",
+      "overview/examples/grid_analysis.md",
+      "overview/examples/image_prediction.md",
+      "overview/examples/io_round_trip.md",
+      "overview/examples/off_the_shelf.md",
+      "overview/examples/sock_shop.md",
+      "overview/examples/user_distribution.md",
+    ] },
+  ] },
+  # filled by api-autonav
+  { "Reference" = "reference/" },
+  { "Changelog" = "changelog.md" },
+]
+
+[project.theme]
+custom_dir = "docs/overrides"
+logo = "_static/images/logo.png"
+favicon = "_static/favicon/favicon.ico"
+font.text = "Montserrat"
+features = [
+  "content.action.edit",
+  "content.code.copy",
+  "content.code.annotate",
+  "content.code.select",
+  "content.tabs.link",
+  "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.progress",
+  # "navigation.instant.preview",
+  "navigation.tracking",
+  "navigation.top",
+  "toc.follow",
+  # render only the visible nav branch; the full API tree would add ~250 KB per page
+  "navigation.prune",
+  "navigation.tabs",
+  "search.highlight",
+]
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: light)"
+scheme = "default"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/sun"
+toggle.name = "Switch to dark mode"
+
+[[project.theme.palette]]
+media = "(prefers-color-scheme: dark)"
+scheme = "slate"
+primary = "custom"
+accent = "custom"
+toggle.icon = "lucide/moon"
+toggle.name = "Switch to light mode"
+
+# Setting markdown_extensions replaces Zensical's defaults, so list all that are used
+[project.markdown_extensions]
+admonition = {}
+attr_list = {}
+md_in_html = {}
+toc.permalink = true
+# toc.toc_depth = 3
+pymdownx.details = {}
+pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
+pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
+pymdownx.highlight.anchor_linenums = true
+pymdownx.highlight.line_spans = "__span"
+pymdownx.highlight.pygments_lang_class = true
+pymdownx.inlinehilite = {}
+# includes resolve from the repository root (examples/, eclypse/)
+pymdownx.snippets.base_path = ["."]
+pymdownx.snippets.check_paths = true
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
+pymdownx.tabbed.alternate_style = true
+pymdownx.tabbed.combine_header_slug = true
+
+[project.plugins.api-autonav]
+modules = ["eclypse"]
+nav_section_title = "Reference"
+
+[project.plugins.mkdocstrings.handlers.python]
+paths = ["."]
+
+[project.plugins.mkdocstrings.handlers.python.options]
+docstring_style = "google"
+# Sphinx never checked docstring types; mypy covers the annotations
+docstring_options.warn_missing_types = false
+members_order = "source"
+show_if_no_docstring = true
+inherited_members = false
+show_bases = true
+show_source = true
+separate_signature = true
+show_signature_annotations = false

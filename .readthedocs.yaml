@@ -7,11 +7,10 @@ build:
   jobs:
     build:
       html:
-        - >-
-          uv run --no-sync --no-dev
-          make -C docs html
-          BUILDDIR="$READTHEDOCS_OUTPUT"
-          O="-T --keep-going -D language=en"
+        - uv run --no-sync --no-dev zensical build --strict
+    post_build:
+      - mkdir -p "$READTHEDOCS_OUTPUT/html/"
+      - cp -r _site/. "$READTHEDOCS_OUTPUT/html/"
 
 python:
   install:
@@ -19,7 +18,3 @@ python:
       command: sync
       groups:
         - docs
-
-sphinx:
-  configuration: docs/conf.py
-  fail_on_warning: true

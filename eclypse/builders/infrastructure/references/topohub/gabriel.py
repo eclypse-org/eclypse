@@ -7,9 +7,9 @@ metadata, making them useful as scalable WAN references with realistic
 distance-driven QoS properties.
 
 Example:
-    .. code-block:: python
-
-        get_gabriel(25, sample=2, **kwargs)
+    ```python
+    get_gabriel(25, sample=2, **kwargs)
+    ```
 
 Source:
     Jurkiewicz, "TopoHub: A repository of reference Gabriel graph and
@@ -51,7 +51,7 @@ def get_gabriel(
     """Create a Gabriel-graph infrastructure from TopoHub.
 
     The ``size`` and ``sample`` values must correspond to a valid topology in
-    `TopoHub <https://www.topohub.org>`_'s ``gabriel`` family catalogue.
+    [TopoHub](https://www.topohub.org)'s ``gabriel`` family catalogue.
 
     Args:
         size (int):

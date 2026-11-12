@@ -81,7 +81,7 @@ class Application(AssetGraph):  # pylint: disable=too-few-public-methods
 
         Args:
             service (Service): The service to add.
-            **assets : The assets to add to the service.
+            **assets: The assets to add to the service.
         """
         if not isinstance(service, Service):
             raise TypeError(f"Expected Service instance, got {type(service).__name__}")

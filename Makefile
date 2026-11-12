@@ -13,7 +13,10 @@ patch:
 	uv run cz bump --increment patch
 
 docs:
-	uv run --group docs $(MAKE) -C docs html
+	uv run --group docs zensical build --strict
+
+docs-serve:
+	uv run --group docs zensical serve
 
 verify:
 	uvx twine check --strict dist/*
@@ -24,4 +27,4 @@ build:
 publish: build verify
 	uv publish -v
 
-.PHONY: setup check bump patch docs verify build publish
+.PHONY: setup check bump patch docs docs-serve verify build publish

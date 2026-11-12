@@ -7,9 +7,9 @@ placement, inter-site connectivity, and link distances, making them suitable
 for WAN latency and geographic-placement studies.
 
 Example:
-    .. code-block:: python
-
-        get_topology_zoo("Abilene", **kwargs)
+    ```python
+    get_topology_zoo("Abilene", **kwargs)
+    ```
 
 Source:
     Internet Topology Zoo, https://topology-zoo.org/
@@ -48,7 +48,7 @@ def get_topology_zoo(
     """Create a Topology Zoo-backed infrastructure from TopoHub.
 
     The ``topology`` value must be a valid topology name from
-    `TopoHub <https://www.topohub.org>`_'s ``topozoo`` family catalogue.
+    [TopoHub](https://www.topohub.org)'s ``topozoo`` family catalogue.
 
     Args:
         topology (str):

@@ -306,10 +306,10 @@ class Infrastructure(AssetGraph):  # pylint: disable=too-few-public-methods
     def processing_time(self, source: str, target: str) -> float:
         """Compute the total processing time of all nodes along the path.
 
-        Calls :py:meth:`path` first to ensure the node list is cached, then
-        sums the ``processing_time`` attribute of every node on that path.
-        Returns 0.0 when source and target are the same node or when no path
-        exists.
+        Calls [path][eclypse.graph.infrastructure.Infrastructure.path] first to ensure
+        the node list is cached, then sums the ``processing_time`` attribute of every
+        node on that path. Returns 0.0 when source and target are the same node or when
+        no path exists.
 
         Args:
             source (str): The name of the source node.

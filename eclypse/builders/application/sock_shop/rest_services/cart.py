@@ -22,17 +22,17 @@ class CartService(RESTService):
             dict: The response body.
 
         Example:
-            .. code-block:: python
-
-                (
-                    200,
-                    {
-                        "items": [
-                            {"id": "1", "quantity": 2},
-                            {"id": "2", "quantity": 1},
-                        ],
-                    },
-                )
+            ```python
+            (
+                200,
+                {
+                    "items": [
+                        {"id": "1", "quantity": 2},
+                        {"id": "2", "quantity": 1},
+                    ],
+                },
+            )
+            ```
         """
         self.logger.info("Received request | " + format_log_kv())
         return 200, {

@@ -7,9 +7,9 @@ ECLYPSE keeps node resources implicit and relies on the infrastructure
 initialisation policy for unspecified assets.
 
 Example:
-    .. code-block:: python
-
-        get_caida("2024-01", **kwargs)
+    ```python
+    get_caida("2024-01", **kwargs)
+    ```
 
 Source:
     CAIDA Ark, https://www.caida.org/catalog/datasets/ark/
@@ -48,7 +48,7 @@ def get_caida(
     """Create a CAIDA-backed infrastructure from TopoHub.
 
     The ``snapshot`` value must be a valid topology name from
-    `TopoHub <https://www.topohub.org>`_'s ``caida`` family catalogue.
+    [TopoHub](https://www.topohub.org)'s ``caida`` family catalogue.
 
     Args:
         snapshot (str):

@@ -308,10 +308,10 @@ def once_at(
 def _camel_to_snake(name: str) -> str:
     """Convert a CamelCase string to a snake_case string.
 
-    .. code-block:: python
-
-            name = "MyCamelCaseSentence"
-            print(_camel_to_snake(name))  # my_camel_case_sentence
+    ```python
+    name = "MyCamelCaseSentence"
+    print(_camel_to_snake(name))  # my_camel_case_sentence
+    ```
 
     Args:
         name (str): The CamelCase string to convert.

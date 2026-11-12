@@ -86,8 +86,6 @@ def simulation(
             as an event. Defaults to None.
         name (str | None, optional): The name of the event. If not provided,
             the name will be derived from the function or class name. Defaults to None.
-        event_type (EventType | None, optional):
-            The type of the event. Defaults to None.
         activates_on (ActivatesOnType, optional):
             The events that will trigger the metric.
             Defaults to DRIVING_EVENT.

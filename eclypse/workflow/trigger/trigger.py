@@ -40,7 +40,7 @@ class Trigger(ABC):
         """Check if the trigger should fire.
 
         Args:
-            trigger_event (EclypseEvent | None): The event that triggered the check.
+            _ (EclypseEvent | None): The event that triggered the check.
 
         Returns:
             bool: True if the trigger should fire, False otherwise.

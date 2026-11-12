@@ -69,7 +69,7 @@ class PlacementStrategy(ABC):
         Args:
             infrastructure (Infrastructure):
                 The infrastructure to place the application onto.
-            application (Application):
+            _ (Application):
                 The application to place onto the infrastructure.
 
         Returns:
