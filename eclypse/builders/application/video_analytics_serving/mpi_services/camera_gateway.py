@@ -17,7 +17,7 @@ class CameraGatewayService(Service):
         """Capture the next frame and wait for the analytics summary."""
         self.frame_id += 1
         await self.start_pipeline()
-        response = await self.mpi.recv()
+        response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response
 

@@ -17,7 +17,7 @@ class UploadService(Service):
         """Upload the next image and wait for the final storage response."""
         self.image_id += 1
         await self.upload_image()
-        response = await self.mpi.recv()
+        response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response
 

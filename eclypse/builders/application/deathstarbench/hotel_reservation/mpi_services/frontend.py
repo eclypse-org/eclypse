@@ -16,13 +16,13 @@ class FrontendService(Service):
     async def step(self):
         """Search for hotels, fetch the profile, and submit a reservation."""
         await self.search_request()
-        hotels = await self.mpi.recv()
+        hotels = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=hotels))
         await self.profile_request()
-        profile = await self.mpi.recv()
+        profile = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=profile))
         await self.reservation_request(hotels["hotels"], profile["user"])
-        reservation = await self.mpi.recv()
+        reservation = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=reservation))
         return reservation
 
