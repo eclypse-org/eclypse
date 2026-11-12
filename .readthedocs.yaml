@@ -10,7 +10,7 @@ build:
         - uv run --no-sync --no-dev zensical build --strict
     post_build:
       - mkdir -p "$READTHEDOCS_OUTPUT/html/"
-      - cp -r site/. "$READTHEDOCS_OUTPUT/html/"
+      - cp -r _site/. "$READTHEDOCS_OUTPUT/html/"
 
 python:
   install:

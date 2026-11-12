@@ -87,7 +87,7 @@
 .ec-home .hero {
   display:grid;
   grid-template-columns:minmax(0, 1fr) minmax(0, 1.15fr);
-  align-items:start;
+  align-items:stretch;
   gap:52px;
   padding:64px 0;
 }
@@ -157,12 +157,19 @@
 .ec-home .first-run a span { color:var(--ember); margin-left:6px; }
 .ec-home .first-run-logo { display:block; width:100%; height:auto; filter:drop-shadow(0 0 18px #ff9e4730); }
 .ec-home .first-run p { grid-column:1 / -1; margin:4px 0 0; padding-top:14px; border-top:1px solid #ffffff12; color:#999; font-size:11px; line-height:1.8; }
+.ec-home .copy { display:flex; flex-direction:column; min-width:0; }
+.ec-home .install-cta { margin-top:auto; padding-top:24px; }
+.ec-home .install-command { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; padding:18px 22px; border:1px solid #ff9e4760; border-radius:9px; background:#ff9e4710; }
+.ec-home .install-command code { color:var(--ember); font-size:16px; user-select:all; }
+.ec-home .install-command button { flex-shrink:0; padding:8px 10px; border:1px solid #ff9e4740; border-radius:5px; background:transparent; color:var(--ember); font:inherit; font-size:11px; cursor:pointer; }
+.ec-home .install-command button:hover { background:#ff9e4718; }
+.ec-home .install-command button:focus-visible { outline:2px solid var(--ember); outline-offset:4px; }
 @media(max-width:480px) {
   .ec-home .first-run { grid-template-columns:minmax(0,1fr) 84px; gap:8px; padding:18px; }
   .ec-home .first-run li { font-size:12px; }
 }
-.ec-home .configuration { min-width:0; }
-.ec-home .configuration .cards { grid-template-columns:1fr; gap:12px; margin-top:20px; }
+.ec-home .configuration { display:flex; flex-direction:column; min-width:0; }
+.ec-home .configuration .cards { flex:1; grid-template-columns:1fr; gap:12px; margin-top:20px; }
 .ec-home .configuration .card { padding:20px 24px; }
 .ec-home .configuration h3 { margin:10px 0 8px; }
 .ec-home .configuration .card p { margin-bottom:12px; }

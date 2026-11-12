@@ -6,6 +6,21 @@ They can be used to update the simulation state, compute metrics, or execute cal
 
 An event can be periodic, conditionally activated, or triggered by another event.
 
+```mermaid
+flowchart TD
+    T["Trigger conditions met"] --> E["Regular event executes"]
+    E --> D["Event payload"]
+    D --> C["Activated callbacks"]
+    D --> M["Activated metrics"]
+    M --> R["Configured reporters"]
+    R --> Q["Report queries"]
+```
+
+An update event can apply configured policies. Callbacks and metrics run after
+the event that activates them. This diagram shows their roles, not a fixed
+ordering between individual callbacks and metrics.
+
+
 ECLYPSE distinguishes between an event's **role** and its **type**:
 
 - the **role** defines *how the event participates in the workflow*,

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block extrahead %}
+  <link rel="icon" sizes="16x16" href="{{ '_static/favicon/favicon-16x16.png' | url }}">
+  <link rel="icon" sizes="32x32" href="{{ '_static/favicon/favicon-32x32.png' | url }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ '_static/favicon/apple-touch-icon.png' | url }}">
+  <link rel="manifest" href="{{ '_static/favicon/site.webmanifest' | url }}">
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script>
+    document$.subscribe(() => {
+      // The standalone homepage needs its own document, styles and canvas script.
+      for (const link of document.querySelectorAll("a[href]")) {
+        if (link.href === __md_scope.href) link.target = "_self";
+      }
+      const edit = document.querySelector('a[rel="edit"]');
+      if (edit && edit.href.endsWith("/docs/changelog.md")) {
+        edit.href = edit.href.replace("/docs/changelog.md", "/CHANGELOG.md");
+      }
+    });
+
+  </script>
+{% endblock %}

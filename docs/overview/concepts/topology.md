@@ -7,6 +7,16 @@ In ECLYPSE, both the **infrastructure** and **applications** are modelled as gra
 
 The two classes share many structural similarities, but differ in purpose and in the parameters used at initialisation.
 
+```mermaid
+flowchart TD
+    I["Infrastructure: nodes, links and capabilities"] --> P["Placement strategy"]
+    A["Application: services, interactions and requirements"] --> P
+    P --> M["Placement: services mapped to nodes"]
+```
+
+Placement matches application requirements against infrastructure capabilities.
+
+
 === "Infrastructure"
 
     ```python

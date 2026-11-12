@@ -6,7 +6,7 @@ are exchanged repeatedly among neighbouring services.
 Use it when you want to understand:
 
 - how to build an application and an infrastructure from Python code,
-- how to run a local simulation end to end,
+- how to run a remote emulation end to end,
 - how MPI-style communication behaves in a simple topology.
 
 The full code lives in the

@@ -11,6 +11,34 @@ These APIs can be used from within emulated services to exchange information,
 coordinate behaviour, or simulate service-level protocols.
 
 
+## Communication at a glance
+
+=== "MPI"
+
+    ```mermaid
+    sequenceDiagram
+        participant A as Sending service
+        participant Q as Recipient queue
+        participant B as Receiving service
+        A->>Q: await mpi.send(recipient_id, data)
+        B->>Q: await mpi.recv()
+        Q-->>B: Message(source, data)
+    ```
+
+    The receiver consumes queued messages explicitly. A reply is another send.
+
+=== "REST"
+
+    ```mermaid
+    sequenceDiagram
+        participant A as Calling service
+        participant B as Registered endpoint
+        A->>B: await rest.post(service/route, ...)
+        B-->>A: Response status and body
+    ```
+
+    The caller addresses a registered endpoint and inspects the response.
+
 ## MPI-style messaging
 
 The MPI interface provides basic primitives to send and receive messages among services deployed in the same application.

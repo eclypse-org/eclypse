@@ -2,6 +2,7 @@
 site_name = "ECLYPSE"
 site_description = "Edge-CLoud pYthon Platform for Simulated runtime Environments"
 site_author = "Jacopo Massa & Valerio De Caro"
+site_dir = "_site"
 # Read the Docs canonical URL; Zensical does not interpolate environment variables
 site_url = "https://eclypse.readthedocs.io/en/latest/"
 repo_url = "https://github.com/eclypse-org/eclypse"
@@ -13,6 +14,9 @@ extra_css = ["_static/css/custom.css"]
 exclude_docs = """
 *.tiff
 /_static/images/legacy/
+/_build/
+/source/
+/overrides/
 """
 not_in_nav = "/index.md"
 nav = [
@@ -59,19 +63,27 @@ nav = [
   ] },
   # filled by api-autonav
   { "Reference" = "reference/" },
-  { "Changelog" = "https://github.com/eclypse-org/eclypse/blob/main/CHANGELOG.md" },
+  { "Changelog" = "changelog.md" },
 ]
 
 [project.theme]
-custom_dir = "overrides"
+custom_dir = "docs/overrides"
 logo = "_static/images/logo.png"
 favicon = "_static/favicon/favicon.ico"
 font.text = "Montserrat"
 features = [
   "content.action.edit",
   "content.code.copy",
+  "content.code.annotate",
+  "content.code.select",
   "content.tabs.link",
   "navigation.indexes",
+  "navigation.instant",
+  "navigation.instant.progress",
+  # "navigation.instant.preview",
+  "navigation.tracking",
+  "navigation.top",
+  "toc.follow",
   # render only the visible nav branch; the full API tree would add ~250 KB per page
   "navigation.prune",
   "navigation.tabs",
@@ -100,6 +112,7 @@ admonition = {}
 attr_list = {}
 md_in_html = {}
 toc.permalink = true
+# toc.toc_depth = 3
 pymdownx.details = {}
 pymdownx.emoji.emoji_generator = "zensical.extensions.emoji.to_svg"
 pymdownx.emoji.emoji_index = "zensical.extensions.emoji.twemoji"
@@ -110,7 +123,9 @@ pymdownx.inlinehilite = {}
 # includes resolve from the repository root (examples/, eclypse/)
 pymdownx.snippets.base_path = ["."]
 pymdownx.snippets.check_paths = true
-pymdownx.superfences = {}
+pymdownx.superfences.custom_fences = [
+  { name = "mermaid", class = "mermaid", format = "pymdownx.superfences.fence_code_format" },
+]
 pymdownx.tabbed.alternate_style = true
 pymdownx.tabbed.combine_header_slug = true
 

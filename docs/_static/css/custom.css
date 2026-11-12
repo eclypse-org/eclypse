@@ -42,6 +42,20 @@ body {
   --md-text-font-family: "Montserrat", ui-sans-serif, system-ui, sans-serif;
 }
 
+.ec-copyright {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+}
+
+.ec-generator {
+  margin-left: auto;
+}
+
+
 .md-header,
 .md-tabs {
   border-bottom: 1px solid color-mix(in srgb, var(--ec-border) 75%, transparent);
@@ -158,5 +172,19 @@ button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   .md-typeset .grid.cards > ul > li {
     transition: none;
+  }
+}
+
+.md-grid {
+  max-width: 1800px;
+}
+
+@media (min-width: 76.25em) {
+  .md-sidebar--primary {
+    width: 18rem;
+  }
+
+  [dir="ltr"] .md-sidebar--primary .md-sidebar__inner {
+    padding-right: 0;
   }
 }
