@@ -3,12 +3,7 @@ from __future__ import annotations
 import asyncio
 import random
 import weakref
-from concurrent.futures import ThreadPoolExecutor
 from queue import Empty
-from threading import (
-    Barrier,
-    Event,
-)
 
 import pytest
 
@@ -89,65 +84,15 @@ async def test_consumed_payloads_and_nodes_are_released_without_compaction():
     assert queue._head is queue._tail is None
 
 
-def test_concurrent_producers_and_consumers_deliver_each_message_once():
+async def test_sender_waiters_keep_waiting_through_other_senders():
     queue = MessageQueue()
-    barrier = Barrier(8)
-    finished = Event()
-    count = 300
-
-    def produce(sender):
-        barrier.wait(timeout=5)
-        for index in range(count):
-            queue.put(sender, {"value": (sender, index)})
-
-    async def consume(sender):
-        barrier.wait(timeout=5)
-        received = []
-        while True:
-            try:
-                received.append((await queue.pop(sender, timeout=0.05)).data["value"])
-            except TimeoutError:
-                if finished.is_set():
-                    return received
-
-    with ThreadPoolExecutor(max_workers=8) as pool:
-        producers = [pool.submit(produce, sender) for sender in ("a", "b", "c", "d")]
-        consumers = [
-            pool.submit(asyncio.run, consume(sender))
-            for sender in (None, None, "a", "c")
-        ]
-        try:
-            for producer in producers:
-                producer.result(timeout=10)
-        finally:
-            finished.set()
-        messages = [
-            item for consumer in consumers for item in consumer.result(timeout=10)
-        ]
-    assert len(messages) == len(set(messages)) == count * 4
-    assert set(messages) == {
-        (sender, i) for sender in ("a", "b", "c", "d") for i in range(count)
-    }
-    assert sum(map(len, queue._senders.values())) == 0
-
-
-async def test_sender_waiters_wake_only_when_their_sender_arrives():
-    queue = MessageQueue()
-    started = Event()
-
-    async def receive():
-        started.set()
-        return [
-            (await queue.pop("target", timeout=5)).data["value"] for _ in range(100)
-        ]
-
-    with ThreadPoolExecutor(max_workers=1) as pool:
-        consumer = pool.submit(asyncio.run, receive())
-        assert started.wait(timeout=5)
-        for i in range(100):
-            queue.put("other", {"value": -i})
-            queue.put("target", {"value": i})
-        assert consumer.result(timeout=5) == list(range(100))
+    pending = asyncio.create_task(queue.pop("target"))
+    for i in range(100):
+        queue.put("other", {"value": -i})
+        await asyncio.sleep(0)
+        assert not pending.done()
+    queue.put("target", {"value": 1})
+    assert (await asyncio.wait_for(pending, timeout=5)).data["value"] == 1
     assert [(await queue.pop()).data["value"] for _ in range(100)] == [
         -i for i in range(100)
     ]
@@ -169,8 +114,6 @@ async def test_async_cancellation_and_timeouts_do_not_consume_later_messages(
     pending.cancel()
     with pytest.raises(asyncio.CancelledError):
         await pending
-    with queue._lock:
-        assert queue._waiters == {}
     queue.put("a", {"value": 1})
     assert (await queue.pop("a")).data["value"] == 1
 
@@ -196,65 +139,6 @@ async def test_multiple_async_receivers_recheck_after_competing_for_a_message():
         message.data["value"]
         for message in await asyncio.wait_for(asyncio.gather(*tasks), 5)
     ) == list(range(30))
-    with queue._lock:
-        assert queue._waiters == {}
-
-
-@pytest.mark.asyncio
-async def test_async_waiters_across_event_loops_and_producer_threads():
-    queue = MessageQueue()
-    ready = Event()
-
-    def receive_on_another_loop():
-        async def receive():
-            task = asyncio.create_task(queue.pop("a"))
-            await asyncio.sleep(0)
-            ready.set()
-            return await asyncio.wait_for(task, timeout=5)
-
-        return asyncio.run(receive())
-
-    with ThreadPoolExecutor(max_workers=1) as pool:
-        other = pool.submit(receive_on_another_loop)
-        pending = asyncio.create_task(queue.pop("b"))
-        await asyncio.sleep(0)
-        assert await asyncio.to_thread(ready.wait, 5)
-        await asyncio.to_thread(queue.put, "b", {"value": 2})
-        assert (await asyncio.wait_for(pending, timeout=5)).data["value"] == 2
-        assert not other.done()
-        queue.put("a", {"value": 1})
-        assert (await asyncio.to_thread(other.result, timeout=5)).data["value"] == 1
-    assert sum(map(len, queue._senders.values())) == 0
-
-
-async def test_closed_receiver_loop_does_not_break_producers():
-    queue = MessageQueue()
-    loop = asyncio.new_event_loop()
-    with queue._lock:
-        queue._waiters[None] = {loop.create_future(): loop}
-    loop.close()
-    queue.put("a", {"value": 1})
-    assert (await queue.pop()).data["value"] == 1
-    with queue._lock:
-        assert queue._waiters == {}
-
-
-async def test_unexpected_notification_errors_are_not_silenced(monkeypatch):
-    queue = MessageQueue()
-    loop = asyncio.new_event_loop()
-
-    def fail_notification(*_args):
-        raise RuntimeError("notification failed")
-
-    monkeypatch.setattr(loop, "call_soon_threadsafe", fail_notification)
-    try:
-        with queue._lock:
-            queue._waiters[None] = {loop.create_future(): loop}
-        with pytest.raises(RuntimeError, match="notification failed"):
-            queue.put("a", {"value": 1})
-        assert (await queue.pop()).data["value"] == 1
-    finally:
-        loop.close()
 
 
 @pytest.mark.parametrize("sender", [1, []])

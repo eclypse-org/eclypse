@@ -1,11 +1,10 @@
-"""Thread-safe FIFO with constant-time removal globally or by sender."""
+"""FIFO with constant-time removal globally or by sender."""
 
 from __future__ import annotations
 
 import asyncio
 from collections import deque
 from queue import Empty
-from threading import Lock
 from typing import Any
 
 from .message import Message
@@ -26,49 +25,38 @@ class _Node:
 class MessageQueue:
     """Share nodes between a global linked FIFO and per-sender deques.
 
-    All indices and waiter registrations are protected by one lock.
     Removing a node updates both indices immediately, so consumed nodes never
-    accumulate and no compaction under the lock is needed. Storage is O(n + k)
-    for n messages and k active senders, plus pending receivers.
+    accumulate and no compaction is needed. Storage is O(n + k) for n messages
+    and k active senders.
     """
 
-    __slots__ = ("_head", "_lock", "_senders", "_tail", "_waiters")
+    __slots__ = ("_arrived", "_head", "_senders", "_tail")
 
     def __init__(self):
         """Create an empty queue."""
-        self._lock = Lock()
+        # shortcut: put and pop must run on the service event loop, as
+        # EclypseCommunicationInterface._handle_request guarantees; notify through
+        # loop.call_soon_threadsafe if put is ever called from another thread.
+        self._arrived = asyncio.Event()
         self._head: _Node | None = None
         self._tail: _Node | None = None
         self._senders: dict[str, deque[_Node]] = {}
-        self._waiters: dict[
-            str | None, dict[asyncio.Future[None], asyncio.AbstractEventLoop]
-        ] = {}
 
     def put(self, source: str, data: dict[str, Any]) -> None:
         """Enqueue an MPI data with its sender and notify receivers."""
         self._validate_sender(source)
-        with self._lock:
-            node = _Node(source, data)
-            node.previous = self._tail
-            if self._tail is None:
-                self._head = node
-            else:
-                self._tail.next = node
-            self._tail = node
-            if source not in self._senders:
-                self._senders[source] = deque()
-            self._senders[source].append(node)
-            # Detach notifications once, avoiding duplicate callbacks on bursts.
-            waiters = [
-                *self._waiters.pop(None, {}).items(),
-                *self._waiters.pop(source, {}).items(),
-            ]
-        for future, loop in waiters:
-            try:
-                loop.call_soon_threadsafe(_wake, future)
-            except RuntimeError:
-                if not loop.is_closed():
-                    raise
+        node = _Node(source, data)
+        node.previous = self._tail
+        if self._tail is None:
+            self._head = node
+        else:
+            self._tail.next = node
+        self._tail = node
+        if source not in self._senders:
+            self._senders[source] = deque()
+        self._senders[source].append(node)
+        # Every waiter re-checks its own source, so one event serves them all.
+        self._arrived.set()
 
     async def pop(
         self,
@@ -87,24 +75,12 @@ class MessageQueue:
         if block and timeout is not None and timeout < 0:
             raise ValueError("timeout must be non-negative")
         async with asyncio.timeout(timeout if block else None):
-            loop = asyncio.get_running_loop()
-            while True:
-                with self._lock:
-                    node = self._first_node(source)
-                    if node is not None:
-                        return self._remove(node)
-                    if not block:
-                        raise Empty
-                    future = loop.create_future()
-                    waiters = self._waiters.setdefault(source, {})
-                    waiters[future] = loop
-                try:
-                    await future
-                finally:
-                    with self._lock:
-                        waiters.pop(future, None)
-                        if not waiters and self._waiters.get(source) is waiters:
-                            del self._waiters[source]
+            while (node := self._first_node(source)) is None:
+                if not block:
+                    raise Empty
+                self._arrived.clear()
+                await self._arrived.wait()
+        return self._remove(node)
 
     def _first_node(self, source: str | None) -> _Node | None:
         if source is None:
@@ -134,8 +110,3 @@ class MessageQueue:
     def _validate_sender(source: str) -> None:
         if not isinstance(source, str):
             raise TypeError("source must be a string")
-
-
-def _wake(future: asyncio.Future[None]) -> None:
-    if not future.done():
-        future.set_result(None)
