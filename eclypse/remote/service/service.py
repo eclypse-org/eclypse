@@ -153,8 +153,7 @@ class Service(ABC):
         # service wait on its loop until it starts, instead of failing.
         if self._communication_interface == "mpi":
             self._comm = EclypseMPI(self)
-
-        if self._communication_interface == "rest":
+        else:
             self._comm = EclypseREST(self)
         self._comm.connect()
 
