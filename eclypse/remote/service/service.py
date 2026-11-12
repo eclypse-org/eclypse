@@ -149,18 +149,20 @@ class Service(ABC):
             name=f"task-{self.id}",
         )
         self._init_thread()
-
-    def _start(self):
-        """Starts the service."""
-        if not self.deployed:
-            raise RuntimeError(f"Service {self.id} is not deployed on any node")
-
+        # Services start one at a time; connecting here lets requests to a deployed
+        # service wait on its loop until it starts, instead of failing.
         if self._communication_interface == "mpi":
             self._comm = EclypseMPI(self)
 
         if self._communication_interface == "rest":
             self._comm = EclypseREST(self)
         self._comm.connect()
+
+    def _start(self):
+        """Starts the service."""
+        if not self.deployed:
+            raise RuntimeError(f"Service {self.id} is not deployed on any node")
+
         self._running = True
         self._thread.start()
 
