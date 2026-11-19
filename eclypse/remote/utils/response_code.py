@@ -1,6 +1,6 @@
 """Module for the ResponseCode enumeration.
 
-It defines the possible responses to an EclypseRequest.
+It defines outcomes for MPI delivery and remote lifecycle operations.
 """
 
 from enum import (
@@ -10,10 +10,19 @@ from enum import (
 
 
 class ResponseCode(Enum):
-    """Enum class, denoting possible responses to an `EclypseRequest`."""
+    """Outcomes for MPI delivery and remote lifecycle operations."""
 
     OK = auto()
-    """The request was processed successfully."""
+    """The operation succeeded, or the MPI message was queued."""
 
     ERROR = auto()
     """An error occurred while processing the request."""
+
+    NOT_CONNECTED = auto()
+    """The recipient's MPI interface is disconnected."""
+
+    ROUTE_NOT_FOUND = auto()
+    """No usable route to the recipient was found."""
+
+    RECIPIENT_UNAVAILABLE = auto()
+    """The recipient service or actor became unavailable during delivery."""

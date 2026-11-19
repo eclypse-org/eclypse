@@ -324,7 +324,9 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     assert same_node_result["future"] == "stored"
 
     with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
-        await _process_request({}, 0, missing_route_future, "worker", comm)
+        await _process_request(
+            {}, 0, missing_route_future, "worker", DummyInterface(service)
+        )
 
     service_stub = SimpleNamespace(
         node=SimpleNamespace(manager_actor_name="edge-cloud/manager"),
@@ -569,7 +571,7 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
             timestamp,
         )
     assert mpi.bcast(data={"x": 1})[:2] == ("broadcast", {"x": 1})
-    assert (await mpi._not_connected_response()).code is ResponseCode.ERROR
+    assert (await mpi._not_connected_response()).code is ResponseCode.NOT_CONNECTED
 
     message_route = Route(
         sender_id="gateway",

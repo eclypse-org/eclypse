@@ -2,6 +2,7 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -10,10 +11,16 @@ class GatewayService(Service):
 
     async def step(self):
         """Authenticate the client and create a demo item."""
-        await self.auth_request()
+        request = await self.auth_request()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         auth_response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=auth_response))
-        await self.item_request(auth_response["token"])
+        request = await self.item_request(auth_response["token"])
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         item_response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=item_response))
         return item_response

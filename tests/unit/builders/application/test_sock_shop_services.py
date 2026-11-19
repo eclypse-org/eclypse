@@ -52,6 +52,7 @@ from eclypse.builders.application.sock_shop.rest_services import (
 )
 from eclypse.remote.communication.mpi import Message
 from eclypse.remote.communication.rest.codes import HTTPStatusCode
+from tests.unit.builders.application._service_test_helpers import FakeMPIRequest
 
 
 class FakeRestResponse:
@@ -111,7 +112,7 @@ class FakeMPIInterface:
 
     def send(self, recipient_id: str, body: dict[str, object]):
         self.sent.append((recipient_id, body))
-        return AwaitableResult((recipient_id, body))
+        return AwaitableResult(FakeMPIRequest((recipient_id, body)))
 
     def bcast(self, body: dict[str, object]):
         self.broadcasts.append(body)
@@ -122,7 +123,9 @@ def _attach_service_logger(service):
     service.attach_node(
         SimpleNamespace(
             _logger=SimpleNamespace(
-                bind=lambda **_: SimpleNamespace(info=lambda *_args: None)
+                bind=lambda **_: SimpleNamespace(
+                    info=lambda *_args: None, warning=lambda *_args: None
+                )
             )
         )
     )

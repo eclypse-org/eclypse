@@ -2,6 +2,7 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -15,13 +16,22 @@ class FrontendService(Service):
 
     async def step(self):
         """Search for hotels, fetch the profile, and submit a reservation."""
-        await self.search_request()
+        request = await self.search_request()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         hotels = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=hotels))
-        await self.profile_request()
+        request = await self.profile_request()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         profile = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=profile))
-        await self.reservation_request(hotels["hotels"], profile["user"])
+        request = await self.reservation_request(hotels["hotels"], profile["user"])
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         reservation = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=reservation))
         return reservation

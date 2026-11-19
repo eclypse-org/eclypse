@@ -13,6 +13,7 @@ providing the user-facing components of the store.
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -37,7 +38,10 @@ class FrontendService(Service):
         order.
         """
         # Send request to CatalogService
-        await self.catalog_request()
+        request = await self.catalog_request()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
 
         # Receive response from CatalogService
         catalog_response = (await self.mpi.recv()).data
@@ -49,7 +53,10 @@ class FrontendService(Service):
 
         # Send request to UserService
         user_request = {"request_type": "user_data", "user_id": self.user_id}
-        self.mpi.send("UserService", user_request)
+        request = await self.mpi.send("UserService", user_request)
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
 
         # Receive response from UserService
         user_response = (await self.mpi.recv()).data
@@ -60,7 +67,10 @@ class FrontendService(Service):
 
         # Send request to CartService
         cart_request = {"request_type": "cart_data", "user_id": self.user_id}
-        self.mpi.send("CartService", cart_request)
+        request = await self.mpi.send("CartService", cart_request)
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
 
         # Receive response from CartService
         cart_response = (await self.mpi.recv()).data
@@ -92,7 +102,10 @@ class FrontendService(Service):
             "user_id": self.user_id,
             "items": order_items,
         }
-        self.mpi.send("OrderService", order_request)
+        request = await self.mpi.send("OrderService", order_request)
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
 
         # Receive response from OrderService
         order_response = (await self.mpi.recv()).data

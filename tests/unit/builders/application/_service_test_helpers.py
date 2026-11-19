@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from eclypse.remote.communication.mpi import Message
+from eclypse.remote.communication.mpi import (
+    Message,
+    Response,
+)
 
 
 class FakeRestResponse:
@@ -20,6 +23,12 @@ class AwaitableResult:
             return self.result
 
         return _resolve().__await__()
+
+
+class FakeMPIRequest(tuple):
+    @property
+    def response(self):
+        return Response()
 
 
 class FakeRESTInterface:
@@ -51,14 +60,16 @@ class FakeMPIInterface:
 
     def send(self, recipient_id: str, body: dict[str, object]):
         self.sent.append((recipient_id, body))
-        return AwaitableResult((recipient_id, body))
+        return AwaitableResult(FakeMPIRequest((recipient_id, body)))
 
 
 def attach_service_logger(service):
     service.attach_node(
         SimpleNamespace(
             _logger=SimpleNamespace(
-                bind=lambda **_: SimpleNamespace(info=lambda *_args: None)
+                bind=lambda **_: SimpleNamespace(
+                    info=lambda *_args: None, warning=lambda *_args: None
+                )
             )
         )
     )

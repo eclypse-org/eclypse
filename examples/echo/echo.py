@@ -3,6 +3,7 @@ import time
 
 from eclypse.remote import ray_backend
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 
 
 class EchoService(Service):
@@ -21,6 +22,9 @@ class EchoService(Service):
         t_init_unicast = time.time()
         for n in neigh:
             req = await self.mpi.send(n, message)
+            if req.response.code != ResponseCode.OK:
+                self.logger.warning(str(req.response))
+                return
             expected_wait_unicast += req.route.cost(message_size) if req.route else 0
         t_final_unicast = time.time()
         t_unicast = t_final_unicast - t_init_unicast
@@ -29,6 +33,10 @@ class EchoService(Service):
         )
         t_init_broadcast = time.time()
         req = await self.mpi.send(neigh, message)
+        for recipient, response in zip(req.recipient_ids, req.responses, strict=True):
+            if response.code != ResponseCode.OK:
+                self.logger.warning(f"{recipient}: {response}")
+                return
         expected_wait_broadcast = max(
             [r.cost(message_size) for r in req.routes if r], default=0
         )

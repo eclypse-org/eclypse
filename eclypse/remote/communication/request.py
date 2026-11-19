@@ -60,7 +60,7 @@ class EclypseRequest:
         self._timestamp = timestamp or datetime.now()
 
         self._recipient_ids: list[str] = recipient_ids
-        self._routes: list[Future[Route]] = [
+        self._routes: list[Future[Route | None]] = [
             asyncio.wrap_future(
                 _comm.request_route(recipient_id).future(),  # type: ignore[attr-defined]
                 loop=_comm.service.node.engine_loop,
@@ -175,13 +175,16 @@ class EclypseRequest:
 async def _process_request(
     args_ref: dict[str, ObjectRef],
     msg_size: int,
-    route: Future[Route],
+    route: Future[Route | None],
     recipient_id: str,
     _comm: EclypseCommunicationInterface,
 ) -> dict[str, Any | datetime]:
     _route = route.result() if route.done() else await route
     if _route is None:
-        raise RouteNotFoundError(recipient_id)
+        return {
+            "future": _comm._route_not_found_response(recipient_id),
+            "timestamp": datetime.now(),
+        }
 
     if _route.no_hop:
         # Read back from the object store, so delivery does not depend on placement
@@ -191,14 +194,30 @@ async def _process_request(
             _comm.__class__,
             **args,
         )
+        response = await future
     else:
+        from ray.exceptions import (  # noqa: PLC0415 -- Ray is optional until delivery.
+            ActorDiedError,
+            ActorUnavailableError,
+        )
+
         infrastructure_id = _comm.service.infrastructure_id
         actor_name = f"{infrastructure_id}/{_route.recipient_node_id}"
-        handle: RemoteNode = _comm.service.node.get_actor(actor_name)
+        try:
+            handle: RemoteNode = _comm.service.node.get_actor(actor_name)
+        except ValueError as error:
+            return {
+                "future": _comm._recipient_unavailable_response(recipient_id, error),
+                "timestamp": datetime.now(),
+            }
         await asyncio.sleep(_route.cost(msg_size))
-        future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
-            _route,
-            _comm.__class__,
-            **args_ref,
-        )
-    return {"future": await future, "timestamp": datetime.now()}
+        try:
+            future = handle.service_comm_entrypoint.remote(  # type: ignore[attr-defined]
+                _route,
+                _comm.__class__,
+                **args_ref,
+            )
+            response = await future
+        except (ActorDiedError, ActorUnavailableError) as error:
+            response = _comm._recipient_unavailable_response(recipient_id, error)
+    return {"future": response, "timestamp": datetime.now()}

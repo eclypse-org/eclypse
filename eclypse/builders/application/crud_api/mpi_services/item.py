@@ -2,6 +2,7 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -15,7 +16,10 @@ class ItemService(Service):
 
     async def step(self):
         """Create the item, then wait for the audit confirmation."""
-        await self.gateway_request()
+        request = await self.gateway_request()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         return await self.audit_request()
 
     @mpi.exchange(receive=True, send=True)

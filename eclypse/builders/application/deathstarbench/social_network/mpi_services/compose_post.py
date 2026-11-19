@@ -2,6 +2,7 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
+from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -18,7 +19,10 @@ class ComposePostService(Service):
     async def step(self):
         """Start the compose-post workflow and await the final response."""
         self.req_id += 1
-        await self.submit_post()
+        request = await self.submit_post()
+        if request.response.code != ResponseCode.OK:
+            self.logger.warning(str(request.response))
+            return
         response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response
