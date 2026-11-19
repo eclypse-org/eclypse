@@ -34,8 +34,17 @@ class FrontendService(Service):
         order.
         """
         catalog_r = await self.rest.get("CatalogService/catalog")
+        if not catalog_r.ok:
+            self.logger.warning(str(catalog_r.body))
+            return
         user_r = await self.rest.get("UserService/user", user_id=self.user_id)
+        if not user_r.ok:
+            self.logger.warning(str(user_r.body))
+            return
         cart_r = await self.rest.get("CartService/cart")
+        if not cart_r.ok:
+            self.logger.warning(str(cart_r.body))
+            return
 
         self.logger.info(
             "Received response | "
@@ -69,6 +78,9 @@ class FrontendService(Service):
         ]
 
         order_r = await self.rest.post("OrderService/order", items=order_items)
+        if not order_r.ok:
+            self.logger.warning(str(order_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="OrderService", body=order_r.body)

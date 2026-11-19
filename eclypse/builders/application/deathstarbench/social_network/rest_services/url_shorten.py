@@ -22,6 +22,9 @@ class UrlShortenService(RESTService):
             urls=urls,
             shortened_urls=shortened_urls,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="MediaService", body=response.body)

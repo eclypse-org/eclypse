@@ -11,6 +11,7 @@ from typing import (
 )
 
 from eclypse.remote.communication import EclypseRequest
+from eclypse.remote.utils import ResponseCode
 
 if TYPE_CHECKING:
     from collections.abc import (
@@ -54,3 +55,18 @@ class MulticastRequest(EclypseRequest):
             Awaitable: The result of the request.
         """
         return super().__await__()  # type: ignore[return-value]
+
+    @property
+    def ok(self) -> bool:
+        """Whether all recipients queued the message; True for no recipients.
+
+        Raises:
+            RuntimeError: If any delivery attempt has not completed yet.
+        """
+        ok = True
+        for response in self.responses:
+            if response is None:
+                raise RuntimeError("Request not completed yet")
+            if response.code != ResponseCode.OK:
+                ok = False
+        return ok

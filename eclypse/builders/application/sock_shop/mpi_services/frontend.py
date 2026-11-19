@@ -13,7 +13,6 @@ providing the user-facing components of the store.
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
-from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -39,7 +38,7 @@ class FrontendService(Service):
         """
         # Send request to CatalogService
         request = await self.catalog_request()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
 
@@ -54,7 +53,7 @@ class FrontendService(Service):
         # Send request to UserService
         user_request = {"request_type": "user_data", "user_id": self.user_id}
         request = await self.mpi.send("UserService", user_request)
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
 
@@ -68,7 +67,7 @@ class FrontendService(Service):
         # Send request to CartService
         cart_request = {"request_type": "cart_data", "user_id": self.user_id}
         request = await self.mpi.send("CartService", cart_request)
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
 
@@ -103,7 +102,7 @@ class FrontendService(Service):
             "items": order_items,
         }
         request = await self.mpi.send("OrderService", order_request)
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
 

@@ -8,6 +8,75 @@ import pytest
 
 @pytest.mark.integration
 @pytest.mark.emulation
+def test_ray_delivery_failures_use_protocol_specific_responses(remote_probe):
+    repo_root = Path(__file__).resolve().parents[3]
+    script = textwrap.dedent(
+        """
+        import asyncio
+        import json
+        import os
+        from types import SimpleNamespace
+
+        import ray
+
+        from eclypse.remote.communication import Route
+        from eclypse.remote.communication.mpi import EclypseMPI
+        from eclypse.remote.communication.request import _process_request
+        from eclypse.remote.communication.rest import EclypseREST
+        from eclypse.remote.node.node import RemoteNode
+
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
+
+        @ray.remote
+        class EmptyNode:
+            def __init__(self):
+                self.id = "node-b"
+                self.services = {}
+
+            async def service_comm_entrypoint(self, route, interface, **data):
+                return await RemoteNode.service_comm_entrypoint(
+                    self, route, interface, **data
+                )
+
+        actor = EmptyNode.remote()
+
+        async def probe():
+            service = SimpleNamespace(
+                infrastructure_id="infra",
+                node=SimpleNamespace(get_actor=lambda _: actor),
+            )
+            results = {}
+            for state in ("missing_service", "dead_actor"):
+                for protocol in (EclypseMPI, EclypseREST):
+                    route = asyncio.get_running_loop().create_future()
+                    route.set_result(Route("sender", "node-a", "worker", "node-b", 0))
+                    result = await _process_request(
+                        {}, 0, route, "worker", protocol(service)
+                    )
+                    response = result["future"]
+                    results[state + protocol.__name__] = (
+                        response.code.name if protocol is EclypseMPI
+                        else [int(response[0]), response[1]["error"]]
+                    )
+                if state == "missing_service":
+                    ray.kill(actor)
+            return results
+
+        print(json.dumps(asyncio.run(probe())))
+        ray.shutdown()
+        """
+    )
+    result = remote_probe(repo_root, script)
+    for state in ("missing_service", "dead_actor"):
+        assert result[state + "EclypseMPI"] == "RECIPIENT_UNAVAILABLE"
+        assert result[state + "EclypseREST"] == [503, "recipient_unavailable"]
+
+
+@pytest.mark.integration
+@pytest.mark.emulation
 def test_ray_route_cost_measures_what_is_transferred(remote_probe):
     repo_root = Path(__file__).resolve().parents[3]
     script = textwrap.dedent(

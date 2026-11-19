@@ -415,8 +415,11 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     )
 
     assert await rest._not_connected_response() == (
-        HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "svc not connected"},
+        HTTPStatusCode.SERVICE_UNAVAILABLE,
+        {
+            "error": "not_connected",
+            "message": "Recipient 'svc' is not connected.",
+        },
     )
     assert await rest._execute_request(
         "svc/hello",
@@ -426,31 +429,35 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     ) == (HTTPStatusCode.OK, {"name": "Ada"})
     assert await rest._execute_request("missing", HTTPMethod.GET, no_hop_route) == (
         HTTPStatusCode.NOT_FOUND,
-        {"message": "Endpoint not found"},
+        {"error": "endpoint_not_found", "message": "Endpoint not found"},
     )
     assert await rest._execute_request("svc/hello", HTTPMethod.POST, no_hop_route) == (
         HTTPStatusCode.METHOD_NOT_ALLOWED,
-        {"message": "Method not allowed"},
+        {"error": "method_not_allowed", "message": "Method not allowed"},
     )
     assert await rest._execute_request("svc/boom", HTTPMethod.POST, no_hop_route) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "boom"},
+        {"error": "handler_error", "message": "boom"},
     )
     assert await rest._execute_request(
         "svc/bad-data", HTTPMethod.PUT, no_hop_route
     ) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "Invalid return type for handler: data must be a dictionary."},
+        {
+            "error": "invalid_handler_response",
+            "message": "Invalid return type for handler: data must be a dictionary.",
+        },
     )
     assert await rest._execute_request(
         "svc/bad-code", HTTPMethod.DELETE, no_hop_route
     ) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
         {
+            "error": "invalid_handler_response",
             "message": (
                 "Invalid return type for handler: "
                 "status code must be a valid HTTP code."
-            )
+            ),
         },
     )
     assert (

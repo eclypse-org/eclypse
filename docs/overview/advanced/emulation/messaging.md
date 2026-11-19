@@ -55,11 +55,9 @@ The send and broadcast requests must be awaited explicitly.
 ```python title="Example: Use MPI interface"
 """ ... inside the step() method of service-A """
 
-from eclypse.remote.utils import ResponseCode
-
 # Check delivery before waiting for an application reply
 request = await self.mpi.send("service-B", {"msg": "ping"})
-if request.response.code != ResponseCode.OK:
+if not request.ok:
     self.logger.warning(str(request.response))
     return
 
@@ -114,12 +112,20 @@ exists. Replace MPI `except RouteNotFoundError` handling with response checks,
 and end the step on failed delivery before calling `recv()`. The default service
 loop no longer skips or logs a step automatically for missing MPI routes.
 Checking only `code == ERROR` does not cover the specific failures; use
-`code != OK`. REST retains its missing-route exception and HTTP response types.
+`request.ok` or `code != OK`.
+
+`request.ok` is True when all recipients queued the message, including unicast.
+It is False if any completed delivery failed. Reading it before every delivery
+has completed raises `RuntimeError("Request not completed yet")`, even when an
+already completed delivery failed. An empty multicast or broadcast has no failed
+deliveries and reports True. Exceptions and cancellation still propagate.
 
 For multicast, expected failures do not prevent the other recipients' delivery
 attempts from finishing. Responses follow the original recipient order:
 
 ```python
+from eclypse.remote.utils import ResponseCode
+
 request = await self.mpi.send(["worker-a", "worker-b"], {"msg": "update"})
 for recipient, response in zip(request.recipient_ids, request.responses, strict=True):
     if response.code != ResponseCode.OK:
@@ -239,9 +245,57 @@ For example:
 
 ```python
 request = await self.rest.post("StoreService/data", key="item1", value=42)
+if not request.ok:
+    self.logger.warning(str(request.body))
+    return
 print(request.status_code)
 print(request.body)
 ```
+
+### REST outcomes and migration
+
+`request.ok` is True for any HTTP status in the `2xx` family, including
+`201 Created` and `204 No Content`. Other statuses return False. Access before
+completion raises `RuntimeError("Request not completed yet")`; underlying
+exceptions and cancellation propagate.
+
+Expected routing and delivery failures now return `503 Service Unavailable`
+with a machine-readable `error` and diagnostic `message` in the response body:
+
+| `body["error"]` | Meaning |
+| --- | --- |
+| `route_not_found` | No usable route could be computed. |
+| `not_connected` | Recipient's REST interface is disconnected. |
+| `recipient_unavailable` | Recipient service is absent, actor lookup failed, or Ray reports an actor died or became unavailable. |
+
+For example:
+
+```python
+request = await self.rest.post("Worker/process", value=42)
+if not request.ok:
+    self.logger.warning(str(request.body))
+    return
+```
+
+**Migration:** missing REST routes no longer raise `RouteNotFoundError`, and
+disconnected recipients return `503` instead of `500`. Check `request.ok`
+before reading application fields in `body`. The default service loop no longer
+automatically skips steps for missing REST routes. A REST endpoint calling a
+downstream endpoint can propagate its failure unchanged:
+
+```python
+response = await self.rest.post("Worker/process", value=42)
+if not response.ok:
+    return response.response  # (HTTPStatusCode, body)
+```
+
+The built-in endpoint errors retain their status codes and messages, with an
+additional `error` field: `endpoint_not_found` (404), `method_not_allowed` (405),
+`handler_error` (500), and `invalid_handler_response` (500). Application-defined
+response bodies are unchanged. Handler exceptions continue to produce `500`
+responses as before; input validation, other backend exceptions and cancellation
+are not converted into `503`. No retries are automatic, and a `503` does not
+guarantee that retrying is safe or that delivery never occurred.
 
 ### Endpoint Resolution
 

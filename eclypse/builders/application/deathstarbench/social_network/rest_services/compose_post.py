@@ -32,6 +32,9 @@ class ComposePostService(Service):
             media_types=["image"],
             post_type="POST",
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UniqueIdService", body=response.body)

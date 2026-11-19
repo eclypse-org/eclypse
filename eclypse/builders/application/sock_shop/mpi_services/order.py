@@ -13,7 +13,6 @@ like payment, inventory, and shipping.
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
-from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -41,11 +40,11 @@ class OrderService(Service):
         `PaymentService` and `ShippingService`.
         """
         request = await self.frontend_request()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         request = await self.payment_request()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         await self.shipping_request()

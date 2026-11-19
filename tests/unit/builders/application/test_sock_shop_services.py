@@ -59,6 +59,7 @@ class FakeRestResponse:
     def __init__(self, body):
         self.body = body
         self.data = body
+        self.ok = True
 
 
 class AwaitableResult:

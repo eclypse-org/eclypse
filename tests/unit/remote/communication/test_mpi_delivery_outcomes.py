@@ -12,10 +12,10 @@ from eclypse.remote.communication.mpi import (
     Response,
 )
 from eclypse.remote.communication.request import (
-    RouteNotFoundError,
     _process_request,
 )
 from eclypse.remote.communication.rest import EclypseREST
+from eclypse.remote.communication.rest.codes import HTTPStatusCode
 from eclypse.remote.communication.route import Route
 from eclypse.remote.node.node import RemoteNode
 from eclypse.remote.utils import ResponseCode
@@ -86,6 +86,7 @@ async def test_missing_mpi_routes_complete_with_ordered_outcomes(
         else [ResponseCode.OK, ResponseCode.ROUTE_NOT_FOUND, ResponseCode.NOT_CONNECTED]
     )
     assert [response.code for response in request.responses] == expected
+    assert request.ok is False
     assert all(elapsed.total_seconds() >= 0 for elapsed in request.elapsed_times)
     if isinstance(recipients, str):
         assert request.route is None
@@ -96,15 +97,44 @@ async def test_missing_mpi_routes_complete_with_ordered_outcomes(
 
 
 @pytest.mark.asyncio
-async def test_rest_missing_route_still_raises():
+async def test_rest_missing_route_returns_service_unavailable():
     route = asyncio.get_running_loop().create_future()
     route.set_result(None)
-    with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
-        await _process_request({}, 0, route, "worker", EclypseREST(SimpleNamespace()))
+    result = await _process_request(
+        {}, 0, route, "worker", EclypseREST(SimpleNamespace())
+    )
+    code, body = result["future"]
+    assert code is HTTPStatusCode.SERVICE_UNAVAILABLE
+    assert body["error"] == "route_not_found"
+    assert "worker" in body["message"]
+    assert isinstance(result["timestamp"], datetime)
 
 
 @pytest.mark.asyncio
-async def test_missing_service_returns_mpi_failure_but_preserves_rest_error():
+async def test_rest_request_exposes_delivery_error_and_ok(monkeypatch):
+    loop = asyncio.get_running_loop()
+    missing = Future()
+    missing.set_result(None)
+    rest = EclypseREST(SimpleNamespace(node=SimpleNamespace(engine_loop=loop)))
+    monkeypatch.setattr(
+        rest, "request_route", lambda _: SimpleNamespace(future=lambda: missing)
+    )
+    monkeypatch.setattr(
+        "eclypse.remote.communication.request.ray_backend.put", lambda value: value
+    )
+    monkeypatch.setattr(
+        "eclypse.remote.communication.request.ray_backend.get_size", lambda _: 0
+    )
+    request = await rest.get("missing/resource")
+    assert request.ok is False
+    assert request.status_code is HTTPStatusCode.SERVICE_UNAVAILABLE
+    assert request.body["error"] == "route_not_found"
+    assert request.route is None
+    assert request.elapsed_times[0].total_seconds() >= 0
+
+
+@pytest.mark.asyncio
+async def test_missing_service_returns_protocol_specific_failure():
     node = object.__new__(RemoteNode)
     node._services = {}
     node._node_id = "node-a"
@@ -112,8 +142,10 @@ async def test_missing_service_returns_mpi_failure_but_preserves_rest_error():
     response = await node.service_comm_entrypoint(route, EclypseMPI)
     assert response.code is ResponseCode.RECIPIENT_UNAVAILABLE
     assert "worker" in response.message
-    with pytest.raises(KeyError, match="worker"):
-        await node.service_comm_entrypoint(route, EclypseREST)
+    code, body = await node.service_comm_entrypoint(route, EclypseREST)
+    assert code is HTTPStatusCode.SERVICE_UNAVAILABLE
+    assert body["error"] == "recipient_unavailable"
+    assert "worker" in body["message"]
 
 
 @pytest.mark.asyncio
@@ -146,18 +178,24 @@ async def test_remote_delivery_translates_only_recognised_failures(failure):
         with pytest.raises(type(error)) as caught:
             await _process_request({}, 0, route_future(remote=True), "worker", mpi)
         assert caught.value is error
+        with pytest.raises(type(error)) as caught:
+            await _process_request(
+                {}, 0, route_future(remote=True), "worker", EclypseREST(service)
+            )
+        assert caught.value is error
     else:
         response = await _process_request(
             {}, 0, route_future(remote=True), "worker", mpi
         )
         assert response["future"].code is ResponseCode.RECIPIENT_UNAVAILABLE
         assert "worker" in response["future"].message
-        # REST keeps the original exception rather than receiving an MPI object.
-        with pytest.raises(type(error)) as caught:
-            await _process_request(
-                {}, 0, route_future(remote=True), "worker", EclypseREST(service)
-            )
-        assert caught.value is error
+        result = await _process_request(
+            {}, 0, route_future(remote=True), "worker", EclypseREST(service)
+        )
+        code, body = result["future"]
+        assert code is HTTPStatusCode.SERVICE_UNAVAILABLE
+        assert body["error"] == "recipient_unavailable"
+        assert "worker" in body["message"]
 
 
 @pytest.mark.asyncio

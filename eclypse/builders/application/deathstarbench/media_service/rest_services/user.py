@@ -20,6 +20,9 @@ class UserService(RESTService):
             **payload,
             user=user,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="ReviewStorageService", body=response.body)

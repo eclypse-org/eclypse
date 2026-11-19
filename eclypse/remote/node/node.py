@@ -24,6 +24,7 @@ from eclypse.remote.communication.mpi import (
     Response,
 )
 from eclypse.remote.communication.rest import EclypseREST
+from eclypse.remote.communication.rest.codes import HTTPStatusCode
 from eclypse.remote.utils import ResponseCode
 from eclypse.utils._logging import (
     config_logger,
@@ -162,9 +163,15 @@ class RemoteNode:
                 )
             return await service.mpi._handle_request(route=route, **handle_args)
         if communication_interface == EclypseREST:
-            return await self.services[service_id].rest._handle_request(
-                route=route, **handle_args
-            )
+            service = self.services.get(service_id)
+            if service is None:
+                return HTTPStatusCode.SERVICE_UNAVAILABLE, {
+                    "error": "recipient_unavailable",
+                    "message": (
+                        f"Recipient '{service_id}' is not deployed on '{self.id}'."
+                    ),
+                }
+            return await service.rest._handle_request(route=route, **handle_args)
         raise ValueError(f"Invalid communication interface: {communication_interface}.")
 
     def __repr__(self) -> str:

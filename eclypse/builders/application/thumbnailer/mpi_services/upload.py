@@ -2,7 +2,6 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
-from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -18,7 +17,7 @@ class UploadService(Service):
         """Upload the next image and wait for the final storage response."""
         self.image_id += 1
         request = await self.upload_image()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         response = (await self.mpi.recv()).data

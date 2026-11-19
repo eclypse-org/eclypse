@@ -27,6 +27,9 @@ class MovieIdService(RESTService):
             movie_title=movie_title,
             movie_id=movie["movie_id"],
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="TextService", body=response.body)

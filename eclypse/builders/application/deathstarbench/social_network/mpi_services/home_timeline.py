@@ -2,7 +2,6 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
-from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -18,7 +17,7 @@ class HomeTimelineService(Service):
     async def step(self):
         """Handle the next home-timeline request."""
         request = await self.handle_request()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         return await self.followers_response()

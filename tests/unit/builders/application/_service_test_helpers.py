@@ -6,12 +6,16 @@ from eclypse.remote.communication.mpi import (
     Message,
     Response,
 )
+from eclypse.remote.utils import ResponseCode
 
 
 class FakeRestResponse:
-    def __init__(self, body):
+    def __init__(self, body, status_code=200):
         self.body = body
         self.data = body
+        self.ok = 200 <= status_code < 300
+        self.status_code = status_code
+        self.response = (self.status_code, body)
 
 
 class AwaitableResult:
@@ -29,6 +33,10 @@ class FakeMPIRequest(tuple):
     @property
     def response(self):
         return Response()
+
+    @property
+    def ok(self):
+        return self.response.code == ResponseCode.OK
 
 
 class FakeRESTInterface:

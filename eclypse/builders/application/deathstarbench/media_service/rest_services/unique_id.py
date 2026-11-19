@@ -23,6 +23,9 @@ class UniqueIdService(RESTService):
             **payload,
             review_id=self.next_review_id,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="MovieIdService", body=response.body)

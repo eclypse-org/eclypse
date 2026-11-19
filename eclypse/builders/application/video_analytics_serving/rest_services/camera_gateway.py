@@ -25,6 +25,9 @@ class CameraGatewayService(Service):
             stream_id="camera-a",
             objects=["person", "forklift"],
         )
+        if not detection_r.ok:
+            self.logger.warning(str(detection_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="DetectionService", body=detection_r.body)
@@ -35,6 +38,9 @@ class CameraGatewayService(Service):
             stream_id="camera-a",
             detections=detection_r.body["detections"],
         )
+        if not tracking_r.ok:
+            self.logger.warning(str(tracking_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="TrackingService", body=tracking_r.body)
@@ -45,6 +51,9 @@ class CameraGatewayService(Service):
             stream_id="camera-a",
             tracks=tracking_r.body["tracks"],
         )
+        if not analytics_r.ok:
+            self.logger.warning(str(analytics_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="AnalyticsService", body=analytics_r.body)

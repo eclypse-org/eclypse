@@ -26,6 +26,9 @@ class TextService(RESTService):
             mentions=mentions,
             urls=urls,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UserMentionService", body=response.body)

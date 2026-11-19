@@ -25,6 +25,9 @@ class ItemService(RESTService):
             item_id=item["id"],
             action="create",
         )
+        if not audit_r.ok:
+            self.logger.warning(str(audit_r.body))
+            return audit_r.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="AuditService", body=audit_r.body)

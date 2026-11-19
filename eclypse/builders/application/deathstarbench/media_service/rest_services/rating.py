@@ -17,6 +17,9 @@ class RatingService(RESTService):
             **payload,
             rating=max(1, min(5, rating)),
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UserService", body=response.body)

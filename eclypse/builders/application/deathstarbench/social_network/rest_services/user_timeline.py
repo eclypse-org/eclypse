@@ -27,6 +27,9 @@ class UserTimelineService(RESTService):
             post=post,
             reply_to=reply_to,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="HomeTimelineService", body=response.body)
@@ -42,6 +45,9 @@ class UserTimelineService(RESTService):
             "PostStorageService/read_many",
             post_ids=post_ids,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PostStorageService", body=response.body)

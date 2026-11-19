@@ -2,7 +2,6 @@
 
 from eclypse.remote.communication import mpi
 from eclypse.remote.service import Service
-from eclypse.remote.utils import ResponseCode
 from eclypse.utils import format_log_kv
 
 
@@ -17,19 +16,19 @@ class MovieInfoService(Service):
     async def step(self):
         """Start a movie-info request and aggregate all downstream replies."""
         request = await self.request_cast()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         cast = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=cast))
         request = await self.request_plot()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         plot = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=plot))
         request = await self.request_reviews()
-        if request.response.code != ResponseCode.OK:
+        if not request.ok:
             self.logger.warning(str(request.response))
             return
         reviews = (await self.mpi.recv()).data

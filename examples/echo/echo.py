@@ -22,7 +22,7 @@ class EchoService(Service):
         t_init_unicast = time.time()
         for n in neigh:
             req = await self.mpi.send(n, message)
-            if req.response.code != ResponseCode.OK:
+            if not req.ok:
                 self.logger.warning(str(req.response))
                 return
             expected_wait_unicast += req.route.cost(message_size) if req.route else 0

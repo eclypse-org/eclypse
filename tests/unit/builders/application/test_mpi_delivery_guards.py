@@ -51,7 +51,9 @@ async def test_workflows_end_step_after_failed_delivery(
     comm = set_mpi(service, [])
 
     async def fail_delivery(*_args):
-        return SimpleNamespace(response=Response(code, message="Delivery failed."))
+        return SimpleNamespace(
+            response=Response(code, message="Delivery failed."), ok=False
+        )
 
     monkeypatch.setattr(service, send_method, fail_delivery)
     # An attempted recv would exhaust the empty fake queue and fail this test.
@@ -68,7 +70,9 @@ async def test_gateway_checks_second_delivery_before_receiving(monkeypatch):
     def send(recipient, data):
         calls.append((recipient, data))
         code = ResponseCode.OK if len(calls) == 1 else ResponseCode.ROUTE_NOT_FOUND
-        return AwaitableResult(SimpleNamespace(response=Response(code)))
+        return AwaitableResult(
+            SimpleNamespace(response=Response(code), ok=code == ResponseCode.OK)
+        )
 
     monkeypatch.setattr(comm, "send", send)
     assert await service.step() is None
