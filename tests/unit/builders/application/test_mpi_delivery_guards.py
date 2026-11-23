@@ -77,3 +77,74 @@ async def test_gateway_checks_second_delivery_before_receiving(monkeypatch):
     monkeypatch.setattr(comm, "send", send)
     assert await service.step() is None
     assert [recipient for recipient, _ in calls] == ["AuthService", "ItemService"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    (
+        "module",
+        "service_name",
+        "messages",
+        "recipients",
+        "initial_reads",
+        "failed_call",
+    ),
+    [
+        (module, name, messages, recipients, initial_reads, failed_call)
+        for module, name, messages, recipients, initial_reads in [
+            (
+                "deathstarbench.hotel_reservation",
+                "FrontendService",
+                [{"hotels": [{}]}, {"user": {}}, {}],
+                ["SearchService", "ProfileService", "ReservationService"],
+                0,
+            ),
+            (
+                "deathstarbench.media_service",
+                "MovieInfoService",
+                [
+                    {"movie_id": "m1", "movie_title": "The Matrix"},
+                    {"cast": []},
+                    {"plot": "Demo"},
+                    {"reviews": []},
+                ],
+                ["CastInfoService", "PlotService", "MovieReviewService"],
+                1,
+            ),
+            (
+                "sock_shop",
+                "FrontendService",
+                [{"products": []}, {}, {"items": []}, {}],
+                ["CatalogService", "UserService", "CartService", "OrderService"],
+                0,
+            ),
+            (
+                "sock_shop",
+                "OrderService",
+                [{"items": []}, {"transaction_id": 1}, {"details": {}}],
+                ["PaymentService", "ShippingService"],
+                1,
+            ),
+        ]
+        for failed_call in range(2, len(recipients) + 1)
+    ],
+)
+async def test_mpi_workflow_does_not_receive_after_later_delivery_failure(
+    monkeypatch, module, service_name, messages, recipients, initial_reads, failed_call
+):
+    services = import_module(f"eclypse.builders.application.{module}.mpi_services")
+    service = attach_service_logger(getattr(services, service_name)(service_name))
+    comm = set_mpi(service, messages)
+    calls = []
+
+    def send(recipient, data):
+        calls.append((recipient, data))
+        ok = len(calls) != failed_call
+        code = ResponseCode.OK if ok else ResponseCode.RECIPIENT_UNAVAILABLE
+        return AwaitableResult(SimpleNamespace(response=Response(code), ok=ok))
+
+    monkeypatch.setattr(comm, "send", send)
+    assert await service.step() is None
+    assert [recipient for recipient, _ in calls] == recipients[:failed_call]
+    consumed = initial_reads + failed_call - 1
+    assert comm.messages == messages[consumed:]

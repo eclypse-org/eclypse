@@ -377,6 +377,11 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     interface.disconnect()
     assert await interface._handle_request() == "offline"
 
+    error = RuntimeError("recipient unavailable")
+    with pytest.raises(RuntimeError, match="recipient unavailable") as caught:
+        interface._recipient_unavailable_response("worker", error)
+    assert caught.value is error
+
 
 @pytest.mark.asyncio
 async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
