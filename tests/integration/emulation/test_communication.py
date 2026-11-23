@@ -18,6 +18,7 @@ def test_ray_delivery_failures_use_protocol_specific_responses(remote_probe):
         from types import SimpleNamespace
 
         import ray
+        from ray.exceptions import ActorDiedError, ActorUnavailableError
 
         from eclypse.remote.communication import Route
         from eclypse.remote.communication.mpi import EclypseMPI
@@ -72,6 +73,13 @@ def test_ray_delivery_failures_use_protocol_specific_responses(remote_probe):
                     )
                 if state == "missing_service":
                     ray.kill(actor)
+                    async with asyncio.timeout(5):
+                        while True:
+                            try:
+                                await actor.__ray_ready__.remote()
+                            except (ActorDiedError, ActorUnavailableError):
+                                break
+                            await asyncio.sleep(0.01)
             return results
 
         print(json.dumps(asyncio.run(probe())))
