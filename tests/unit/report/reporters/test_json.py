@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from datetime import datetime
+from types import SimpleNamespace
 
 import numpy as np
 import pytest
@@ -38,5 +39,7 @@ def test_json_encoder_supports_numpy_values_and_keys():
     assert json.loads(
         json.dumps(_normalize_for_json(payload), cls=_SafeJSONEncoder)
     ) == {"7": {"scalar": 0.5, "bool": True, "array": [[1, 2], [3, 4]]}}
+    tensor = SimpleNamespace(tolist=lambda: [0.5])
+    assert json.dumps(tensor, cls=_SafeJSONEncoder) == "[0.5]"
     with pytest.raises(TypeError, match="not JSON serializable"):
         json.dumps(object(), cls=_SafeJSONEncoder)

@@ -122,3 +122,99 @@ def test_ray_emulation_runtime_generates_reports(tmp_path: Path, remote_probe):
     assert result["csv_service_exists"] is True
     assert result["service_count"] > 0
     assert result["step_result_callbacks"] > 0
+
+
+@pytest.mark.integration
+@pytest.mark.emulation
+def test_ray_emulation_collects_every_value_pushed_by_the_services(
+    tmp_path: Path, remote_probe
+):
+    repo_root = Path(__file__).resolve().parents[3]
+    output_dir = tmp_path / "ray-simulation"
+    script = textwrap.dedent(f"""
+        from __future__ import annotations
+
+        import asyncio
+        import json
+        import os
+        from pathlib import Path
+
+        os.environ["RAY_ENABLE_UV_RUN_RUNTIME_ENV"] = "0"
+        os.environ["ECLYPSE_RND_SEED"] = "7"
+
+        import numpy as np
+        import ray
+
+        from eclypse.graph import Application, Infrastructure
+        from eclypse.placement.strategies import StaticStrategy
+        from eclypse.remote import ray_backend
+        from eclypse.remote.service.service import Service
+        from eclypse.simulation.config import SimulationConfig
+        from eclypse.simulation.simulation import Simulation
+
+
+        class MonitoredService(Service):
+            async def step(self):
+                self.monitor(load=np.float32(0.5), step=self.step_count)
+                await asyncio.sleep(0.001)
+
+            def on_undeploy(self):
+                self.monitor(total=self.monitor_count + 1)
+
+
+        infrastructure = Infrastructure("edge-cloud", seed=7)
+        infrastructure.add_node("edge-a")
+        infrastructure.add_node("edge-b")
+        infrastructure.add_edge("edge-a", "edge-b")
+
+        application = Application("shop", seed=7)
+        application.add_service(MonitoredService("gateway"))
+        application.add_service(MonitoredService("worker"))
+        application.add_edge("gateway", "worker")
+
+        ray.shutdown()
+        ray.init(
+            address=os.environ["ECLYPSE_TEST_RAY_ADDRESS"],
+            namespace=os.environ["ECLYPSE_TEST_RAY_NAMESPACE"],
+        )
+        ray_backend._backend = ray
+        ray_backend.init = lambda runtime_env: None
+
+        simulation = Simulation(
+            infrastructure,
+            SimulationConfig(
+                path=Path({str(output_dir)!r}),
+                remote=True,
+                step_every_ms=100,
+                max_steps=5,
+            ),
+        )
+        simulation.register(
+            application,
+            StaticStrategy({{"gateway": "edge-a", "worker": "edge-b"}}),
+        )
+        simulation.start()
+        simulation.wait(timeout=15)
+
+        print(json.dumps({{"records": simulation.monitored}}))
+
+        ray.shutdown()
+        """)
+
+    records = remote_probe(repo_root, script)["records"]
+
+    for service_id, node_id in (("gateway", "edge-a"), ("worker", "edge-b")):
+        pushed = sorted(
+            (record for record in records if record["service_id"] == service_id),
+            key=lambda record: record["n_event"],
+        )
+        # the last push is made while undeploying, and carries how many were made
+        assert pushed[-1]["total"] == len(pushed) > 1
+        assert [record["n_event"] for record in pushed] == list(
+            range(1, len(pushed) + 1)
+        )
+        assert {record["node_id"] for record in pushed} == {node_id}
+        assert {record["application_id"] for record in pushed} == {"shop"}
+        assert all(record["load"] == 0.5 for record in pushed[:-1])
+    timestamps = [record["timestamp"] for record in records]
+    assert timestamps == sorted(timestamps)

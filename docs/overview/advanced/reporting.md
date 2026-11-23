@@ -83,6 +83,9 @@ metadata, and stores the returned value in the `value` column. Returning
     mapping or a tuple: their items would become extra fields that do not fit
     the report schema. To report several quantities, define one metric for each.
 
+In emulation mode, a service can also
+[push values without a metric](emulation/emulation.md#pushing-values-from-a-service).
+
 ### Metric and callback types
 
 The metric decorators mirror the same event types used by regular events. The event type

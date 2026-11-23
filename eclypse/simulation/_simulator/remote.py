@@ -7,14 +7,23 @@ deploying, starting, stopping and undeploying them.
 The RemoteSimulator is also the entry point for the communication between services, as
 it ask to the infrastructure the computation of the routes between them, retrieving the
 costs of such interactions.
+
+It also receives the values that the services push through their `monitor` method, and
+hands them to the JSON reporter of the simulation.
 """
 
 from __future__ import annotations
 
 import asyncio
+from typing import Any
 
 from eclypse.remote.communication.route import Route
 from eclypse.utils._logging import config_logger
+from eclypse.utils.constants import (
+    FLOAT_EPSILON,
+    SERVICE_MONITOR,
+)
+from eclypse.utils.defaults import JSON_REPORT_DIR
 
 from .local import (
     Simulator,
@@ -32,6 +41,7 @@ class RemoteSimulator(Simulator):
     def __init__(self, *args, **kwargs):
         config_logger()  # re-do for RemoteSimulator node
         self._engines = kwargs.pop("remotes")
+        self._monitor_count = 0
         super().__init__(*args, **kwargs)
 
     def enact(self):
@@ -64,11 +74,54 @@ class RemoteSimulator(Simulator):
                 RemoteSimOpsHandler.undeploy(p)
 
     async def _finalize_shutdown(self):
-        """Stop remote services before flushing local simulator resources."""
+        """Stop remote services before flushing local simulator resources.
+
+        The report is closed only once all the values pushed by the services arrived.
+        """
         try:
             self.cleanup()
+            # undeployed services come back with the number of pushes they made
+            sent = sum(
+                service.monitor_count
+                for placement in self.placements.values()
+                for service in placement.application.services.values()
+            )
+            while self._monitor_count < sent:
+                await asyncio.sleep(FLOAT_EPSILON)
         finally:
             await super()._finalize_shutdown()
+
+    def monitor(
+        self,
+        application_id: str,
+        service_id: str,
+        n_event: int,
+        timestamp: str,
+        values: dict[str, Any],
+    ):
+        """Hand the values pushed by a service to the JSON reporter.
+
+        Args:
+            application_id (str): The ID of the application.
+            service_id (str): The ID of the service.
+            n_event (int): The progressive number of the push for the service.
+            timestamp (str): When the service pushed the values.
+            values (dict[str, Any]): The pushed values.
+        """
+        row = {
+            "timestamp": timestamp,
+            "event_name": SERVICE_MONITOR,
+            "event_idx": n_event,
+            "callback_name": SERVICE_MONITOR,
+            "data": [application_id, service_id, values],
+        }
+        # this runs on the loop of the actor, the reporter on that of the simulation
+        self._event_loop.call_soon_threadsafe(self._enqueue_monitor, row)
+
+    def _enqueue_monitor(self, row: dict[str, Any]):
+        """Queue a row of pushed values for the JSON reporter."""
+        self._monitor_count += 1
+        self._reporter._ensure_queue(JSON_REPORT_DIR, "service").put_nowait([row])
 
     async def route(
         self,

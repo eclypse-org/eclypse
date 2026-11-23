@@ -34,6 +34,7 @@ from eclypse.utils.defaults import (
     DEFAULT_REPORT_BACKEND,
     DEFAULT_REPORT_CHUNK_SIZE,
     DEFAULT_REPORT_TYPE,
+    JSON_REPORT_DIR,
     PARQUET_REPORT_DIR,
     TENSORBOARD_REPORT_DIR,
     get_default_sim_path,
@@ -178,6 +179,9 @@ class SimulationConfig:
                 if event.role is not EventRole.EVENT
             }
         )
+        if self.remote is not None:
+            # the values pushed by the services do not fit the tabular formats
+            report_types.append(JSON_REPORT_DIR)
         resolved_reporters = cast(
             "dict[str, type[Reporter]]",
             get_default_reporters(report_types),

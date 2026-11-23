@@ -9,6 +9,7 @@ from datetime import (
 from types import SimpleNamespace
 from typing import Any
 
+import numpy as np
 import pytest
 
 from eclypse.remote.communication.mpi.requests import (
@@ -182,6 +183,41 @@ def test_service_guard_properties_and_basic_accessors(dummy_logger):
 
     service.detach_node()
     assert service.deployed is False
+
+
+def test_service_monitor_pushes_plain_values_to_the_simulator():
+    pushes: list[tuple[Any, ...]] = []
+    manager = SimpleNamespace(
+        monitor=SimpleNamespace(remote=lambda *args: pushes.append(args))
+    )
+    service = ScriptedService("worker", [1])
+    service.application_id = "shop"
+
+    with pytest.raises(RuntimeError, match="not deployed on any node"):
+        service.monitor(loss=0.5)
+
+    service.attach_node(
+        SimpleNamespace(
+            id="edge-a",
+            manager_actor_name="edge-cloud/manager",
+            get_actor={"edge-cloud/manager": manager}.__getitem__,
+        )
+    )
+    service.monitor(loss=np.float32(0.5), shape=(1, 2), tags={"b"})
+    with pytest.raises(TypeError, match="not JSON serializable"):
+        service.monitor(loss=object())
+    service.monitor(node_id="spoofed")
+
+    assert service.monitor_count == 2
+    assert [(app, sid, n) for app, sid, n, *_ in pushes] == [
+        ("shop", "worker", 1),
+        ("shop", "worker", 2),
+    ]
+    assert pushes[0][3] <= pushes[1][3]
+    assert [values for *_, values in pushes] == [
+        {"loss": 0.5, "shape": [1, 2], "tags": ["b"], "node_id": "edge-a"},
+        {"node_id": "edge-a"},
+    ]
 
 
 @pytest.mark.asyncio

@@ -3,13 +3,19 @@
 from __future__ import annotations
 
 import json
+from operator import itemgetter
 from typing import (
     TYPE_CHECKING,
+    Any,
     cast,
 )
 
 from eclypse.remote import ray_backend
 from eclypse.report import Report
+from eclypse.report.backend import (
+    get_report_source,
+    load_jsonl_rows,
+)
 from eclypse.simulation._simulator.local import Simulator
 from eclypse.simulation.config import SimulationConfig
 from eclypse.utils._logging import (
@@ -18,10 +24,14 @@ from eclypse.utils._logging import (
 )
 from eclypse.utils.constants import (
     DRIVING_EVENT,
+    SERVICE_MONITOR,
     START_EVENT,
     STOP_EVENT,
 )
-from eclypse.utils.defaults import SIMULATION_CONFIG_FILENAME
+from eclypse.utils.defaults import (
+    JSON_REPORT_DIR,
+    SIMULATION_CONFIG_FILENAME,
+)
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -280,6 +290,34 @@ class Simulation:
                 self._sim_config.report_format,
             )
         return self._report
+
+    @property
+    def monitored(self) -> list[dict[str, Any]]:
+        """Values pushed by the services of the finished simulation, oldest first.
+
+        Each record holds the values of a call of `Service.monitor`, with its
+        `application_id`, `service_id`, `node_id`, `timestamp` and `n_event`, the
+        progressive number of the call for the service.
+        """
+        self.wait()
+        source = get_report_source(
+            self.path / JSON_REPORT_DIR, "service", JSON_REPORT_DIR
+        )
+        rows = load_jsonl_rows(source, "service") if source.exists() else []
+        return sorted(
+            (
+                {
+                    **row["value"],
+                    "application_id": row["application_id"],
+                    "service_id": row["service_id"],
+                    "timestamp": row["timestamp"],
+                    "n_event": row["n_event"],
+                }
+                for row in rows
+                if row["callback_id"] == SERVICE_MONITOR
+            ),
+            key=itemgetter("timestamp"),
+        )
 
 
 def _local_remote_event_call(
