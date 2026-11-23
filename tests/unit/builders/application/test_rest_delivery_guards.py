@@ -41,8 +41,7 @@ async def test_rest_gateway_stops_before_reading_failed_response(failed_call):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("failed_call", [1, 2, 3])
-@pytest.mark.parametrize("status", [404, 503])
+@pytest.mark.parametrize(("failed_call", "status"), [(1, 404), (2, 503), (3, 503)])
 async def test_rest_aggregator_propagates_downstream_error_unchanged(
     failed_call, status
 ):

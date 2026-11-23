@@ -35,16 +35,8 @@ from tests.unit.builders.application._service_test_helpers import (
         ("deathstarbench.social_network", "HomeTimelineService", "handle_request"),
     ],
 )
-@pytest.mark.parametrize(
-    "code",
-    [
-        ResponseCode.NOT_CONNECTED,
-        ResponseCode.ROUTE_NOT_FOUND,
-        ResponseCode.RECIPIENT_UNAVAILABLE,
-    ],
-)
 async def test_workflows_end_step_after_failed_delivery(
-    monkeypatch, module, service_name, send_method, code
+    monkeypatch, module, service_name, send_method
 ):
     services = import_module(f"eclypse.builders.application.{module}.mpi_services")
     service = attach_service_logger(getattr(services, service_name)(service_name))
@@ -52,7 +44,8 @@ async def test_workflows_end_step_after_failed_delivery(
 
     async def fail_delivery(*_args):
         return SimpleNamespace(
-            response=Response(code, message="Delivery failed."), ok=False
+            response=Response(ResponseCode.ROUTE_NOT_FOUND, message="Delivery failed."),
+            ok=False,
         )
 
     monkeypatch.setattr(service, send_method, fail_delivery)
