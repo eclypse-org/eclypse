@@ -119,3 +119,40 @@ value. If `step` runs more often than the metric is triggered, values
 accumulate and the report lags behind the service. The buffer holds up to
 `DEFAULT_STEP_QUEUE_SIZE` (1024) values; when it is full, the oldest ones are
 dropped.
+
+### Pushing values from a service
+
+A service can also push values straight to the simulator with
+[monitor][eclypse.remote.service.service.Service.monitor], instead of waiting for
+a metric to read them:
+
+```python
+class Worker(Service):
+    async def step(self):
+        self.monitor(queue_size=len(self.queue), state="busy")
+```
+
+The values of a call are kept together, and they can be anything JSON can
+represent, as well as NumPy or PyTorch arrays and scalars. Any other value raises
+a `TypeError` in the service. Once the simulation has finished, read them with
+[monitored][eclypse.simulation.simulation.Simulation.monitored], one dictionary
+per call, oldest first:
+
+```python
+for record in simulation.monitored:
+    print(record["service_id"], record["n_event"], record["queue_size"])
+```
+
+Each record also holds `application_id`, `service_id`, `node_id`, `timestamp` and
+`n_event`, the progressive number of the call for the service. These names are
+reserved. The simulation stops only once it has received every value pushed by
+the services it undeployed.
+
+Values are written to `json/service.jsonl`, whatever the `report_format`.
+
+!!! warning
+
+    With `report_format="json"`, these records also appear in `report.service()`,
+    where the `value` column then mixes scalars and mappings. The `pandas` backend
+    reads it, the `polars` ones raise an error: use `simulation.monitored` and
+    another `report_format` with them.

@@ -50,6 +50,17 @@ def test_simulation_config_normalises_and_serialises(list_frame_backend, tmp_pat
     assert config.to_dict()["max_steps"] == 3
 
 
+def test_simulation_config_registers_the_json_reporter_only_for_emulations(
+    list_frame_backend, tmp_path, monkeypatch
+):
+    monkeypatch.setattr("eclypse.simulation.config._require_module", lambda _: None)
+    options = {"report_backend": list_frame_backend, "include_default_metrics": True}
+    local = SimulationConfig(path=tmp_path / "local", **options)
+    remote = SimulationConfig(path=tmp_path / "remote", remote=True, **options)
+    assert set(local.reporters) == {"csv"}
+    assert set(remote.reporters) == {"csv", "json"}
+
+
 def test_simulation_config_rejects_invalid_step_and_duplicate_keys(list_frame_backend):
     with pytest.raises(ValueError, match="step_every_ms"):
         SimulationConfig(step_every_ms="sometimes", report_backend=list_frame_backend)

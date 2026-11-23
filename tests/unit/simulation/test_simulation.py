@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from types import SimpleNamespace
 
 import pytest
@@ -288,3 +289,50 @@ def test_simulation_register_uses_default_strategy_and_requires_one(
 
     assert sample_application.id in simulation.applications
     assert not any(level == "warning" for level, _ in dummy_logger.records)
+
+
+def test_simulation_monitored_reads_only_the_pushed_values(
+    sample_infrastructure,
+    simulation_config,
+):
+    simulation = Simulation(sample_infrastructure, simulation_config)
+    assert simulation.monitored == []
+
+    def row(name, timestamp, n_event, value):
+        return {
+            "timestamp": timestamp,
+            "event_name": name,
+            "event_idx": n_event,
+            "callback_name": name,
+            "data": ["shop", "worker", value],
+        }
+
+    path = simulation.path / "json" / "service.jsonl"
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        "\n".join(
+            json.dumps(item)
+            for item in (
+                row("service_monitor", "2026-01-01T00:00:01", 2, {"load": 5}),
+                row("step_result", "2026-01-01T00:00:00", 1, 7),
+                row(
+                    "service_monitor",
+                    "2026-01-01T00:00:00",
+                    1,
+                    {"load": 3, "n_event": 99, "node_id": "edge-a"},
+                ),
+            )
+        )
+    )
+
+    identity = {"application_id": "shop", "service_id": "worker"}
+    assert simulation.monitored == [
+        {
+            **identity,
+            "load": 3,
+            "node_id": "edge-a",
+            "timestamp": "2026-01-01T00:00:00",
+            "n_event": 1,
+        },
+        {**identity, "load": 5, "timestamp": "2026-01-01T00:00:01", "n_event": 2},
+    ]

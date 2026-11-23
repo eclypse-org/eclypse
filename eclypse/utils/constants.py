@@ -68,6 +68,11 @@ STOP_EVENT = "stop"
 DRIVING_EVENT = ENACT_EVENT
 """Name of the default driving event used to advance the simulation."""
 
+# Reporting
+
+SERVICE_MONITOR = "service_monitor"
+"""Name of the values pushed by the services in the `service` report."""
+
 __all__ = [
     "COST_RECOMPUTATION_THRESHOLD",
     "DRIVING_EVENT",
@@ -84,6 +89,7 @@ __all__ = [
     "MIN_FLOAT",
     "MIN_LATENCY",
     "RND_SEED",
+    "SERVICE_MONITOR",
     "START_EVENT",
     "STEP_EVENT",
     "STOP_EVENT",

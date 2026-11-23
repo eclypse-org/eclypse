@@ -15,17 +15,20 @@ In its lifecycle, a `Service` object has the following capabilities:
     5. To communicate with other services through the given communication interfaces.
         Currently, only the MPI interface is supported, which is accessed via the `.mpi`
         property.
+    6. To push values to the simulator while running, through the `monitor` method.
 """
 
 from __future__ import annotations
 
 import asyncio
+import json
 import threading
 from abc import (
     ABC,
     abstractmethod,
 )
 from collections import deque
+from datetime import datetime as dt
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -34,6 +37,10 @@ from typing import (
 
 from eclypse.remote.communication.mpi import EclypseMPI
 from eclypse.remote.communication.rest import EclypseREST
+from eclypse.report.reporters.json import (
+    _normalize_for_json,
+    _SafeJSONEncoder,
+)
 from eclypse.utils._logging import (
     logger,
     print_exception,
@@ -88,6 +95,7 @@ class Service(ABC):
         self._run_task_fn: Callable[[], asyncio.Task] | None = None
         self._running: bool = False
         self._step_count: int = 0
+        self._monitor_count: int = 0
         self._step_queue: deque[Any] = deque(maxlen=DEFAULT_STEP_QUEUE_SIZE)
 
     async def run(self):
@@ -113,6 +121,44 @@ class Service(ABC):
         Returns:
             Any: The result of the step (if any).
         """
+
+    def monitor(self, **values: Any):
+        """Push values to the simulator, which writes them in the report.
+
+        It does not wait for the simulator, and it can be called at any time while
+        the service is deployed, with no metric or event involved. The values are
+        written together in the JSON report, whatever the report format of the
+        simulation, and can be read with `Simulation.monitored`.
+
+        `application_id`, `service_id`, `node_id`, `timestamp` and `n_event` are
+        reserved names: they are always set by ECLYPSE.
+
+        Args:
+            **values: The values to push, by name. They can be anything JSON can
+                represent, and arrays or scalars of the numerical libraries.
+
+        Raises:
+            TypeError: If a value cannot be represented.
+            RuntimeError: If the service is not deployed on any node.
+
+        Example:
+            ```python
+            async def step(self):
+                self.monitor(queue_size=len(self.queue), state="busy")
+            ```
+        """
+        # checked here, as a value that cannot be written would lose the whole batch
+        values = json.loads(
+            json.dumps(_normalize_for_json(values), cls=_SafeJSONEncoder)
+        )
+        self.node.get_actor(self.node.manager_actor_name).monitor.remote(
+            self.application_id,
+            self.id,
+            self._monitor_count + 1,
+            dt.now().isoformat(),
+            {**values, "node_id": self.node.id},
+        )
+        self._monitor_count += 1
 
     def on_deploy(self):
         """Hook called when the service is deployed on a node."""
@@ -273,6 +319,11 @@ class Service(ABC):
     def step_count(self) -> int:
         """Return the number of attempted service loop iterations."""
         return self._step_count
+
+    @property
+    def monitor_count(self) -> int:
+        """Return the number of times the service pushed values to the simulator."""
+        return self._monitor_count
 
     @property
     def logger(self) -> Logger:

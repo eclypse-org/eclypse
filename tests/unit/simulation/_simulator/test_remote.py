@@ -1,9 +1,12 @@
 from __future__ import annotations
 
+import asyncio
+import json
 from types import SimpleNamespace
 
 import pytest
 
+from eclypse.report.reporters import JSONReporter
 from eclypse.simulation._simulator.ops_handler import (
     RemoteSimOpsHandler,
     _handle_error,
@@ -207,3 +210,40 @@ async def test_remote_simulator_wait_finalize_and_route_edge_cases(
     assert calls[0] == ("wait", 1.25)
     assert calls[1][0] == "cleanup"
     assert calls[2] == ("super-finalize", simulator)
+
+
+@pytest.mark.asyncio
+async def test_remote_simulator_writes_every_pushed_value_before_closing(
+    sample_infrastructure,
+    sample_application,
+    simulation_config,
+):
+    simulation_config.reporters = {"json": JSONReporter}
+    simulator = RemoteSimulator(
+        sample_infrastructure,
+        simulation_config,
+        remotes=[],
+    )
+    simulator.register(sample_application)
+    simulator._event_loop.close()
+    simulator._event_loop = asyncio.get_running_loop()
+    await simulator._reporter.start(simulator._event_loop)
+
+    # the services were undeployed, but one push is still on its way
+    sample_application.services["gateway"]._monitor_count = 1
+    sample_application.services["worker"]._monitor_count = 1
+    simulator.monitor("shop", "gateway", 1, "2026-01-01T00:00:00", {"load": 3})
+    shutdown = asyncio.create_task(simulator._finalize_shutdown())
+    await asyncio.sleep(0.05)
+    assert not shutdown.done()
+
+    simulator.monitor("shop", "worker", 1, "2026-01-01T00:00:01", {"load": 5})
+    await asyncio.wait_for(shutdown, timeout=5)
+
+    path = simulation_config.path / "json" / "service.jsonl"
+    rows = [json.loads(line) for line in path.read_text().splitlines()]
+    assert [row["data"] for row in rows] == [
+        ["shop", "gateway", {"load": 3}],
+        ["shop", "worker", {"load": 5}],
+    ]
+    assert {row["callback_name"] for row in rows} == {"service_monitor"}
