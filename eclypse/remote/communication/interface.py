@@ -13,8 +13,6 @@ from typing import (
 
 from eclypse.remote import ray_backend
 
-from .request import RouteNotFoundError
-
 if TYPE_CHECKING:
     from asyncio import (
         Future,
@@ -128,9 +126,9 @@ class EclypseCommunicationInterface:
         """
         raise NotImplementedError
 
-    def _route_not_found_response(self, recipient_id: str) -> Any:
-        """Raise for a missing route unless the protocol provides a response."""
-        raise RouteNotFoundError(recipient_id)
+    def _route_not_found_response(self, _recipient_id: str) -> Any:
+        """Return the protocol's response when no route is available."""
+        raise NotImplementedError
 
     def _recipient_unavailable_response(
         self, _recipient_id: str, error: Exception

@@ -103,12 +103,15 @@ guarantee successful delivery or application processing. Inspect the request's
 | `ERROR` | Generic failure, retained for compatibility and remote lifecycle operations. |
 
 Each response has a creation `timestamp` and an optional diagnostic `message`.
+Unavailable-recipient diagnostics contain the exception type and its first line,
+without repeating a multiline traceback. The same rule applies to REST diagnostics.
 Use codes for decisions and messages for logs. `Response(code, timestamp)`
 remains valid; pass `message` by keyword.
 
 **Migration:** missing MPI routes now return `ROUTE_NOT_FOUND` instead of raising
-`RouteNotFoundError`. Code after an awaited send therefore runs even if no route
-exists. Replace MPI `except RouteNotFoundError` handling with response checks,
+an exception. The previous routing exception and its public export have been removed.
+Code after an awaited send therefore runs even if no route exists.
+Replace MPI routing-exception handling with response checks,
 and end the step on failed delivery before calling `recv()`. The default service
 loop no longer skips or logs a step automatically for missing MPI routes.
 Checking only `code == ERROR` does not cover the specific failures; use
@@ -277,7 +280,7 @@ if not request.ok:
     return
 ```
 
-**Migration:** missing REST routes no longer raise `RouteNotFoundError`, and
+**Migration:** missing REST routes now return `503` instead of raising an exception, and
 disconnected recipients return `503` instead of `500`. Check `request.ok`
 before reading application fields in `body`. The default service loop no longer
 automatically skips steps for missing REST routes. A REST endpoint calling a

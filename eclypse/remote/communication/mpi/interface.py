@@ -169,9 +169,14 @@ class EclypseMPI(EclypseCommunicationInterface):
     def _recipient_unavailable_response(
         self, recipient_id: str, error: Exception
     ) -> Response:
+        lines = str(error).splitlines()
+        detail = f": {lines[0]}" if lines else ""
         return Response(
             ResponseCode.RECIPIENT_UNAVAILABLE,
-            message=f"Recipient '{recipient_id}' is unavailable: {error}",
+            message=(
+                f"Recipient '{recipient_id}' is unavailable: "
+                f"{type(error).__name__}{detail}"
+            ),
         )
 
     async def _execute_request(  # pylint: disable=arguments-differ

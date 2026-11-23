@@ -57,6 +57,15 @@ def test_ray_delivery_failures_use_protocol_specific_responses(remote_probe):
                         {}, 0, route, "worker", protocol(service)
                     )
                     response = result["future"]
+                    message = (
+                        response.message if protocol is EclypseMPI
+                        else response[1]["message"]
+                    )
+                    assert message.splitlines() == [message], message
+                    if state == "dead_actor":
+                        assert any(name in message for name in (
+                            "ActorDiedError", "ActorUnavailableError"
+                        )), message
                     results[state + protocol.__name__] = (
                         response.code.name if protocol is EclypseMPI
                         else [int(response[0]), response[1]["error"]]

@@ -42,6 +42,44 @@ def test_response_preserves_positional_arguments_and_diagnostics():
     assert ResponseCode.ERROR.value == 2
 
 
+@pytest.mark.parametrize("protocol", [EclypseMPI, EclypseREST])
+@pytest.mark.parametrize(
+    "text",
+    ["", "connection lost", "connection lost\ntraceback", "connection lost\rtraceback"],
+)
+def test_unavailable_diagnostics_are_single_line(protocol, text):
+    response = protocol(SimpleNamespace())._recipient_unavailable_response(
+        "worker", RuntimeError(text)
+    )
+    message = response.message if protocol is EclypseMPI else response[1]["message"]
+    expected = "Recipient 'worker' is unavailable: RuntimeError"
+    if text:
+        expected += f": {text.splitlines()[0]}"
+    assert message == expected
+    assert message.splitlines() == [message]
+
+
+@pytest.mark.parametrize("protocol", [EclypseMPI, EclypseREST])
+def test_actor_initialisation_traceback_is_not_repeated_in_diagnostics(protocol):
+    exceptions = pytest.importorskip("ray.exceptions")
+    cause = exceptions.RayTaskError(
+        "Worker.__init__",
+        'Traceback (most recent call last):\n  File "worker.py", line 3\n'
+        "ValueError: init failed",
+        ValueError("init failed"),
+    )
+    error = exceptions.ActorDiedError(cause)
+    assert len(str(error).splitlines()) > 1
+    response = protocol(SimpleNamespace())._recipient_unavailable_response(
+        "worker", error
+    )
+    message = response.message if protocol is EclypseMPI else response[1]["message"]
+    assert message.splitlines() == [message]
+    assert f"ActorDiedError: {str(error).splitlines()[0]}" in message
+    assert "worker.py" not in message
+    assert "init failed" not in message
+
+
 @pytest.mark.asyncio
 @pytest.mark.parametrize("recipients", ["missing", ["online", "missing", "offline"]])
 async def test_missing_mpi_routes_complete_with_ordered_outcomes(

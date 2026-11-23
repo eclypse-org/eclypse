@@ -16,7 +16,6 @@ from eclypse.remote.communication.mpi.interface import (
 from eclypse.remote.communication.mpi.response import Response
 from eclypse.remote.communication.request import (
     EclypseRequest,
-    RouteNotFoundError,
     _process_request,
 )
 from eclypse.remote.communication.rest.codes import HTTPStatusCode
@@ -323,7 +322,7 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 
     assert same_node_result["future"] == "stored"
 
-    with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
+    with pytest.raises(NotImplementedError):
         await _process_request(
             {}, 0, missing_route_future, "worker", DummyInterface(service)
         )
