@@ -1,0 +1,59 @@
+include = ["eclypse/**/*.py", "tests/**/*.py"]
+extend-exclude = ["docs", "examples"]
+
+[format]
+docstring-code-format = true
+
+[lint]
+select = [
+    "E",
+    "F",
+    "W",
+    # "I", # isort works better so far
+    "B",
+    "UP",
+    "SIM",
+    "C90",
+    "RUF",
+    "TCH",
+    "PL",
+    "ARG",
+    "D",
+]
+
+[lint.mccabe]
+max-complexity = 10
+
+[lint.pylint]
+max-args = 20
+max-locals = 30
+max-branches = 15
+max-positional-args = 20
+
+[lint.pycodestyle]
+max-doc-length = 100
+
+[lint.pydocstyle]
+convention = "google"
+
+[lint.flake8-type-checking]
+strict = true
+
+[lint.flake8-tidy-imports]
+banned-module-level-imports = ["ray", "tensorboardX"]
+
+[lint.per-file-ignores]
+"tests/**" = [
+    "D",
+    "ARG005",
+    "B018",
+    "C901",
+    "PLR0915",
+    "PLR1711",
+    "PLR2004",
+    "PLW0108",
+    "RUF012",
+    "RUF100",
+    "TC003",
+    "UP037",
+]

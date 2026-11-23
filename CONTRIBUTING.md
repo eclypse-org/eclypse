@@ -84,7 +84,7 @@ The Changelog page includes the root `CHANGELOG.md` directly at build time.
 
 The configured pre-commit hooks check formatting, linting, types, and basic file hygiene:
 
-- [Ruff](https://github.com/astral-sh/ruff): linting (rules in the `[tool.ruff]` section of `pyproject.toml`) and formatting.
+- [Ruff](https://github.com/astral-sh/ruff): linting and formatting (configured in `ruff.toml`).
 - [isort](https://github.com/PyCQA/isort): import sorting.
 - [mypy](https://mypy-lang.org/): type checking of the `eclypse` package.
 
