@@ -15,6 +15,44 @@ from eclypse.utils.constants import (
 )
 
 
+@pytest.mark.parametrize("shutdown_complete", [True, False])
+def test_stop_racing_with_shutdown_closes_unscheduled_coroutine(
+    monkeypatch, simulation_config, sample_infrastructure, shutdown_complete
+):
+    simulator = Simulator(sample_infrastructure, simulation_config)
+    simulator._status = SimulationState.RUNNING
+    simulator._finished.clear()
+    loop = simulator._event_loop
+    schedule = asyncio.run_coroutine_threadsafe
+    coroutines = []
+
+    def race_shutdown(coro, target_loop):
+        coroutines.append(coro)
+        if shutdown_complete:
+            simulator._status = SimulationState.IDLE
+            simulator._finished.set()
+            target_loop.close()
+            return schedule(coro, target_loop)
+        raise RuntimeError("scheduler failed")
+
+    monkeypatch.setattr(
+        "eclypse.simulation._simulator.local.asyncio.run_coroutine_threadsafe",
+        race_shutdown,
+    )
+    try:
+        if shutdown_complete:
+            simulator.stop()
+        else:
+            with pytest.raises(RuntimeError, match="scheduler failed"):
+                simulator.stop()
+        assert coroutines[0].cr_frame is None
+        assert simulator._stop_requested is False
+    finally:
+        for coro in coroutines:
+            coro.close()
+        loop.close()
+
+
 def test_wait_reports_write_failure_only_after_shutdown(
     simulation_config, sample_infrastructure
 ):

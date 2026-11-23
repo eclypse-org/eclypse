@@ -154,10 +154,15 @@ class Simulator:
             return
 
         self._stop_requested = True
-        asyncio.run_coroutine_threadsafe(
-            self.enqueue_event(STOP_EVENT),
-            self._event_loop,
-        )
+        stop_event = self.enqueue_event(STOP_EVENT)
+        try:
+            asyncio.run_coroutine_threadsafe(stop_event, self._event_loop)
+        except RuntimeError:
+            stop_event.close()
+            self._stop_requested = False
+            # Automatic shutdown can finish between the state check and scheduling.
+            if not self._finished.is_set():
+                raise
 
     async def enqueue_event(self, event_name: str, triggered_by: str | None = None):
         """Enqueue an event to be processed by the simulation.
