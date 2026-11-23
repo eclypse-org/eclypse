@@ -89,6 +89,7 @@ required-version = ">=0.13"
 [tool.commitizen]
 name = "cz_conventional_commits"
 version_provider = "uv"
+major_version_zero = true
 tag_format = "$version"
 bump_message = "chore(release): bump version $current_version → $new_version"
 update_changelog_on_bump = true
