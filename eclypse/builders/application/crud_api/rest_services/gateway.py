@@ -10,6 +10,9 @@ class GatewayService(Service):
     async def step(self):
         """Authenticate the client and create a demo item via REST."""
         auth_r = await self.rest.post("AuthService/auth", api_key="demo-key")
+        if not auth_r.ok:
+            self.logger.warning(str(auth_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="AuthService", body=auth_r.body)
@@ -19,6 +22,9 @@ class GatewayService(Service):
             token=auth_r.body["token"],
             item={"id": "item-1", "name": "demo", "status": "active"},
         )
+        if not item_r.ok:
+            self.logger.warning(str(item_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="ItemService", body=item_r.body)

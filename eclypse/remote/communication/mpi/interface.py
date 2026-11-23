@@ -80,6 +80,9 @@ class EclypseMPI(EclypseCommunicationInterface):
 
         Returns:
             UnicastRequest | MulticastRequest: The MPI request.
+
+        Expected delivery failures are returned as Response codes. Check each
+        response before waiting for an application reply. Other errors propagate.
         """
         if not timestamp:
             timestamp = datetime.now()
@@ -152,7 +155,29 @@ class EclypseMPI(EclypseCommunicationInterface):
         return self._input_queue.pop(source, block, timeout)
 
     async def _not_connected_response(self) -> Any:
-        return Response(ResponseCode.ERROR)
+        return Response(
+            ResponseCode.NOT_CONNECTED,
+            message=f"Recipient '{self.service.id}' is not connected.",
+        )
+
+    def _route_not_found_response(self, recipient_id: str) -> Response:
+        return Response(
+            ResponseCode.ROUTE_NOT_FOUND,
+            message=f"No usable route to recipient '{recipient_id}'.",
+        )
+
+    def _recipient_unavailable_response(
+        self, recipient_id: str, error: Exception
+    ) -> Response:
+        lines = str(error).splitlines()
+        detail = f": {lines[0]}" if lines else ""
+        return Response(
+            ResponseCode.RECIPIENT_UNAVAILABLE,
+            message=(
+                f"Recipient '{recipient_id}' is unavailable: "
+                f"{type(error).__name__}{detail}"
+            ),
+        )
 
     async def _execute_request(  # pylint: disable=arguments-differ
         self, route: Route, **data

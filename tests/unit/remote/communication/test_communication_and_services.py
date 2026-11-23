@@ -16,7 +16,6 @@ from eclypse.remote.communication.mpi.interface import (
 from eclypse.remote.communication.mpi.response import Response
 from eclypse.remote.communication.request import (
     EclypseRequest,
-    RouteNotFoundError,
     _process_request,
 )
 from eclypse.remote.communication.rest.codes import HTTPStatusCode
@@ -323,8 +322,10 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
 
     assert same_node_result["future"] == "stored"
 
-    with pytest.raises(RouteNotFoundError, match="Route to worker not found"):
-        await _process_request({}, 0, missing_route_future, "worker", comm)
+    with pytest.raises(NotImplementedError):
+        await _process_request(
+            {}, 0, missing_route_future, "worker", DummyInterface(service)
+        )
 
     service_stub = SimpleNamespace(
         node=SimpleNamespace(manager_actor_name="edge-cloud/manager"),
@@ -376,6 +377,11 @@ async def test_process_request_and_base_interface_behaviour(monkeypatch):
     interface.disconnect()
     assert await interface._handle_request() == "offline"
 
+    error = RuntimeError("recipient unavailable")
+    with pytest.raises(RuntimeError, match="recipient unavailable") as caught:
+        interface._recipient_unavailable_response("worker", error)
+    assert caught.value is error
+
 
 @pytest.mark.asyncio
 async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
@@ -413,8 +419,11 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     )
 
     assert await rest._not_connected_response() == (
-        HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "svc not connected"},
+        HTTPStatusCode.SERVICE_UNAVAILABLE,
+        {
+            "error": "not_connected",
+            "message": "Recipient 'svc' is not connected.",
+        },
     )
     assert await rest._execute_request(
         "svc/hello",
@@ -424,31 +433,35 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
     ) == (HTTPStatusCode.OK, {"name": "Ada"})
     assert await rest._execute_request("missing", HTTPMethod.GET, no_hop_route) == (
         HTTPStatusCode.NOT_FOUND,
-        {"message": "Endpoint not found"},
+        {"error": "endpoint_not_found", "message": "Endpoint not found"},
     )
     assert await rest._execute_request("svc/hello", HTTPMethod.POST, no_hop_route) == (
         HTTPStatusCode.METHOD_NOT_ALLOWED,
-        {"message": "Method not allowed"},
+        {"error": "method_not_allowed", "message": "Method not allowed"},
     )
     assert await rest._execute_request("svc/boom", HTTPMethod.POST, no_hop_route) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "boom"},
+        {"error": "handler_error", "message": "boom"},
     )
     assert await rest._execute_request(
         "svc/bad-data", HTTPMethod.PUT, no_hop_route
     ) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
-        {"message": "Invalid return type for handler: data must be a dictionary."},
+        {
+            "error": "invalid_handler_response",
+            "message": "Invalid return type for handler: data must be a dictionary.",
+        },
     )
     assert await rest._execute_request(
         "svc/bad-code", HTTPMethod.DELETE, no_hop_route
     ) == (
         HTTPStatusCode.INTERNAL_SERVER_ERROR,
         {
+            "error": "invalid_handler_response",
             "message": (
                 "Invalid return type for handler: "
                 "status code must be a valid HTTP code."
-            )
+            ),
         },
     )
     assert (
@@ -569,7 +582,7 @@ async def test_rest_and_mpi_interfaces_and_service_lifecycle(monkeypatch):
             timestamp,
         )
     assert mpi.bcast(data={"x": 1})[:2] == ("broadcast", {"x": 1})
-    assert (await mpi._not_connected_response()).code is ResponseCode.ERROR
+    assert (await mpi._not_connected_response()).code is ResponseCode.NOT_CONNECTED
 
     message_route = Route(
         sender_id="gateway",

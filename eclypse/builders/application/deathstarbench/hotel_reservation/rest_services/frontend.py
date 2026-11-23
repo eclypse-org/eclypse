@@ -19,11 +19,17 @@ class FrontendService(Service):
     async def step(self):
         """Search for hotels, fetch the profile, and submit a reservation."""
         hotels_r = await self.rest.get("SearchService/search", city="Pisa", nights=2)
+        if not hotels_r.ok:
+            self.logger.warning(str(hotels_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="SearchService", body=hotels_r.body)
         )
         profile_r = await self.rest.get("ProfileService/profile", user_id=self.user_id)
+        if not profile_r.ok:
+            self.logger.warning(str(profile_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="ProfileService", body=profile_r.body)
@@ -33,6 +39,9 @@ class FrontendService(Service):
             hotel=hotels_r.body["hotels"][0],
             user=profile_r.body["user"],
         )
+        if not reservation_r.ok:
+            self.logger.warning(str(reservation_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="ReservationService", body=reservation_r.body)

@@ -54,7 +54,7 @@ class EclypseCommunicationInterface:
         """Disconnects the communication interface from the `RemoteSimulator`."""
         self._im = None
 
-    def request_route(self, recipient_id: str) -> Future[Route]:
+    def request_route(self, recipient_id: str) -> Future[Route | None]:
         """Interact with the `RemoteSimulator` to request a service route.
 
         The result of the function can be obtained by calling
@@ -64,7 +64,7 @@ class EclypseCommunicationInterface:
             recipient_id (str): The ID of the recipient service.
 
         Returns:
-            Task[Route]: The route to the recipient service.
+            Future[Route | None]: The route, or None when no route is available.
         """
         if self._im:
             return self._im.route.remote(  # type: ignore[attr-defined]
@@ -125,6 +125,16 @@ class EclypseCommunicationInterface:
             NotImplementedError: The method is not implemented.
         """
         raise NotImplementedError
+
+    def _route_not_found_response(self, _recipient_id: str) -> Any:
+        """Return the protocol's response when no route is available."""
+        raise NotImplementedError
+
+    def _recipient_unavailable_response(
+        self, _recipient_id: str, error: Exception
+    ) -> Any:
+        """Propagate unavailable-recipient errors unless the protocol handles them."""
+        raise error
 
     async def _execute_request(self, *args, **kwargs) -> Any:
         """Enqueue a message in the input queue.

@@ -22,6 +22,9 @@ class UserMentionService(RESTService):
             mentions=mentions,
             user_mentions=user_mentions,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UrlShortenService", body=response.body)

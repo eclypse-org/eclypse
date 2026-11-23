@@ -16,7 +16,10 @@ class SensorService(Service):
     async def step(self):
         """Create the next audio window and wait for the command response."""
         self.window_id += 1
-        await self.capture_window()
+        request = await self.capture_window()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response

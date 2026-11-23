@@ -33,7 +33,6 @@ from typing import (
 )
 
 from eclypse.remote.communication.mpi import EclypseMPI
-from eclypse.remote.communication.request import RouteNotFoundError
 from eclypse.remote.communication.rest import EclypseREST
 from eclypse.utils._logging import (
     logger,
@@ -101,15 +100,7 @@ class Service(ABC):
         """
         while self.running:
             self._step_count += 1
-            try:
-                step_result = await self.step()
-            except RouteNotFoundError as error:
-                self.logger.warning(
-                    "Skipping service step "
-                    f"{self.step_count} because route to {error.recipient_id} "
-                    "was not found."
-                )
-                continue
+            step_result = await self.step()
             if step_result is not None and self._store_step:
                 self._step_queue.append(step_result)
 

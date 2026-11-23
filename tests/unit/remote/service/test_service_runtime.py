@@ -18,7 +18,6 @@ from eclypse.remote.communication.mpi.requests import (
 )
 from eclypse.remote.communication.request import (
     EclypseRequest,
-    RouteNotFoundError,
 )
 from eclypse.remote.node.ops_thread import RemoteOpsThread
 from eclypse.remote.service.rest import RESTService
@@ -186,12 +185,12 @@ def test_service_guard_properties_and_basic_accessors(dummy_logger):
 
 
 @pytest.mark.asyncio
-async def test_service_run_handles_missing_routes_and_stored_steps(dummy_logger):
+async def test_service_run_stores_nonempty_steps(dummy_logger):
     node = _make_node(dummy_logger)
 
     service = ScriptedService(
         "worker",
-        [RouteNotFoundError("catalog"), None, 7],
+        [None, 7],
         store_step=True,
     )
     service.attach_node(node)
@@ -199,13 +198,22 @@ async def test_service_run_handles_missing_routes_and_stored_steps(dummy_logger)
 
     await service.run()
 
-    assert service.step_count == 3
+    assert service.step_count == 2
     assert list(service._step_queue) == [7]
-    assert any(
-        "route to catalog was not found" in record[1][0]
-        for record in dummy_logger.records
-        if record[0] == "warning"
-    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "error", [RuntimeError("step failed"), ValueError("invalid step")]
+)
+async def test_service_run_propagates_step_errors(error):
+    service = ScriptedService("worker", [error], store_step=True)
+    service._running = True
+    with pytest.raises(type(error)) as caught:
+        await service.run()
+    assert caught.value is error
+    assert service.step_count == 1
+    assert list(service._step_queue) == []
 
 
 def test_service_deploy_start_stop_and_undeploy_flow(monkeypatch, dummy_logger):

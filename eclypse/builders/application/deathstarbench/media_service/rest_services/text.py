@@ -17,6 +17,9 @@ class TextService(RESTService):
             **payload,
             text=text.strip(),
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="RatingService", body=response.body)

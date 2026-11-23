@@ -22,6 +22,9 @@ class UserService(RESTService):
             username=username,
             creator=creator,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PostStorageService", body=response.body)

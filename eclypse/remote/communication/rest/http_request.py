@@ -6,6 +6,7 @@ communication interface.
 
 from __future__ import annotations
 
+from http import HTTPStatus
 from typing import (
     TYPE_CHECKING,
     Any,
@@ -96,6 +97,15 @@ class HTTPRequest(EclypseRequest):
         if self.response is None:
             raise RuntimeError("Request not completed yet")
         return self.response[0]
+
+    @property
+    def ok(self) -> bool:
+        """Whether the response has a successful HTTP status (2xx).
+
+        Raises:
+            RuntimeError: If the request has not completed yet.
+        """
+        return HTTPStatus.OK <= self.status_code < HTTPStatus.MULTIPLE_CHOICES
 
     @property
     def body(self) -> dict[str, Any]:

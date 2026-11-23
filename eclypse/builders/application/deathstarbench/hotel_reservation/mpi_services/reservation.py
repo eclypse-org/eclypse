@@ -15,7 +15,10 @@ class ReservationService(Service):
 
     async def step(self):
         """Create a reservation and wait for the payment response."""
-        await self.frontend_request()
+        request = await self.frontend_request()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         return await self.payment_request()
 
     @mpi.exchange(receive=True, send=True)

@@ -139,8 +139,30 @@ class EclypseREST(EclypseCommunicationInterface):
 
     async def _not_connected_response(self) -> tuple[HTTPStatusCode, dict[str, Any]]:
         """Returns a response when the service is not connected."""
-        return HTTPStatusCode.INTERNAL_SERVER_ERROR, {
-            "message": f"{self.service.id} not connected"
+        return HTTPStatusCode.SERVICE_UNAVAILABLE, {
+            "error": "not_connected",
+            "message": f"Recipient '{self.service.id}' is not connected.",
+        }
+
+    def _route_not_found_response(
+        self, recipient_id: str
+    ) -> tuple[HTTPStatusCode, dict[str, Any]]:
+        return HTTPStatusCode.SERVICE_UNAVAILABLE, {
+            "error": "route_not_found",
+            "message": f"No usable route to recipient '{recipient_id}'.",
+        }
+
+    def _recipient_unavailable_response(
+        self, recipient_id: str, error: Exception
+    ) -> tuple[HTTPStatusCode, dict[str, Any]]:
+        lines = str(error).splitlines()
+        detail = f": {lines[0]}" if lines else ""
+        return HTTPStatusCode.SERVICE_UNAVAILABLE, {
+            "error": "recipient_unavailable",
+            "message": (
+                f"Recipient '{recipient_id}' is unavailable: "
+                f"{type(error).__name__}{detail}"
+            ),
         }
 
     async def _execute_request(  # pylint: disable=arguments-differ
@@ -163,10 +185,16 @@ class EclypseREST(EclypseCommunicationInterface):
             tuple[HTTPStatusCode, dict[str, Any]]: The result of the request.
         """
         if url not in self.endpoints:
-            return HTTPStatusCode.NOT_FOUND, {"message": "Endpoint not found"}
+            return HTTPStatusCode.NOT_FOUND, {
+                "error": "endpoint_not_found",
+                "message": "Endpoint not found",
+            }
 
         if method not in self.endpoints[url]:
-            return HTTPStatusCode.METHOD_NOT_ALLOWED, {"message": "Method not allowed"}
+            return HTTPStatusCode.METHOD_NOT_ALLOWED, {
+                "error": "method_not_allowed",
+                "message": "Method not allowed",
+            }
         handler = self.endpoints[url][method]
         try:
             if inspect.iscoroutinefunction(handler):
@@ -176,17 +204,23 @@ class EclypseREST(EclypseCommunicationInterface):
         except Exception as e:
             http_code, result = (
                 HTTPStatusCode.INTERNAL_SERVER_ERROR,
-                {"message": str(e)},
+                {"error": "handler_error", "message": str(e)},
             )
         if not isinstance(result, dict):
             error_code = "Invalid return type for handler: data must be a dictionary."
-            return HTTPStatusCode.INTERNAL_SERVER_ERROR, {"message": error_code}
+            return HTTPStatusCode.INTERNAL_SERVER_ERROR, {
+                "error": "invalid_handler_response",
+                "message": error_code,
+            }
         if http_code not in iter(HTTPStatusCode):
             error_code = (
                 "Invalid return type for handler: status code must be "
                 "a valid HTTP code."
             )
-            return HTTPStatusCode.INTERNAL_SERVER_ERROR, {"message": error_code}
+            return HTTPStatusCode.INTERNAL_SERVER_ERROR, {
+                "error": "invalid_handler_response",
+                "message": error_code,
+            }
 
         if not isinstance(http_code, HTTPStatusCode):
             http_code = HTTPStatusCode(http_code)

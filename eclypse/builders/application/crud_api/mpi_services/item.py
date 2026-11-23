@@ -15,7 +15,10 @@ class ItemService(Service):
 
     async def step(self):
         """Create the item, then wait for the audit confirmation."""
-        await self.gateway_request()
+        request = await self.gateway_request()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         return await self.audit_request()
 
     @mpi.exchange(receive=True, send=True)

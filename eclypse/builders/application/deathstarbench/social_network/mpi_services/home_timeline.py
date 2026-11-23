@@ -16,7 +16,10 @@ class HomeTimelineService(Service):
 
     async def step(self):
         """Handle the next home-timeline request."""
-        await self.handle_request()
+        request = await self.handle_request()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         return await self.followers_response()
 
     @mpi.exchange(receive=True, send=True)

@@ -16,7 +16,10 @@ class CameraGatewayService(Service):
     async def step(self):
         """Capture the next frame and wait for the analytics summary."""
         self.frame_id += 1
-        await self.start_pipeline()
+        request = await self.start_pipeline()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response

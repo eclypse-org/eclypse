@@ -39,8 +39,14 @@ class OrderService(Service):
         It starts with processing the order request, then sending requests to the
         `PaymentService` and `ShippingService`.
         """
-        await self.frontend_request()
-        await self.payment_request()
+        request = await self.frontend_request()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
+        request = await self.payment_request()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         await self.shipping_request()
 
     @mpi.exchange(receive=True, send=True)

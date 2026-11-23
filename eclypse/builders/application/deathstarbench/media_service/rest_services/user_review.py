@@ -28,6 +28,9 @@ class UserReviewService(RESTService):
             review=review,
             reply_to=reply_to,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="MovieReviewService", body=response.body)

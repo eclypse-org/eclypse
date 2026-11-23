@@ -31,6 +31,9 @@ class ComposeReviewService(Service):
             rating=5,
             text="A sharp and timeless science-fiction classic.",
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="UniqueIdService", body=response.body)

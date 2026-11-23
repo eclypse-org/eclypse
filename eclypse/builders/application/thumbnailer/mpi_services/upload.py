@@ -16,7 +16,10 @@ class UploadService(Service):
     async def step(self):
         """Upload the next image and wait for the final storage response."""
         self.image_id += 1
-        await self.upload_image()
+        request = await self.upload_image()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response

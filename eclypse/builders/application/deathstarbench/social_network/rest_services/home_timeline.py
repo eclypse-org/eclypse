@@ -24,6 +24,9 @@ class HomeTimelineService(RESTService):
             "SocialGraphService/followers",
             user_id=creator["user_id"],
         )
+        if not followers.ok:
+            self.logger.warning(str(followers.body))
+            return followers.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="SocialGraphService", body=followers.body)
@@ -49,6 +52,9 @@ class HomeTimelineService(RESTService):
             "PostStorageService/read_many",
             post_ids=post_ids,
         )
+        if not response.ok:
+            self.logger.warning(str(response.body))
+            return response.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PostStorageService", body=response.body)

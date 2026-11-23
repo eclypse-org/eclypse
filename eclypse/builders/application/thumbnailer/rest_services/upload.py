@@ -24,6 +24,9 @@ class UploadService(Service):
             image_id=f"img-{self.image_id}",
             resolution=[1920, 1080],
         )
+        if not transform_r.ok:
+            self.logger.warning(str(transform_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="TransformService", body=transform_r.body)
@@ -33,6 +36,9 @@ class UploadService(Service):
             image_id=f"img-{self.image_id}",
             thumbnail=transform_r.body["thumbnail"],
         )
+        if not storage_r.ok:
+            self.logger.warning(str(storage_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="StorageService", body=storage_r.body)
@@ -42,6 +48,9 @@ class UploadService(Service):
             image_id=f"img-{self.image_id}",
             uri=storage_r.body["uri"],
         )
+        if not notification_r.ok:
+            self.logger.warning(str(notification_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="NotificationService", body=notification_r.body)

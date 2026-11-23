@@ -24,6 +24,9 @@ class SensorService(Service):
             window_id=self.window_id,
             samples=[0.1, 0.3, 0.2],
         )
+        if not preprocess_r.ok:
+            self.logger.warning(str(preprocess_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PreprocessService", body=preprocess_r.body)
@@ -33,6 +36,9 @@ class SensorService(Service):
             window_id=self.window_id,
             features=preprocess_r.body["features"],
         )
+        if not inference_r.ok:
+            self.logger.warning(str(inference_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="InferenceService", body=inference_r.body)
@@ -42,6 +48,9 @@ class SensorService(Service):
             window_id=self.window_id,
             keyword=inference_r.body["keyword"],
         )
+        if not action_r.ok:
+            self.logger.warning(str(action_r.body))
+            return
         self.logger.info(
             "Received response | "
             + format_log_kv(source="ActionService", body=action_r.body)

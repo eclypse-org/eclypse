@@ -16,15 +16,24 @@ class MovieInfoService(RESTService):
             + format_log_kv(movie_id=movie_id, movie_title=movie_title)
         )
         cast = await self.rest.get("CastInfoService/cast", movie_id=movie_id)
+        if not cast.ok:
+            self.logger.warning(str(cast.body))
+            return cast.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="CastInfoService", body=cast.body)
         )
         plot = await self.rest.get("PlotService/plot", movie_id=movie_id)
+        if not plot.ok:
+            self.logger.warning(str(plot.body))
+            return plot.response
         self.logger.info(
             "Received response | " + format_log_kv(source="PlotService", body=plot.body)
         )
         reviews = await self.rest.get("MovieReviewService/read", movie_id=movie_id)
+        if not reviews.ok:
+            self.logger.warning(str(reviews.body))
+            return reviews.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="MovieReviewService", body=reviews.body)

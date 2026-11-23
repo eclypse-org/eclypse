@@ -23,6 +23,9 @@ class ReservationService(RESTService):
             reservation_id=self.reservation_id,
             amount=hotel["price"],
         )
+        if not payment_r.ok:
+            self.logger.warning(str(payment_r.body))
+            return payment_r.response
         self.logger.info(
             "Received response | "
             + format_log_kv(source="PaymentService", body=payment_r.body)

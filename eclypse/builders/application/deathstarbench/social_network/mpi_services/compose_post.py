@@ -18,7 +18,10 @@ class ComposePostService(Service):
     async def step(self):
         """Start the compose-post workflow and await the final response."""
         self.req_id += 1
-        await self.submit_post()
+        request = await self.submit_post()
+        if not request.ok:
+            self.logger.warning(str(request.response))
+            return
         response = (await self.mpi.recv()).data
         self.logger.info("Received response | " + format_log_kv(response=response))
         return response
