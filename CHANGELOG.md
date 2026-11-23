@@ -1,3 +1,48 @@
+## 0.11.0 (2026-11-24)
+
+### BREAKING CHANGE
+
+- RouteNotFoundError and its public export are removed.
+Check request.ok and protocol-specific response codes for routing failures.
+- Missing REST routes and unavailable recipients return
+503 responses with error and message fields instead of raising delivery
+exceptions. Disconnected REST recipients return 503 instead of 500.
+Read request.ok after completion; pending requests raise RuntimeError.
+- Missing MPI routes return ROUTE_NOT_FOUND instead of raising RouteNotFoundError. Callers must check delivery responses before waiting for application replies. REST keeps its existing exception contract.
+- MPI recv returns Message(source, data). Use source
+instead of sender_id for receive filters and data instead of body for
+send and broadcast arguments. Direct receivers must read message.data;
+exchange handlers retain their positional source and data arguments.
+
+### Feat
+
+- **remote**: Let services push values to the simulator
+- Align REST failures and add request checks
+- Return explicit MPI delivery outcomes
+- Add selective MPI receive
+
+### Fix
+
+- Handle simulator shutdown during stop requests
+- Narrow the service interface type for mypy
+- Connect services when they are deployed
+- Preserve MPI send timestamps
+- Prevent local metrics from running twice
+- Prevent crashed services blocking cleanup
+- Prevent report failures blocking shutdown
+- Reuse docs Makefile on Read the Docs
+
+### Refactor
+
+- Remove obsolete routing exceptions
+- Drop cross-thread notification from MPI queue
+- Remove redundant checks and copying
+
+### Perf
+
+- Reuse Ray clusters across tests
+- Reduce documentation sidebar depth
+
 ## 0.10.0 (2026-11-02)
 
 ### Feat
